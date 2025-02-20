@@ -347,7 +347,9 @@ dict <- list("353358909"="Yes", "104430631"="No",  "178420302"="Do not Know", "5
              "838403733"= "Average Quality", "137254299"="As Loud as Talking","178420302"="Unknown","624808470"="Slightly Louder than Breathing","954318357"="Louder than Talking",
              "198347104"="1-2 times per week","471294296"="3-4 times per week","520089841"="0-1 times per month","632512449"="1-2 times per month","648960871"="Never","718687985"="Almost Every Day",
              "200323667"="In the past yes","249673703"="Currently yes", "310201523"="100 Units per ml", "290716491"="500 unit per ml",
-              "582602017" = "Twins", "105727261" = "Triplets", "720288326" = "Four or More", "660308254" = "Cesarean", "936573532" = "Vaginal")
+              "582602017" = "Twins", "105727261" = "Triplets", "720288326" = "Four or More", "660308254" = "Cesarean", "936573532" = "Vaginal",
+             "582425113"="Menopause", "330745988"="Began taking female hormones during the menopausal transition or menopause", "909774794"="Hysterectomy or Oophorectomy", "868504994"="After endometrial ablation", 
+             "655309065"="Using a hormonal medication or device", "757609794"="Pregnant or breastfeeding during the last year", "585076356"="After radiation or chemotherapy", "351584248"="Unknown")
 
 
 
@@ -1954,9 +1956,9 @@ dt_agep_summary %>%  gt::gt() %>%
 ```{r Menstrual, warning=FALSE, echo=FALSE, message=FALSE}
 ##Menstrual History
 
-fem_birth <- module2 %>%  filter(module2$D_407056417==536341288)
+fem_birth <- module2 %>%  filter(module2$D_407056417==536341288 | (D_750420077_D_578416151==1 | D_750420077_D_434651539==1))
 fb <- as_tibble(fem_birth)
-#| (module2$D_407056417==576796184 & (module2$D_750420077_D_57841615=1 | module2$D_750420077_D_434651539==1)))  #no intersex participants as of yet
+
 
 #Age at first period 
 module2$D_496539718_D_969451837 <- round(as.numeric(module2$D_496539718_D_969451837), digits=0)
