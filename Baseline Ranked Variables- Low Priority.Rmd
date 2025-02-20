@@ -1922,7 +1922,7 @@ dict <- list("353358909"="Yes", "104430631"="No",  "178420302"="Do not Know", "5
              "198347104"="1-2 times per week","471294296"="3-4 times per week","520089841"="0-1 times per month","632512449"="1-2 times per month","648960871"="Never","718687985"="Almost Every Day",
              "200323667"="In the past yes","249673703"="Currently yes", "310201523"="100 Units per ml", "290716491"="500 unit per ml", 
              "582602017" = "Twins", "105727261" = "Triplets", "720288326" = "Four or More", "660308254" = "Cesarean", "936573532" = "Vaginal",
-             "582425113"="Menopause", "330745988"="Female hormones", "909774794"="Hysterectomy or bilateral oophorectomy", "868504994"="Endometrial ablation", "655309065"="Using a hormonal medication or device", "757609794"="Pregnant or breastfeeding", "585076356"="Ratiation or chemotherapy","351584248"="Gender affirming hormones", "647504893"="Everyday", "862918284"="0-9 per month", "275059825"="10-14 per month", "481217808"="15-19 per month","565450397"="20-25 per month")
+             "582425113"="Menopause", "330745988"="Female hormones", "909774794"="Hysterectomy or bilateral oophorectomy", "868504994"="Endometrial ablation", "655309065"="Using a hormonal medication or device", "757609794"="Pregnant or breastfeeding", "585076356"="Ratiation or chemotherapy","351584248"="Unknown", "647504893"="Everyday", "862918284"="0-9 per month", "275059825"="10-14 per month", "481217808"="15-19 per month","565450397"="20-25 per month")
 
 
 
@@ -3294,7 +3294,7 @@ hist_funct(D_889053435,"ACIDSUP6_3: Years Ago over-the-counter H2 Receptor Block
 data_tib_all2$D_496539718_D_969451837 <- round(as.numeric(data_tib_all2$D_496539718_D_969451837), digits=0)
 hist_funct_F(D_496539718_D_969451837,"MENSHIS: Age at First Menstrual Period", "Age", "Frequency")
 
-fem_birth <- data_tib_all2 %>%  filter(data_tib_all2$D_407056417==536341288)
+fem_birth <- data_tib_all2 %>%  filter(D_407056417==536341288  | (D_750420077_D_578416151==1 | D_750420077_D_434651539==1))
 fb <- as_tibble(fem_birth)
 
 #How long until regular
