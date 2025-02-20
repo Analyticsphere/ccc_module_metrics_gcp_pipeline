@@ -942,15 +942,15 @@ add_footnote(Comp_by_Age, "Note: Age defined as the de-identified age data repor
 
 ```{r merge1, include=FALSE, warning=FALSE}
 
-dictionary <- rio::import("https://episphere.github.io/conceptGithubActions/aggregate.json",format = "json")
-dd <- dplyr::bind_rows(dictionary,.id="CID")
-dd <-rbindlist(dictionary,fill=TRUE,use.names=TRUE,idcol="CID")
-dd$`Variable Label`[is.na(dd$`Variable Label`)] <- replace_na(dd$'Variable Name')
-
-dd <- as.data.frame.matrix(do.call("rbind",dictionary)) 
-dd$CID <- rownames(dd)
-#https://shaivyakodan.medium.com/7-useful-r-packages-for-analysis-7f60d28dca98
-#devtools::install_github("tidyverse/reprex")
+# dictionary <- rio::import("https://episphere.github.io/conceptGithubActions/aggregate.json",format = "json")
+# dd <- dplyr::bind_rows(dictionary,.id="CID")
+# dd <-rbindlist(dictionary,fill=TRUE,use.names=TRUE,idcol="CID")
+# dd$`Variable Label`[is.na(dd$`Variable Label`)] <- replace_na(dd$'Variable Name')
+# 
+# dd <- as.data.frame.matrix(do.call("rbind",dictionary)) 
+# dd$CID <- rownames(dd)
+# #https://shaivyakodan.medium.com/7-useful-r-packages-for-analysis-7f60d28dca98
+# #devtools::install_github("tidyverse/reprex")
 
 
 recr_M1 <- bq_project_query(project, query="SELECT token,Connect_ID, d_821247024, d_914594314,  d_827220437,d_512820379,
@@ -2198,7 +2198,7 @@ queries <- list(
                 on ces.Connect_ID=pts.Connect_ID
                 WHERE pts.Connect_ID IS NOT NULL and d_956490759='231311385'",
   CSH_lang_c = "SELECT pts.Connect_ID, csh.d_784119588, d_255077064
-                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.experience2024_JP` csh
+                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.cancerScreeningHistorySurvey_JP` csh
                 left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` pts
                 on csh.Connect_ID=pts.Connect_ID
                 WHERE pts.Connect_ID IS NOT NULL and d_176068627='231311385'"
