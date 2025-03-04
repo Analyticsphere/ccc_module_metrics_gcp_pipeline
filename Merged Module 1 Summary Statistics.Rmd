@@ -2,7 +2,22 @@
 title: "Merged Module 1 Summary Statistics"
 author: "Kelsey Sanchez"
 date: "`r Sys.Date()`"
-output: pdf_document
+header-includes: 
+  \usepackage[labelformat=empty]{caption} 
+  \usepackage{placeins} 
+  \usepackage{booktabs}
+  \usepackage{pdflscape}
+  
+output:
+  pdf_document:
+    latex_engine: xelatex
+    extra_dependencies: ["float"]
+    toc: yes
+    keep_tex: yes
+    fig_width: 7
+    fig_height: 5
+    fig_caption: yes
+    df_print: paged
 ---
 
 
@@ -1214,11 +1229,16 @@ dt_language_summary %>%  gt::gt(rowname_col = "row_lab") %>%
 
 
 
-## Sex at Birth, Gender, Sexual Orientation and Style 
+## Sex at Birth, Body Parts
 ```{r SMG, warning=FALSE, echo=FALSE, message=FALSE}
 
 
-simple_funct(D_407056417, "Sex at birth")
+simple_funct(D_407056417, "Sex at Birth")
+
+
+
+## gender, style, and sexual orientation deprecated for exectuive order
+
 
 
 
@@ -1433,9 +1453,13 @@ knitr::kable(style_of_lesbian_female,
 ```
 
 
-### Specific Demographics 
-```{r Demogrpahics, warning=FALSE, echo=FALSE, message=FALSE}
+
+
+
+```{r Demogrpahics, warning=FALSE, echo=FALSE, message=FALSE, include=FALSE}
 #Specific demographics (white, straight, married females)
+
+### Specific Demographics 
 
 WMF = module1 %>% filter(D_555481393_D_555481393=="271882746") %>% filter(D_407056417==536341288) %>% filter(D_783167257==288321056) %>% 
   filter(D_384191091_D_384191091_D_412790539==1) %>% filter(D_588212264_D_588212264_D_163149180==1)
@@ -1444,7 +1468,7 @@ cat("Number of White, Straight, Married, Female Participants", round(((dim(WMF)[
 ```
 
 \newpage
-
+\FloatBarrier
 # Section 2: Medical History 
 ## Cancer 
 ```{r SkinCancer, warning=FALSE, echo=FALSE, message=FALSE}
@@ -1601,7 +1625,7 @@ tab_footnote(
 
 
 ```
-
+\FloatBarrier
 ```{r MHGroup1Diagn, warning=FALSE, echo=FALSE, message=FALSE}
 ##Cardiovascular 
 
@@ -1766,7 +1790,7 @@ dt_mgr2
 
 
 ```
-
+\FloatBarrier
 ```{r MHGroup2Diagn, warning=FALSE, echo=FALSE, message=FALSE}
 ###Respiratory
 
@@ -1890,7 +1914,7 @@ tab_footnote(
 
 
 ```
-
+\FloatBarrier
 ```{r MHGroup3Diagn, warning=FALSE, echo=FALSE, message=FALSE}
 
 
@@ -2052,7 +2076,7 @@ tab_footnote(
 
 
 ```
-
+\FloatBarrier
 ```{r MHGroup4Diagn, warning=FALSE, echo=FALSE, message=FALSE}
 #MHGROUP4
 
@@ -2162,7 +2186,7 @@ tab_footnote(
 )
 
 ```
-
+\FloatBarrier
 ```{r MHGroup5Diagn, warning=FALSE, echo=FALSE, message=FALSE}
 #MHGROUP5
 
@@ -2266,7 +2290,7 @@ tab_footnote(
 )
 
 ```
-
+\FloatBarrier
 ```{r MHGroup6Diagn, warning=FALSE, echo=FALSE, message=FALSE}
 #MHGROUP6 
 #cat("Rheumatoid Arthritis Diagnosis")
@@ -2381,7 +2405,7 @@ tab_footnote(
 )
 
 ```
-
+\FloatBarrier
 ```{r MHGroup7Diagn, warning=FALSE, echo=FALSE, message=FALSE}
 #MHGROUP7
 
@@ -2541,7 +2565,7 @@ tab_footnote(
 
 
 ```
-
+\FloatBarrier
 ```{r MHGroup8Diagn, warning=FALSE, echo=FALSE, message=FALSE}
 ##Urinary and Reproductive 
 
@@ -2706,7 +2730,7 @@ dt_mgr9
 
 
 ```
-
+\FloatBarrier
 ```{r MHGroup9Diagn, warning=FALSE, echo=FALSE, message=FALSE}
 #	Tonsils removed (tonsillectomy)
 tonsil_a_sg=boxp_funct(D_367884741_D_206625031,"Age at Tonisllectomy Surgery","Age") 
@@ -2761,7 +2785,7 @@ tmp_Brst <- data_tib_m1 %>%  filter(data_tib_m1$D_624179836_D_533491176==1)
 tmpMC2<- tmp_Brst[, grepl("517307064", colnames(tmp_Brst))]
 #tmpMC2$D_517307064_D_942347130 <- ifelse(is.na(tmpMC2$D_517307064_D_942347130), 0, 1)
 
-tmpM2 <- tmpMC2 %>%  select(-"D_517307064_D_942347130", -"D_517307064_D_517307064_D_942347130")
+tmpM2 <- tmpMC2 %>%  select(-"D_517307064_D_942347130") #, -"D_517307064_D_517307064_D_942347130")
 
 #tmpM2 <- tmpMC2[, c(8,2,3,12,4,1,9, 5, 7, 11, 6)]
 Bsurgnc_dx <- NULL
@@ -2814,7 +2838,7 @@ tab_footnote(
 
 ```
 
-
+\FloatBarrier
 ```{r BreastSurgYear, warning=FALSE, echo=FALSE, message=FALSE}
 #cat("Breast Implants")
 implant_a_sg=boxp_funct(D_477690298_D_623218391,"Age at Breats Implants Surgery","Age")
@@ -2991,7 +3015,7 @@ one_logic_funct(D_952682839, D_323512813, "353358909", "PAIN2: Rank of Pain")
 
 
 ```
-
+\FloatBarrier
 ## Height and Weight 
 ```{r HeightWeight, warning=FALSE, echo=FALSE, message=FALSE}
 ##Height and weight
@@ -3501,7 +3525,7 @@ brand= dt_hrmed_typ  %>%  mutate(med= case_when(D_814664694_D_814664694_D_903825
 tmp_hrm2 <- data_tib_m1 %>%  filter(data_tib_m1$D_769668224==353358909)
 tmp_hr2<- tmp_hrm2[, grepl("814664694", colnames(tmp_hrm2))]
 
-tmpM2 <- tmp_hr2 %>%  select(-"D_814664694_D_787193493", -"D_814664694_D_814664694_D_787193493")
+tmpM2 <- tmp_hr2 %>%  select(-"D_814664694_D_787193493") #, -"D_814664694_D_814664694_D_787193493")
 #tmpM2 <- tmp_hr2[, c(5, 2, 4)]
 hrm2_dx <- NULL
 for (i in 1:3){
@@ -3514,7 +3538,7 @@ for (i in 1:3){
 
 hrm2_dx$hrm2_dx <- c("Rogaine, Minoxidil, or Ioniten","Finasteride","Other")
 ```
-
+\FloatBarrier
 ```{r HairMedTable, warning=FALSE, echo=FALSE, message=FALSE}
 colnames(hrm2_dx) <- c("Frequency", "Percentage" , "  %(NA-)",  "Condition")
 hrm2 <- hrm2_dx[, c(4,1,2)]
@@ -3561,7 +3585,7 @@ grid.arrange(hairthin1, hairthin0, nrow=2)
 
 ```
 
-
+\FloatBarrier
 ## Acne 
 ```{r Acne, warning=FALSE, echo=FALSE, message=FALSE}
 ##Acne
@@ -3595,7 +3619,7 @@ simple_funct(D_535621923, "ADOPTFOST: Adopted or Foster Child")
 simple_funct(D_992987417, "MULTBIRTH: A Twin or Multiple")
 
 ```
-
+\FloatBarrier
 
 ## Mom 
 ```{r Mom, warning=FALSE, echo=FALSE, message=FALSE}
@@ -3712,7 +3736,7 @@ tab_footnote(
 
 ```
 
-
+\FloatBarrier
 
 ```{r MomCancDiag, warning=FALSE, echo=FALSE, message=FALSE}
 #Age of Diagnosis
@@ -3839,7 +3863,7 @@ grid.arrange(ukn_a_mdg, ukn_y_mdg, nrow=2)
 ```
 
 \newpage
-
+\FloatBarrier
 ## Dad
 ```{r Dad, warning=FALSE, echo=FALSE, message=FALSE}
 ##Dad
@@ -3968,7 +3992,7 @@ dadcnc= dt_dad_cnc  %>%  mutate(cancer= case_when(as.numeric(multc)>1 ~ "Multipl
 
 tmpDADCANC <- data_tib_m1 %>%  filter(data_tib_m1$D_659784914==353358909)
 tmpM2<- tmpDADCANC[, grepl("173240848", colnames(tmpDADCANC))]
-tmpM2 <- tmpM2 %>%  select(-"D_173240848_D_173240848_D_195093589", -"D_173240848_D_195093589", -"D_173240848_D_173240848_D_210004486")
+tmpM2 <- tmpM2 %>%  select( -"D_173240848_D_195093589") #-"D_173240848_D_173240848_D_195093589", -"D_173240848_D_173240848_D_210004486")
 
 DADcnc_dx <- NULL
 for (i in 1:22){
@@ -4022,7 +4046,7 @@ tab_footnote(
 ```
 
 
-
+\FloatBarrier
 
 ```{r DadCancDiagn, warning=FALSE, echo=FALSE, message=FALSE}
 # #Age at Diagnosis  
@@ -4141,7 +4165,7 @@ grid.arrange(ukn_a_ddg, ukn_y_ddg, nrow=2)
 ```
 
 \newpage
-
+\FloatBarrier
 ## Siblings 
 ```{r Sibling, warning=FALSE, echo=FALSE, message=FALSE}
 ###Siblings
@@ -5337,7 +5361,7 @@ grid.arrange(sib6_c33, sib6_c34, nrow=2)
 ```
 
 \newpage
-
+\FloatBarrier
 ## Children
 ```{r Children, warning=FALSE, echo=FALSE, message=FALSE}
 ##Children 

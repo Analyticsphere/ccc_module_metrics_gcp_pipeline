@@ -972,8 +972,8 @@ dt_hrmed_typ= data_tib_base   %>%  filter(D_769668224==353358909)    %>%
 tmp_hrm2 <- data_tib_base %>%  filter(data_tib_base$D_769668224==353358909)
 tmp_hr2<- tmp_hrm2[, grepl("814664694", colnames(tmp_hrm2))]
 
-
-tmpM2 <- tmp_hr2[, c(5, 2, 4)]
+tmpM2 <- tmp_hr2 %>%  select(-"D_814664694_D_787193493")
+#tmpM2 <- tmp_hr2[, c(5, 2, 4)]
 hrm2_dx <- NULL
 for (i in 1:3){
   dt <- as.data.frame(tab1(tmpM2[,i])$output.table)
