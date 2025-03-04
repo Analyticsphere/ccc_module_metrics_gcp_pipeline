@@ -2129,40 +2129,6 @@ one_logic_funct2 <- function(CID, CID_prev, Prev_Answer, Title){
 ``` 
 
 
-## HORNONCISWOM
-```{r HORNONCISWOM, warning=FALSE, echo=FALSE, message=FALSE}
-#Used hormones to reflect gender
-
-hormn <- data_tib_all2 %>%  filter((D_407056417==654207589 | D_407056417==576796184) & (D_289664241_D_289664241==536341288 | D_289664241_D_289664241==218837028 | D_289664241_D_289664241==873138103 | D_289664241_D_289664241==805712793 | D_289664241_D_289664241==486192236 | D_289664241_D_289664241==807835037))
-
-agep <- hormn %>%  mutate(horm= case_when(D_798889867=="200323667"~"In the past yes",
-                                      D_798889867=="249673703"~"Currently yes",
-                                      D_798889867=="104430631"~"No",
-                                      TRUE ~ "Skipped this Question"))
-
-dt_agep_summary <- agep %>% group_by(horm) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(horm, n, percentage)
-
-#gt_total_func(dt_agep_summary, "horm", "HORNONCISWOM: Used Hormones to Make Body Look More Feminine")
-dt_agep_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
-  fmt_number(columns = "percentage", decimals = 2) %>% 
-  fmt_number(column = "n", decimals=0, use_seps = TRUE) %>% 
-  tab_header(title = md("HORNONCISWOM: Used Hormones to Make Body Look More Feminine")) %>% 
-  cols_label(n= md("**N**"), horm = md("**Answer**"), percentage = md("**%**")) %>% 
-  grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
-  tab_options(
-      stub.font.weight = "bold"
-    ) %>%
-  tab_style(
-    style = list(
-      cell_text(weight = "bold")
-    ),
-    locations = cells_body(
-      columns = horm,
-    )
-  ) 
-
-
-```
 
 
 
