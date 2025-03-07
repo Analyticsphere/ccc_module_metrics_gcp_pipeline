@@ -1240,13 +1240,9 @@ simple_funct(D_407056417, "Sex at Birth")
 ## gender, style, and sexual orientation deprecated for exectuive order
 
 
-
-
-## gender, style, and sexual orientation deprecated for exectuive order
-
-
 #levels=c("Woman", "Man", "Transgender Man", "Transgender Woman", "Genderqueer", "Non-binary", "Other", "Prefer Not to Answer") #, "Skipped this Question")
 #simple_funct(D_289664241_D_289664241, "Gender")
+
 
 # style= data_tib_m1  %>%  mutate(descr= case_when(D_289664241_D_289664241==536341288 | D_289664241_D_289664241==218837028 ~ "Woman",
 #                                                D_289664241_D_289664241==654207589 | D_289664241_D_289664241==983318667 ~ "Man",
