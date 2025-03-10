@@ -31,8 +31,8 @@ RUN apt-get update \
 
               
 # Install tinytex
-# RUN Rscript -e 'tinytex::install_tinytex()'
-RUN Rscript -e 'tinytex::install_tinytex(repository = "illinois")'
+RUN Rscript -e 'tinytex::install_tinytex()'
+#RUN Rscript -e 'tinytex::install_tinytex(repository = "illinois")'
 
 # Preinstall the LaTeX packages used by Rmarkdown and other PDF libraries
 RUN Rscript -e 'tinytex::tlmgr_install(c("multirow", "ulem", "environ", "colortbl", "wrapfig", "pdflscape", "tabu", "threeparttable", "threeparttablex", "makecell", "caption", "anyfontsize"))'
