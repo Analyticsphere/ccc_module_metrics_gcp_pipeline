@@ -1607,6 +1607,81 @@ if (nrow(PA_Report_sms_rem) > 50) {
 ```
 
 
+
+
+\FloatBarrier
+# The same participant received multiple Duplicate Account Msg - Pt Already Enrolled email Reminders on the same day. 
+
+```{r Dup_Report_Email, echo=FALSE, message=FALSE, warning=FALSE}
+
+Dup_Report_Email <- "SELECT DISTINCT p.Connect_ID, 
+                MIN(category) AS category,
+                DATE(notification_time) AS repeat_date, 
+                COUNT(*) AS num_same_day_attempts
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
+LEFT JOIN `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+ON p.token = n.token
+WHERE (category = 'Duplicate Account Msg - Pt Already Enrolled')
+AND DATE(notification_time) >= (CURRENT_DATE() - 7)
+AND notificationType = 'email'
+GROUP BY Connect_ID,repeat_date
+HAVING COUNT(*) > 1"
+
+Dup_Report_Email_table <- bq_project_query(project, Dup_Report_Email)
+Dup_Report_Email_rem <- bq_table_download(Dup_Report_Email_table, bigint = "integer64") #currently 4 - all 2
+
+
+if (nrow(Dup_Report_Email_rem) > 50) {
+  cat("There are", nrow(Dup_Report_Email_rem), "errors. This table has been made a csv and posted to Box, link in the report intro.")
+  write.csv(Dup_Report_Email_rem,glue("{local_drive}Multiple_Dup_Report_Email_rem_reminders_{currentDate}_boxfolder_{boxfolder}.csv"),row.names = F,na="")
+} else {
+  if(nrow(Dup_Report_Email_rem) == 0) {
+  cat("No errors\n")
+} else {
+  knitr::kable(Dup_Report_Email_rem) %>% kable_styling(latex_options = "scale_down")
+}
+}
+
+```
+
+
+
+\FloatBarrier
+# The same participant received multiple Duplicate Account Msg - Pt Already Enrolled SMS Reminders on the same day. 
+
+```{r Dup_Report_sms, echo=FALSE, message=FALSE, warning=FALSE}
+
+Dup_Report_sms <- "SELECT DISTINCT p.Connect_ID, 
+                MIN(category) AS category,
+                DATE(notification_time) AS repeat_date, 
+                COUNT(*) AS num_same_day_attempts
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
+LEFT JOIN `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+ON p.token = n.token
+WHERE (category = 'Duplicate Account Msg - Pt Already Enrolled')
+AND DATE(notification_time) >= (CURRENT_DATE() - 7)
+AND notificationType = 'sms'
+GROUP BY Connect_ID,repeat_date
+HAVING COUNT(*) > 1"
+
+Dup_Report_sms_table <- bq_project_query(project, Dup_Report_sms)
+Dup_Report_sms_rem <- bq_table_download(Dup_Report_sms_table, bigint = "integer64") #currently 4 - all 2
+
+
+if (nrow(Dup_Report_sms_rem) > 50) {
+  cat("There are", nrow(Dup_Report_sms_rem), "errors. This table has been made a csv and posted to Box, link in the report intro.")
+  write.csv(Dup_Report_sms_rem,glue("{local_drive}Multiple_Dup_Report_sms_text_rem_reminders_{currentDate}_boxfolder_{boxfolder}.csv"),row.names = F,na="")
+} else {
+  if(nrow(Dup_Report_sms_rem) == 0) {
+  cat("No errors\n")
+} else {
+  knitr::kable(Dup_Report_sms_rem) %>% kable_styling(latex_options = "scale_down")
+}
+}
+
+```
+
+
 \FloatBarrier
 
 
