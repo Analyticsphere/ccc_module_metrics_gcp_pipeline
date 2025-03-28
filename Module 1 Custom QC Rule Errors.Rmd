@@ -169,7 +169,7 @@ table(m1_complete_nodup$version)
 
 
 
-parts <- "SELECT Connect_ID, token, d_949302066,d_536735468,d_976570371,d_663265240, d_827220437
+parts <- "SELECT Connect_ID, token, d_949302066,d_536735468,d_976570371,d_663265240, d_827220437, d_517311251, d_205553981
 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` 
 where Connect_ID IS NOT NULL and (d_512820379='486306141' OR d_512820379='854703046') and (D_919254129='353358909') and (D_699625233='353358909') and (d_949302066='231311385')"
 parts_table <- bq_project_query(project, parts)
@@ -361,59 +361,42 @@ if (nrow(brst_surg_none) == 0) {
 ```
 
 \FloatBarrier
-### 8. Alternative contact mobile number (SrvBOH_AltContCell_v1r0) must be numeric and 10 digits
-```{r alt_mb_phone, echo=FALSE, warning=FALSE, message=FALSE}
-
-module1 <- module1   %>% mutate(mobile_num= gsub("[^0-9]", "", D_285718391_D_286149234))
-
-alt_mobile <- module1 %>%  mutate(mobile= ifelse(nchar(module1$mobile_num)==11 & str_sub(module1$mobile_num,1,1)==1, str_sub(module1$mobile_num,2,11), module1$mobile_num)) 
-alt_mb <- alt_mobile %>% filter(!is.na(alt_mobile$mobile) & nchar(alt_mobile$mobile)!=10) %>% 
-  select(Site, Connect_ID, mobile ) %>%  group_by(Site)
+### 8. All participants who completed Module 1 before 2/14/2025 must respond to SEX
+```{r Sex, echo=FALSE, warning=FALSE, message=FALSE}
 
 
-colnames(alt_mb) <- c("Site", "Connect ID", "SrvBOH_AltContCell_v1r0")
-knitr::kable(alt_mb)  %>% kable_styling(latex_options = "HOLD_position")
-
-```
-
-
-\FloatBarrier
-### 9. Alternative contact home number must be numeric and 10 digits
-```{r alt_home_phone, echo=FALSE, warning=FALSE, message=FALSE}
+sex_qc <- module1 %>% 
+  mutate(start_date = as.Date(d_205553981)) %>% 
+  filter(is.na(D_407056417) & start_date < "2025-02-14") %>% 
+  select(Connect_ID, D_407056417, start_date) %>% arrange(start_date)
 
 
-module1 <- module1   %>% mutate(home_num= gsub("[^0-9]", "", D_285718391_D_318130543))
-
-alt_home <- module1 %>%  mutate(home= ifelse(nchar(module1$home_num)==11 & str_sub(module1$home_num,1,1)==1, str_sub(module1$home_num,2,11), module1$home_num)) 
-alt_home <- alt_home %>% filter(!is.na(alt_home$home) & nchar(alt_home$home)!=10) %>% 
-  select(Site, Connect_ID, home ) %>%  group_by(Site)
-
-
-colnames(alt_home) <- c("Site", "Connect ID", "SrvBOH_AltContCell_v1r0")
-knitr::kable(alt_home)  %>% kable_styling(latex_options = "HOLD_position")
+colnames(sex_qc) <- c("Connect ID", "Sex", "Module1 Start Date")
+knitr::kable(sex_qc)  %>% kable_styling(latex_options = "HOLD_position")
 
 ```
 
 
 \FloatBarrier
-### 10. Alternative ZIP code should be no more than 9 digits; 5 with primary ZIP code and 9 if full ZIP code given 
-```{r zip, echo=FALSE, warning=FALSE, message=FALSE}
+### 9. All participants who complete Module1 after 2/14/2025 (for the English version) or 2/20 (for the spanish version) must respond to SEX2
+```{r SEX2, echo=FALSE, warning=FALSE, message=FALSE}
+
+sex2_qc <- module1 %>% 
+  mutate(start_date = as.Date(d_205553981)) %>% 
+  filter(((d_784119588=="163149180" & start_date > "2025-02-14") | d_784119588=="773342525" & start_date > "2025-02-20") & 
+           (is.na(D_750420077_D_582784267) | is.na(D_750420077_D_751402477) | is.na(D_750420077_D_700100953) | is.na(D_750420077_D_846483618) | 
+              is.na(D_750420077_D_505282171) | is.na(D_750420077_D_578416151) | is.na(D_750420077_D_434651539) | is.na(D_750420077_D_108025529))) %>% 
+  select(Connect_ID, start_date) %>% 
+  arrange(start_date)
 
 
+colnames(sex2_qc) <- c("Connect ID","Module1 Start Date")
+knitr::kable(sex2_qc)  %>% kable_styling(latex_options = "scale_down")
 
-module1 <- module1   %>% mutate(zip_num= gsub("[^0-9]", "", D_857915436_D_379899229))
-zipcode <- module1 %>% filter(!is.na(module1$zip_num) & nchar(module1$zip_num)!=0 & nchar(module1$zip_num)!=5 & nchar(module1$zip_num)!=9) %>% 
-  select(Site, Connect_ID, zip_num) %>%  group_by(Site)
-
-colnames(zipcode) <- c("Site", "Connect ID", "ZIP")
-
-#table(nchar(zipcode$ZIP))
-
-#zipcodes <- zipcode %>%  filter(nchar(zipcode$ZIP)!=0 & nchar(zipcode$ZIP)!=5 & nchar(zipcode$ZIP)!=9)
-
-knitr::kable(zipcode)  %>% kable_styling(latex_options = "HOLD_position")
 
 ```
+
+
 
 
 

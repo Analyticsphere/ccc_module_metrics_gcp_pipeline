@@ -280,7 +280,6 @@ data_tib_m2 <- as_tibble(module2)
 
 
 
-
 ```{r counts, warning=FALSE, echo=FALSE,  message=FALSE, collapse=TRUE}
 
 
