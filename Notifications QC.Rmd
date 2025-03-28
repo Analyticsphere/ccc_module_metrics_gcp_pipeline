@@ -1684,6 +1684,7 @@ if (nrow(Dup_Report_sms_rem) > 50) {
 
 
 
+
 \FloatBarrier
 # The same participant received multiple Physical Activity Report email Reminders on the same day. 
 
@@ -1830,6 +1831,7 @@ if (nrow(Dup_Report_sms_rem) > 50) {
 }
 
 ```
+
 
 
 
