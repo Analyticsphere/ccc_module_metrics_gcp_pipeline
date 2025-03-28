@@ -459,53 +459,66 @@ refactor_variables <- function(dataframe, variable_pattern, levels) {
 
 
 
-## Multi-racial
+# ## Multi-racial
+# 
+# multi_race=0    
+# for (i in 1:length(data_tib_base$Connect_ID)){
+#   AI=ifelse((data_tib_base$D_384191091_D_384191091_D_583826374[[i]]==1 & (data_tib_base$D_384191091_D_384191091_D_636411467[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_458435048[[i]]==1|
+#                                                data_tib_base$D_384191091_D_384191091_D_706998638[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_973565052[[i]]==1 |
+#                                                data_tib_base$D_384191091_D_384191091_D_586825330[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_412790539[[i]]==1 |
+#                                                data_tib_base$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
+#   As=ifelse((data_tib_base$D_384191091_D_384191091_D_636411467[[i]]==1 & (data_tib_base$D_384191091_D_384191091_D_583826374[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_458435048[[i]]==1|
+#                                                         data_tib_base$D_384191091_D_384191091_D_706998638[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_973565052[[i]]==1 |
+#                                                         data_tib_base$D_384191091_D_384191091_D_586825330[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_412790539[[i]]==1 |
+#                                                         data_tib_base$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
+#   Bl=ifelse((data_tib_base$D_384191091_D_384191091_D_458435048[[i]]==1 & (data_tib_base$D_384191091_D_384191091_D_583826374[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_636411467[[i]]==1|
+#                                                         data_tib_base$D_384191091_D_384191091_D_706998638[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_973565052[[i]]==1 |
+#                                                         data_tib_base$D_384191091_D_384191091_D_586825330[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_412790539[[i]]==1 |
+#                                                         data_tib_base$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
+#   Hs=ifelse((data_tib_base$D_384191091_D_384191091_D_706998638[[i]]==1 & (data_tib_base$D_384191091_D_384191091_D_583826374[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_636411467[[i]]==1|
+#                                                         data_tib_base$D_384191091_D_384191091_D_458435048[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_973565052[[i]]==1 |
+#                                                         data_tib_base$D_384191091_D_384191091_D_586825330[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_412790539[[i]]==1 |
+#                                                         data_tib_base$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
+#   Me=ifelse((data_tib_base$D_384191091_D_384191091_D_973565052[[i]]==1 & (data_tib_base$D_384191091_D_384191091_D_583826374[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_636411467[[i]]==1|
+#                                                         data_tib_base$D_384191091_D_384191091_D_458435048[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_706998638[[i]]==1 |
+#                                                         data_tib_base$D_384191091_D_384191091_D_586825330[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_412790539[[i]]==1 |
+#                                                         data_tib_base$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
+#   Hw=ifelse((data_tib_base$D_384191091_D_384191091_D_586825330[[i]]==1 & (data_tib_base$D_384191091_D_384191091_D_583826374[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_636411467[[i]]==1|
+#                                                         data_tib_base$D_384191091_D_384191091_D_458435048[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_706998638[[i]]==1 |
+#                                                         data_tib_base$D_384191091_D_384191091_D_973565052[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_412790539[[i]]==1 |
+#                                                         data_tib_base$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
+#   Wh=ifelse((data_tib_base$D_384191091_D_384191091_D_412790539[[i]]==1 & (data_tib_base$D_384191091_D_384191091_D_583826374[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_636411467[[i]]==1|
+#                                                         data_tib_base$D_384191091_D_384191091_D_458435048[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_706998638[[i]]==1 |
+#                                                         data_tib_base$D_384191091_D_384191091_D_586825330[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_973565052[[i]]==1 |
+#                                                         data_tib_base$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
+#   Ot=ifelse((data_tib_base$D_384191091_D_384191091_D_807835037[[i]]==1 & (data_tib_base$D_384191091_D_384191091_D_583826374[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_636411467[[i]]==1|
+#                                                         data_tib_base$D_384191091_D_384191091_D_458435048[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_706998638[[i]]==1 |
+#                                                         data_tib_base$D_384191091_D_384191091_D_586825330[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_973565052[[i]]==1 |
+#                                                         data_tib_base$D_384191091_D_384191091_D_412790539[[i]]==1)), 1, 0)
+#   multi_race= multi_race + sum(AI+As+Bl+Hs+Me+Hw+Wh+Ot, na.rm=T)
+# 
+# }
+# 
+# #cat("Percentage of multirace participants:", (multi_race/(dim(data_tib_base)[1]))*100)
+#    
+#    
+# 
+# data_tib_base$multi_racial <- c(rep(1, times=multi_race), rep(0, times=(dim(data_tib_base)[1]- multi_race)))
 
-multi_race=0    
-for (i in 1:length(data_tib_base$Connect_ID)){
-  AI=ifelse((data_tib_base$D_384191091_D_384191091_D_583826374[[i]]==1 & (data_tib_base$D_384191091_D_384191091_D_636411467[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_458435048[[i]]==1|
-                                               data_tib_base$D_384191091_D_384191091_D_706998638[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_973565052[[i]]==1 |
-                                               data_tib_base$D_384191091_D_384191091_D_586825330[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_412790539[[i]]==1 |
-                                               data_tib_base$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  As=ifelse((data_tib_base$D_384191091_D_384191091_D_636411467[[i]]==1 & (data_tib_base$D_384191091_D_384191091_D_583826374[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_458435048[[i]]==1|
-                                                        data_tib_base$D_384191091_D_384191091_D_706998638[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_973565052[[i]]==1 |
-                                                        data_tib_base$D_384191091_D_384191091_D_586825330[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_412790539[[i]]==1 |
-                                                        data_tib_base$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  Bl=ifelse((data_tib_base$D_384191091_D_384191091_D_458435048[[i]]==1 & (data_tib_base$D_384191091_D_384191091_D_583826374[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_636411467[[i]]==1|
-                                                        data_tib_base$D_384191091_D_384191091_D_706998638[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_973565052[[i]]==1 |
-                                                        data_tib_base$D_384191091_D_384191091_D_586825330[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_412790539[[i]]==1 |
-                                                        data_tib_base$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  Hs=ifelse((data_tib_base$D_384191091_D_384191091_D_706998638[[i]]==1 & (data_tib_base$D_384191091_D_384191091_D_583826374[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_636411467[[i]]==1|
-                                                        data_tib_base$D_384191091_D_384191091_D_458435048[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_973565052[[i]]==1 |
-                                                        data_tib_base$D_384191091_D_384191091_D_586825330[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_412790539[[i]]==1 |
-                                                        data_tib_base$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  Me=ifelse((data_tib_base$D_384191091_D_384191091_D_973565052[[i]]==1 & (data_tib_base$D_384191091_D_384191091_D_583826374[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_636411467[[i]]==1|
-                                                        data_tib_base$D_384191091_D_384191091_D_458435048[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_706998638[[i]]==1 |
-                                                        data_tib_base$D_384191091_D_384191091_D_586825330[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_412790539[[i]]==1 |
-                                                        data_tib_base$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  Hw=ifelse((data_tib_base$D_384191091_D_384191091_D_586825330[[i]]==1 & (data_tib_base$D_384191091_D_384191091_D_583826374[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_636411467[[i]]==1|
-                                                        data_tib_base$D_384191091_D_384191091_D_458435048[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_706998638[[i]]==1 |
-                                                        data_tib_base$D_384191091_D_384191091_D_973565052[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_412790539[[i]]==1 |
-                                                        data_tib_base$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  Wh=ifelse((data_tib_base$D_384191091_D_384191091_D_412790539[[i]]==1 & (data_tib_base$D_384191091_D_384191091_D_583826374[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_636411467[[i]]==1|
-                                                        data_tib_base$D_384191091_D_384191091_D_458435048[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_706998638[[i]]==1 |
-                                                        data_tib_base$D_384191091_D_384191091_D_586825330[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_973565052[[i]]==1 |
-                                                        data_tib_base$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  Ot=ifelse((data_tib_base$D_384191091_D_384191091_D_807835037[[i]]==1 & (data_tib_base$D_384191091_D_384191091_D_583826374[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_636411467[[i]]==1|
-                                                        data_tib_base$D_384191091_D_384191091_D_458435048[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_706998638[[i]]==1 |
-                                                        data_tib_base$D_384191091_D_384191091_D_586825330[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_973565052[[i]]==1 |
-                                                        data_tib_base$D_384191091_D_384191091_D_412790539[[i]]==1)), 1, 0)
-  multi_race= multi_race + sum(AI+As+Bl+Hs+Me+Hw+Wh+Ot, na.rm=T)
-
-}
-
-#cat("Percentage of multirace participants:", (multi_race/(dim(data_tib_base)[1]))*100)
-   
-   
-
-data_tib_base$multi_racial <- c(rep(1, times=multi_race), rep(0, times=(dim(data_tib_base)[1]- multi_race)))
 
 
+race_columns <- c("D_384191091_D_384191091_D_583826374", 
+                  "D_384191091_D_384191091_D_636411467",
+                  "D_384191091_D_384191091_D_458435048",
+                  "D_384191091_D_384191091_D_706998638",
+                  "D_384191091_D_384191091_D_973565052",
+                  "D_384191091_D_384191091_D_586825330",
+                  "D_384191091_D_384191091_D_412790539",
+                  "D_384191091_D_384191091_D_807835037")
+
+# All data is currently string values, need to convert "1" and "0" to 1 and 0 to be summarized
+data_tib_base[race_columns] <- lapply(data_tib_base[race_columns], as.numeric)
+data_tib_base$multi_racial <- ifelse(rowSums(data_tib_base[race_columns], na.rm = TRUE) > 1, 1, 0)
 
 
 data_tib_base <- data_tib_base %>% 

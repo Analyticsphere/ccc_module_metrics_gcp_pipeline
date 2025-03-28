@@ -93,8 +93,8 @@ for (i in 1: length(cnames)){
 
 #### Handling participants that somehow completed both Mod1 version 1 and Mod1 version 2
 
-sql_M1_1 <- bq_project_query(project, query = "SELECT Connect_ID, D_407056417, D_750420077_D_108025529, D_750420077_D_434651539, D_750420077_D_505282171, D_750420077_D_578416151, D_750420077_D_846483618, D_289664241_D_289664241, D_613744428 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v1_JP` WHERE Connect_ID IS NOT NULL")
-sql_M1_2 <- bq_project_query(project, query = "SELECT Connect_ID, D_407056417, D_750420077_D_108025529, D_750420077_D_434651539, D_750420077_D_505282171, D_750420077_D_578416151, D_750420077_D_582784267, D_750420077_D_700100953, D_750420077_D_751402477, D_750420077_D_846483618, D_289664241_D_918409306, D_613744428 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v2_JP` WHERE Connect_ID IS NOT NULL")
+sql_M1_1 <- bq_project_query(project, query = "SELECT Connect_ID, D_407056417, D_750420077_D_108025529, D_750420077_D_434651539, D_750420077_D_505282171, D_750420077_D_578416151, D_750420077_D_846483618, D_613744428 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v1_JP` WHERE Connect_ID IS NOT NULL")
+sql_M1_2 <- bq_project_query(project, query = "SELECT Connect_ID, D_407056417, D_750420077_D_108025529, D_750420077_D_434651539, D_750420077_D_505282171, D_750420077_D_578416151, D_750420077_D_582784267, D_750420077_D_700100953, D_750420077_D_751402477, D_750420077_D_846483618, D_613744428 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v2_JP` WHERE Connect_ID IS NOT NULL")
 
 M1_V1 <- bq_table_download(sql_M1_1, bigint = "integer64")
 M1_V2 <- bq_table_download(sql_M1_2, bigint = "integer64")
@@ -290,8 +290,7 @@ if (nrow(error1) == 0) {
 ## If MENSHISA is less than 0 or null, MENSHIS5 must be null.
 ```{r, warning=FALSE, echo=FALSE,  message=FALSE}
 
-error2 <- data_tib_m2 %>%  filter((as.numeric(D_496539718_D_969451837)<0  | is.na(D_496539718_D_969451837)) & 
-                                    !is.na(D_164595895)) %>% 
+error2 <- data_tib_m2 %>%  filter(D_496539718_D_496539718_D_648960871==1 & !is.na(D_164595895)) %>% 
   select(Connect_ID, D_496539718_D_969451837, D_164595895, d_832139544)%>% 
   arrange(desc(d_832139544))
 

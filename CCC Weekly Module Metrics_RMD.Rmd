@@ -1048,67 +1048,99 @@ knitr::opts_chunk$set(comment = NA)
 ```{r Race, warning=FALSE, echo=FALSE, message=FALSE}
 
 
-## Multi-racial
+# ## Multi-racial
+# 
+# multi_race=0    
+# for (i in 1:length(promis$Connect_ID)){
+#   AI=ifelse((promis$D_384191091_D_384191091_D_583826374[[i]]==1 & (promis$D_384191091_D_384191091_D_636411467[[i]]==1 | promis$D_384191091_D_384191091_D_458435048[[i]]==1|
+#                                                promis$D_384191091_D_384191091_D_706998638[[i]]==1 | promis$D_384191091_D_384191091_D_973565052[[i]]==1 |
+#                                                promis$D_384191091_D_384191091_D_586825330[[i]]==1 | promis$D_384191091_D_384191091_D_412790539[[i]]==1 |
+#                                                promis$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
+#   As=ifelse((promis$D_384191091_D_384191091_D_636411467[[i]]==1 & (promis$D_384191091_D_384191091_D_583826374[[i]]==1 | promis$D_384191091_D_384191091_D_458435048[[i]]==1|
+#                                                         promis$D_384191091_D_384191091_D_706998638[[i]]==1 | promis$D_384191091_D_384191091_D_973565052[[i]]==1 |
+#                                                         promis$D_384191091_D_384191091_D_586825330[[i]]==1 | promis$D_384191091_D_384191091_D_412790539[[i]]==1 |
+#                                                         promis$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
+#   Bl=ifelse((promis$D_384191091_D_384191091_D_458435048[[i]]==1 & (promis$D_384191091_D_384191091_D_583826374[[i]]==1 | promis$D_384191091_D_384191091_D_636411467[[i]]==1|
+#                                                         promis$D_384191091_D_384191091_D_706998638[[i]]==1 | promis$D_384191091_D_384191091_D_973565052[[i]]==1 |
+#                                                         promis$D_384191091_D_384191091_D_586825330[[i]]==1 | promis$D_384191091_D_384191091_D_412790539[[i]]==1 |
+#                                                         promis$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
+#   Hs=ifelse((promis$D_384191091_D_384191091_D_706998638[[i]]==1 & (promis$D_384191091_D_384191091_D_583826374[[i]]==1 | promis$D_384191091_D_384191091_D_636411467[[i]]==1|
+#                                                         promis$D_384191091_D_384191091_D_458435048[[i]]==1 | promis$D_384191091_D_384191091_D_973565052[[i]]==1 |
+#                                                         promis$D_384191091_D_384191091_D_586825330[[i]]==1 | promis$D_384191091_D_384191091_D_412790539[[i]]==1 |
+#                                                         promis$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
+#   Me=ifelse((promis$D_384191091_D_384191091_D_973565052[[i]]==1 & (promis$D_384191091_D_384191091_D_583826374[[i]]==1 | promis$D_384191091_D_384191091_D_636411467[[i]]==1|
+#                                                         promis$D_384191091_D_384191091_D_458435048[[i]]==1 | promis$D_384191091_D_384191091_D_706998638[[i]]==1 |
+#                                                         promis$D_384191091_D_384191091_D_586825330[[i]]==1 | promis$D_384191091_D_384191091_D_412790539[[i]]==1 |
+#                                                         promis$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
+#   Hw=ifelse((promis$D_384191091_D_384191091_D_586825330[[i]]==1 & (promis$D_384191091_D_384191091_D_583826374[[i]]==1 | promis$D_384191091_D_384191091_D_636411467[[i]]==1|
+#                                                         promis$D_384191091_D_384191091_D_458435048[[i]]==1 | promis$D_384191091_D_384191091_D_706998638[[i]]==1 |
+#                                                         promis$D_384191091_D_384191091_D_973565052[[i]]==1 | promis$D_384191091_D_384191091_D_412790539[[i]]==1 |
+#                                                         promis$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
+#   Wh=ifelse((promis$D_384191091_D_384191091_D_412790539[[i]]==1 & (promis$D_384191091_D_384191091_D_583826374[[i]]==1 | promis$D_384191091_D_384191091_D_636411467[[i]]==1|
+#                                                         promis$D_384191091_D_384191091_D_458435048[[i]]==1 | promis$D_384191091_D_384191091_D_706998638[[i]]==1 |
+#                                                         promis$D_384191091_D_384191091_D_586825330[[i]]==1 | promis$D_384191091_D_384191091_D_973565052[[i]]==1 |
+#                                                         promis$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
+#   Ot=ifelse((promis$D_384191091_D_384191091_D_807835037[[i]]==1 & (promis$D_384191091_D_384191091_D_583826374[[i]]==1 | promis$D_384191091_D_384191091_D_636411467[[i]]==1|
+#                                                         promis$D_384191091_D_384191091_D_458435048[[i]]==1 | promis$D_384191091_D_384191091_D_706998638[[i]]==1 |
+#                                                         promis$D_384191091_D_384191091_D_586825330[[i]]==1 | promis$D_384191091_D_384191091_D_973565052[[i]]==1 |
+#                                                         promis$D_384191091_D_384191091_D_412790539[[i]]==1)), 1, 0)
+#   multi_race= multi_race + sum(AI+As+Bl+Hs+Me+Hw+Wh+Ot, na.rm=T)
+# 
+# }
+# 
+# #cat("Percentage of multirace participants:", (multi_race/(dim(promis)[1]))*100)
+#    
+#    
+# 
+# promis$multi_racial <- c(rep(1, times=multi_race), rep(0, times=(dim(promis)[1]- multi_race)))
+# 
+# 
+# 
+# ## RACE
+# 
+# promis = promis %>%  mutate(race= case_when(multi_racial==1 ~ "Multi-Racial",
+#                                                      D_384191091_D_384191091_D_583826374==1 ~ "American Indian or Native American",
+#                                                      D_384191091_D_384191091_D_636411467==1 ~ "Asian/Asian American",
+#                                                      D_384191091_D_384191091_D_458435048==1 ~ "Black, African American, or African",
+#                                                      D_384191091_D_384191091_D_706998638==1 ~ "Hispanic, Latino, or Spanish",
+#                                                      D_384191091_D_384191091_D_973565052==1 ~ "Middle Eastern or North African",
+#                                                      D_384191091_D_384191091_D_586825330==1 ~ "Hawaiian or Pacific Islander",
+#                                                      D_384191091_D_384191091_D_412790539==1 ~ "White",
+#                                                      (D_384191091_D_384191091_D_807835037==1 | !is.na(D_384191091_D_747350323)) ~ "Other",
+#                                                      D_384191091_D_384191091_D_746038746==1 ~ "Prefer Not to Answer",
+#                                                      TRUE  ~ "Skipped this question"))
 
-multi_race=0    
-for (i in 1:length(promis$Connect_ID)){
-  AI=ifelse((promis$D_384191091_D_384191091_D_583826374[[i]]==1 & (promis$D_384191091_D_384191091_D_636411467[[i]]==1 | promis$D_384191091_D_384191091_D_458435048[[i]]==1|
-                                               promis$D_384191091_D_384191091_D_706998638[[i]]==1 | promis$D_384191091_D_384191091_D_973565052[[i]]==1 |
-                                               promis$D_384191091_D_384191091_D_586825330[[i]]==1 | promis$D_384191091_D_384191091_D_412790539[[i]]==1 |
-                                               promis$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  As=ifelse((promis$D_384191091_D_384191091_D_636411467[[i]]==1 & (promis$D_384191091_D_384191091_D_583826374[[i]]==1 | promis$D_384191091_D_384191091_D_458435048[[i]]==1|
-                                                        promis$D_384191091_D_384191091_D_706998638[[i]]==1 | promis$D_384191091_D_384191091_D_973565052[[i]]==1 |
-                                                        promis$D_384191091_D_384191091_D_586825330[[i]]==1 | promis$D_384191091_D_384191091_D_412790539[[i]]==1 |
-                                                        promis$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  Bl=ifelse((promis$D_384191091_D_384191091_D_458435048[[i]]==1 & (promis$D_384191091_D_384191091_D_583826374[[i]]==1 | promis$D_384191091_D_384191091_D_636411467[[i]]==1|
-                                                        promis$D_384191091_D_384191091_D_706998638[[i]]==1 | promis$D_384191091_D_384191091_D_973565052[[i]]==1 |
-                                                        promis$D_384191091_D_384191091_D_586825330[[i]]==1 | promis$D_384191091_D_384191091_D_412790539[[i]]==1 |
-                                                        promis$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  Hs=ifelse((promis$D_384191091_D_384191091_D_706998638[[i]]==1 & (promis$D_384191091_D_384191091_D_583826374[[i]]==1 | promis$D_384191091_D_384191091_D_636411467[[i]]==1|
-                                                        promis$D_384191091_D_384191091_D_458435048[[i]]==1 | promis$D_384191091_D_384191091_D_973565052[[i]]==1 |
-                                                        promis$D_384191091_D_384191091_D_586825330[[i]]==1 | promis$D_384191091_D_384191091_D_412790539[[i]]==1 |
-                                                        promis$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  Me=ifelse((promis$D_384191091_D_384191091_D_973565052[[i]]==1 & (promis$D_384191091_D_384191091_D_583826374[[i]]==1 | promis$D_384191091_D_384191091_D_636411467[[i]]==1|
-                                                        promis$D_384191091_D_384191091_D_458435048[[i]]==1 | promis$D_384191091_D_384191091_D_706998638[[i]]==1 |
-                                                        promis$D_384191091_D_384191091_D_586825330[[i]]==1 | promis$D_384191091_D_384191091_D_412790539[[i]]==1 |
-                                                        promis$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  Hw=ifelse((promis$D_384191091_D_384191091_D_586825330[[i]]==1 & (promis$D_384191091_D_384191091_D_583826374[[i]]==1 | promis$D_384191091_D_384191091_D_636411467[[i]]==1|
-                                                        promis$D_384191091_D_384191091_D_458435048[[i]]==1 | promis$D_384191091_D_384191091_D_706998638[[i]]==1 |
-                                                        promis$D_384191091_D_384191091_D_973565052[[i]]==1 | promis$D_384191091_D_384191091_D_412790539[[i]]==1 |
-                                                        promis$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  Wh=ifelse((promis$D_384191091_D_384191091_D_412790539[[i]]==1 & (promis$D_384191091_D_384191091_D_583826374[[i]]==1 | promis$D_384191091_D_384191091_D_636411467[[i]]==1|
-                                                        promis$D_384191091_D_384191091_D_458435048[[i]]==1 | promis$D_384191091_D_384191091_D_706998638[[i]]==1 |
-                                                        promis$D_384191091_D_384191091_D_586825330[[i]]==1 | promis$D_384191091_D_384191091_D_973565052[[i]]==1 |
-                                                        promis$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  Ot=ifelse((promis$D_384191091_D_384191091_D_807835037[[i]]==1 & (promis$D_384191091_D_384191091_D_583826374[[i]]==1 | promis$D_384191091_D_384191091_D_636411467[[i]]==1|
-                                                        promis$D_384191091_D_384191091_D_458435048[[i]]==1 | promis$D_384191091_D_384191091_D_706998638[[i]]==1 |
-                                                        promis$D_384191091_D_384191091_D_586825330[[i]]==1 | promis$D_384191091_D_384191091_D_973565052[[i]]==1 |
-                                                        promis$D_384191091_D_384191091_D_412790539[[i]]==1)), 1, 0)
-  multi_race= multi_race + sum(AI+As+Bl+Hs+Me+Hw+Wh+Ot, na.rm=T)
-
-}
-
-#cat("Percentage of multirace participants:", (multi_race/(dim(promis)[1]))*100)
-   
-   
-
-promis$multi_racial <- c(rep(1, times=multi_race), rep(0, times=(dim(promis)[1]- multi_race)))
 
 
+race_columns <- c("D_384191091_D_384191091_D_583826374", 
+                  "D_384191091_D_384191091_D_636411467",
+                  "D_384191091_D_384191091_D_458435048",
+                  "D_384191091_D_384191091_D_706998638",
+                  "D_384191091_D_384191091_D_973565052",
+                  "D_384191091_D_384191091_D_586825330",
+                  "D_384191091_D_384191091_D_412790539",
+                  "D_384191091_D_384191091_D_807835037")
 
-## RACE
+# All data is currently string values, need to convert "1" and "0" to 1 and 0 to be summarized
+promis[race_columns] <- lapply(promis[race_columns], as.numeric)
 
-promis = promis %>%  mutate(race= case_when(multi_racial==1 ~ "Multi-Racial",
-                                                     D_384191091_D_384191091_D_583826374==1 ~ "American Indian or Native American",
-                                                     D_384191091_D_384191091_D_636411467==1 ~ "Asian/Asian American",
-                                                     D_384191091_D_384191091_D_458435048==1 ~ "Black, African American, or African",
-                                                     D_384191091_D_384191091_D_706998638==1 ~ "Hispanic, Latino, or Spanish",
-                                                     D_384191091_D_384191091_D_973565052==1 ~ "Middle Eastern or North African",
-                                                     D_384191091_D_384191091_D_586825330==1 ~ "Hawaiian or Pacific Islander",
-                                                     D_384191091_D_384191091_D_412790539==1 ~ "White",
-                                                     (D_384191091_D_384191091_D_807835037==1 | !is.na(D_384191091_D_747350323)) ~ "Other",
-                                                     D_384191091_D_384191091_D_746038746==1 ~ "Prefer Not to Answer",
-                                                     TRUE  ~ "Skipped this question"))
+promis$multi_racial <- ifelse(rowSums(promis[race_columns], na.rm = TRUE) > 1, 1, 0)
+
+promis <- promis %>%  
+  mutate(race = case_when(
+    multi_racial == 1 ~ "Multi-Racial",
+    D_384191091_D_384191091_D_583826374 == 1 ~ "American Indian or Native American",
+    D_384191091_D_384191091_D_636411467 == 1 ~ "Asian/Asian American",
+    D_384191091_D_384191091_D_458435048 == 1 ~ "Black, African American, or African",
+    D_384191091_D_384191091_D_706998638 == 1 ~ "Hispanic, Latino, or Spanish",
+    D_384191091_D_384191091_D_973565052 == 1 ~ "Middle Eastern or North African",
+    D_384191091_D_384191091_D_586825330 == 1 ~ "Hawaiian or Pacific Islander",
+    D_384191091_D_384191091_D_412790539 == 1 ~ "White",
+    (D_384191091_D_384191091_D_807835037 == 1 | !is.na(D_384191091_D_747350323)) ~ "Other",
+    D_384191091_D_384191091_D_746038746==1 ~ "Prefer Not to Answer",
+    TRUE ~ "Skipped this question"
+  ))
+
 
 ```
 
@@ -1401,17 +1433,27 @@ trigger_time <- left_join(trigger_time, trigger_BU, by="token") %>%  left_join(t
 
 ################   Numerator  ##############
 
-#Completed QOL before or on the same day as BL survey
+#Completed QOL before or on the same day as BL survey-- now within 30 days
 BL_QOL <- trigger_time %>%
   filter(qolcomplt == "Submitted") %>%
-  mutate(BOH = as.Date(d_843688458) <= as.Date(d_517311251),
-         MRE = as.Date(d_843688458) <= as.Date(d_832139544),
-         SAS = as.Date(d_843688458) <= as.Date(d_770257102),
-         LAW = as.Date(d_843688458) <= as.Date(d_264644252),
-         BUM = (as.Date(BUM_time) < as.Date(trig) ) & (as.Date(d_843688458) <= as.Date(d_222161762)),  
-         BU = (as.Date(BU_time) < as.Date(trig) ) & (as.Date(d_843688458) <= as.Date(d_764863765)), 
-         MW = (as.Date(d_173836415_d_266600170_d_319972665_d_661940160) < as.Date(trig)) & (as.Date(d_843688458) <= as.Date(d_195145666)),
-         COVID = (as.Date(d_556788178) < as.Date(trig)) & (as.Date(d_556788178) >= as.Date("2023-07-05")) & (as.Date(d_843688458) <= as.Date(d_784810139))) %>%
+  # mutate(BOH = as.Date(d_843688458) <= as.Date(d_517311251),
+  #        MRE = as.Date(d_843688458) <= as.Date(d_832139544),
+  #        SAS = as.Date(d_843688458) <= as.Date(d_770257102),
+  #        LAW = as.Date(d_843688458) <= as.Date(d_264644252),
+  #        BUM = (as.Date(BUM_time) < as.Date(trig) ) & (as.Date(d_843688458) <= as.Date(d_222161762)),  
+  #        BU = (as.Date(BU_time) < as.Date(trig) ) & (as.Date(d_843688458) <= as.Date(d_764863765)), 
+  #        MW = (as.Date(d_173836415_d_266600170_d_319972665_d_661940160) < as.Date(trig)) & (as.Date(d_843688458) <= as.Date(d_195145666)),
+  #        COVID = (as.Date(d_556788178) < as.Date(trig)) & (as.Date(d_556788178) >= as.Date("2023-07-05")) & (as.Date(d_843688458) <= as.Date(d_784810139))) %>%
+    mutate(BOH = as.Date(d_843688458) <= as.Date(d_517311251) & difftime(as.Date(d_517311251), as.Date(d_843688458), units="days") <31,
+         MRE = as.Date(d_843688458) <= as.Date(d_832139544) & difftime( as.Date(d_832139544), as.Date(d_843688458), units="days") <31,
+         SAS = as.Date(d_843688458) <= as.Date(d_770257102) & difftime( as.Date(d_770257102), as.Date(d_843688458), units="days") <31,
+         LAW = as.Date(d_843688458) <= as.Date(d_264644252) & difftime( as.Date(d_264644252), as.Date(d_843688458), units="days") <31,
+         BUM = (as.Date(BUM_time) < as.Date(trig) ) & (as.Date(d_843688458) <= as.Date(d_222161762)) & difftime( as.Date(d_222161762), as.Date(d_843688458), units="days") <31,  
+         BU = (as.Date(BU_time) < as.Date(trig) ) & (as.Date(d_843688458) <= as.Date(d_764863765)) & difftime( as.Date(d_764863765), as.Date(d_843688458), units="days") <31,
+         MW = (as.Date(d_173836415_d_266600170_d_319972665_d_661940160) < as.Date(trig)) & 
+           (as.Date(d_843688458) <= as.Date(d_195145666)) & difftime( as.Date(d_195145666), as.Date(d_843688458), units="days") <31,
+         COVID = (as.Date(d_556788178) < as.Date(trig)) & (as.Date(d_556788178) >= as.Date("2023-07-05")) & 
+           (as.Date(d_843688458) <= as.Date(d_784810139)) & difftime( as.Date(d_784810139),as.Date(d_843688458),units="days") <31) %>%
   pivot_longer(
     cols = c(BOH, MRE, SAS, LAW, BUM, BU, MW, COVID),
     names_to = "qol_timeframe",
@@ -1480,7 +1522,7 @@ after_QOL_table <- after_QOL %>%
 
 
 knitr::kable(after_QOL_table,
-             caption = 'Table 3.11. Baseline Survey Completion On Day of or After QOL Survey Completion', 
+             caption = 'Table 3.11. Baseline Survey Completion Within 30 days of QOL Survey Completion', 
              booktabs=T, linesep = "", row.names=FALSE, align=c("l", "c", "c")) %>% 
   kable_styling(latex_options = "scale_down") %>% 
   footnote(general = "Note: Percentages calculated among those who were eligible but had not yet completed the survey at the time of QOL invitation.", 
@@ -1631,75 +1673,24 @@ knitr::kable(ces_notif_table,
 
 
 
-\newpage
-\FloatBarrier
-```{r BL_After_CES, include=FALSE}
-
-
-BL_CES <- all_data %>%  filter(CES_status=="Submitted") %>%
-  mutate(
-    BOH = as.Date(d_199471989) <= as.Date(d_517311251),
-    MRE = as.Date(d_199471989) <= as.Date(d_832139544),
-    SAS = as.Date(d_199471989) <= as.Date(d_770257102),
-    LAW = as.Date(d_199471989) <= as.Date(d_264644252),
-    BUM = as.Date(d_199471989) <= as.Date(d_222161762),
-    BU = as.Date(d_199471989) <= as.Date(d_764863765),
-    MW = as.Date(d_199471989) <= as.Date(d_195145666),
-    COVID = as.Date(d_199471989) <= as.Date(d_784810139)
-  ) %>%
-    mutate(
-        No_Survey_Submitted_After_CES = rowSums(select(., BOH:COVID)) == 0
-    ) %>%
-    pivot_longer(
-        cols = c(BOH, MRE, SAS, LAW, BUM, BU, MW, COVID, No_Survey_Submitted_After_CES),
-        names_to = "after_CES",
-        values_to = "is_in_timeframe"
-    ) %>%
-  filter(is_in_timeframe) %>%  # Keep only TRUE rows
-  group_by(after_CES) %>%
-  tally() %>%
-  mutate(Percentage = (n / sum(n)) * 100)
-
-summary_row <- data.frame(after_CES = "Total Submitted CES Survey",
-                          n = sum(BL_CES$n),
-                          Percentage = 100)
-
-
-BL_CES_table <- rbind(BL_CES, summary_row) %>%
-  mutate(N_percent = paste0(formatC(n, big.mark = ",", format = "d"), 
-                            " (", round(Percentage, digits = 1), "%)"))
-
-BL_CES_table <- BL_CES_table %>% 
-  select(after_CES, N_percent) %>%
-  rename(`Survey Completed After CES` = after_CES, `N%` = N_percent)
-
-
-knitr::kable(BL_CES_table[c(1,6,8,5,3,2,7,4,9),],
-             caption = 'Table 4.5. Baseline Survey Completion On Day of or After CES Survey Completion', 
-             booktabs=T, linesep = "", row.names=FALSE, align=c("l", "c")) %>% 
-  add_indent(c(1:(nrow(BL_CES_table)-1))) %>%  
-  kable_styling(latex_options = "scale_down") #c("scale_down","hold_position"))
-
-
-
-```
-
 
 
 ```{r BL_After_CES2, echo=FALSE, warning=FALSE, message=FALSE}
 ################   Numerator  ##############
 
-#Completed CES before or on the same day as BL survey
+#Completed CES before or on the same day as BL survey-- now within 30 days
 BL_CES <- trigger_time %>%
   filter(CES_status == "Submitted") %>%
-  mutate(BOH = as.Date(d_199471989) <= as.Date(d_517311251),
-         MRE = as.Date(d_199471989) <= as.Date(d_832139544),
-         SAS = as.Date(d_199471989) <= as.Date(d_770257102),
-         LAW = as.Date(d_199471989) <= as.Date(d_264644252),
-         BUM = (as.Date(BUM_time) < as.Date("2024-09-30") ) & (as.Date(d_199471989) <= as.Date(d_222161762)),  
-         BU = (as.Date(BU_time) < as.Date("2024-09-30")  ) & (as.Date(d_199471989) <= as.Date(d_764863765)), 
-         MW = (as.Date(d_173836415_d_266600170_d_319972665_d_661940160) < as.Date("2024-09-30") ) & (as.Date(d_199471989) <= as.Date(d_195145666)),
-         COVID = (as.Date(d_556788178) < as.Date("2024-09-30") ) & (as.Date(d_556788178) >= as.Date("2023-07-05")) & (as.Date(d_199471989) <= as.Date(d_784810139))) %>%
+  mutate(BOH = as.Date(d_199471989) <= as.Date(d_517311251) & difftime(as.Date(d_517311251), as.Date(d_199471989), units="days") <31,
+         MRE = as.Date(d_199471989) <= as.Date(d_832139544) & difftime(as.Date(d_832139544), as.Date(d_199471989), units="days") <31,
+         SAS = as.Date(d_199471989) <= as.Date(d_770257102) & difftime(as.Date(d_770257102), as.Date(d_199471989), units="days") <31,
+         LAW = as.Date(d_199471989) <= as.Date(d_264644252) & difftime(as.Date(d_264644252), as.Date(d_199471989), units="days") <31,
+         BUM = (as.Date(BUM_time) < as.Date("2024-09-30") ) & (as.Date(d_199471989) <= as.Date(d_222161762)) & difftime(as.Date(d_222161762), as.Date(d_199471989), units="days") <31,  
+         BU = (as.Date(BU_time) < as.Date("2024-09-30")  ) & (as.Date(d_199471989) <= as.Date(d_764863765)) & difftime(as.Date(d_764863765), as.Date(d_199471989), units="days") <31, 
+         MW = (as.Date(d_173836415_d_266600170_d_319972665_d_661940160) < as.Date("2024-09-30") ) & (as.Date(d_199471989) <= as.Date(d_195145666))  & 
+           difftime(as.Date(d_195145666), as.Date(d_199471989), units="days") <31,
+         COVID = (as.Date(d_556788178) < as.Date("2024-09-30") ) & (as.Date(d_556788178) >= as.Date("2023-07-05")) & (as.Date(d_199471989) <= as.Date(d_784810139)) & 
+           difftime(as.Date(d_784810139),as.Date(d_199471989),units="days") <31) %>%
   pivot_longer(
     cols = c(BOH, MRE, SAS, LAW, BUM, BU, MW, COVID),
     names_to = "CES_timeframe",
@@ -1767,7 +1758,7 @@ after_CES_table <- after_CES %>%
 
 
 knitr::kable(after_CES_table,
-             caption = 'Table 4.5. Baseline Survey Completion On Day of or After CES Survey Completion', 
+             caption = 'Table 4.5. Baseline Survey Completion Within 30 days of CES Survey Completion', 
              booktabs=T, linesep = "", row.names=FALSE, align=c("l", "c", "c")) %>% 
   kable_styling(latex_options = "scale_down") %>% 
   footnote(general = "Note: Percentages calculated among those who were eligible but had not yet completed the survey at the time of CES invitation.", 
@@ -1890,7 +1881,7 @@ knitr::kable(CSH_TM,
 ## Time from CSH trigger to submission of CSH survey- "Cancer Screening History Survey"
 
 trig_csh <- bq_project_query(project,
-                             query="SELECT distinct(Connect_ID), notification_time as CSH_time FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` notif
+                             query="SELECT distinct(Connect_ID), notification_time as CSH_notif FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` notif
                              left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` pts
                              on notif.token=pts.token
                              where category LIKE '%Screen%' and attempt='1st contact'")
@@ -1908,7 +1899,7 @@ trigger_time <- left_join(trigger_time, trigger_csh, by="Connect_ID")
 
 CSH_notif_table = trigger_time %>%  
   filter(CSH_status == "Submitted") %>%
-  mutate(time = as.numeric(difftime(as.POSIXct(ymd_hms(d_389890053)), as.POSIXct(ymd_hms(notification_time)), units="days"))) %>% 
+  mutate(time = as.numeric(difftime(as.POSIXct(ymd_hms(d_389890053)), as.POSIXct(ymd_hms(CSH_notif)), units="days"))) %>% 
   dplyr::summarize('N'=n(),
                    Min = round(min(time, na.rm = TRUE), digits=2),
                    Q1 = round(quantile(time, 0.25, na.rm = TRUE), digits=2),
@@ -1932,48 +1923,6 @@ knitr::kable(CSH_notif_table,
 
 \newpage
 \FloatBarrier
-```{r BL_After_CSH, include=FALSE}
-
-
-BL_CSH <- all_data %>%  filter(CSH_status=="Submitted") %>%
-  mutate(after_CSH = case_when(as.Date(d_389890053) <= as.Date(d_517311251) ~ "BOH",
-                               as.Date(d_389890053) <= as.Date(d_832139544) ~ "MRE",
-                               as.Date(d_389890053) <= as.Date(d_770257102) ~ "SAS",
-                               as.Date(d_389890053) <= as.Date(d_264644252) ~ "LAW",
-                               as.Date(d_389890053) <= as.Date(d_222161762) ~ "BUM",
-                               as.Date(d_389890053) <= as.Date(d_764863765) ~ "BU",
-                               as.Date(d_389890053) <= as.Date(d_195145666) ~ "MW",
-                               as.Date(d_389890053) <= as.Date(d_784810139) ~ "COVID",
-                               TRUE ~ "No Survey Submitted After CSH"),
-         after_CSH = factor(after_CSH, levels=c("BOH","MRE","SAS", 
-                                                "LAW", "BUM", "BU", 
-                                                "MW", "COVID", "No Survey Submitted After CSH"))) %>% 
-  group_by(after_CSH) %>% tally() %>% 
-  mutate(Percentage = (n / sum(n)) * 100)
-
-summary_row <- data.frame(after_CSH = "Total Submitted CSH Survey",
-                          n = sum(BL_CSH$n),
-                          Percentage = 100)
-
-
-BL_CSH_table <- rbind(BL_CSH, summary_row) %>%
-  mutate(N_percent = paste0(formatC(n, big.mark = ",", format = "d"), 
-                            " (", round(Percentage, digits = 1), "%)"))
-
-BL_CSH_table <- BL_CSH_table %>% 
-  select(after_CSH, N_percent) %>%
-  rename(`Survey Completed After CSH` = after_CSH, `N%` = N_percent)
-
-
-knitr::kable(BL_CSH_table,
-             caption = 'Table 5.5. Baseline Survey Completion On Day of or After CSH Survey Completion', 
-             booktabs=T, linesep = "", row.names=FALSE, align=c("l", "c")) %>% 
-  add_indent(c(1:(nrow(BL_CSH_table)-1))) %>%  
-  kable_styling(latex_options = "scale_down") #c("scale_down","hold_position"))
-
-
-
-```
 
 
 ```{r BL_After_CSH2, echo=FALSE, warning=FALSE, message=FALSE}
@@ -1983,17 +1932,19 @@ knitr::kable(BL_CSH_table,
 
 ################   Numerator  ##############
 
-#Completed CSH before or on the same day as BL survey
+#Completed CSH before or on the same day as BL survey--now within 30 days
 BL_CSH <- trigger_time %>%
   filter(CSH_status == "Submitted") %>%
-  mutate(BOH = as.Date(d_389890053) <= as.Date(d_517311251),
-         MRE = as.Date(d_389890053) <= as.Date(d_832139544),
-         SAS = as.Date(d_389890053) <= as.Date(d_770257102),
-         LAW = as.Date(d_389890053) <= as.Date(d_264644252),
-         BUM = (as.Date(BUM_time) < as.Date(CSH_time) ) & (as.Date(d_389890053) <= as.Date(d_222161762)),  
-         BU = (as.Date(BU_time) < as.Date(CSH_time) ) & (as.Date(d_389890053) <= as.Date(d_764863765)), 
-         MW = (as.Date(d_173836415_d_266600170_d_319972665_d_661940160) < as.Date(CSH_time)) & (as.Date(d_389890053) <= as.Date(d_195145666)),
-         COVID = (as.Date(d_556788178) < as.Date(CSH_time)) & (as.Date(d_556788178) >= as.Date("2023-07-05")) & (as.Date(d_389890053) <= as.Date(d_784810139))) %>%
+  mutate(BOH = as.Date(d_389890053) <= as.Date(d_517311251) & difftime(as.Date(d_517311251), as.Date(d_389890053), units="days") <31,
+         MRE = as.Date(d_389890053) <= as.Date(d_832139544) & difftime(as.Date(d_832139544), as.Date(d_389890053), units="days") <31,
+         SAS = as.Date(d_389890053) <= as.Date(d_770257102) & difftime(as.Date(d_770257102), as.Date(d_389890053), units="days") <31,
+         LAW = as.Date(d_389890053) <= as.Date(d_264644252) & difftime(as.Date(d_264644252), as.Date(d_389890053), units="days") <31,
+         BUM = (as.Date(BUM_time) < as.Date(CSH_notif) ) & (as.Date(d_389890053) <= as.Date(d_222161762)) & difftime(as.Date(d_222161762), as.Date(d_389890053), units="days") <31,  
+         BU = (as.Date(BU_time) < as.Date(CSH_notif) ) & (as.Date(d_389890053) <= as.Date(d_764863765)) & difftime(as.Date(d_764863765), as.Date(d_389890053), units="days") <31, 
+         MW = (as.Date(d_173836415_d_266600170_d_319972665_d_661940160) < as.Date(CSH_notif)) & (as.Date(d_389890053) <= as.Date(d_195145666)) & 
+           difftime(as.Date(d_195145666), as.Date(d_389890053), units="days") <31,
+         COVID = (as.Date(d_556788178) < as.Date(CSH_notif)) & (as.Date(d_556788178) >= as.Date("2023-07-05")) & (as.Date(d_389890053) <= as.Date(d_784810139)) & 
+           difftime(as.Date(d_784810139),as.Date(d_389890053),units="days") <31) %>%
   pivot_longer(
     cols = c(BOH, MRE, SAS, LAW, BUM, BU, MW, COVID),
     names_to = "CSH_timeframe",
@@ -2022,24 +1973,24 @@ BL_CSH <- trigger_time %>%
 ## of those that are eligible for CSH, and eligible for whichever BL module, who hadn't completed that module upon eligibility activation
 BL_time_eligible2 <- trigger_time %>%
   filter(!is.na(CSH_status) & CSH_status != "Not Eligible") %>%
-  mutate( BOH = is.na(d_517311251) | (as.Date(CSH_time) <= as.Date(d_517311251)),
-          MRE = !is.na(d_517311251) & (is.na(d_832139544) | as.Date(CSH_time) <= as.Date(d_832139544)),
-          SAS = !is.na(d_517311251) & (is.na(d_770257102) | as.Date(CSH_time) <= as.Date(d_770257102)),
-          LAW = !is.na(d_517311251) & (is.na(d_264644252) | as.Date(CSH_time) <= as.Date(d_264644252)),
-          BUM = (as.Date(BUM_time) < as.Date(CSH_time))  & (is.na(d_222161762) | as.Date(CSH_time) <= as.Date(d_222161762)),
-          BU = (as.Date(BU_time) < as.Date(CSH_time))  & (is.na(d_764863765) | as.Date(CSH_time) <= as.Date(d_764863765)),
-          MW = (as.Date(d_173836415_d_266600170_d_319972665_d_661940160) < as.Date(CSH_time)) &
-            (is.na(d_195145666) | as.Date(CSH_time) <= as.Date(d_195145666)),
-          COVID = as.Date(d_556788178) < as.Date(CSH_time) &
+  mutate( BOH = is.na(d_517311251) | (as.Date(CSH_notif) <= as.Date(d_517311251)),
+          MRE = !is.na(d_517311251) & (is.na(d_832139544) | as.Date(CSH_notif) <= as.Date(d_832139544)),
+          SAS = !is.na(d_517311251) & (is.na(d_770257102) | as.Date(CSH_notif) <= as.Date(d_770257102)),
+          LAW = !is.na(d_517311251) & (is.na(d_264644252) | as.Date(CSH_notif) <= as.Date(d_264644252)),
+          BUM = (as.Date(BUM_time) < as.Date(CSH_notif))  & (is.na(d_222161762) | as.Date(CSH_notif) <= as.Date(d_222161762)),
+          BU = (as.Date(BU_time) < as.Date(CSH_notif))  & (is.na(d_764863765) | as.Date(CSH_notif) <= as.Date(d_764863765)),
+          MW = (as.Date(d_173836415_d_266600170_d_319972665_d_661940160) < as.Date(CSH_notif)) &
+            (is.na(d_195145666) | as.Date(CSH_notif) <= as.Date(d_195145666)),
+          COVID = as.Date(d_556788178) < as.Date(CSH_notif) &
             as.Date(d_556788178) >= as.Date("2023-07-05") &
-            (is.na(d_784810139) | as.Date(CSH_time) <= as.Date(d_784810139))) %>%
+            (is.na(d_784810139) | as.Date(CSH_notif) <= as.Date(d_784810139))) %>%
   pivot_longer(
     cols = c(BOH, MRE, SAS, LAW, BUM, BU, MW, COVID),
-    names_to = "CSH_timeframe",
+    names_to = "CSH_notifframe",
     values_to = "is_in_timeframe"
   ) %>%
   filter(is_in_timeframe) %>%  # Keep only rows where the condition is TRUE
-  group_by(CSH_timeframe) %>%
+  group_by(CSH_notifframe) %>%
   tally()
 
 
@@ -2060,7 +2011,7 @@ after_CSH_table <- after_CSH %>%
 
 
 knitr::kable(after_CSH_table,
-             caption = 'Table 5.5. Baseline Survey Completion On Day of or After CSH Survey Completion', 
+             caption = 'Table 5.5. Baseline Survey Completion Within 30 days of CSH Survey Completion', 
              booktabs=T, linesep = "", row.names=FALSE, align=c("l", "c", "c")) %>% 
   kable_styling(latex_options = "scale_down") %>% 
   footnote(general = "Note: Percentages calculated among those who were eligible but had not yet completed the survey at the time of CSH invitation.", 
