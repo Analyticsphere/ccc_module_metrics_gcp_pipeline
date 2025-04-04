@@ -106,7 +106,7 @@ for (i in 1: length(cnames)){
 #### Handling participants that somehow completed both Mod1 version 1 and Mod1 version 2
 
 sql_M1_1 <- bq_project_query(project, query = "SELECT Connect_ID, D_407056417, D_750420077_D_108025529, D_750420077_D_434651539, D_750420077_D_505282171, D_750420077_D_578416151, D_750420077_D_846483618, D_613744428 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v1_JP` WHERE Connect_ID IS NOT NULL")
-sql_M1_2 <- bq_project_query(project, query = "SELECT Connect_ID, D_407056417, D_750420077_D_108025529, D_750420077_D_434651539, D_750420077_D_505282171, D_750420077_D_578416151, D_750420077_D_582784267, D_750420077_D_700100953, D_750420077_D_751402477, D_750420077_D_846483618, D_289664241_D_289664241, D_289664241_D_918409306, D_613744428 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v2_JP` WHERE Connect_ID IS NOT NULL")
+sql_M1_2 <- bq_project_query(project, query = "SELECT Connect_ID, D_407056417, D_750420077_D_108025529, D_750420077_D_434651539, D_750420077_D_505282171, D_750420077_D_578416151, D_750420077_D_582784267, D_750420077_D_700100953, D_750420077_D_751402477, D_750420077_D_846483618,  D_613744428 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v2_JP` WHERE Connect_ID IS NOT NULL")
 
 M1_V1 <- bq_table_download(sql_M1_1, bigint = "integer64")
 M1_V2 <- bq_table_download(sql_M1_2, bigint = "integer64")
@@ -2733,7 +2733,9 @@ hist_funct_F(D_875135634,"FERT9: Cycles of IVF", "Cycles", "Frequency")
 #Used any hormone meds/contraceptives----- can't do regular select all code because of the two different versions of the variable
 
 
-dtHORMED= fb %>%  mutate(multb2 = ifelse((D_543780863_D_441493408==1 | D_543780863_D_543780863_D_441493408==1), 1, 0) + ifelse((D_543780863_D_612012325==1 | D_543780863_D_543780863_D_612012325==1), 1, 0) + ifelse((D_543780863_D_100752105==1 | D_543780863_D_543780863_D_100752105==1), 1, 0) + ifelse((D_543780863_D_207913198==1 | D_543780863_D_543780863_D_207913198==1), 1, 0) + ifelse((D_543780863_D_207913198==1 | D_543780863_D_543780863_D_207913198==1), 1, 0) + ifelse((D_543780863_D_863920008==1 | D_543780863_D_543780863_D_863920008==1), 1, 0) + ifelse((D_543780863_D_787142499==1 | D_543780863_D_543780863_D_787142499==1), 1, 0) + ifelse((D_543780863_D_205223932==1 | D_543780863_D_543780863_D_205223932==1), 1, 0) + ifelse((D_543780863_D_817131019==1 | D_543780863_D_543780863_D_817131019==1), 1, 0) + ifelse((D_543780863_D_807835037==1 | D_543780863_D_543780863_D_807835037==1), 1, 0) + ifelse((D_543780863_D_535003378==1 | D_543780863_D_543780863_D_535003378==1), 1, 0))
+# dtHORMED= fb %>%  mutate(multb2 = ifelse((D_543780863_D_441493408==1 | D_543780863_D_543780863_D_441493408==1), 1, 0) + ifelse((D_543780863_D_612012325==1 | D_543780863_D_543780863_D_612012325==1), 1, 0) + ifelse((D_543780863_D_100752105==1 | D_543780863_D_543780863_D_100752105==1), 1, 0) + ifelse((D_543780863_D_207913198==1 | D_543780863_D_543780863_D_207913198==1), 1, 0) + ifelse((D_543780863_D_207913198==1 | D_543780863_D_543780863_D_207913198==1), 1, 0) + ifelse((D_543780863_D_863920008==1 | D_543780863_D_543780863_D_863920008==1), 1, 0) + ifelse((D_543780863_D_787142499==1 | D_543780863_D_543780863_D_787142499==1), 1, 0) + ifelse((D_543780863_D_205223932==1 | D_543780863_D_543780863_D_205223932==1), 1, 0) + ifelse((D_543780863_D_817131019==1 | D_543780863_D_543780863_D_817131019==1), 1, 0) + ifelse((D_543780863_D_807835037==1 | D_543780863_D_543780863_D_807835037==1), 1, 0) + ifelse((D_543780863_D_535003378==1 | D_543780863_D_543780863_D_535003378==1), 1, 0))
+
+dtHORMED= fb %>%  mutate(multb2 = rowSums(select(., starts_with("D_543780863_")) == 1, na.rm = TRUE))
 
 
 HORMED_med= dtHORMED %>%  mutate(meds= case_when( (as.numeric(multb2)>1) ~ "Multiple Medications",
@@ -3949,15 +3951,9 @@ dt_exercise_summary %>%
 dt_walk= data_tib_m2 %>%  filter(data_tib_m2$D_517976064_D_904954920==1)
 
 
-ex_type= dt_walk %>%  mutate(ex= case_when(((D_894610280_D_917302906==1 & (D_894610280_D_152773041==1 | D_894610280_D_249341444==1  |D_894610280_D_690018400==1)) | 
-                                            (D_894610280_D_152773041==1 & (D_894610280_D_917302906==1 | D_894610280_D_249341444==1  |D_894610280_D_690018400==1)) |
-                                              (D_894610280_D_249341444==1 & (D_894610280_D_152773041==1 | D_894610280_D_917302906==1  |D_894610280_D_690018400==1)) |
-                                              (D_894610280_D_690018400==1 & (D_894610280_D_152773041==1 | D_894610280_D_249341444==1  |D_894610280_D_917302906==1)) &
-                                              !(D_894610280_D_917302906==1 & D_894610280_D_152773041==1 & 
-                                                D_894610280_D_249341444==1 & D_894610280_D_690018400==1))~ 
-                                             "Multiple Seasons", #at least two but not all four
-                                             (D_894610280_D_917302906==1 & D_894610280_D_152773041==1 & 
-                                                D_894610280_D_249341444==1 & D_894610280_D_690018400==1) ~ "All Four Seasons",
+ex_type= dt_walk %>%  mutate(multiple = rowSums(select(., starts_with("D_894610280_")) == 1, na.rm = TRUE),
+                             ex= case_when(multiple=4 ~ "All Four Seasons", 
+                                           multiple>1 ~ "Multiple Seasons",
                                            D_894610280_D_917302906==1 ~ "Winter",
                                              D_894610280_D_152773041==1 ~ "Spring",
                                              D_894610280_D_249341444==1 ~ "Summer",
@@ -4009,15 +4005,9 @@ one_logic_funct2(D_901660173, D_517976064_D_904954920, 1, "Time Spent per day Wa
 dt_run= data_tib_m2 %>%  filter(data_tib_m2$D_517976064_D_619501806==1)
 
 
-ex_type= dt_run %>%  mutate(season= case_when(((D_222110888_D_917302906==1 & (D_222110888_D_152773041==1 | D_222110888_D_249341444==1  |D_222110888_D_690018400==1)) | 
-                                            (D_222110888_D_152773041==1 & (D_222110888_D_917302906==1 | D_222110888_D_249341444==1  |D_222110888_D_690018400==1)) |
-                                              (D_222110888_D_249341444==1 & (D_222110888_D_152773041==1 | D_222110888_D_917302906==1  |D_222110888_D_690018400==1)) |
-                                              (D_222110888_D_690018400==1 & (D_222110888_D_152773041==1 | D_222110888_D_249341444==1  |D_222110888_D_917302906==1)) &
-                                              !(D_222110888_D_917302906==1 & D_222110888_D_152773041==1 & 
-                                                D_222110888_D_249341444==1 & D_222110888_D_690018400==1))~ 
-                                             "Multiple Seasons", #at least two but not all four
-                                             (D_222110888_D_917302906==1 & D_222110888_D_152773041==1 & 
-                                                D_222110888_D_249341444==1 & D_222110888_D_690018400==1) ~ "All Four Seasons",
+ex_type= dt_run %>%  mutate(multiple = rowSums(select(., starts_with("D_222110888_")) == 1, na.rm = TRUE),
+                             season= case_when(multiple=4 ~ "All Four Seasons", 
+                                           multiple>1 ~ "Multiple Seasons",
                                             D_222110888_D_917302906==1 ~ "Winter",
                                              D_222110888_D_152773041==1 ~ "Spring",
                                              D_222110888_D_249341444==1 ~ "Summer",
@@ -4072,20 +4062,14 @@ one_logic_funct2(D_422260069, D_517976064_D_619501806, 1, "Time Spent on Running
 dt_tennis= data_tib_m2 %>%  filter(data_tib_m2$D_517976064_D_203192394==1)
 
 
-ex_type= dt_tennis %>%  mutate(season= case_when(((D_564242877_D_917302906==1 & (D_564242877_D_152773041==1 | D_564242877_D_249341444==1  |D_564242877_D_690018400==1)) | 
-    (D_564242877_D_152773041==1 & (D_564242877_D_917302906==1 | D_564242877_D_249341444==1  |D_564242877_D_690018400==1)) |
-    (D_564242877_D_249341444==1 & (D_564242877_D_152773041==1 | D_564242877_D_917302906==1  |D_564242877_D_690018400==1)) |
-    (D_564242877_D_690018400==1 & (D_564242877_D_152773041==1 | D_564242877_D_249341444==1  |D_564242877_D_917302906==1)) &
-    !(D_564242877_D_917302906==1 & D_564242877_D_152773041==1 & 
-          D_564242877_D_249341444==1 & D_564242877_D_690018400==1))~ 
-    "Multiple Seasons", #at least two but not all four
-    (D_564242877_D_917302906==1 & D_564242877_D_152773041==1 & 
-       D_564242877_D_249341444==1 & D_564242877_D_690018400==1) ~ "All Four Seasons",
-    D_564242877_D_917302906==1 ~ "Winter",
-    D_564242877_D_152773041==1 ~ "Spring",
-    D_564242877_D_249341444==1 ~ "Summer",
-    D_564242877_D_690018400==1 ~ "Fall",
-    TRUE~ "Skipped this Question"))
+ex_type= dt_tennis %>%  mutate(multiple = rowSums(select(., starts_with("D_564242877_")) == 1, na.rm = TRUE),
+                             season= case_when(multiple=4 ~ "All Four Seasons", 
+                                           multiple>1 ~ "Multiple Seasons",
+                                           D_564242877_D_917302906==1 ~ "Winter",
+                                           D_564242877_D_152773041==1 ~ "Spring",
+                                           D_564242877_D_249341444==1 ~ "Summer",
+                                           D_564242877_D_690018400==1 ~ "Fall",
+                                           TRUE~ "Skipped this Question"))
 
 ex_type$season <- factor(ex_type$season,levels=c("All Four Seasons", "Multiple Seasons", "Winter","Spring","Summer","Fall","Skipped this Question"))
 
@@ -4131,20 +4115,13 @@ one_logic_funct2(D_141251197, D_517976064_D_203192394, 1, "Time Spent Playing Te
 dt_golf= data_tib_m2 %>%  filter(data_tib_m2$D_517976064_D_261267696==1)
 
 
-ex_type= dt_golf %>%  mutate(season= case_when(((D_635874413_D_917302906==1 & (D_635874413_D_152773041==1 | D_635874413_D_249341444==1  |D_635874413_D_690018400==1)) | 
-    (D_635874413_D_152773041==1 & (D_635874413_D_917302906==1 | D_635874413_D_249341444==1  |D_635874413_D_690018400==1)) |
-    (D_635874413_D_249341444==1 & (D_635874413_D_152773041==1 | D_635874413_D_917302906==1  |D_635874413_D_690018400==1)) |
-    (D_635874413_D_690018400==1 & (D_635874413_D_152773041==1 | D_635874413_D_249341444==1  |D_635874413_D_917302906==1)) &
-    !(D_635874413_D_917302906==1 & D_635874413_D_152773041==1 & 
-          D_635874413_D_249341444==1 & D_635874413_D_690018400==1))~ 
-    "Multiple Seasons", #at least two but not all four
-    D_635874413_D_917302906==1 ~ "Winter",
-    (D_635874413_D_917302906==1 & D_635874413_D_152773041==1 & 
-       D_635874413_D_249341444==1 & D_635874413_D_690018400==1) ~ "All Four Seasons",
-    D_635874413_D_152773041==1 ~ "Spring",
-    D_635874413_D_249341444==1 ~ "Summer",
-    D_635874413_D_690018400==1 ~ "Fall",
-    TRUE~ "Skipped this Question"))
+ex_type= dt_golf %>%  mutate(multiple = rowSums(select(., starts_with("D_635874413_")) == 1, na.rm = TRUE),
+                             season= case_when(multiple=4 ~ "All Four Seasons", 
+                                           multiple>1 ~ "Multiple Seasons",
+                                           D_635874413_D_152773041==1 ~ "Spring",
+                                           D_635874413_D_249341444==1 ~ "Summer",
+                                           D_635874413_D_690018400==1 ~ "Fall",
+                                           TRUE~ "Skipped this Question"))
 ex_type$season <- factor(ex_type$season,levels=c("All Four Seasons", "Multiple Seasons", "Winter","Spring","Summer","Fall","Skipped this Question"))
 
 
@@ -4189,20 +4166,14 @@ one_logic_funct2(D_768302347, D_517976064_D_261267696, 1, "Time Spent on Playing
 dt_swim= data_tib_m2 %>%  filter(data_tib_m2$D_517976064_D_926584500==1)
 
 
-ex_type= dt_swim %>%  mutate(season= case_when(((D_371748514_D_917302906==1 & (D_371748514_D_152773041==1 | D_371748514_D_249341444==1  |D_371748514_D_690018400==1)) | 
-    (D_371748514_D_152773041==1 & (D_371748514_D_917302906==1 | D_371748514_D_249341444==1  |D_371748514_D_690018400==1)) |
-    (D_371748514_D_249341444==1 & (D_371748514_D_152773041==1 | D_371748514_D_917302906==1  |D_371748514_D_690018400==1)) |
-    (D_371748514_D_690018400==1 & (D_371748514_D_152773041==1 | D_371748514_D_249341444==1  |D_371748514_D_917302906==1)) &
-    !(D_371748514_D_917302906==1 & D_371748514_D_152773041==1 & 
-          D_371748514_D_249341444==1 & D_371748514_D_690018400==1))~ 
-    "Multiple Seasons", #at least two but not all four
-    (D_371748514_D_917302906==1 & D_371748514_D_152773041==1 & 
-                                                D_371748514_D_249341444==1 & D_371748514_D_690018400==1) ~ "All Four Seasons",
+ex_type= dt_swim %>%  mutate(multiple = rowSums(select(., starts_with("D_371748514_")) == 1, na.rm = TRUE),
+                             season= case_when(multiple=4 ~ "All Four Seasons", 
+                                               multiple>1 ~ "Multiple Seasons",
                                                D_371748514_D_917302906==1 ~ "Winter",
-                                             D_371748514_D_152773041==1 ~ "Spring",
-                                             D_371748514_D_249341444==1 ~ "Summer",
-                                             D_371748514_D_690018400==1 ~ "Fall",
-                                             TRUE~ "Skipped this Question"))
+                                               D_371748514_D_152773041==1 ~ "Spring",
+                                               D_371748514_D_249341444==1 ~ "Summer",
+                                               D_371748514_D_690018400==1 ~ "Fall",
+                                               TRUE~ "Skipped this Question"))
 ex_type$season <- factor(ex_type$season,levels=c("All Four Seasons", "Multiple Seasons", "Winter","Spring","Summer","Fall","Skipped this Question"))
 
 
@@ -4250,20 +4221,13 @@ one_logic_funct2(D_658018390, D_517976064_D_926584500, 1, "EXEREC4E:Time Spent o
 dt_bike= data_tib_m2 %>%  filter(data_tib_m2$D_517976064_D_420058896==1)
 
 
-ex_type= dt_bike %>%  mutate(season= case_when(((D_858525957_D_917302906==1 & (D_858525957_D_152773041==1 | D_858525957_D_249341444==1  |D_858525957_D_690018400==1)) | 
-    (D_858525957_D_152773041==1 & (D_858525957_D_917302906==1 | D_858525957_D_249341444==1  |D_858525957_D_690018400==1)) |
-    (D_858525957_D_249341444==1 & (D_858525957_D_152773041==1 | D_858525957_D_917302906==1  |D_858525957_D_690018400==1)) |
-    (D_858525957_D_690018400==1 & (D_858525957_D_152773041==1 | D_858525957_D_249341444==1  |D_858525957_D_917302906==1)) &
-    !(D_858525957_D_917302906==1 & D_858525957_D_152773041==1 & 
-          D_858525957_D_249341444==1 & D_858525957_D_690018400==1))~ 
-    "Multiple Seasons", #at least two but not all four
-    D_858525957_D_917302906==1 ~ "Winter",
-    (D_858525957_D_917302906==1 & D_858525957_D_152773041==1 & 
-       D_858525957_D_249341444==1 & D_858525957_D_690018400==1) ~ "All Four Seasons",
-    D_858525957_D_152773041==1 ~ "Spring",
-    D_858525957_D_249341444==1 ~ "Summer",
-    D_858525957_D_690018400==1 ~ "Fall",
-    TRUE~ "Skipped this Question"))
+ex_type= dt_bike %>%  mutate(multiple = rowSums(select(., starts_with("D_858525957_")) == 1, na.rm = TRUE),
+                             season= case_when(multiple=4 ~ "All Four Seasons", 
+                                               multiple>1 ~ "Multiple Seasons",
+                                               D_858525957_D_152773041==1 ~ "Spring",
+                                               D_858525957_D_249341444==1 ~ "Summer",
+                                               D_858525957_D_690018400==1 ~ "Fall",
+                                               TRUE~ "Skipped this Question"))
 
 ex_type$season <- factor(ex_type$season,levels=c("All Four Seasons", "Multiple Seasons", "Winter","Spring","Summer","Fall","Skipped this Question"))
 
@@ -4309,20 +4273,14 @@ one_logic_funct2(D_406846149, D_517976064_D_420058896, 1, "EXEREC4F: Time Spent 
 dt_strength= data_tib_m2 %>%  filter(data_tib_m2$D_517976064_D_868685663==1)
 
 
-ex_type= dt_strength %>%  mutate(season= case_when(((D_787591805_D_917302906==1 & (D_787591805_D_152773041==1 | D_787591805_D_249341444==1  |D_787591805_D_690018400==1)) | 
-    (D_787591805_D_152773041==1 & (D_787591805_D_917302906==1 | D_787591805_D_249341444==1  |D_787591805_D_690018400==1)) |
-    (D_787591805_D_249341444==1 & (D_787591805_D_152773041==1 | D_787591805_D_917302906==1  |D_787591805_D_690018400==1)) |
-    (D_787591805_D_690018400==1 & (D_787591805_D_152773041==1 | D_787591805_D_249341444==1  |D_787591805_D_917302906==1)) &
-    !(D_787591805_D_917302906==1 & D_787591805_D_152773041==1 & 
-          D_787591805_D_249341444==1 & D_787591805_D_690018400==1))~ 
-    "Multiple Seasons", #at least two but not all four
-                                             (D_787591805_D_917302906==1 & D_787591805_D_152773041==1 & 
-                                                D_787591805_D_249341444==1 & D_787591805_D_690018400==1) ~ "All Four Seasons",
-                                             D_787591805_D_917302906==1 ~ "Winter",
-                                             D_787591805_D_152773041==1 ~ "Spring",
-                                             D_787591805_D_249341444==1 ~ "Summer",
-                                             D_787591805_D_690018400==1 ~ "Fall",
-                                             TRUE~ "Skipped this Question"))
+ex_type= dt_strength %>%  mutate(multiple = rowSums(select(., starts_with("D_787591805_")) == 1, na.rm = TRUE),
+                                 season= case_when(multiple=4 ~ "All Four Seasons", 
+                                                   multiple>1 ~ "Multiple Seasons",
+                                                   D_787591805_D_917302906==1 ~ "Winter",
+                                                   D_787591805_D_152773041==1 ~ "Spring",
+                                                   D_787591805_D_249341444==1 ~ "Summer",
+                                                   D_787591805_D_690018400==1 ~ "Fall",
+                                                   TRUE~ "Skipped this Question"))
 
 ex_type$season <- factor(ex_type$season,levels=c("All Four Seasons", "Multiple Seasons", "Winter","Spring","Summer","Fall","Skipped this Question"))
 
@@ -4371,19 +4329,14 @@ one_logic_funct2(D_725713485, D_517976064_D_868685663, 1, "EXEREC4G:Time Spent S
 dt_yoga= data_tib_m2 %>%  filter(data_tib_m2$D_517976064_D_760484278==1)
 
 
-ex_type= dt_yoga %>%  mutate(season= case_when(((D_900299856_D_917302906==1 & (D_900299856_D_152773041==1 | D_900299856_D_249341444==1  |D_900299856_D_690018400==1)) | 
-    (D_900299856_D_152773041==1 & (D_900299856_D_917302906==1 | D_900299856_D_249341444==1  |D_900299856_D_690018400==1)) |
-    (D_900299856_D_249341444==1 & (D_900299856_D_152773041==1 | D_900299856_D_917302906==1  |D_900299856_D_690018400==1)) |
-    (D_900299856_D_690018400==1 & (D_900299856_D_152773041==1 | D_900299856_D_249341444==1  |D_900299856_D_917302906==1)) &
-    !(D_900299856_D_917302906==1 & D_900299856_D_152773041==1 & 
-          D_900299856_D_249341444==1 & D_900299856_D_690018400==1))~ 
-    "Multiple Seasons", #at least two but not all four
-                                             (D_900299856_D_917302906==1 & D_900299856_D_152773041==1 & 
-                                                D_900299856_D_249341444==1 & D_900299856_D_690018400==1) ~ "All Four Seasons",D_900299856_D_917302906==1 ~ "Winter",
-                                             D_900299856_D_152773041==1 ~ "Spring",
-                                             D_900299856_D_249341444==1 ~ "Summer",
-                                             D_900299856_D_690018400==1 ~ "Fall",
-                                             TRUE~ "Skipped this Question"))
+ex_type= dt_yoga %>%  mutate(multiple = rowSums(select(., starts_with("D_900299856_")) == 1, na.rm = TRUE),
+                             season= case_when(multiple=4 ~ "All Four Seasons", 
+                                               multiple>1 ~ "Multiple Seasons",
+                                               D_900299856_D_917302906==1 ~ "Winter",
+                                               D_900299856_D_152773041==1 ~ "Spring",
+                                               D_900299856_D_249341444==1 ~ "Summer",
+                                               D_900299856_D_690018400==1 ~ "Fall",
+                                               TRUE~ "Skipped this Question"))
 
 ex_type$season <- factor(ex_type$season,levels=c("All Four Seasons", "Multiple Seasons", "Winter","Spring","Summer","Fall","Skipped this Question"))
 
@@ -4427,19 +4380,14 @@ one_logic_funct2(D_571361258, D_517976064_D_760484278, 1, "EXEREC4H: Time Spent 
 dt_martial= data_tib_m2 %>%  filter(data_tib_m2$D_517976064_D_345916806==1)
 
 
-ex_type= dt_martial %>%  mutate(season= case_when(((D_149884127_D_917302906==1 & (D_149884127_D_152773041==1 | D_149884127_D_249341444==1  |D_149884127_D_690018400==1)) | 
-    (D_149884127_D_152773041==1 & (D_149884127_D_917302906==1 | D_149884127_D_249341444==1  |D_149884127_D_690018400==1)) |
-    (D_149884127_D_249341444==1 & (D_149884127_D_152773041==1 | D_149884127_D_917302906==1  |D_149884127_D_690018400==1)) |
-    (D_149884127_D_690018400==1 & (D_149884127_D_152773041==1 | D_149884127_D_249341444==1  |D_149884127_D_917302906==1)) &
-    !(D_149884127_D_917302906==1 & D_149884127_D_152773041==1 & 
-          D_149884127_D_249341444==1 & D_149884127_D_690018400==1))~ 
-    "Multiple Seasons", #at least two but not all four
-                                             (D_149884127_D_917302906==1 & D_149884127_D_152773041==1 & 
-                                                D_149884127_D_249341444==1 & D_149884127_D_690018400==1) ~ "All Four Seasons",D_149884127_D_917302906==1 ~ "Winter",
-                                             D_149884127_D_152773041==1 ~ "Spring",
-                                             D_149884127_D_249341444==1 ~ "Summer",
-                                             D_149884127_D_690018400==1 ~ "Fall",
-                                             TRUE~ "Skipped this Question"))
+ex_type= dt_martial %>%  mutate(multiple = rowSums(select(., starts_with("D_149884127_")) == 1, na.rm = TRUE),
+                                season= case_when(multiple=4 ~ "All Four Seasons", 
+                                                  multiple>1 ~ "Multiple Seasons",
+                                                  D_149884127_D_917302906==1 ~ "Winter",
+                                                  D_149884127_D_152773041==1 ~ "Spring",
+                                                  D_149884127_D_249341444==1 ~ "Summer",
+                                                  D_149884127_D_690018400==1 ~ "Fall",
+                                                  TRUE~ "Skipped this Question"))
 
 ex_type$season <- factor(ex_type$season,levels=c("All Four Seasons", "Multiple Seasons", "Winter","Spring","Summer","Fall","Skipped this Question"))
 
@@ -4483,20 +4431,14 @@ one_logic_funct2(D_904844824, D_517976064_D_345916806, 1, "EXEREC4I: Time Spent 
 dt_dance= data_tib_m2 %>%  filter(data_tib_m2$D_517976064_D_936042582==1)
 
 
-ex_type= dt_dance %>%  mutate(season= case_when(((D_845164425_D_917302906==1 & (D_845164425_D_152773041==1 | D_845164425_D_249341444==1  |D_845164425_D_690018400==1)) | 
-    (D_845164425_D_152773041==1 & (D_845164425_D_917302906==1 | D_845164425_D_249341444==1  |D_845164425_D_690018400==1)) |
-    (D_845164425_D_249341444==1 & (D_845164425_D_152773041==1 | D_845164425_D_917302906==1  |D_845164425_D_690018400==1)) |
-    (D_845164425_D_690018400==1 & (D_845164425_D_152773041==1 | D_845164425_D_249341444==1  |D_845164425_D_917302906==1)) &
-    !(D_845164425_D_917302906==1 & D_845164425_D_152773041==1 & 
-          D_845164425_D_249341444==1 & D_845164425_D_690018400==1))~ 
-    "Multiple Seasons", #at least two but not all four
-                                             (D_845164425_D_917302906==1 & D_845164425_D_152773041==1 & 
-                                                D_845164425_D_249341444==1 & D_845164425_D_690018400==1) ~ "All Four Seasons",
-                                            D_845164425_D_917302906==1 ~ "Winter",
-                                             D_845164425_D_152773041==1 ~ "Spring",
-                                             D_845164425_D_249341444==1 ~ "Summer",
-                                             D_845164425_D_690018400==1 ~ "Fall",
-                                             TRUE~ "Skipped this Question"))
+ex_type= dt_dance %>%  mutate(multiple = rowSums(select(., starts_with("D_845164425_")) == 1, na.rm = TRUE),
+                              season= case_when(multiple=4 ~ "All Four Seasons", 
+                                                multiple>1 ~ "Multiple Seasons",
+                                                D_845164425_D_917302906==1 ~ "Winter",
+                                                D_845164425_D_152773041==1 ~ "Spring",
+                                                D_845164425_D_249341444==1 ~ "Summer",
+                                                D_845164425_D_690018400==1 ~ "Fall",
+                                                TRUE~ "Skipped this Question"))
 ex_type$season <- factor(ex_type$season,levels=c("All Four Seasons", "Multiple Seasons", "Winter","Spring","Summer","Fall","Skipped this Question"))
 
 
@@ -4543,15 +4485,9 @@ one_logic_funct2(D_650405110, D_517976064_D_936042582, 1, "EXEREC4J: Time Spent 
 dt_ski= data_tib_m2 %>%  filter(data_tib_m2$D_517976064_D_182827107==1)
 
 
-ex_type= dt_ski %>%  mutate(season= case_when(((D_187772368_D_917302906==1 & (D_187772368_D_152773041==1 | D_187772368_D_249341444==1  |D_187772368_D_690018400==1)) | 
-    (D_187772368_D_152773041==1 & (D_187772368_D_917302906==1 | D_187772368_D_249341444==1  |D_187772368_D_690018400==1)) |
-    (D_187772368_D_249341444==1 & (D_187772368_D_152773041==1 | D_187772368_D_917302906==1  |D_187772368_D_690018400==1)) |
-    (D_187772368_D_690018400==1 & (D_187772368_D_152773041==1 | D_187772368_D_249341444==1  |D_187772368_D_917302906==1)) &
-    !(D_187772368_D_917302906==1 & D_187772368_D_152773041==1 & 
-          D_187772368_D_249341444==1 & D_187772368_D_690018400==1))~ 
-    "Multiple Seasons", #at least two but not all four
-                                             (D_187772368_D_917302906==1 & D_187772368_D_152773041==1 & 
-                                                D_187772368_D_249341444==1 & D_187772368_D_690018400==1) ~ "All Four Seasons",
+ex_type= dt_ski %>%  mutate(multiple = rowSums(select(., starts_with("D_187772368_")) == 1, na.rm = TRUE),
+                              season= case_when(multiple=4 ~ "All Four Seasons", 
+                                                multiple>1 ~ "Multiple Seasons",
                                              D_187772368_D_917302906==1 ~ "Winter",
                                              D_187772368_D_152773041==1 ~ "Spring",
                                              D_187772368_D_249341444==1 ~ "Summer",
@@ -4603,19 +4539,14 @@ one_logic_funct2(D_831643763, D_517976064_D_182827107, 1, "EXEREC4K: Time Spent 
 dt_crossc= data_tib_m2 %>%  filter(data_tib_m2$D_517976064_D_734860227==1)
 
 
-ex_type= dt_crossc %>%  mutate(season= case_when(((D_815229596_D_917302906==1 & (D_815229596_D_152773041==1 | D_815229596_D_249341444==1  |D_815229596_D_690018400==1)) | 
-    (D_815229596_D_152773041==1 & (D_815229596_D_917302906==1 | D_815229596_D_249341444==1  |D_815229596_D_690018400==1)) |
-    (D_815229596_D_249341444==1 & (D_815229596_D_152773041==1 | D_815229596_D_917302906==1  |D_815229596_D_690018400==1)) |
-    (D_815229596_D_690018400==1 & (D_815229596_D_152773041==1 | D_815229596_D_249341444==1  |D_815229596_D_917302906==1)) &
-    !(D_815229596_D_917302906==1 & D_815229596_D_152773041==1 & 
-          D_815229596_D_249341444==1 & D_815229596_D_690018400==1))~ 
-    "Multiple Seasons", #at least two but not all four
-                                             (D_815229596_D_917302906==1 & D_815229596_D_152773041==1 & 
-                                                D_815229596_D_249341444==1 & D_815229596_D_690018400==1) ~ "All Four Seasons",D_815229596_D_917302906==1 ~ "Winter",
-                                             D_815229596_D_152773041==1 ~ "Spring",
-                                             D_815229596_D_249341444==1 ~ "Summer",
-                                             D_815229596_D_690018400==1 ~ "Fall",
-                                             TRUE~ "Skipped this Question"))
+ex_type= dt_crossc %>%  mutate(multiple = rowSums(select(., starts_with("D_815229596_")) == 1, na.rm = TRUE),
+                               season= case_when(multiple=4 ~ "All Four Seasons", 
+                                                 multiple>1 ~ "Multiple Seasons",
+                                                 D_815229596_D_917302906==1 ~ "Winter",
+                                                 D_815229596_D_152773041==1 ~ "Spring",
+                                                 D_815229596_D_249341444==1 ~ "Summer",
+                                                 D_815229596_D_690018400==1 ~ "Fall",
+                                                 TRUE~ "Skipped this Question"))
 
 ex_type$season <- factor(ex_type$season,levels=c("All Four Seasons", "Multiple Seasons", "Winter","Spring","Summer","Fall","Skipped this Question"))
 
@@ -4662,15 +4593,9 @@ one_logic_funct2(D_921220809, D_517976064_D_734860227, 1, "EXEREC4L: Time Spent 
 dt_surf= data_tib_m2 %>%  filter(data_tib_m2$D_517976064_D_371531887==1)
 
 
-ex_type= dt_surf %>%  mutate(season= case_when(((D_262305264_D_917302906==1 & (D_262305264_D_152773041==1 | D_262305264_D_249341444==1  |D_262305264_D_690018400==1)) | 
-    (D_262305264_D_152773041==1 & (D_262305264_D_917302906==1 | D_262305264_D_249341444==1  |D_262305264_D_690018400==1)) |
-    (D_262305264_D_249341444==1 & (D_262305264_D_152773041==1 | D_262305264_D_917302906==1  |D_262305264_D_690018400==1)) |
-    (D_262305264_D_690018400==1 & (D_262305264_D_152773041==1 | D_262305264_D_249341444==1  |D_262305264_D_917302906==1)) &
-    !(D_262305264_D_917302906==1 & D_262305264_D_152773041==1 & 
-          D_262305264_D_249341444==1 & D_262305264_D_690018400==1))~ 
-    "Multiple Seasons", #at least two but not all four
-                                             (D_262305264_D_917302906==1 & D_262305264_D_152773041==1 & 
-                                                D_262305264_D_249341444==1 & D_262305264_D_690018400==1) ~ "All Four Seasons",
+ex_type= dt_surf %>%  mutate(multiple = rowSums(select(., starts_with("D_262305264_")) == 1, na.rm = TRUE),
+                               season= case_when(multiple=4 ~ "All Four Seasons", 
+                                                 multiple>1 ~ "Multiple Seasons",
                                              D_262305264_D_917302906==1 ~ "Winter",
                                              D_262305264_D_152773041==1 ~ "Spring",
                                              D_262305264_D_249341444==1 ~ "Summer",
@@ -4720,15 +4645,9 @@ one_logic_funct2(D_621878019, D_517976064_D_371531887, 1, "EXEREC4M: Time Spent 
 #which season-circuit  
 dt_circ= data_tib_m2 %>%  filter(data_tib_m2$D_517976064_D_423631576==1)
 
-ex_type= dt_circ %>%  mutate(season= case_when(((D_409324592_D_917302906==1 & (D_409324592_D_152773041==1 | D_409324592_D_249341444==1  |D_409324592_D_690018400==1)) | 
-    (D_409324592_D_152773041==1 & (D_409324592_D_917302906==1 | D_409324592_D_249341444==1  |D_409324592_D_690018400==1)) |
-    (D_409324592_D_249341444==1 & (D_409324592_D_152773041==1 | D_409324592_D_917302906==1  |D_409324592_D_690018400==1)) |
-    (D_409324592_D_690018400==1 & (D_409324592_D_152773041==1 | D_409324592_D_249341444==1  |D_409324592_D_917302906==1)) &
-    !(D_409324592_D_917302906==1 & D_409324592_D_152773041==1 & 
-          D_409324592_D_249341444==1 & D_409324592_D_690018400==1))~ 
-    "Multiple Seasons", #at least two but not all four
-                                             (D_409324592_D_917302906==1 & D_409324592_D_152773041==1 & 
-                                                D_409324592_D_249341444==1 & D_409324592_D_690018400==1) ~ "All Four Seasons",
+ex_type= dt_circ %>%  mutate(multiple = rowSums(select(., starts_with("D_409324592_")) == 1, na.rm = TRUE),
+                               season= case_when(multiple=4 ~ "All Four Seasons", 
+                                                 multiple>1 ~ "Multiple Seasons",
                                              D_409324592_D_917302906==1 ~ "Winter",
                                              D_409324592_D_152773041==1 ~ "Spring",
                                              D_409324592_D_249341444==1 ~ "Summer",
@@ -4780,15 +4699,9 @@ one_logic_funct2(D_305312165, D_517976064_D_423631576, 1, "EXEREC4N: Time Spent 
 dt_oth_ex= data_tib_m2 %>%  filter(data_tib_m2$D_517976064_D_181769837==1)
 
 
-ex_type= dt_oth_ex %>%  mutate(season= case_when(((D_895837106_D_917302906==1 & (D_895837106_D_152773041==1 | D_895837106_D_249341444==1  |D_895837106_D_690018400==1)) | 
-    (D_895837106_D_152773041==1 & (D_895837106_D_917302906==1 | D_895837106_D_249341444==1  |D_895837106_D_690018400==1)) |
-    (D_895837106_D_249341444==1 & (D_895837106_D_152773041==1 | D_895837106_D_917302906==1  |D_895837106_D_690018400==1)) |
-    (D_895837106_D_690018400==1 & (D_895837106_D_152773041==1 | D_895837106_D_249341444==1  |D_895837106_D_917302906==1)) &
-    !(D_895837106_D_917302906==1 & D_895837106_D_152773041==1 & 
-          D_895837106_D_249341444==1 & D_895837106_D_690018400==1))~ 
-    "Multiple Seasons", #at least two but not all four
-                                             (D_895837106_D_917302906==1 & D_895837106_D_152773041==1 & 
-                                                D_895837106_D_249341444==1 & D_895837106_D_690018400==1) ~ "All Four Seasons",
+ex_type= dt_oth_ex %>%  mutate(multiple = rowSums(select(., starts_with("D_895837106_")) == 1, na.rm = TRUE),
+                               season= case_when(multiple=4 ~ "All Four Seasons", 
+                                                 multiple>1 ~ "Multiple Seasons",
                                              D_895837106_D_917302906==1 ~ "Winter",
                                              D_895837106_D_152773041==1 ~ "Spring",
                                              D_895837106_D_249341444==1 ~ "Summer",
@@ -4906,20 +4819,14 @@ dtLAWN1_summary %>%
 dtLAWN2A= data_tib_m2 %>% filter(D_204421360_D_797221287==1)
 
 
-mod_ss= dtLAWN2A %>%  mutate(season= case_when(((D_442059084_D_917302906==1 & (D_442059084_D_152773041==1 | D_442059084_D_249341444==1  |D_442059084_D_690018400==1)) | 
-    (D_442059084_D_152773041==1 & (D_442059084_D_917302906==1 | D_442059084_D_249341444==1  |D_442059084_D_690018400==1)) |
-    (D_442059084_D_249341444==1 & (D_442059084_D_152773041==1 | D_442059084_D_917302906==1  |D_442059084_D_690018400==1)) |
-    (D_442059084_D_690018400==1 & (D_442059084_D_152773041==1 | D_442059084_D_249341444==1  |D_442059084_D_917302906==1)) &
-    !(D_442059084_D_917302906==1 & D_442059084_D_152773041==1 & 
-          D_442059084_D_249341444==1 & D_442059084_D_690018400==1))~ 
-    "Multiple Seasons", #at least two but not all four
-(D_442059084_D_917302906==1 & D_442059084_D_152773041==1 & 
-     D_442059084_D_249341444==1 & D_442059084_D_690018400==1) ~ "All Four Seasons",
-D_442059084_D_917302906==1 ~ "Winter",
-                                             D_442059084_D_152773041==1 ~ "Spring",
-                                             D_442059084_D_249341444==1 ~ "Summer",
-                                             #D_442059084_D_690018400==1 ~ "Fall",
-                                             TRUE~ "Skipped this Question"))
+mod_ss= dtLAWN2A %>%  mutate(multiple = rowSums(select(., starts_with("D_442059084_")) == 1, na.rm = TRUE),
+                             season= case_when(multiple=4 ~ "All Four Seasons", 
+                                               multiple>1 ~ "Multiple Seasons",
+                                               D_442059084_D_917302906==1 ~ "Winter",
+                                               D_442059084_D_152773041==1 ~ "Spring",
+                                               D_442059084_D_249341444==1 ~ "Summer",
+                                               #D_442059084_D_690018400==1 ~ "Fall",
+                                               TRUE~ "Skipped this Question"))
 
 mod_ss$season <- factor(mod_ss$season,levels=c("All Four Seasons", "Multiple Seasons", "Winter","Spring","Summer","Fall","Skipped this Question"))
 
@@ -4964,20 +4871,14 @@ one_logic_funct2(D_429531329,D_204421360_D_797221287,1,"LAWN4A: Time Spent on Mo
 dtLAWN2B= data_tib_m2 %>%  filter(D_204421360_D_500744195==1)
 
 
-vig_ss= dtLAWN2B %>%  mutate(season= case_when(((D_829749579_D_917302906==1 & (D_829749579_D_152773041==1 | D_829749579_D_249341444==1  |D_829749579_D_690018400==1)) | 
-    (D_829749579_D_152773041==1 & (D_829749579_D_917302906==1 | D_829749579_D_249341444==1  |D_829749579_D_690018400==1)) |
-    (D_829749579_D_249341444==1 & (D_829749579_D_152773041==1 | D_829749579_D_917302906==1  |D_829749579_D_690018400==1)) |
-    (D_829749579_D_690018400==1 & (D_829749579_D_152773041==1 | D_829749579_D_249341444==1  |D_829749579_D_917302906==1)) &
-    !(D_829749579_D_917302906==1 & D_829749579_D_152773041==1 & 
-          D_829749579_D_249341444==1 & D_829749579_D_690018400==1))~ 
-    "Multiple Seasons", #at least two but not all four
-(D_829749579_D_917302906==1 & D_829749579_D_152773041==1 & 
-     D_829749579_D_249341444==1 & D_829749579_D_690018400==1) ~ "All Four Seasons",
-D_829749579_D_917302906==1 ~ "Winter",
-                                             D_829749579_D_152773041==1 ~ "Spring",
-                                             D_829749579_D_249341444==1 ~ "Summer",
-                                             D_829749579_D_690018400==1 ~ "Fall",
-                                             TRUE~ "Skipped this Question"))
+vig_ss= dtLAWN2B %>%  mutate(multiple = rowSums(select(., starts_with("D_829749579_")) == 1, na.rm = TRUE),
+                             season= case_when(multiple=4 ~ "All Four Seasons", 
+                                               multiple>1 ~ "Multiple Seasons",
+                                               D_829749579_D_917302906==1 ~ "Winter",
+                                               D_829749579_D_152773041==1 ~ "Spring",
+                                               D_829749579_D_249341444==1 ~ "Summer",
+                                               D_829749579_D_690018400==1 ~ "Fall",
+                                               TRUE~ "Skipped this Question"))
 
 vig_ss$season <- factor(vig_ss$season,levels=c("All Four Seasons", "Multiple Seasons", "Winter","Spring","Summer","Fall","Skipped this Question"))
 
@@ -5027,20 +4928,14 @@ one_logic_funct2(D_644018981,D_204421360_D_500744195,1,"LAWN4B: Time Spent on Vi
 dtLAWN2C= data_tib_m2 %>% filter(D_204421360_D_383015037==1)
 
 
-home_ss= dtLAWN2C %>%  mutate(season= case_when(((D_618482103_D_917302906==1 & (D_618482103_D_152773041==1 | D_618482103_D_249341444==1  |D_618482103_D_690018400==1)) | 
-    (D_618482103_D_152773041==1 & (D_618482103_D_917302906==1 | D_618482103_D_249341444==1  |D_618482103_D_690018400==1)) |
-    (D_618482103_D_249341444==1 & (D_618482103_D_152773041==1 | D_618482103_D_917302906==1  |D_618482103_D_690018400==1)) |
-    (D_618482103_D_690018400==1 & (D_618482103_D_152773041==1 | D_618482103_D_249341444==1  |D_618482103_D_917302906==1)) &
-    !(D_618482103_D_917302906==1 & D_618482103_D_152773041==1 & 
-          D_618482103_D_249341444==1 & D_618482103_D_690018400==1))~ 
-    "Multiple Seasons", #at least two but not all four
-(D_618482103_D_917302906==1 & D_618482103_D_152773041==1 & 
-     D_618482103_D_249341444==1 & D_618482103_D_690018400==1) ~ "All Four Seasons",
-D_618482103_D_917302906==1 ~ "Winter",
-                                             D_618482103_D_152773041==1 ~ "Spring",
-                                             D_618482103_D_249341444==1 ~ "Summer",
-                                             D_618482103_D_690018400==1 ~ "Fall",
-                                             TRUE~ "Skipped this Question"))
+home_ss= dtLAWN2C %>%  mutate(multiple = rowSums(select(., starts_with("D_618482103_")) == 1, na.rm = TRUE),
+                              season= case_when(multiple=4 ~ "All Four Seasons", 
+                                                multiple>1 ~ "Multiple Seasons",
+                                                D_618482103_D_917302906==1 ~ "Winter",
+                                                D_618482103_D_152773041==1 ~ "Spring",
+                                                D_618482103_D_249341444==1 ~ "Summer",
+                                                D_618482103_D_690018400==1 ~ "Fall",
+                                                TRUE~ "Skipped this Question"))
 
 home_ss$season <- factor(home_ss$season,levels=c("All Four Seasons", "Multiple Seasons", "Winter","Spring","Summer","Fall","Skipped this Question"))
 
