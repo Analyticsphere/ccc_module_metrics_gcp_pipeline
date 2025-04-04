@@ -336,178 +336,85 @@ simple_funct1(D_479353866,"AGECOR: Age Reported Correct")
 
 ```
 
-# SEXORIENT- 'Other' Selected
+
 ```{r sexorient, warning=FALSE, echo=FALSE, message=FALSE}
-
-
-#Need table that looks at responses by race
-multi_race=0    
-for (i in 1:length(data_tib_base$Connect_ID)){
-  AI=ifelse((data_tib_base$D_384191091_D_384191091_D_583826374[[i]]==1 & (data_tib_base$D_384191091_D_384191091_D_636411467[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_458435048[[i]]==1|
-                                               data_tib_base$D_384191091_D_384191091_D_706998638[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_973565052[[i]]==1 |
-                                               data_tib_base$D_384191091_D_384191091_D_586825330[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_412790539[[i]]==1 |
-                                               data_tib_base$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  As=ifelse((data_tib_base$D_384191091_D_384191091_D_636411467[[i]]==1 & (data_tib_base$D_384191091_D_384191091_D_583826374[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_458435048[[i]]==1|
-                                                        data_tib_base$D_384191091_D_384191091_D_706998638[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_973565052[[i]]==1 |
-                                                        data_tib_base$D_384191091_D_384191091_D_586825330[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_412790539[[i]]==1 |
-                                                        data_tib_base$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  Bl=ifelse((data_tib_base$D_384191091_D_384191091_D_458435048[[i]]==1 & (data_tib_base$D_384191091_D_384191091_D_583826374[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_636411467[[i]]==1|
-                                                        data_tib_base$D_384191091_D_384191091_D_706998638[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_973565052[[i]]==1 |
-                                                        data_tib_base$D_384191091_D_384191091_D_586825330[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_412790539[[i]]==1 |
-                                                        data_tib_base$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  Hs=ifelse((data_tib_base$D_384191091_D_384191091_D_706998638[[i]]==1 & (data_tib_base$D_384191091_D_384191091_D_583826374[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_636411467[[i]]==1|
-                                                        data_tib_base$D_384191091_D_384191091_D_458435048[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_973565052[[i]]==1 |
-                                                        data_tib_base$D_384191091_D_384191091_D_586825330[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_412790539[[i]]==1 |
-                                                        data_tib_base$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  Me=ifelse((data_tib_base$D_384191091_D_384191091_D_973565052[[i]]==1 & (data_tib_base$D_384191091_D_384191091_D_583826374[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_636411467[[i]]==1|
-                                                        data_tib_base$D_384191091_D_384191091_D_458435048[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_706998638[[i]]==1 |
-                                                        data_tib_base$D_384191091_D_384191091_D_586825330[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_412790539[[i]]==1 |
-                                                        data_tib_base$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  Hw=ifelse((data_tib_base$D_384191091_D_384191091_D_586825330[[i]]==1 & (data_tib_base$D_384191091_D_384191091_D_583826374[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_636411467[[i]]==1|
-                                                        data_tib_base$D_384191091_D_384191091_D_458435048[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_706998638[[i]]==1 |
-                                                        data_tib_base$D_384191091_D_384191091_D_973565052[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_412790539[[i]]==1 |
-                                                        data_tib_base$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  Wh=ifelse((data_tib_base$D_384191091_D_384191091_D_412790539[[i]]==1 & (data_tib_base$D_384191091_D_384191091_D_583826374[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_636411467[[i]]==1|
-                                                        data_tib_base$D_384191091_D_384191091_D_458435048[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_706998638[[i]]==1 |
-                                                        data_tib_base$D_384191091_D_384191091_D_586825330[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_973565052[[i]]==1 |
-                                                        data_tib_base$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  Ot=ifelse((data_tib_base$D_384191091_D_384191091_D_807835037[[i]]==1 & (data_tib_base$D_384191091_D_384191091_D_583826374[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_636411467[[i]]==1|
-                                                        data_tib_base$D_384191091_D_384191091_D_458435048[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_706998638[[i]]==1 |
-                                                        data_tib_base$D_384191091_D_384191091_D_586825330[[i]]==1 | data_tib_base$D_384191091_D_384191091_D_973565052[[i]]==1 |
-                                                        data_tib_base$D_384191091_D_384191091_D_412790539[[i]]==1)), 1, 0)
-  multi_race= multi_race + sum(AI+As+Bl+Hs+Me+Hw+Wh+Ot, na.rm=T)
-
-}
-   
-
-data_tib_base$multi_racial <- c(rep(1, times=multi_race), rep(0, times=(dim(data_tib_base)[1]- multi_race)))
-
-data_tib_base= data_tib_base %>%  mutate(race= case_when(multi_racial==1 ~ "Multi-Racial",
-                                                     D_384191091_D_384191091_D_583826374==1 ~ "American Indian or Native American",
-                                                     D_384191091_D_384191091_D_636411467==1 ~ "Asian/Asian American",
-                                                     D_384191091_D_384191091_D_458435048==1 ~ "Black, African American, or African",
-                                                     D_384191091_D_384191091_D_706998638==1 ~ "Hispanic, Latino, or Spanish",
-                                                     D_384191091_D_384191091_D_973565052==1 ~ "Middle Eastern or North African",
-                                                     D_384191091_D_384191091_D_586825330==1 ~ "Hawaiian or Pacific Islander",
-                                                     D_384191091_D_384191091_D_412790539==1 ~ "White",
-                                                     (D_384191091_D_384191091_D_807835037==1 | !is.na(D_384191091_D_747350323)) ~ "Other",
-                                                     D_384191091_D_384191091_D_746038746==1 ~ "Prefer Not to Answer",
-                                                     TRUE  ~ "Skipped this Question"))
-
-
-#Also need table to look at age ranges (934298480 recruitment ranges )
-data_tib_base= data_tib_base %>%  mutate(age=case_when(state_d_934298480==124276120 ~ "40-45",
-                                         state_d_934298480==450985724 ~ "46-50",
-                                         state_d_934298480==363147933 ~ "51-55",
-                                         state_d_934298480==636706443 ~ "56-50",
-                                         state_d_934298480==771230670 ~ "61-65",
-                                                     TRUE  ~ "Skipped this Question"))
-
-
-
-sexorient_raceage_table <- data_tib_base %>% filter(!is.na(D_555481393_D_979809707) & age!="Skipped this Question" & race!="Skipped this Question") %>% dplyr::group_by(age, race) %>% dplyr::summarize(n=n(), percentage=100*n/nrow(.)) %>% dplyr::ungroup()  %>%  dplyr::select(age, race, n, percentage)
-
-sexorient_raceage_table_gt <- sexorient_raceage_table %>%  gt::gt(rowname_col = "row_lab") %>%  
-  cols_label(n= md("**N**"), age="Age", race="Race", percentage = md("**%**")) %>% 
-  grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
-  tab_options(
-      stub.font.weight = "bold"
-    ) 
-
-
-
-
-sexorient <- data_tib_base %>%  filter(!is.na(D_555481393_D_979809707))
-sexorient$sexuality=tolower(sexorient$D_555481393_D_979809707)
-sexorient$sexuality_no_spaces = gsub(" ", "", sexorient$D_555481393_D_979809707)
-
-
-# orient= sexorient  %>%  mutate(sexuality= case_when(length(grep("asexual", sexorient$D_555481393_D_979809707)) ~ "Asexual",
-#                                                            length(grep("pansexual", sexorient$D_555481393_D_979809707))~ "Pansexual",
-#                                                            length(grep("queer", sexorient$D_555481393_D_979809707)) ~ "Queer",
-#                                                            length(grep("straight", sexorient$D_555481393_D_979809707)) ~ "Straight",
-#                                                           is.na(D_555481393_D_979809707)~ "Skipped this Question",
-#                                                       TRUE ~ D_555481393_D_979809707))
-
-# sexorient= sexorient  %>%  mutate(sexuality= case_when(gsub(" ", "", sexorient$gsub(" ", "", sexorient$D_555481393_D_979809707))=="asexual" ~ "Asexual",
-#                                                     gsub(" ", "", sexorient$D_555481393_D_979809707)=="pansexual" | gsub(" ", "", sexorient$D_555481393_D_979809707)=="pan" ~ "Pansexual",
-#                                                     gsub(" ", "", sexorient$D_555481393_D_979809707)=="queer"~ "Queer",
-#                                                     gsub(" ", "", sexorient$D_555481393_D_979809707)=="straight" | gsub(" ", "", sexorient$D_555481393_D_979809707)=="hetero"~ "Straight",
-#                                                     is.na(gsub(" ", "", sexorient$D_555481393_D_979809707))~ "Skipped this Question",
-#                                                       TRUE ~ D_555481393_D_979809707))
+# # SEXORIENT- 'Other' Selected
+# 
+# #Need table that looks at responses by race
+# race_columns <- c("D_384191091_D_384191091_D_583826374", 
+#                   "D_384191091_D_384191091_D_636411467",
+#                   "D_384191091_D_384191091_D_458435048",
+#                   "D_384191091_D_384191091_D_706998638",
+#                   "D_384191091_D_384191091_D_973565052",
+#                   "D_384191091_D_384191091_D_586825330",
+#                   "D_384191091_D_384191091_D_412790539",
+#                   "D_384191091_D_384191091_D_807835037")
+# 
+# # All data is currently string values, need to convert "1" and "0" to 1 and 0 to be summarized
+# data_tib_base[race_columns] <- lapply(data_tib_base[race_columns], as.numeric)
+# data_tib_base$multi_racial <- ifelse(rowSums(data_tib_base[race_columns], na.rm = TRUE) > 1, 1, 0)
 # 
 # 
-# sexorient= sexorient  %>%  mutate(sexuality= case_when(grep("asexual",  sexorient$sexuality_no_spaces, value=TRUE) ~ "Asexual",
-#                                                            grep("pan",  sexorient$sexuality_no_spaces, value=TRUE)~ "Pansexual",
-#                                                            grep("queer",  sexorient$sexuality_no_spaces, value=TRUE)~ "Queer",
-#                                                            grep("straight",  sexorient$sexuality_no_spaces, value=TRUE) ~ "Straight",
+# data_tib_base= data_tib_base %>%  mutate(race= case_when(multi_racial==1 ~ "Multi-Racial",
+#                                                      D_384191091_D_384191091_D_583826374==1 ~ "American Indian or Native American",
+#                                                      D_384191091_D_384191091_D_636411467==1 ~ "Asian/Asian American",
+#                                                      D_384191091_D_384191091_D_458435048==1 ~ "Black, African American, or African",
+#                                                      D_384191091_D_384191091_D_706998638==1 ~ "Hispanic, Latino, or Spanish",
+#                                                      D_384191091_D_384191091_D_973565052==1 ~ "Middle Eastern or North African",
+#                                                      D_384191091_D_384191091_D_586825330==1 ~ "Hawaiian or Pacific Islander",
+#                                                      D_384191091_D_384191091_D_412790539==1 ~ "White",
+#                                                      (D_384191091_D_384191091_D_807835037==1 | !is.na(D_384191091_D_747350323)) ~ "Other",
+#                                                      D_384191091_D_384191091_D_746038746==1 ~ "Prefer Not to Answer",
+#                                                     D_384191091_D_384191091_D_178420302==1 ~ "Unknown",
+#                                                      TRUE  ~ "Skipped this question "))
+# 
+# 
+# #Also need table to look at age ranges (934298480 recruitment ranges )
+# data_tib_base= data_tib_base %>%  mutate(age=case_when(state_d_934298480==124276120 ~ "40-45",
+#                                          state_d_934298480==450985724 ~ "46-50",
+#                                          state_d_934298480==363147933 ~ "51-55",
+#                                          state_d_934298480==636706443 ~ "56-50",
+#                                          state_d_934298480==771230670 ~ "61-65",
+#                                                      TRUE  ~ "Skipped this Question"))
+# 
+# 
+# 
+# sexorient_raceage_table <- data_tib_base %>% filter(!is.na(D_555481393_D_979809707) & age!="Skipped this Question" & race!="Skipped this Question") %>% dplyr::group_by(age, race) %>% dplyr::summarize(n=n(), percentage=100*n/nrow(.)) %>% dplyr::ungroup()  %>%  dplyr::select(age, race, n, percentage)
+# 
+# sexorient_raceage_table_gt <- sexorient_raceage_table %>%  gt::gt(rowname_col = "row_lab") %>%  
+#   cols_label(n= md("**N**"), age="Age", race="Race", percentage = md("**%**")) %>% 
+#   grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+#   tab_options(
+#       stub.font.weight = "bold"
+#     ) 
+# 
+# 
+# 
+# 
+# sexorient <- data_tib_base %>%  filter(!is.na(D_555481393_D_979809707))
+# sexorient$sexuality=tolower(sexorient$D_555481393_D_979809707)
+# sexorient$sexuality_no_spaces = gsub(" ", "", sexorient$D_555481393_D_979809707)
+# 
+# 
+# 
+# sexorient= sexorient  %>%  mutate(sexuality= case_when(tolower(D_555481393_D_979809707)=="asexual" | tolower(D_555481393_D_979809707)=="a sexual" ~ "Asexual",
+#                                                            tolower(D_555481393_D_979809707)=="pansexual" | tolower(D_555481393_D_979809707)=="pan sexual" | tolower(D_555481393_D_979809707)=="pan"~ "Pansexual",
+#                                                            tolower(D_555481393_D_979809707)=="queer"~ "Queer",
+#                                                            tolower(D_555481393_D_979809707)=="straight" | D_555481393_D_979809707=="hetero" ~ "Straight",
 #                                                           is.na(D_555481393_D_979809707)~ "Skipped this Question",
 #                                                       TRUE ~ "Other"))
-
-sexorient= sexorient  %>%  mutate(sexuality= case_when(tolower(D_555481393_D_979809707)=="asexual" | tolower(D_555481393_D_979809707)=="a sexual" ~ "Asexual",
-                                                           tolower(D_555481393_D_979809707)=="pansexual" | tolower(D_555481393_D_979809707)=="pan sexual" | tolower(D_555481393_D_979809707)=="pan"~ "Pansexual",
-                                                           tolower(D_555481393_D_979809707)=="queer"~ "Queer",
-                                                           tolower(D_555481393_D_979809707)=="straight" | D_555481393_D_979809707=="hetero" ~ "Straight",
-                                                          is.na(D_555481393_D_979809707)~ "Skipped this Question",
-                                                      TRUE ~ "Other"))
-
-
-# sexorient= sexorient  %>%  mutate(sexuality= case_when(D_555481393_D_979809707=="asexual" | D_555481393_D_979809707=="a sexual" ~ "Asexual",
-#                                                            D_555481393_D_979809707=="pansexual" | D_555481393_D_979809707=="pan sexual" | D_555481393_D_979809707=="pan"~ "Pansexual",
-#                                                            D_555481393_D_979809707=="queer"~ "Queer",
-#                                                            D_555481393_D_979809707=="straight" | D_555481393_D_979809707=="hetero" ~ "Straight",
-#                                                           is.na(D_555481393_D_979809707)~ "Skipped this Question",
-#                                                       TRUE ~ "Other"))
-
-
-
 # 
-# dt_sexorient_summary <- orient %>% group_by(sexuality) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(sexuality, n, percentage)
-
-#gsub(" ", "", x) <- remove spaces so its easier to find any version of pansexual, ect. 
-#length(grep("corn", dataset)) <- grab all versions of asexual or pansexual, and count them
- 
-
-
-
-# sexorient %>%  select(D_555481393_D_979809707) %>% filter(!is.na(D_555481393_D_979809707)) %>% gt() %>% cols_label(D_555481393_D_979809707= md("**Response for 'Other' Sexual Orientation**"))
-
-#sexorient_table <- sexorient %>%  select(age, race, sexuality) %>%  group_by(age, race) %>% filter(!is.na(sexuality) & age!="Skipped this Question" & race!="Skipped this Question") %>% ungroup() %>% gt() %>% cols_label(age="Age", race="Race", sexuality= md("**Response for 'Other' Sexual Orientation**")) 
-#group by removes title and doesn't group them together
-
-
-
-sexorient_table1 <- sexorient %>% filter(!is.na(D_555481393_D_979809707) & age!="Skipped this Question" & race!="Skipped this Question") %>% dplyr::group_by(age, race, sexuality) %>% dplyr::summarize(n=n(), percentage=100*n/nrow(.)) %>% dplyr::ungroup()  %>%  dplyr::select(age, race, sexuality, n, percentage)
-
-sexorient_age_race_gt <-  sexorient_table1 %>%  gt::gt(rowname_col = "row_lab") %>%  
-  cols_label(n= md("**N**"), age="Age", race="Race", sexuality="'Other Sexuality' Response", percentage = md("**%**")) %>% 
-  grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
-  tab_options(
-      stub.font.weight = "bold"
-    ) 
-
-
-
-sexorient_table2 <- sexorient %>% filter(!is.na(D_555481393_D_979809707) & age!="Skipped this Question") %>% dplyr::group_by(age,  sexuality) %>% dplyr::summarize(n=n(), percentage=100*n/nrow(.)) %>% dplyr::ungroup()  %>%  dplyr::select(age, sexuality, n, percentage)
-
-sexorient_age_gt <- sexorient_table2 %>%  gt::gt(rowname_col = "row_lab") %>%  
-  cols_label(n= md("**N**"), age="Age", sexuality="'Other Sexuality' Response", percentage = md("**%**")) %>% 
-  grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
-  tab_options(
-      stub.font.weight = "bold"
-    ) 
-
-
-sexorient_table <- sexorient %>% filter(!is.na(D_555481393_D_979809707) & age!="Skipped this Question") %>% dplyr::group_by(sexuality) %>% dplyr::summarize(n=n(), percentage=100*n/nrow(.)) %>% dplyr::ungroup()  %>%  dplyr::select(sexuality, n, percentage)
-
-sexorient_table %>%  gt::gt(rowname_col = "row_lab") %>%  
-  fmt_number(columns = "percentage", decimals = 2) %>%
-  cols_label(n= md("**N**"), sexuality=md("**'Other Sexuality' Response**"), percentage = md("**%**")) %>% 
-  grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
-  tab_options(
-      stub.font.weight = "bold"
-    ) 
-
+# 
+# sexorient_table1 <- sexorient %>% filter(!is.na(D_555481393_D_979809707) & age!="Skipped this Question" & race!="Skipped this Question") %>% dplyr::group_by(age, race, sexuality) %>% dplyr::summarize(n=n(), percentage=100*n/nrow(.)) %>% dplyr::ungroup()  %>%  dplyr::select(age, race, sexuality, n, percentage)
+# 
+# sexorient_age_race_gt <-  sexorient_table1 %>%  gt::gt(rowname_col = "row_lab") %>%  
+#   cols_label(n= md("**N**"), age="Age", race="Race", sexuality="'Other Sexuality' Response", percentage = md("**%**")) %>% 
+#   grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+#   tab_options(
+#       stub.font.weight = "bold"
+#     ) 
+# 
+# 
 
 
 ```
@@ -1654,77 +1561,6 @@ cat("Don't know number of people in household:", sum(table(merged$D_641651634_D_
 
 ```
 
-
-```{r altadd2, warning=FALSE, echo=FALSE, message=FALSE}
-# ALTADDRESS2- not in BQ
-#ALTADDRESS1/ALTADDRESS2/ALTCONTACT1/ALTCONTACT2 won't list for PII reasons
-
-
-
-
-
-```
-
-# ALTCONTACT1,2
-```{r altcontact12, warning=FALSE, echo=FALSE, message=FALSE}
-
-#ALTADDRESS1/ALTADDRESS2/ALTCONTACT1/ALTCONTACT2 won't list for PII reasons
-
-  altcont1= data_tib_base %>%  mutate(Contact= case_when(!is.na(D_986275155_D_661719912) & !is.na(D_986275155_D_801653230)~"Gave Full Name",
-                                                           (!is.na(D_986275155_D_661719912)| !is.na(D_986275155_D_801653230))~"Gave First or Last Name Only",
-                                                           TRUE~"Skipped Alternative Contact Question"))
-
-dt_altcont1_summary <- altcont1 %>% dplyr::group_by(Contact) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Contact, n, percentage)
-
-
-dt_altcont1_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
-  fmt_number(columns = "percentage", decimals = 2) %>% 
-  tab_header(title = md("ALTCONTACT1: Contact Name In Case Participant Cannot Be Reached")) %>% 
-  cols_label(n= md("**N**"),Contact = md("**Answer**"), percentage = md("**%**")) %>% 
-  grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
-  tab_options(
-      stub.font.weight = "bold"
-    ) %>%
-  tab_style(
-    style = list(
-      cell_text(weight = "bold")
-    ),
-    locations = cells_body(
-      columns = Contact,
-    )
-  ) 
-
-
-
-
-
-
-
-altcont2= data_tib_base %>%  mutate(Contact= case_when(!is.na(D_285718391_D_286149234) | !is.na(D_285718391_D_318130543) | !is.na(D_285718391_D_750097000)~"Gave Alternative Contact Info",
-                                                       TRUE~"Skipped Alternative Contact Info"))
-dt_altcont2_summary <- altcont2 %>% dplyr::group_by(Contact) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Contact, n, percentage)
-
-dt_altcont2_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
-  fmt_number(columns = "percentage", decimals = 2) %>% 
-  tab_header(title = md("ALTCONTACT2: Phone/Email of Alternative Contact")) %>% 
-  cols_label(n= md("**N**"),Contact = md("**Answer**"), percentage = md("**%**")) %>% 
-  grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
-  tab_options(
-      stub.font.weight = "bold"
-    ) %>%
-  tab_style(
-    style = list(
-      cell_text(weight = "bold")
-    ),
-    locations = cells_body(
-      columns = Contact,
-    )
-  ) 
-
-
-
-
-```
 
 # QXAUTHOR1
 ```{r author, warning=FALSE, echo=FALSE, message=FALSE}

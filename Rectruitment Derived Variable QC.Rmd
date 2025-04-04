@@ -1133,129 +1133,169 @@ if (nrow(hipaa_consent_match) == 0) {
 
 
 
-<!-- ```{r bday_card_table, echo=FALSE, include=FALSE} -->
+```{r bday_card_table, echo=FALSE, include=FALSE}
 
-<!-- bdaybq <- "SELECT * FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.birthdayCard_JP` where Connect_ID IS NOT NULL" -->
-<!-- bdaybq_table <- bq_project_query(project, bdaybq) -->
-<!-- bdaybq <- bq_table_download(bdaybq_table, bigint = "integer64") -->
+bdaybq <- "SELECT * FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.birthdayCard` where Connect_ID IS NOT NULL"
+bdaybq_table <- bq_project_query(project, bdaybq)
+bdaybq <- bq_table_download(bdaybq_table, bigint = "integer64")
 
-<!-- bdaybq$Connect_ID <- as.numeric(bdaybq$Connect_ID) -->
-<!-- bday_base_vars= left_join(partsbq, bdaybq, by="Connect_ID") -->
+bdaybq$Connect_ID <- as.numeric(bdaybq$Connect_ID)
+bday_base_vars= left_join(partsbq, bdaybq, by="Connect_ID")
 
-<!-- ``` -->
+```
 
 
-<!-- \FloatBarrier -->
-<!-- ## 38. If maildate is populated then cardVersion should be populated. -->
-<!-- ```{r bday1, echo=FALSE, warning=FALSE, message=FALSE} -->
+\FloatBarrier
+## 40. If maildate is populated then cardVersion should be populated.
+```{r bday1, echo=FALSE, warning=FALSE, message=FALSE}
 
-<!-- bday1 <- bday_base_vars %>%  filter(!is.na(d_768313785) & is.na(d_194486780)) %>% -->
-<!--       select(Site, Connect_ID, d_768313785, d_194486780) %>%  sort_by(Site) -->
+bday1 <- bday_base_vars %>%  filter(!is.na(d_768313785) & is.na(d_194486780)) %>%
+      select(Site, Connect_ID, d_768313785, d_194486780) %>%  sort_by(Site)
 
-<!-- colnames(bday1) <- c("Site", "Connect ID", "NORCBC_CardMailingDt", "NORCBC_CardVersion") -->
+colnames(bday1) <- c("Site", "Connect ID", "NORCBC_CardMailingDt", "NORCBC_CardVersion")
 
-<!-- if (nrow(bday1) == 0) { -->
+if (nrow(bday1) == 0) {
+  cat("No errors\n")
+} else {
+  knitr::kable(bday1) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+```
+
+
+\FloatBarrier
+## 41. If cardVersion d_194486780 is populated then maildate d_768313785 should be populated
+```{r bday2, echo=FALSE, warning=FALSE, message=FALSE}
+
+bday2 <- bday_base_vars %>%  filter(is.na(d_768313785) & !is.na(d_194486780)) %>%
+      select(Site, Connect_ID, d_768313785, d_194486780) %>%  sort_by(Site)
+
+colnames(bday2) <- c("Site", "Connect ID", "NORCBC_CardMailingDt", "NORCBC_CardVersion")
+
+if (nrow(bday2) == 0) {
+  cat("No errors\n")
+} else {
+  knitr::kable(bday2) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+```
+
+
+
+\FloatBarrier
+## 42. If maildate d_768313785 is populated then dispCode d_916186376 should be values 01, 02, 06, 07, or N/A
+```{r bday3, echo=FALSE, warning=FALSE, message=FALSE}
+
+bday3 <- bday_base_vars %>%  filter(!is.na(d_768313785) & !(d_916186376 %in% c("01", "02", "06", "07") | is.na(d_916186376))) %>%
+      select(Site, Connect_ID, d_768313785, d_916186376) %>%  sort_by(Site)
+
+colnames(bday3) <- c("Site", "Connect ID", "NORCBC_CardMailingDt", "NORCBC_CardDispCode")
+
+if (nrow(bday3) == 0) {
+  cat("No errors\n")
+} else {
+  knitr::kable(bday3) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+```
+
+
+\FloatBarrier
+## 43. If dispCode d_916186376 is populated then maildate d_768313785 should be populated
+```{r bday4, echo=FALSE, warning=FALSE, message=FALSE}
+
+bday4 <- bday_base_vars %>%  filter(is.na(d_768313785) & !is.na(d_916186376)) %>%
+      select(Site, Connect_ID, d_768313785, d_916186376) %>%  sort_by(Site)
+
+colnames(bday4) <- c("Site", "Connect ID", "NORCBC_CardMailingDt", "NORCBC_CardDispCode")
+
+if (nrow(bday4) == 0) {
+  cat("No errors\n")
+} else {
+  knitr::kable(bday4) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+```
+
+
+\FloatBarrier
+## 44. If maildate d_768313785 is populated then returnDate d_902078073 should be submitted as an ISO 8601 timestamp or be N/A
+```{r bday5, echo=FALSE, warning=FALSE, message=FALSE}
+
+bday5 <- bday_base_vars %>%  filter(!is.na(d_768313785) & !(is.na(ymd_hms(d_194486780, quiet = TRUE)) | is.na(d_194486780))) %>%
+      select(Site, Connect_ID, d_768313785, d_902078073) %>%  sort_by(Site)
+
+colnames(bday5) <- c("Site", "Connect ID", "NORCBC_CardMailingDt", "NORCBC_CardReturnDt")
+
+if (nrow(bday5) == 0) {
+  cat("No errors\n")
+} else {
+  knitr::kable(bday5) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+```
+
+
+\FloatBarrier
+## 45. If returnDate d_902078073 is populated then maildate d_768313785 should be populated
+```{r bday6, echo=FALSE, warning=FALSE, message=FALSE}
+
+bday6 <- bday_base_vars %>%  filter(is.na(d_768313785) & !is.na(d_902078073)) %>%
+      select(Site, Connect_ID, d_768313785, d_902078073) %>%  sort_by(Site)
+
+colnames(bday6) <- c("Site", "Connect ID", "NORCBC_CardMailingDt", "NORCBC_CardReturnDt")
+
+if (nrow(bday6) == 0) {
+  cat("No errors\n")
+} else {
+  knitr::kable(bday6) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+```
+
+
+
+<!-- ## 46. If re-invitation date set, then re-invitation campaign type data should be sent -->
+<!-- reinvite_date_type <- base_vars %>%  filter(!is.na(d_439351436) & is.na(d_280021666)) -->
+
+
+
+
+<!-- if (nrow(reinvite_date_type) == 0) { -->
 <!--   cat("No errors\n") -->
 <!-- } else { -->
-<!--   knitr::kable(bday1) %>% -->
+
+<!--   reinvite_date_type <- reinvite_date_type  %>% select(Site, Connect_ID, d_439351436, d_280021666)  %>%  sort_by(Site) -->
+<!--   colnames(reinvite_date_type) <- c("Site", "Connect ID", "RcrtSI_RInvTimeStamp_v1r0", "RcrtSI_RInvCampaignType_v1r0") -->
+
+<!--   knitr::kable(reinvite_date_type) %>% -->
 <!--     kable_styling(latex_options = "scale_down") -->
 <!-- } -->
 
-<!-- ``` -->
 
 
-<!-- \FloatBarrier -->
-<!-- ## 39. If cardVersion d_194486780 is populated then maildate d_768313785 should be populated -->
-<!-- ```{r bday2, echo=FALSE, warning=FALSE, message=FALSE} -->
 
-<!-- bday2 <- bday_base_vars %>%  filter(is.na(d_768313785) & !is.na(d_194486780)) %>% -->
-<!--       select(Site, Connect_ID, d_768313785, d_194486780) %>%  sort_by(Site) -->
 
-<!-- colnames(bday2) <- c("Site", "Connect ID", "NORCBC_CardMailingDt", "NORCBC_CardVersion") -->
+<!-- ## 47. There should not be any re-invitation data sent before 2/6/2025 -->
+<!-- reinvite_start <- base_vars %>%  filter(as.Date(d_439351436) < "2025-02-06")  -->
 
-<!-- if (nrow(bday2) == 0) { -->
+
+
+
+<!-- if (nrow(reinvite_start) == 0) { -->
 <!--   cat("No errors\n") -->
 <!-- } else { -->
-<!--   knitr::kable(bday2) %>% -->
+
+<!--   reinvite_start <- reinvite_start  %>% select(Site, Connect_ID, d_439351436, d_280021666)  %>%  sort_by(Site) -->
+<!--   colnames(reinvite_start) <- c("Site", "Connect ID", "RcrtSI_RInvTimeStamp_v1r0", "RcrtSI_RInvCampaignType_v1r0") -->
+
+<!--   knitr::kable(reinvite_start) %>% -->
 <!--     kable_styling(latex_options = "scale_down") -->
 <!-- } -->
-
-<!-- ``` -->
-
-
-
-<!-- \FloatBarrier -->
-<!-- ## 41. If maildate d_768313785 is populated then dispCode d_916186376 should be values 01, 02, 06, 07, or N/A -->
-<!-- ```{r bday3, echo=FALSE, warning=FALSE, message=FALSE} -->
-
-<!-- bday3 <- bday_base_vars %>%  filter(!is.na(d_768313785) & !(d_916186376 %in% c("01", "02", "06", "07") | is.na(d_916186376))) %>% -->
-<!--       select(Site, Connect_ID, d_768313785, d_916186376) %>%  sort_by(Site) -->
-
-<!-- colnames(bday3) <- c("Site", "Connect ID", "NORCBC_CardMailingDt", "NORCBC_CardDispCode") -->
-
-<!-- if (nrow(bday3) == 0) { -->
-<!--   cat("No errors\n") -->
-<!-- } else { -->
-<!--   knitr::kable(bday3) %>% -->
-<!--     kable_styling(latex_options = "scale_down") -->
-<!-- } -->
-
-<!-- ``` -->
-
-
-<!-- \FloatBarrier -->
-<!-- ## 42. If dispCode d_916186376 is populated then maildate d_768313785 should be populated -->
-<!-- ```{r bday4, echo=FALSE, warning=FALSE, message=FALSE} -->
-
-<!-- bday4 <- bday_base_vars %>%  filter(is.na(d_768313785) & !is.na(d_916186376)) %>% -->
-<!--       select(Site, Connect_ID, d_768313785, d_916186376) %>%  sort_by(Site) -->
-
-<!-- colnames(bday4) <- c("Site", "Connect ID", "NORCBC_CardMailingDt", "NORCBC_CardDispCode") -->
-
-<!-- if (nrow(bday4) == 0) { -->
-<!--   cat("No errors\n") -->
-<!-- } else { -->
-<!--   knitr::kable(bday4) %>% -->
-<!--     kable_styling(latex_options = "scale_down") -->
-<!-- } -->
-
-<!-- ``` -->
-
-
-<!-- \FloatBarrier -->
-<!-- ## 44. If maildate d_768313785 is populated then returnDate d_902078073 should be submitted as an ISO 8601 timestamp or be N/A -->
-<!-- ```{r bday5, echo=FALSE, warning=FALSE, message=FALSE} -->
-
-<!-- bday5 <- bday_base_vars %>%  filter(!is.na(d_768313785) & !(is.na(ymd_hms(d_194486780, quiet = TRUE)) | is.na(d_194486780))) %>% -->
-<!--       select(Site, Connect_ID, d_768313785, d_902078073) %>%  sort_by(Site) -->
-
-<!-- colnames(bday5) <- c("Site", "Connect ID", "NORCBC_CardMailingDt", "NORCBC_CardReturnDt") -->
-
-<!-- if (nrow(bday5) == 0) { -->
-<!--   cat("No errors\n") -->
-<!-- } else { -->
-<!--   knitr::kable(bday5) %>% -->
-<!--     kable_styling(latex_options = "scale_down") -->
-<!-- } -->
-
-<!-- ``` -->
-
-
-<!-- \FloatBarrier -->
-<!-- ## 45. If returnDate d_902078073 is populated then maildate d_768313785 should be populated -->
-<!-- ```{r bday6, echo=FALSE, warning=FALSE, message=FALSE} -->
-
-<!-- bday6 <- bday_base_vars %>%  filter(is.na(d_768313785) & !is.na(d_902078073)) %>% -->
-<!--       select(Site, Connect_ID, d_768313785, d_902078073) %>%  sort_by(Site) -->
-
-<!-- colnames(bday6) <- c("Site", "Connect ID", "NORCBC_CardMailingDt", "NORCBC_CardReturnDt") -->
-
-<!-- if (nrow(bday6) == 0) { -->
-<!--   cat("No errors\n") -->
-<!-- } else { -->
-<!--   knitr::kable(bday6) %>% -->
-<!--     kable_styling(latex_options = "scale_down") -->
-<!-- } -->
-
-<!-- ``` -->
 
