@@ -1689,6 +1689,7 @@ if (nrow(Dup_Report_sms_rem) > 50) {
 
 
 
+
 # 3. Participants receiving attempts out of order, meaning that they received "2nd contact" attempt or higher but not the "1st contact" attempt. Several categories are excluded from this query if the first attempt has a different category name then the remaining contact attempts; backlogs are also excluded.
 
 \FloatBarrier
