@@ -63,7 +63,7 @@ knitr::opts_chunk$set(dev = "png", fig.path = "", comment = NA)
 #knitr::opts_chunk$set(comment = NA)
 
 project = "nih-nci-dceg-connect-prod-6d04"
-pt_pull <- "SELECT Connect_ID,  d_827220437, d_987563196, d_821247024
+pt_pull <- "SELECT Connect_ID,  d_827220437, d_987563196, d_821247024, d_914594314
 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` 
 where Connect_ID IS NOT NULL  and (d_512820379='486306141' OR d_512820379='854703046') and 
 d_821247024='197316935' and d_919254129='353358909' and d_558435199='353358909' #verified, consented, HIPAA auth
@@ -94,12 +94,13 @@ rca <- rca %>% mutate(Site = case_when(d_827220437==472940358 ~ "Baylor Scott an
                                        d_827220437==657167265 ~ "Sanford Health",
                                        d_827220437==809703864 ~ "University of Chicago Medicine"),
                       dead = case_when(d_114227122=="337516613" ~ "Alive",
-                                       d_114227122=="353358909" ~ "Deceased",
-                                       TRUE ~ "Unknown"),
-                      awareness = case_when(d_844209241=="104430631" ~ "Alive",
-                                       d_844209241=="646675764" ~ "Deceased",
-                                       TRUE ~ "Unknown"),
-                      'Cancer Flag' = case_when(d_525972260 =="353358909" & d_793981056=="1"~ "Cancer Occurrence", #count only the first occurance for each participant (will be used on participant level table only)
+                                       d_114227122=="646675764" ~ "Deceased",
+                                       d_114227122=="178420302" ~ "Unknown"),
+                      awareness = case_when(d_844209241=="104430631" ~ "Unaware",
+                                            d_844209241=="353358909" ~ "Aware",
+                                            d_844209241=="178420302" ~ "Unknown"),
+                      'Cancer Flag' = case_when(d_525972260 =="353358909" & d_793981056=="1"~ "Cancer Occurrence", 
+                                                #count only the first occurrence for each participant (will be used on participant level table only)
                                                 TRUE ~ "No Cancer Occurrence"))
 
 
@@ -215,10 +216,13 @@ pivot_data[nrow(pivot_data)+1,] <- list("Total", paste0(sum(location_counts$Freq
 ## update with cancer occurance : d_793981056
 
 cancer_loc_occ <- cancer_loc %>% 
+  group_by(Connect_ID) %>%
+  filter(d_793981056 == max(d_793981056, na.rm = TRUE)) %>% #highest cancer occurance count
+  ungroup() %>% 
   mutate(occs = case_when(d_793981056=="1" ~ "Participants with 1 Cancer Occurrence(s)",
                           d_793981056=="2" ~ "Participants with 2 Cancer Occurrence(s)",
                           d_793981056=="3" ~ "Participants with 3 Cancer Occurrence(s)",
-                          d_793981056=="4" ~ "Participants with 4 Cancer Occurrence(s)")) 
+                          d_793981056=="4" ~ "Participants with 4 Cancer Occurrence(s)"))
 
 cancer_loc_occs <- cancer_loc_occ %>% 
   dplyr::group_by(occs) %>% 
@@ -337,7 +341,7 @@ occ_by_site %>%
 ```{r Flags_by_Site, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
 
-occ_by_site <- cancer_loc_occ %>% 
+occ_by_site <- cancer_loc %>% 
     filter(!is.na(Site)) %>% select(Site, d_793981056) %>% 
   tbl_cross(col =d_793981056,
             row = Site, 
@@ -351,6 +355,60 @@ occ_by_site <- cancer_loc_occ %>%
 occ_by_site %>%
   modify_caption("Table 5. Number of Cancer Occurrences Among Verified Participants \n as Identified by RCA") %>%
   as_kable_extra(escape = FALSE, addtl_fmt = TRUE)
+
+```
+
+
+
+
+
+\FloatBarrier
+
+```{r Diagnosis_vs_Verif_Date, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+
+Diag_Verif <- cancer_loc %>%
+  mutate(months_diff =difftime(as.Date(d_345545422), as.Date(d_914594314), units = "weeks")*.25,
+         time_diff = case_when( months_diff < 0 ~ "Prior to verification",
+                                months_diff < 7 ~ "Within 6 months post-verification",
+                                months_diff < 13 ~ "6-12 months post-veriification",
+                                months_diff <=24 ~ "12-24 months post-veriification",
+                                months_diff >24 ~ "More than 24 months post verification",
+                                is.na(d_345545422) | is.na(d_914594314) ~ "Missing Verification or Diagnosis Date")) %>%
+  mutate(time_diff = factor(time_diff,
+                                      levels = c("Prior to verification","Within 6 months post-verification","6-12 months post-veriification",
+                                                 "12-24 months post-veriification","More than 24 months post verification","Missing Verification or Diagnosis Date")))
+
+
+Diag_Verif_Table <- Diag_Verif %>%
+  group_by(time_diff) %>%
+  tally() %>%
+  mutate("N (%)" = paste0(format(n, big.mark = ","), " (", round(100 * n / sum(n), 2), " %)"))
+
+
+total_row <- Diag_Verif_Table %>%
+  summarize(time_diff = "Total",
+            n = sum(n),
+            `N (%)` = paste0(format(sum(n), big.mark = ","), 
+                             " (", 100, " %)"))
+
+Diag_Verif_Table <- bind_rows(Diag_Verif_Table, total_row)
+
+
+Diag_Verif_Table <- Diag_Verif_Table %>%
+  mutate(time_diff = factor(time_diff,
+                                      levels = c("Prior to verification","Within 6 months post-verification","6-12 months post-veriification",
+                                                 "12-24 months post-veriification","More than 24 months post verification","Missing Verification or Diagnosis Date",
+                                                 "Total"))) %>% 
+  select(time_diff, `N (%)`)
+
+
+
+tbd_table <- knitr::kable(Diag_Verif_Table, 
+               caption = "Table 6. Diagnosis Date Realtive to Verification Date Among Cancer Occurences", 
+               col.names = c("Number of Occurrence", "Number of Participants"), 
+               row.names = FALSE, align = c("l", "c"), digits = 1, booktabs = TRUE) %>%  
+    add_indent(seq(1, nrow(Diag_Verif_Table) - 1)) %>% 
+    kable_styling(latex_options = "scale_down")
 
 ```
 
@@ -408,14 +466,16 @@ for (i in 1:length(unique_sites)) {
 
   
 aware_by_dead <- cancer_loc  %>% 
-    select(dead, awareness) %>% 
+  mutate(dead = factor(dead, levels = c("Alive", "Deceased", "Unknown")), 
+         awareness = factor(awareness, levels = c("Aware", "Unaware", "Unknown"))) %>%  #make sure all values are included
+  select(dead, awareness) %>% 
   tbl_cross(col =awareness,
             row = dead, 
             percent = "row",
             digits= c(0,1),
             label= c(dead~ "Vital Status", awareness ~ "Awareness"),
             missing="ifany",
-            #missing_text="0 ( 0 %)",
+            missing_text="Missing",
             margin_text="Total Verified Participants") 
 
 aware_by_dead %>%

@@ -127,9 +127,12 @@ modules1 <- modules %>% mutate(process = case_when(as.character(modules) =='0' ~
                                                    as.character(modules) == '2' & d_949302066 == '231311385' & d_536735468 == '231311385' ~ "BOH and MRE Sections" ,
                                                    as.character(modules) =='2' & d_949302066 == '231311385' & d_976570371 == '231311385' ~ "BOH and SAS Sections" , 
                                                    as.character(modules) =='2' & d_949302066 == '231311385' & d_663265240 == '231311385' ~ "BOH and LAW Sections" ,  
-                                                   as.character(modules) =='3' & d_949302066 == '231311385' & d_536735468 == '231311385' & d_976570371 == '231311385' ~ "BOH, MRE, and SAS Sections" ,  
-                                                   as.character(modules) =='3' & d_949302066 == '231311385' & d_976570371 == '231311385' & d_663265240 == '231311385'~ "BOH, SAS, and LAW Sections" , 
-                                                   as.character(modules) =='3' & d_949302066 == '231311385' & d_536735468 == '231311385' & d_663265240 == '231311385' ~ "BOH, MRE, and LAW Sections",   
+                                                   as.character(modules) =='3' & d_949302066 == '231311385' & d_536735468 == '231311385' & 
+                                                     d_976570371 == '231311385' ~ "BOH, MRE, and SAS Sections" ,  
+                                                   as.character(modules) =='3' & d_949302066 == '231311385' & d_976570371 == '231311385' & 
+                                                     d_663265240 == '231311385'~ "BOH, SAS, and LAW Sections" , 
+                                                   as.character(modules) =='3' & d_949302066 == '231311385' & d_536735468 == '231311385' & 
+                                                     d_663265240 == '231311385' ~ "BOH, MRE, and LAW Sections",   
                                                    as.character(modules) =='4' ~ "All")) 
 
 tab1(modules1$process, decimal=2,sort.group = "decreasing", cum.percent = TRUE)$output.table
@@ -219,7 +222,7 @@ all_data$BL_comp <- factor(all_data$BL_comp, levels=c("All", "2 or 3 Sections", 
 all_data$completion <- factor(all_data$completion, levels=c("Completed both survey and sample(s)", "Completed all baseline survey modules 1-4, no baseline samples", 
                                                   "Completed any baseline sample, did not complete baseline survey","Completed neither survey or sample(s)"))
 all_data$process <- factor(all_data$process, levels=c("None", "BOH Section only", "BOH and MRE Sections", "BOH and SAS Sections",  "BOH and LAW Sections", 
-                                                      "BOH, MRE, and SAS Sections", "BOH, SAS, and LAW Sections", "BOH, MRE, and LAW Sections"))
+                                                      "BOH, MRE, and SAS Sections", "BOH, SAS, and LAW Sections", "BOH, MRE, and LAW Sections", "All"))
 all_data$provided4<- factor(all_data$provided4,levels=c("Full SSN", "Partial SSN", "No SSN"))
 
 ```
