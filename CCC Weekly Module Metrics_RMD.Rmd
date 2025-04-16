@@ -80,7 +80,8 @@ d_386488297, d_452942800, d_517311251 , d_822499427, d_126331570, d_914639140, d
 d_831041022, d_255077064, d_320303124, d_684635302, d_843688458, d_870643066, d_878865966, d_167958071, token,
 state_d_934298480, state_d_706256705, state_d_435027713, d_199471989, d_956490759, d_263355177,
 state_d_684926335, state_d_849518448, state_d_119643471, state_d_253532712, d_764863765, d_195145666, 
-d_784810139, d_176068627, d_389890053, d_609630315, d_173836415_d_266600170_d_319972665_d_661940160
+d_784810139, d_176068627, d_389890053, d_609630315, d_173836415_d_266600170_d_319972665_d_661940160, 
+d_220186468, d_268176409, d_784810139, d_253883960, d_265193023
 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` where Connect_ID IS NOT NULL  and (d_512820379='486306141' OR d_512820379='854703046') " 
 
 #and d_831041022='104430631'-- not needed, according to 3/12/24 decisions we'll be keeping participant journeys in overall counts
@@ -143,7 +144,7 @@ completion <- modules1[, c(1,10)]
 all_data <- left_join(data_tib, completion, by="Connect_ID")
 
 
-all_data <- all_data %>%  mutate(Site = case_when(d_827220437==472940358 ~ "Baylor Scott and White Health",
+all_data <- all_data %>%  mutate(Site = case_when(d_827220437==472940358 ~ "Baylor Scott and White",
                                                   d_827220437==125001209 ~ "KP Colorado",
                                                   d_827220437==327912200 ~ "KP Georgia",
                                                   d_827220437==300267574 ~ "KP Hawaii",
@@ -217,7 +218,7 @@ all_data <- all_data %>%  mutate(Site = case_when(d_827220437==472940358 ~ "Bayl
                                  m3_comp_mins = as.numeric(difftime(as.POSIXct(ymd_hms(d_770257102)), as.POSIXct(ymd_hms(d_386488297)), units="hours"))*60,
                                  m4_comp_mins = as.numeric(difftime(as.POSIXct(ymd_hms(d_264644252)), as.POSIXct(ymd_hms(d_452942800)), units="hours"))*60)
 
-all_data$Site <- factor(all_data$Site, levels=c("Baylor Scott and White Health","HealthPartners", "Henry Ford","Marshfield","Sanford","UChicago","KP Colorado","KP Georgia", "KP Hawaii","KP Northwest"))
+all_data$Site <- factor(all_data$Site, levels=c("Baylor Scott and White","HealthPartners", "Henry Ford","Marshfield","Sanford","UChicago","KP Colorado","KP Georgia", "KP Hawaii","KP Northwest"))
 all_data$BL_comp <- factor(all_data$BL_comp, levels=c("All", "2 or 3 Sections", "BOH Only", "None"))
 all_data$completion <- factor(all_data$completion, levels=c("Completed both survey and sample(s)", "Completed all baseline survey modules 1-4, no baseline samples", 
                                                   "Completed any baseline sample, did not complete baseline survey","Completed neither survey or sample(s)"))
@@ -229,6 +230,9 @@ all_data$provided4<- factor(all_data$provided4,levels=c("Full SSN", "Partial SSN
 
 
 ```{r Functions, include=FALSE}
+
+
+### Regular tbl_cross
 
 create_tbl_cross1 <- function(data,row_var, colm_var, row_or_col_pct, row_name, column_name){
 cross__table <- data %>%  
@@ -248,6 +252,10 @@ cross_table_df <- as.data.frame(cross__table)[-1, ]
 }
 
 
+
+
+
+### a tbl cross where the tbl_cross should have all row percentages, but the Total column should be a column percentage
 
 create_tbl_cross2 <- function(data, row_var, colm_var, row_or_col_pct, row_name, column_name, margin_text) {
   cross__table <- data %>%
@@ -310,7 +318,7 @@ comp_by_site_totals <- create_tbl_cross1(all_data,"Site", "BSL_compl", "row", "S
 
 total_rows <- nrow(comp_by_site_totals)
 knitr::kable(comp_by_site_totals , 
-             caption='Table 1. Completion of Initial Surveys by Site', 
+             caption='Table 1.1. Completion of Initial Surveys by Site', 
              row.names=FALSE,align=c("l","c","c","c"),
              col.names=c("Site", "All Completed", "One or More Not Completed", "Total"),
              booktabs = TRUE) %>%  
@@ -739,6 +747,86 @@ knitr::kable(ssn_surv_table,
 
 ```
 
+
+\newpage
+# COVID-19 Survey
+\FloatBarrier
+```{r COVID_Section, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+
+
+# COVID questions were in the BU and BUM surveys prior to 7/5/2023; only include the stand alone COVID Survey results
+  #Need a biospecimen collection to be eligible for survey, collection on or after 7/5/23 to be eligible for the COVID survey
+
+
+covid <- all_data %>%  
+  mutate(COVID_status = case_when(d_220186468==231311385 ~ "Submitted",
+                                  d_220186468==615768760 ~ "Started",
+                                  d_220186468==972455046 ~ "Not Started",
+                                  TRUE ~ "Not Eligible")) %>% 
+  filter(COVID_status!="Not Eligible" & (as.Date(d_556788178) >= as.Date("2023-07-05"))) #stand alone survey only
+
+covid_table <- create_tbl_cross1(covid,"Site", "COVID_status", "column", "Site", "Status")
+
+covid_df <- as.data.frame(covid_table)
+colnames(covid_df)[5] <- "Total Eligible for \n COVID-19 Survey"
+
+covid_table1 <- knitr::kable(covid_df, 
+             caption='Table 3.1 Baseline COVID Response Rate',
+             row.names=FALSE, align=c("l","c","c","c","c","c"), booktabs = TRUE) %>%
+    kable_styling(latex_options = "scale_down")
+
+add_footnote(covid_table1, "Note: This table includes all participants who are eligible for the stand alone COVID-19 Survey. Eligibility is defined as having donated a biospecimen collection on or after July 5th, 2023.", notation = "none")
+
+
+
+
+  
+
+Covid_time = all_data %>% 
+  filter(d_220186468==231311385 & (as.Date(d_556788178) >= as.Date("2023-07-05"))) %>% 
+  mutate(covid_start_stop = as.numeric(difftime(as.POSIXct(ymd_hms(d_784810139)), as.POSIXct(ymd_hms(d_268176409)), units="mins")), 
+         timeframe = case_when(covid_start_stop<5 ~ "Under 5 Minutes",
+                       covid_start_stop<10 ~ "5-10 Minutes",
+                       covid_start_stop<15 ~ "10-15 Minutes",
+                       covid_start_stop<20 ~ "15-20 Minutes",
+                       covid_start_stop<30 ~ "20-30 Minutes",
+                       covid_start_stop>=30 ~ "30+ Minutes",
+                       is.na(d_784810139) | is.na(d_268176409) ~ "Missing Time Stamp(s)"),
+timeframe = factor(timeframe, levels=c("Under 5 Minutes", "5-10 Minutes", "10-15 Minutes", 
+                                         "15-20 Minutes", "20-30 Minutes", "30+ Minutes", "Missing Time Stamp(s)")))  %>% 
+    group_by(timeframe) %>% tally() %>% 
+    mutate(Percentage = (n / sum(n)) * 100)
+
+
+
+summary_row <- data.frame(timeframe = "Total Submitted COVID-19 Surveys",
+                          n = sum(Covid_time$n),
+                          Percentage = 100)
+
+
+Covid_time <- rbind(Covid_time, summary_row) %>%
+    mutate(N_percent = paste0(formatC(n, big.mark = ",", format = "d"), 
+                              " (", round(Percentage, digits = 1), "%)"),
+           Cumulative_Percentage = round(cumsum(Percentage), digits=2))
+Covid_time$Cumulative_Percentage[nrow(Covid_time)] <- 100
+
+Covid_time <- Covid_time %>% 
+    select(timeframe, N_percent, Cumulative_Percentage) %>%
+    rename(`Completion Time` = timeframe, `N%` = N_percent,
+           'Cumulative Percentage' = Cumulative_Percentage)
+
+
+covid_table2 <- knitr::kable(Covid_time, 
+             caption='Table 3.2 Baseline COVID Survey Completion Length (in minutes) among Submitted COVID-19 Surveys',
+             row.names=FALSE, align=c("l","c","c"), booktabs = TRUE) %>%
+  add_indent(c(1:(nrow(Covid_time)-1))) %>% 
+    kable_styling(latex_options = "scale_down") 
+add_footnote(covid_table2, "Note: To determine the length of COVID-19 Survey questions, only those who completed the stand alone COVID-19 Survey were included in this table. Those that completed the COVID-19 survey questions within the baseline biospecimen survey were not included.", notation = "none")
+
+```
+
+
+
 \newpage
 \FloatBarrier
 # Quality of Life Survey
@@ -764,7 +852,7 @@ QOL_comp_elg <- QOL_comp_elg %>%
   #bold_labels() %>%
   #italicize_levels() %>% 
   modify_header(stat_0 = "Total QOL Eligible \n Participants") %>%
-  modify_caption("Table 3.1. Completion of 3-Month Quality of Life Survey Among Eligible Participants") %>%
+  modify_caption("Table 4.1. Completion of 3-Month Quality of Life Survey Among Eligible Participants") %>%
   as_kable_extra(escape = FALSE, addtl_fmt = TRUE)
 
  
@@ -792,7 +880,7 @@ QOL_comp_elg_after[["table_body"]]$stat_0 <- sapply(strsplit(QOL_comp_elg_after[
   #bold_labels() %>%
   #italicize_levels() %>% 
   modify_header(stat_0 = "Total QOL Eligible \n Participants") %>%
-  modify_caption("Table 3.1.a. Completion of 3-Month Quality of Life Survey among Eligible participants Verified on or after December 1, 2023") %>%
+  modify_caption("Table 4.1.a. Completion of 3-Month Quality of Life Survey among Eligible participants Verified on or after December 1, 2023") %>%
   as_kable_extra(escape = FALSE, addtl_fmt = TRUE)
 
 QOL_comp_elg_after %>% kable_styling(latex_options = c("scale_down","hold_position")) 
@@ -819,7 +907,7 @@ QOL_comp_elg_before <- QOL_comp_elg_before %>%
   #bold_labels() %>%
   #italicize_levels() %>% 
   modify_header(stat_0 = "Total QOL Eligible \n Participants") %>%
-  modify_caption("Table 3.1.b. Completion of 3-Month Quality of Life Survey among Eligible Participants Verified prior to December 1, 2023") %>%
+  modify_caption("Table 4.1.b. Completion of 3-Month Quality of Life Survey among Eligible Participants Verified prior to December 1, 2023") %>%
   as_kable_extra(escape = FALSE, addtl_fmt = TRUE)
 
 
@@ -842,7 +930,7 @@ colnames(QOL_comp_BL)[5] <- "Total QOL Eligible \n Participants"
 
 
 knitr::kable(QOL_comp_BL, 
-             caption='Table 3.2. Completion of 3-Month Quality of Life Survey by Baseline Data Completeness',
+             caption='Table 4.2. Completion of 3-Month Quality of Life Survey by Baseline Data Completeness',
              row.names=FALSE, align=c("l","c","c","c","c"), booktabs = TRUE) %>%
     kable_styling(latex_options = "scale_down") %>%  
     add_indent(seq(1, nrow(QOL_comp_BL) - 1)) %>%  landscape()
@@ -859,7 +947,7 @@ QOL_comp_BL_after <- create_tbl_cross2(QOL_comp_after, "completion", "qolcomplt"
 colnames(QOL_comp_BL_after)[5] <- "Total QOL Eligible \n Participants"
 
 knitr::kable(QOL_comp_BL_after, 
-             caption='Table 3.2.a. Completion of 3-Month Quality of Life Survey by Baseline Data Completeness among Eligible Participants Verified on or after December 1, 2023',
+             caption='Table 4.2.a. Completion of 3-Month Quality of Life Survey by Baseline Data Completeness among Eligible Participants Verified on or after December 1, 2023',
              row.names=FALSE, align=c("l","c","c","c","c"), booktabs = TRUE) %>%
     kable_styling(latex_options = "scale_down") %>%  
     add_indent(seq(1, nrow(QOL_comp_BL_after) - 1)) %>%  landscape()
@@ -874,7 +962,7 @@ QOL_comp_BL_before <- create_tbl_cross2(QOL_comp_after, "completion", "qolcomplt
 
 colnames(QOL_comp_BL_before)[5] <- "Total QOL Eligible \n Participants"
 knitr::kable(QOL_comp_BL_before, 
-             caption='Table 3.2.b. Completion of 3-Month Quality of Life Survey by Baseline Data Completeness among Eligible Participants Verified on before December 1, 2023',
+             caption='Table 4.2.b. Completion of 3-Month Quality of Life Survey by Baseline Data Completeness among Eligible Participants Verified on before December 1, 2023',
              row.names=FALSE, align=c("l","c","c","c","c"), booktabs = TRUE) %>%
     kable_styling(latex_options = "scale_down") %>%  
     add_indent(seq(1, nrow(QOL_comp_BL_before) - 1)) %>%  landscape()
@@ -905,7 +993,7 @@ Comp_by_Sex_table <- Comp_by_Sex %>%
   #bold_labels() %>%
   #italicize_levels() %>% 
   modify_header(stat_0 = "Total QOL Eligible \n Participants") %>%
-  modify_caption("Table 3.3. 3-Month Quality of Life Survey Completion Rate by Site Defined Sex \n Among Eligible Participants") %>%
+  modify_caption("Table 4.3. 3-Month Quality of Life Survey Completion Rate by Site Defined Sex \n Among Eligible Participants") %>%
   as_kable_extra(escape = FALSE, addtl_fmt = TRUE) %>% kable_styling(latex_options = c("scale_down","hold_position"))  
 
 add_footnote(Comp_by_Sex_table, "Note: Sex defined as the de-identified sex data reported by sites at time of invitation.", 
@@ -932,7 +1020,7 @@ Comp_by_Age <- Comp_by_Age %>%
   #bold_labels() %>%
   #italicize_levels() %>% 
   modify_header(stat_0 = "Total QOL Eligible \n Participants") %>%
-  modify_caption("Table 3.4. 3-Month Quality of Life Survey Completion Rate by Age \n Among Eligible Participants") %>%
+  modify_caption("Table 4.4. 3-Month Quality of Life Survey Completion Rate by Age \n Among Eligible Participants") %>%
   as_kable_extra(escape = FALSE, addtl_fmt = TRUE)  %>% kable_styling(latex_options = c("scale_down","hold_position")) 
 
 add_footnote(Comp_by_Age, "Note: Age defined as the de-identified age data reported by sites at time of invitation, not current age at time of survey completion.", 
@@ -1167,7 +1255,7 @@ Comp_by_race <- promis %>% filter(qolcomplt!="Not Eligible") %>%
 
 Comp_by_race <- Comp_by_race %>%
   modify_header(stat_0 = "Total QOL Eligible \n Participants") %>%
-  modify_caption("Table 3.5. 3-Month Quality of Life Survey Completion Rate by Race \n Among Eligible Participants") %>%
+  modify_caption("Table 4.5. 3-Month Quality of Life Survey Completion Rate by Race \n Among Eligible Participants") %>%
   as_kable_extra(escape = FALSE, addtl_fmt = TRUE) %>% kable_styling(latex_options = c("scale_down","hold_position"))
 
 reduced <- all_data %>% filter(d_949302066 != 231311385 & qolcomplt!="Not Eligible") # Those who are eligible for PROMIS but didn't complete mod1 yet
@@ -1229,7 +1317,7 @@ Comp_by_sex_race <- promis %>% filter(qolcomplt!="Not Eligible") %>%
 
 Comp_by_sex_race <- Comp_by_sex_race %>%
   modify_header(stat_0 = "Total QOL Eligible \n Participants") %>%
-  modify_caption("Table 3.6. 3-Month Quality of Life Survey Completion Rate by Sex and Race \n Among Eligible Participants") %>%
+  modify_caption("Table 4.6. 3-Month Quality of Life Survey Completion Rate by Sex and Race \n Among Eligible Participants") %>%
   as_kable_extra(escape = FALSE, addtl_fmt = TRUE)
 
 reduced <- all_data %>% filter(d_949302066 != 231311385 & qolcomplt!="Not Eligible") # Those who are eligible for PROMIS but didn't complete mod1 yet
@@ -1277,7 +1365,7 @@ Comp_by_Demographic <- all_data_long %>%
 
 Comp_by_Demographic <- Comp_by_Demographic %>%
   modify_header(stat_0 = "Total") %>%
-  modify_caption("Table 3.7. 3-Month Quality of Life Survey Completion Rate \n by Demographic Among Eligible Participants") %>%
+  modify_caption("Table 4.7. 3-Month Quality of Life Survey Completion Rate \n by Demographic Among Eligible Participants") %>%
   as_kable_extra(escape = FALSE, addtl_fmt = TRUE)
 
 # Style the table output
@@ -1327,7 +1415,7 @@ QOL_TM <- QOL_TM %>%
 
 
 knitr::kable(QOL_TM, #format.args = list(big.mark = ","),
-             caption = 'Table 3.8. 3-Month Quality of Life Survey Completion Time from Start to Submit \n Among Eligible Participants That Submitted the Survey', 
+             caption = 'Table 4.8. 3-Month Quality of Life Survey Completion Time from Start to Submit \n Among Eligible Participants That Submitted the Survey', 
              booktabs=T, linesep = "", row.names=FALSE, align=c("l", "c", "c")) %>% 
   add_indent(c(1:(nrow(QOL_TM)-1))) %>%  
   kable_styling(latex_options = "scale_down") #c("scale_down","hold_position"))
@@ -1372,7 +1460,7 @@ Trig_table = trig_time %>%
                    Max = round(max(trigTM_qol, na.rm = TRUE), digits=2))
 
 knitr::kable(Trig_table, 
-             caption = 'Table 3.9. 3-Month Quality of Life Survey Completion from Trigger to Submit for \n Verified Participants, in Days', 
+             caption = 'Table 4.9. 3-Month Quality of Life Survey Completion from Trigger to Submit for \n Verified Participants, in Days', 
              row.names=FALSE, format.args = list(big.mark = ","), linesep = "", 
              booktabs = T, align=c("l", "c", "c", "c", "c", "c", "c", "c", "c")) %>% 
   kable_styling(latex_options = c("scale_down","hold_position")) 
@@ -1395,7 +1483,7 @@ qol_ver_df <- create_tbl_cross2(qol_ver, "ver_surv", "qolcomplt", "row", "Time f
 
 colnames(qol_ver_df)[5] <- "Total QOL Eligible \n Participants"
 knitr::kable(qol_ver_df, 
-             caption='Table 3.10. QOL Survey Completion By Time from Verification to QOL Survey Release',
+             caption='Table 4.10. QOL Survey Completion By Time from Verification to QOL Survey Release',
              row.names=FALSE, align=c("l","c","c","c","c"), booktabs = TRUE) %>%
     kable_styling(latex_options = "scale_down") %>%  
     add_indent(seq(1, nrow(qol_ver_df) - 1)) %>%  landscape()
@@ -1525,7 +1613,7 @@ after_QOL_table <- after_QOL %>%
 
 
 knitr::kable(after_QOL_table,
-             caption = 'Table 3.11. Baseline Survey Completion Within 30 days of QOL Survey Completion', 
+             caption = 'Table 4.11. Baseline Survey Completion Within 30 days of QOL Survey Completion', 
              booktabs=T, linesep = "", row.names=FALSE, align=c("l", "c", "c")) %>% 
   kable_styling(latex_options = "scale_down") %>% 
   footnote(general = "Note: Percentages calculated among those who were eligible but had not yet completed the survey at the time of QOL invitation.", 
@@ -1563,7 +1651,7 @@ CES_comp <- CES_comp %>%
   #bold_labels() %>%
   #italicize_levels() %>% 
   modify_header(stat_0 = "Total CES Eligible \n Participants") %>%
-  modify_caption("Table 4.1. Completion of Connect Experience Survey Among Eligible Participants") %>%
+  modify_caption("Table 5.1. Completion of Connect Experience Survey Among Eligible Participants") %>%
   as_kable_extra(escape = FALSE, addtl_fmt = TRUE)
 
  
@@ -1587,7 +1675,7 @@ CES_com_df <- create_tbl_cross2(CES_comp_BL, "completion", "CES_status", "row", 
 colnames(CES_com_df)[5] <- "Total CES Eligible \n Participants"
 
 knitr::kable(CES_com_df, 
-             caption='Table 4.2. Completion of Connect Experience Survey by Baseline Data Completeness',
+             caption='Table 5.2. Completion of Connect Experience Survey by Baseline Data Completeness',
              row.names=FALSE, align=c("l","c","c","c","c"), booktabs = TRUE) %>%
     kable_styling(latex_options = "scale_down") %>%  
     add_indent(seq(1, nrow(CES_com_df) - 1)) %>%  landscape()
@@ -1637,7 +1725,7 @@ CES_TM_table <- CES_TM[, c(1,4)]
 colnames(CES_TM_table) <- c("Completion Time", "N%")
 
 knitr::kable(CES_TM_table, 
-             caption = 'Table 4.3. Connect Experience Survey Completion Time from Start to Submit \n Among Eligible Participants', 
+             caption = 'Table 5.3. Connect Experience Survey Completion Time from Start to Submit \n Among Eligible Participants', 
              booktabs=T, linesep = "", row.names=FALSE, align=c("l", "c")) %>% 
   add_indent(c(1:(nrow(CES_TM_table)-1))) %>%  
   kable_styling(latex_options = "scale_down") #c("scale_down","hold_position"))
@@ -1667,7 +1755,7 @@ ces_notif_table = ces_notif_time %>%
 
 
 knitr::kable(ces_notif_table, 
-             caption = 'Table 4.4. Connect Experience Survey Completion from Trigger to Submit for \n Verified Participants, in Days', 
+             caption = 'Table 5.4. Connect Experience Survey Completion from Trigger to Submit for \n Verified Participants, in Days', 
              row.names=FALSE, format.args = list(big.mark = ","), linesep = "", 
              booktabs = T, align=c("l", "c", "c", "c", "c", "c", "c", "c", "c")) %>% 
   kable_styling(latex_options = c("scale_down","hold_position")) 
@@ -1761,7 +1849,7 @@ after_CES_table <- after_CES %>%
 
 
 knitr::kable(after_CES_table,
-             caption = 'Table 4.5. Baseline Survey Completion Within 30 days of CES Survey Completion', 
+             caption = 'Table 5.5. Baseline Survey Completion Within 30 days of CES Survey Completion', 
              booktabs=T, linesep = "", row.names=FALSE, align=c("l", "c", "c")) %>% 
   kable_styling(latex_options = "scale_down") %>% 
   footnote(general = "Note: Percentages calculated among those who were eligible but had not yet completed the survey at the time of CES invitation.", 
@@ -1802,7 +1890,7 @@ CSH_comp <- CSH_comp %>%
   #italicize_levels() %>% 
   modify_header(stat_0 = "Total CSH Eligible \n Participants") %>%
 
-  modify_caption("Table 5.1. Completion of Cancer Screening History Survey Among Eligible Participants") %>%
+  modify_caption("Table 6.1. Completion of Cancer Screening History Survey Among Eligible Participants") %>%
   as_kable_extra(escape = FALSE, addtl_fmt = TRUE)
 
 
@@ -1826,7 +1914,7 @@ CSH_com_df <- create_tbl_cross2(CSH_comp_BL, "completion", "CSH_status", "row", 
 colnames(CSH_com_df)[5] <- "Total CSH Eligible \n Participants"
 
 knitr::kable(CSH_com_df, 
-             caption='Table 5.2. Completion of Cancer Screening History Survey by Baseline Data Completeness',
+             caption='Table 6.2. Completion of Cancer Screening History Survey by Baseline Data Completeness',
              row.names=FALSE, align=c("l","c","c","c","c"), booktabs = TRUE) %>%
   kable_styling(latex_options = "scale_down") %>%  
   add_indent(seq(1, nrow(CSH_com_df) - 1)) %>%  landscape()
@@ -1871,7 +1959,7 @@ CSH_TM <- CSH_TM %>%
 
 
 knitr::kable(CSH_TM, 
-             caption = 'Table 5.3. Cancer Screening History Survey Completion Time from Start to Submit \n Among Eligible Participants', 
+             caption = 'Table 6.3. Cancer Screening History Survey Completion Time from Start to Submit \n Among Eligible Participants', 
              booktabs=T, linesep = "", row.names=FALSE, align=c("l", "c")) %>% 
   add_indent(c(1:(nrow(CSH_TM)-1))) %>%  
   kable_styling(latex_options = "scale_down") #c("scale_down","hold_position"))
@@ -1916,7 +2004,7 @@ CSH_notif_table = trigger_time %>%
 
 
 knitr::kable(CSH_notif_table, 
-             caption = 'Table 5.4. Cancer Screening History Survey Completion from Trigger to Submit for \n Verified Participants, in Days', 
+             caption = 'Table 6.4. Cancer Screening History Survey Completion from Trigger to Submit for \n Verified Participants, in Days', 
              row.names=FALSE, format.args = list(big.mark = ","), linesep = "", 
              booktabs = T, align=c("l", "c", "c", "c", "c", "c", "c", "c", "c")) %>% 
   kable_styling(latex_options = c("scale_down","hold_position")) 
@@ -2014,7 +2102,7 @@ after_CSH_table <- after_CSH %>%
 
 
 knitr::kable(after_CSH_table,
-             caption = 'Table 5.5. Baseline Survey Completion Within 30 days of CSH Survey Completion', 
+             caption = 'Table 6.5. Baseline Survey Completion Within 30 days of CSH Survey Completion', 
              booktabs=T, linesep = "", row.names=FALSE, align=c("l", "c", "c")) %>% 
   kable_styling(latex_options = "scale_down") %>% 
   footnote(general = "Note: Percentages calculated among those who were eligible but had not yet completed the survey at the time of CSH invitation.", 
@@ -2043,7 +2131,7 @@ csh_ver_df <- create_tbl_cross2(csh_ver, "ver_surv", "CSH_status", "row", "Time 
 
 colnames(csh_ver_df)[5] <- "Total CSH Eligible \n Participants"
 knitr::kable(csh_ver_df, 
-             caption='Table 5.6. CSH Survey Completion By Time from Verification to CSH Survey Release',
+             caption='Table 6.6. CSH Survey Completion By Time from Verification to CSH Survey Release',
              row.names=FALSE, align=c("l","c","c","c","c"), booktabs = TRUE) %>%
     kable_styling(latex_options = "scale_down") %>%  
     add_indent(seq(1, nrow(csh_ver_df) - 1)) %>%  landscape()
@@ -2074,7 +2162,7 @@ pref_lang_site <- all_data %>%
     missing="ifany",
     margin_text="Total") %>% 
   modify_header(stat_0 = "Total") %>%
-  modify_caption("Table 6.1. Preferred Language by Site") %>%
+  modify_caption("Table 7.1. Preferred Language by Site") %>%
   as_kable_extra(escape = FALSE, addtl_fmt = TRUE) %>%  
   kable_styling(latex_options = "scale_down") 
 
@@ -2233,7 +2321,7 @@ scenario_counts <- final_scenarios %>%
   dplyr::rename(Scenario = scenario, 'Total Participants' = n)
 
 consist <- knitr::kable(scenario_counts,
-                        caption = "Table 6.2. Consistency of Language Choice in Survey Completion",
+                        caption = "Table 7.2. Consistency of Language Choice in Survey Completion",
                         row.names = FALSE, align = c("l", "c"), digits = 2, booktabs = TRUE) %>%
   kable_styling(latex_options = "scale_down") # c("scale_down","hold_position")) 
 
@@ -2325,19 +2413,19 @@ final_df_condition2 <- do.call(rbind, all_flags_list_condition2)
 
 
 knitr::kable(final_df_overall,
-               caption = paste0("Table 6.3. Survey Completion by Survey Language \n Among All Participants"),
+               caption = paste0("Table 7.3. Survey Completion by Survey Language \n Among All Participants"),
                row.names = FALSE, align = c("l","c","c","c"), digits = 2, booktabs = TRUE) %>% 
   add_indent(1:12) %>%  
   kable_styling(latex_options = "scale_down")
 
 knitr::kable(final_df_condition1,
-               caption = paste0("Table 6.3.a. Survey Completion by Survey Language \n Among Participants with Preferred language of Spanish"),
+               caption = paste0("Table 7.3.a. Survey Completion by Survey Language \n Among Participants with Preferred language of Spanish"),
                row.names = FALSE, align = c("l","c","c","c"), digits = 2, booktabs = TRUE) %>% 
   add_indent(1:12) %>%  
   kable_styling(latex_options = "scale_down")
 
 knitr::kable(final_df_condition2,
-               caption = paste0("Table 6.3.b. Survey Completion by Survey Language \n Among Participants with Preferred language of English"),
+               caption = paste0("Table 7.3.b. Survey Completion by Survey Language \n Among Participants with Preferred language of English"),
                row.names = FALSE, align = c("l","c","c","c"), digits = 2, booktabs = TRUE) %>% 
   add_indent(1:12) %>%  
   kable_styling(latex_options = "scale_down")
@@ -2392,12 +2480,12 @@ colnames(BL_lang_E)[1] <- "Section"
 colnames(BL_lang_SP)[1] <- "Section"
 
 knitr::kable(BL_lang_E, format.args = list(big.mark = ","), digits=2, 
-             caption='Table 6.4.a Time (in minutes) from Start to Submit of Initial Survey Modules for English',
+             caption='Table 7.4.a Time (in minutes) from Start to Submit of Initial Survey Modules for English',
              row.names=FALSE, align=c("l","c","c","c","c","c","c","c","c"), booktabs = TRUE)%>% 
     kable_styling(latex_options = c("scale_down","hold_position")) 
 
 knitr::kable(BL_lang_SP, format.args = list(big.mark = ","), digits=2, 
-             caption='Table 6.5.b Time (in minutes) from Start to Submit of Initial Survey Modules for Spanish',
+             caption='Table 7.4.b Time (in minutes) from Start to Submit of Initial Survey Modules for Spanish',
              row.names=FALSE, align=c("l","c","c","c","c","c","c","c","c"),booktabs = TRUE)%>% 
     kable_styling(latex_options = c("scale_down","hold_position")) 
 
