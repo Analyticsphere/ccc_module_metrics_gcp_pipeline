@@ -183,7 +183,7 @@ m1_complete_nodup$Connect_ID <- as.numeric(m1_complete_nodup$Connect_ID)
 
 
 ### Define requirements of the data: active or passive,  user profile done, consented, mod1 done, verified
-parts <- "SELECT Connect_ID, token, d_564964481,d_795827569, d_544150384
+parts <- "SELECT Connect_ID, token, d_564964481,d_795827569, d_544150384, d_827220437
 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` 
 where Connect_ID IS NOT NULL and (d_512820379='486306141' OR d_512820379='854703046') and d_821247024='197316935' and
 (d_919254129='353358909') and (d_699625233='353358909') and (d_949302066='231311385')"
@@ -439,83 +439,6 @@ simple_funct(D_783167257, "MARITAL: Marital Status")
 
 ## Race, and Ethnicity
 ```{r race, warning=FALSE, echo=FALSE, message=FALSE}
-# all_races <- c("D_384191091_D_384191091_D_178420302", "D_384191091_D_384191091_D_583826374", "D_384191091_D_384191091_D_636411467", "D_384191091_D_384191091_D_458435048",
-#                "D_384191091_D_384191091_D_706998638", "D_384191091_D_384191091_D_973565052", "D_384191091_D_384191091_D_586825330","D_384191091_D_384191091_D_412790539", 
-#                "D_384191091_D_384191091_D_807835037", "D_384191091_D_747350323", "D_384191091_D_384191091_D_746038746")
-# 
-# 
-# which_race <- module1 %>%
-#   rowwise() %>%
-#   mutate(
-#     num_race_responses = sum(c_across(all_of(all_races)) %>% as.numeric(), na.rm = TRUE),
-#     multi_racial = ifelse(num_race_responses > 1, 1, 0)
-#   ) %>%
-#   ungroup()
-# 
-# 
-# 
-# 
-# 
-# which_race <- module1 %>%
-#   group_by(Connect_ID) %>%
-#   mutate(
-#     num_race_responses = sum(all_of(all_races=="1"), na.rm = TRUE),
-#     multi_racial = ifelse(num_race_responses > 1, 1, 0)
-#   ) %>%
-#   ungroup()
-
-
-
-# 
-# ## Multi-racial
-# 
-# multi_race=0    
-# for (i in 1:length(module1$Connect_ID)){
-#   AI=ifelse((module1$D_384191091_D_384191091_D_583826374[[i]]=='1' & (module1$D_384191091_D_384191091_D_636411467[[i]]=='1' | module1$D_384191091_D_384191091_D_458435048[[i]]=='1'|
-#                                                module1$D_384191091_D_384191091_D_706998638[[i]]=='1' | module1$D_384191091_D_384191091_D_973565052[[i]]=='1' |
-#                                                module1$D_384191091_D_384191091_D_586825330[[i]]=='1' | module1$D_384191091_D_384191091_D_412790539[[i]]=='1' |
-#                                                module1$D_384191091_D_384191091_D_807835037[[i]]=='1' | module1$D_384191091_D_384191091_D_178420302[[i]]=='1')), 1, 0)
-#   As=ifelse((module1$D_384191091_D_384191091_D_636411467[[i]]=='1' & (module1$D_384191091_D_384191091_D_583826374[[i]]=='1' | module1$D_384191091_D_384191091_D_458435048[[i]]=='1'|
-#                                                         module1$D_384191091_D_384191091_D_706998638[[i]]=='1' | module1$D_384191091_D_384191091_D_973565052[[i]]=='1' |
-#                                                         module1$D_384191091_D_384191091_D_586825330[[i]]=='1' | module1$D_384191091_D_384191091_D_412790539[[i]]=='1' |
-#                                                         module1$D_384191091_D_384191091_D_807835037[[i]]=='1' | module1$D_384191091_D_384191091_D_178420302[[i]]=='1')), 1, 0)
-#   Bl=ifelse((module1$D_384191091_D_384191091_D_458435048[[i]]=='1' & (module1$D_384191091_D_384191091_D_583826374[[i]]=='1' | module1$D_384191091_D_384191091_D_636411467[[i]]=='1'|
-#                                                         module1$D_384191091_D_384191091_D_706998638[[i]]=='1' | module1$D_384191091_D_384191091_D_973565052[[i]]=='1' |
-#                                                         module1$D_384191091_D_384191091_D_586825330[[i]]=='1' | module1$D_384191091_D_384191091_D_412790539[[i]]=='1' |
-#                                                         module1$D_384191091_D_384191091_D_807835037[[i]]=='1' | module1$D_384191091_D_384191091_D_178420302[[i]]=='1')), 1, 0)
-#   Hs=ifelse((module1$D_384191091_D_384191091_D_706998638[[i]]=='1' & (module1$D_384191091_D_384191091_D_583826374[[i]]=='1' | module1$D_384191091_D_384191091_D_636411467[[i]]=='1'|
-#                                                         module1$D_384191091_D_384191091_D_458435048[[i]]=='1' | module1$D_384191091_D_384191091_D_973565052[[i]]=='1' |
-#                                                         module1$D_384191091_D_384191091_D_586825330[[i]]=='1' | module1$D_384191091_D_384191091_D_412790539[[i]]=='1' |
-#                                                         module1$D_384191091_D_384191091_D_807835037[[i]]=='1' | module1$D_384191091_D_384191091_D_178420302[[i]]=='1')), 1, 0)
-#   Me=ifelse((module1$D_384191091_D_384191091_D_973565052[[i]]=='1' & (module1$D_384191091_D_384191091_D_583826374[[i]]=='1' | module1$D_384191091_D_384191091_D_636411467[[i]]=='1'|
-#                                                         module1$D_384191091_D_384191091_D_458435048[[i]]=='1' | module1$D_384191091_D_384191091_D_706998638[[i]]=='1' |
-#                                                         module1$D_384191091_D_384191091_D_586825330[[i]]=='1' | module1$D_384191091_D_384191091_D_412790539[[i]]=='1' |
-#                                                         module1$D_384191091_D_384191091_D_807835037[[i]]=='1' | module1$D_384191091_D_384191091_D_178420302[[i]]=='1')), 1, 0)
-#   Hw=ifelse((module1$D_384191091_D_384191091_D_586825330[[i]]=='1' & (module1$D_384191091_D_384191091_D_583826374[[i]]=='1' | module1$D_384191091_D_384191091_D_636411467[[i]]=='1'|
-#                                                         module1$D_384191091_D_384191091_D_458435048[[i]]=='1' | module1$D_384191091_D_384191091_D_706998638[[i]]=='1' |
-#                                                         module1$D_384191091_D_384191091_D_973565052[[i]]=='1' | module1$D_384191091_D_384191091_D_412790539[[i]]=='1' |
-#                                                         module1$D_384191091_D_384191091_D_807835037[[i]]=='1' | module1$D_384191091_D_384191091_D_178420302[[i]]=='1')), 1, 0)
-#   Wh=ifelse((module1$D_384191091_D_384191091_D_412790539[[i]]=='1' & (module1$D_384191091_D_384191091_D_583826374[[i]]=='1' | module1$D_384191091_D_384191091_D_636411467[[i]]=='1'|
-#                                                         module1$D_384191091_D_384191091_D_458435048[[i]]=='1' | module1$D_384191091_D_384191091_D_706998638[[i]]=='1' |
-#                                                         module1$D_384191091_D_384191091_D_586825330[[i]]=='1' | module1$D_384191091_D_384191091_D_973565052[[i]]=='1' |
-#                                                         module1$D_384191091_D_384191091_D_807835037[[i]]=='1' | module1$D_384191091_D_384191091_D_178420302[[i]]=='1')), 1, 0)
-#   Ot=ifelse((module1$D_384191091_D_384191091_D_807835037[[i]]=='1' & (module1$D_384191091_D_384191091_D_583826374[[i]]=='1' | module1$D_384191091_D_384191091_D_636411467[[i]]=='1'|
-#                                                         module1$D_384191091_D_384191091_D_458435048[[i]]=='1' | module1$D_384191091_D_384191091_D_706998638[[i]]=='1' |
-#                                                         module1$D_384191091_D_384191091_D_586825330[[i]]=='1' | module1$D_384191091_D_384191091_D_973565052[[i]]=='1' |
-#                                                         module1$D_384191091_D_384191091_D_412790539[[i]]=='1' | module1$D_384191091_D_384191091_D_178420302[[i]]=='1')), 1, 0)
-#   Uk=ifelse((module1$D_384191091_D_384191091_D_178420302[[i]]=='1' & (module1$D_384191091_D_384191091_D_583826374[[i]]=='1' | module1$D_384191091_D_384191091_D_458435048[[i]]=='1'|
-#                                                         module1$D_384191091_D_384191091_D_706998638[[i]]=='1' | module1$D_384191091_D_384191091_D_973565052[[i]]=='1' |
-#                                                         module1$D_384191091_D_384191091_D_586825330[[i]]=='1' | module1$D_384191091_D_384191091_D_412790539[[i]]=='1' |
-#                                                         module1$D_384191091_D_384191091_D_807835037[[i]]=='1' | module1$D_384191091_D_384191091_D_636411467[[i]]=='1')), 1, 0)
-#   multi_race= multi_race + sum(AI+As+Bl+Hs+Me+Hw+Wh+Ot+Uk, na.rm=T)
-# 
-# }
-# 
-#   
-# 
-# module1$multi_racial <- c(rep(1, times=multi_race), rep(0, times=(dim(module1)[1]- multi_race)))
-
-
 
 ## RACE
 
@@ -533,7 +456,7 @@ module1[race_columns] <- lapply(module1[race_columns], as.numeric)
 module1$multi_racial <- ifelse(rowSums(module1[race_columns], na.rm = TRUE) > 1, 1, 0)
 
 
-which_race= module1 %>%  mutate(race= case_when(multi_racial==1 ~ "Multi-Racial",
+module1 <- module1 %>%  mutate(race= case_when(multi_racial==1 ~ "Multi-Racial",
                                                      D_384191091_D_384191091_D_583826374==1 ~ "American Indian or Native American",
                                                      D_384191091_D_384191091_D_636411467==1 ~ "Asian/Asian American",
                                                      D_384191091_D_384191091_D_458435048==1 ~ "Black, African American, or African",
@@ -546,7 +469,7 @@ which_race= module1 %>%  mutate(race= case_when(multi_racial==1 ~ "Multi-Racial"
                                                     D_384191091_D_384191091_D_178420302==1 ~ "Unknown",
                                                      TRUE  ~ "Skipped this question "))
 
-dt_all_races_summary <- which_race  %>% dplyr::group_by(race) %>% dplyr::summarize(n=n(), percentage=100*n/nrow(.)) %>% dplyr::ungroup()  %>%  dplyr::select(race, n, percentage)
+dt_all_races_summary <- module1  %>% dplyr::group_by(race) %>% dplyr::summarize(n=n(), percentage=100*n/nrow(.)) %>% dplyr::ungroup()  %>%  dplyr::select(race, n, percentage)
 
 dt_all_races_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
   fmt_number(columns = "percentage", decimals = 2) %>% 
@@ -566,6 +489,41 @@ dt_all_races_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   ) 
 
 ```
+
+
+```{r, warning=FALSE, echo=FALSE, message=FALSE}
+
+module1 <- module1 %>%  mutate(Site = case_when(d_827220437==472940358 ~ "Baylor Scott and White Health",
+                                                  d_827220437==125001209 ~ "KP Colorado",
+                                                  d_827220437==327912200 ~ "KP Georgia",
+                                                  d_827220437==300267574 ~ "KP Hawaii",
+                                                  d_827220437==452412599 ~ "KP Northwest",
+                                                  d_827220437==548392715 ~ "Henry Ford",
+                                                  d_827220437==531629870 ~ "HealthPartners",
+                                                  d_827220437==303349821 ~ "Marshfield",
+                                                  d_827220437==657167265 ~ "Sanford",
+                                                  d_827220437==809703864 ~ "UChicago"))
+
+sex_by_site <- module1 %>% 
+  tbl_cross(
+    col = Site,
+    row = race,
+    digits=c(0,1),
+    percent = "column",
+    label=list(race="Race",
+                Site = "Site"),
+    missing="ifany",
+    margin_text="Total") %>% 
+  modify_header(stat_0 = "Total") %>%
+  modify_caption("Race/Ethnicity of Participants by Site") %>%
+  as_kable_extra(escape = FALSE, addtl_fmt = TRUE) %>%  
+  kable_styling(latex_options = "scale_down") 
+
+add_footnote(sex_by_site, "Note: 'Multi-racial' is defined as a participant that selects multiple races. 'Other' is defined as a participant that selects other.",
+             notation="none")
+
+```
+
 
 ```{r RacePieChart, include=FALSE}
 
@@ -649,7 +607,7 @@ dt_am_ind_ethn_summary %>%  gt::gt(rowname_col = "row_lab") %>%
     )
   )  %>%
   tab_footnote(
-    footnote = md("The denomination of this table is all participants who selected this race/etnicity only, as well as multi-racial participants that selected this race/ethnicity as well as other race/ethnicities."),
+    footnote = md("The denomination of this table is all participants who selected this race/ethnicity only, as well as multi-racial participants that selected this race/ethnicity as well as other race/ethnicities."),
   locations = cells_column_labels(columns = n),
   placement = c("left")
 ) %>%
@@ -701,7 +659,7 @@ dt_asian_summary %>%  gt::gt(rowname_col = "row_lab") %>%
     )
   )  %>%
   tab_footnote(
-    footnote = md("The denomination of this table is all participants who selected this race/etnicity only, as well as multi-racial participants that selected this race/ethnicity as well as other race/ethnicities."),
+    footnote = md("The denomination of this table is all participants who selected this race/ethnicity only, as well as multi-racial participants that selected this race/ethnicity as well as other race/ethnicities."),
   locations = cells_column_labels(columns = n),
   placement = c("left")
 ) %>%
@@ -757,7 +715,7 @@ dt_black_summary %>%  gt::gt(rowname_col = "row_lab") %>%
     )
   )  %>%
   tab_footnote(
-    footnote = md("The denomination of this table is all participants who selected this race/etnicity only, as well as multi-racial participants that selected this race/ethnicity as well as other race/ethnicities."),
+    footnote = md("The denomination of this table is all participants who selected this race/ethnicity only, as well as multi-racial participants that selected this race/ethnicity as well as other race/ethnicities."),
   locations = cells_column_labels(columns = n),
   placement = c("left")
 ) %>%
@@ -809,7 +767,7 @@ dt_ethnic4 <- dt_hisp_summary %>%  gt::gt(rowname_col = "row_lab") %>%
     )
   )  %>%
   tab_footnote(
-    footnote = md("The denomination of this table is all participants who selected this race/etnicity only, as well as multi-racial participants that selected this race/ethnicity as well as other race/ethnicities."),
+    footnote = md("The denomination of this table is all participants who selected this race/ethnicity only, as well as multi-racial participants that selected this race/ethnicity as well as other race/ethnicities."),
   locations = cells_column_labels(columns = n),
   placement = c("left")
 ) %>%
@@ -863,7 +821,7 @@ dt_mideast_summary %>%  gt::gt(rowname_col = "row_lab") %>%
     )
   )  %>%
   tab_footnote(
-    footnote = md("The denomination of this table is all participants who selected this race/etnicity only, as well as multi-racial participants that selected this race/ethnicity as well as other race/ethnicities."),
+    footnote = md("The denomination of this table is all participants who selected this race/ethnicity only, as well as multi-racial participants that selected this race/ethnicity as well as other race/ethnicities."),
   locations = cells_column_labels(columns = n),
   placement = c("left")
 ) %>%
@@ -914,7 +872,7 @@ dt_hawi_summary <- which_eth %>% group_by(ethnicity) %>% dplyr::summarize(n=n(),
     )
   )  %>%
   tab_footnote(
-    footnote = md("The denomination of this table is all participants who selected this race/etnicity only, as well as multi-racial participants that selected this race/ethnicity as well as other race/ethnicities."),
+    footnote = md("The denomination of this table is all participants who selected this race/ethnicity only, as well as multi-racial participants that selected this race/ethnicity as well as other race/ethnicities."),
   locations = cells_column_labels(columns = n),
   placement = c("left")
 ) %>%
@@ -933,7 +891,7 @@ dt_white= dt_white %>%  mutate(multb2 = ifelse(D_797626610_D_797626610_D_6645715
 
 
 which_eth= dt_white %>%  mutate(ethnicity= case_when(as.numeric(multb2)>1 ~ "Multi-Ethnic",
-                                                     D_797626610_D_797626610_D_664571574==1 ~ "Ducth",
+                                                     D_797626610_D_797626610_D_664571574==1 ~ "Dutch",
                                              D_797626610_D_797626610_D_163149180==1 ~ "English",
                                              D_797626610_D_797626610_D_192776753==1 ~ "European",
                                              D_797626610_D_797626610_D_733789220==1 ~ "French",
@@ -968,7 +926,7 @@ dt_white_summary %>%  gt::gt(rowname_col = "row_lab") %>%
     )
   )  %>%
   tab_footnote(
-    footnote = md("The denomination of this table is all participants who selected this race/etnicity only, as well as multi-racial participants that selected this race/ethnicity as well as other race/ethnicities."),
+    footnote = md("The denomination of this table is all participants who selected this race/ethnicity only, as well as multi-racial participants that selected this race/ethnicity as well as other race/ethnicities."),
   locations = cells_column_labels(columns = n),
   placement = c("left")
 ) %>%
@@ -1141,11 +1099,17 @@ dt_language_summary %>%  gt::gt(rowname_col = "row_lab") %>%
 
 
 
-## Sex at Birth, Body Parts
+## Sex, Body Parts
 ```{r SMG, warning=FALSE, echo=FALSE, message=FALSE}
 
 
-simple_funct(D_407056417, "Sex at Birth")
+sex_table <- simple_funct(D_407056417, "Sex")
+
+sex_table %>%
+  tab_footnote(
+    footnote = md("This became an optional question on 1/31/2025."),
+  placement = c("left")
+) 
 
 
 
@@ -1232,18 +1196,27 @@ dt_sex2_summary %>%  gt::gt(rowname_col = "row_lab") %>%
     locations = cells_body(
       columns = body_part,
     )
-  ) 
+  ) %>%
+  tab_footnote(
+    footnote = md("This became a required question on 1/31/2025."),
+  placement = c("left")
+)  %>%
+  tab_footnote(
+    footnote = md("'Multiple Body Parts' is defined as a participant selecting more than one body part."),
+    locations = cells_column_labels(columns = body_part),
+  placement = c("left")
+) 
 
 
 
 
 ## these were deprecated in accordance with the executive order
 #Appearance/Style
-data_tib_m1$D_987107433 <- factor(data_tib_m1$D_987107433, levels=c(220083334,541300533,878286618,910745276,510148951,265452386,915528806,746038746, "Skipped this Question"))
+#data_tib_m1$D_987107433 <- factor(data_tib_m1$D_987107433, levels=c(220083334,541300533,878286618,910745276,510148951,265452386,915528806,746038746, "Skipped this Question"))
 #simple_funct(D_987107433, "STYLE: Appearence, Style, Dress, Mannerisms")
 
 
-data_tib_m1$D_555481393_D_555481393 <- factor(data_tib_m1$D_555481393_D_555481393, levels=c(271882746,903084185,999994434,727200870,854349138,832978839,197935377,410008111,831942158,210894509,807835037,178420302,746038746, "Skipped this Question"))
+#data_tib_m1$D_555481393_D_555481393 <- factor(data_tib_m1$D_555481393_D_555481393, levels=c(271882746,903084185,999994434,727200870,854349138,832978839,197935377,410008111,831942158,210894509,807835037,178420302,746038746, "Skipped this Question"))
 #simple_funct(D_555481393_D_555481393, "SEXORIET: Sexual Orienation")
 #data_tib_m1 %>%  select(D_555481393_D_979809707) %>% filter(!is.na(D_555481393_D_979809707)) %>% gt::gt() %>% cols_label(D_555481393_D_979809707= md("**Response for 'Other' Sexual Orientation**"))
 
@@ -3791,14 +3764,14 @@ hist_funct(D_694265648, "Number of Siblings", "Siblings", "Frequency")
 
 
 
-sib_logic_funct(D_579563781_1_1, 1, "SIB2_1: Sibling 1 Sex at Birth")
-sib_logic_funct(D_579563781_2_2, 2, "SIB2_2: Sibling 2 Sex at Birth")
-sib_logic_funct(D_579563781_3_3, 3, "SIB2_3: Sibling 3 Sex at Birth")
-sib_logic_funct(D_579563781_4_4, 4, "SIB2_4: Sibling 4 Sex at Birth")
-sib_logic_funct(D_579563781_5_5, 5, "SIB2_5: Sibling 5 Sex at Birth")
-sib_logic_funct(D_579563781_6_6, 6, "SIB2_6: Sibling 6 Sex at Birth")
-sib_logic_funct(D_579563781_7_7, 7, "SIB2_7: Sibling 7 Sex at Birth")
-sib_logic_funct(D_579563781_8_8, 8, "SIB2_8: Sibling 8 Sex at Birth")
+sib_logic_funct(D_579563781_1_1, 1, "SIB2_1: Sibling 1 Sex")
+sib_logic_funct(D_579563781_2_2, 2, "SIB2_2: Sibling 2 Sex")
+sib_logic_funct(D_579563781_3_3, 3, "SIB2_3: Sibling 3 Sex")
+sib_logic_funct(D_579563781_4_4, 4, "SIB2_4: Sibling 4 Sex")
+sib_logic_funct(D_579563781_5_5, 5, "SIB2_5: Sibling 5 Sex")
+sib_logic_funct(D_579563781_6_6, 6, "SIB2_6: Sibling 6 Sex")
+sib_logic_funct(D_579563781_7_7, 7, "SIB2_7: Sibling 7 Sex")
+sib_logic_funct(D_579563781_8_8, 8, "SIB2_8: Sibling 8 Sex")
 
 
 
@@ -4905,14 +4878,14 @@ grid.arrange(sib6_c33, sib6_c34, nrow=2)
 hist_funct(D_446999144, "Number of Children", "Children", "Frequency")
 
 
-child_logic_funct(D_887697329_1_1, 1, "CHILD2_1: Child 1 Sex at Birth")
-child_logic_funct(D_887697329_2_2, 2, "CHILD2_2: Child 2 Sex at Birth")
-child_logic_funct(D_887697329_3_3, 3, "CHILD2_3: Child 3 Sex at Birth")
-child_logic_funct(D_887697329_4_4, 4, "CHILD2_4: Child 4 Sex at Birth")
-child_logic_funct(D_887697329_5_5, 5, "CHILD2_5: Child 5 Sex at Birth")
-child_logic_funct(D_887697329_6_6, 6, "CHILD2_6: Child 6 Sex at Birth")
-child_logic_funct(D_887697329_7_7, 7, "CHILD2_7: Child 7 Sex at Birth")
-child_logic_funct(D_887697329_8_8, 8, "CHILD2_8: Child 8 Sex at Birth")
+child_logic_funct(D_887697329_1_1, 1, "CHILD2_1: Child 1 Sex")
+child_logic_funct(D_887697329_2_2, 2, "CHILD2_2: Child 2 Sex")
+child_logic_funct(D_887697329_3_3, 3, "CHILD2_3: Child 3 Sex")
+child_logic_funct(D_887697329_4_4, 4, "CHILD2_4: Child 4 Sex")
+child_logic_funct(D_887697329_5_5, 5, "CHILD2_5: Child 5 Sex")
+child_logic_funct(D_887697329_6_6, 6, "CHILD2_6: Child 6 Sex")
+child_logic_funct(D_887697329_7_7, 7, "CHILD2_7: Child 7 Sex")
+child_logic_funct(D_887697329_8_8, 8, "CHILD2_8: Child 8 Sex")
 
 
 

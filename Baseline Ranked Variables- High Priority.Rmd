@@ -255,7 +255,7 @@ boxp_funct <- function(CID,Title, Xlab) {
     filter(!is.na(!!CID_SYM)) %>%
     ggplot(aes(x=!!CID_SYM))+
     xlab(Xlab) + geom_boxplot()+  ggtitle(Title)+
-    scale_fill_discrete(name = "Sex at Birth") + 
+    scale_fill_discrete(name = "Sex") + 
     scale_y_continuous(labels = scales::number_format(accuracy = 0.01))
 }
 
@@ -992,7 +992,7 @@ dt_white_summary %>%  gt::gt(rowname_col = "row_lab") %>%
 #levels_list <- c("Female", "Male", "Unknown", "Skipped this Question")
 data_tib_base$D_407056417 <- factor(data_tib_base$D_407056417,levels=c( 536341288,654207589, 576796184, "Skipped this Question"))
 
-simple_funct1(D_407056417, "Sex at birth")
+simple_funct1(D_407056417, "Sex")
 
 
 
@@ -2204,7 +2204,7 @@ data_tib_all3 <- as_tibble(data_all3)
 #     ggplot(aes(x=!!CID_SYM)) + #, fill=as.factor(D_407056417)))+
 #     xlab(Xlab) + ylab(Ylab) +  ggtitle(Title)+
 #     geom_histogram(color="black")+ scale_y_continuous(breaks=pretty_breaks()) +
-#     #scale_fill_discrete(name = "Sex at Birth", labels=c("Female", "Male"))+
+#     #scale_fill_discrete(name = "Sex", labels=c("Female", "Male"))+
 #     geom_vline(aes(xintercept=mean(!!CID_SYM, na.rm=T)), colour="#2973A5", linetype="solid")
 #   
 # }
@@ -2217,7 +2217,7 @@ data_tib_all3 <- as_tibble(data_all3)
 #     filter(!is.na(!!CID_SYM)) %>%
 #     ggplot(aes(x=!!CID_SYM)) + #, fill=as.factor(D_407056417)))+
 #     xlab(Xlab) + geom_boxplot()+  ggtitle(Title)
-#     #scale_fill_discrete(name = "Sex at Birth", labels=c("Female", "Male"))
+#     #scale_fill_discrete(name = "Sex", labels=c("Female", "Male"))
 # }
 
 
@@ -2226,7 +2226,7 @@ data_tib_all3 <- as_tibble(data_all3)
 #   CID_SYM <- rlang::ensym(CID)
 # data_all3 %>% filter(!is.na(!!CID_SYM)) %>% ggplot(aes(x=!!CID_SYM)) +geom_bar()+ 
 #   ggtitle(Title)+xlab(Xlab)+ylab("Frequency") + 
-#   #scale_fill_discrete(name = "Sex at Birth", labels=c("Female", "Male")) +
+#   #scale_fill_discrete(name = "Sex", labels=c("Female", "Male")) +
 #   scale_x_discrete(labels=c("151488193"="10 or less", 
 #                             "805449318"="11-49",
 #                             "486319890"="50-99",
@@ -2243,7 +2243,7 @@ data_tib_all3 <- as_tibble(data_all3)
 #                               "299561721"="Yes, but rarely",
 #                               "716761013"="Yes, but some days",
 #                               "804785430"="Yes, every day"))
-#     #scale_fill_discrete(name = "Sex at Birth", labels=c("Female", "Male"))
+#     #scale_fill_discrete(name = "Sex", labels=c("Female", "Male"))
 # }
 # 
 # #Bar--time frame used
@@ -2254,7 +2254,7 @@ data_tib_all3 <- as_tibble(data_all3)
 #   scale_x_discrete(labels=c("317567178"="In the past month", 
 #                             "484055234"="In the past year",
 #                             "802197176"="More than a year"))
-#   #scale_fill_discrete(name = "Sex at Birth", labels=c("Female", "Male"))
+#   #scale_fill_discrete(name = "Sex", labels=c("Female", "Male"))
 # }
 # 
 # #Bar--time spent using
@@ -2268,7 +2268,7 @@ data_tib_all3 <- as_tibble(data_all3)
 #                             "998679771"="31-59 min.",
 #                             "638092100"="1 hr",
 #                             "127455035"="2+ hrs"))
-#   #scale_fill_discrete(name = "Sex at Birth", labels=c("Female", "Male"))
+#   #scale_fill_discrete(name = "Sex", labels=c("Female", "Male"))
 # }
 
 
