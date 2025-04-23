@@ -163,7 +163,9 @@ knitr::opts_chunk$set(comment = NA)
 
 
 
-parts <- "SELECT Connect_ID, d_564964481, d_795827569, d_544150384, d_117249500, d_454445267,d_949302066 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` where Connect_ID IS NOT NULL and d_821247024='197316935' and d_747006172!='353358909' and d_831041022!='353358909'" 
+parts <- "SELECT Connect_ID, d_564964481, d_795827569, d_544150384, d_117249500, d_454445267,d_949302066 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` where Connect_ID IS NOT NULL and 
+d_821247024='197316935' and d_747006172!='353358909' and d_831041022!='353358909' and
+DATE(d_914594314) < '2024-10-01'" 
 parts_table <- bq_project_query(project, parts)
 parts_data <- bq_table_download(parts_table, bigint = "integer64",n_max = Inf, page_size = 10000)
 
@@ -181,50 +183,19 @@ dim(irb)
 
 
 ## Multi-racial
+race_columns <- c("D_384191091_D_384191091_D_583826374", 
+                  "D_384191091_D_384191091_D_636411467",
+                  "D_384191091_D_384191091_D_458435048",
+                  "D_384191091_D_384191091_D_706998638",
+                  "D_384191091_D_384191091_D_973565052",
+                  "D_384191091_D_384191091_D_586825330",
+                  "D_384191091_D_384191091_D_412790539",
+                  "D_384191091_D_384191091_D_807835037")
 
-multi_race=0    
-for (i in 1:length(irb$Connect_ID)){
-  AI=ifelse((irb$D_384191091_D_384191091_D_583826374[[i]]==1 & (irb$D_384191091_D_384191091_D_636411467[[i]]==1 | irb$D_384191091_D_384191091_D_458435048[[i]]==1|
-                                               irb$D_384191091_D_384191091_D_706998638[[i]]==1 | irb$D_384191091_D_384191091_D_973565052[[i]]==1 |
-                                               irb$D_384191091_D_384191091_D_586825330[[i]]==1 | irb$D_384191091_D_384191091_D_412790539[[i]]==1 |
-                                               irb$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  As=ifelse((irb$D_384191091_D_384191091_D_636411467[[i]]==1 & (irb$D_384191091_D_384191091_D_583826374[[i]]==1 | irb$D_384191091_D_384191091_D_458435048[[i]]==1|
-                                                        irb$D_384191091_D_384191091_D_706998638[[i]]==1 | irb$D_384191091_D_384191091_D_973565052[[i]]==1 |
-                                                        irb$D_384191091_D_384191091_D_586825330[[i]]==1 | irb$D_384191091_D_384191091_D_412790539[[i]]==1 |
-                                                        irb$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  Bl=ifelse((irb$D_384191091_D_384191091_D_458435048[[i]]==1 & (irb$D_384191091_D_384191091_D_583826374[[i]]==1 | irb$D_384191091_D_384191091_D_636411467[[i]]==1|
-                                                        irb$D_384191091_D_384191091_D_706998638[[i]]==1 | irb$D_384191091_D_384191091_D_973565052[[i]]==1 |
-                                                        irb$D_384191091_D_384191091_D_586825330[[i]]==1 | irb$D_384191091_D_384191091_D_412790539[[i]]==1 |
-                                                        irb$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  Hs=ifelse((irb$D_384191091_D_384191091_D_706998638[[i]]==1 & (irb$D_384191091_D_384191091_D_583826374[[i]]==1 | irb$D_384191091_D_384191091_D_636411467[[i]]==1|
-                                                        irb$D_384191091_D_384191091_D_458435048[[i]]==1 | irb$D_384191091_D_384191091_D_973565052[[i]]==1 |
-                                                        irb$D_384191091_D_384191091_D_586825330[[i]]==1 | irb$D_384191091_D_384191091_D_412790539[[i]]==1 |
-                                                        irb$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  Me=ifelse((irb$D_384191091_D_384191091_D_973565052[[i]]==1 & (irb$D_384191091_D_384191091_D_583826374[[i]]==1 | irb$D_384191091_D_384191091_D_636411467[[i]]==1|
-                                                        irb$D_384191091_D_384191091_D_458435048[[i]]==1 | irb$D_384191091_D_384191091_D_706998638[[i]]==1 |
-                                                        irb$D_384191091_D_384191091_D_586825330[[i]]==1 | irb$D_384191091_D_384191091_D_412790539[[i]]==1 |
-                                                        irb$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  Hw=ifelse((irb$D_384191091_D_384191091_D_586825330[[i]]==1 & (irb$D_384191091_D_384191091_D_583826374[[i]]==1 | irb$D_384191091_D_384191091_D_636411467[[i]]==1|
-                                                        irb$D_384191091_D_384191091_D_458435048[[i]]==1 | irb$D_384191091_D_384191091_D_706998638[[i]]==1 |
-                                                        irb$D_384191091_D_384191091_D_973565052[[i]]==1 | irb$D_384191091_D_384191091_D_412790539[[i]]==1 |
-                                                        irb$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  Wh=ifelse((irb$D_384191091_D_384191091_D_412790539[[i]]==1 & (irb$D_384191091_D_384191091_D_583826374[[i]]==1 | irb$D_384191091_D_384191091_D_636411467[[i]]==1|
-                                                        irb$D_384191091_D_384191091_D_458435048[[i]]==1 | irb$D_384191091_D_384191091_D_706998638[[i]]==1 |
-                                                        irb$D_384191091_D_384191091_D_586825330[[i]]==1 | irb$D_384191091_D_384191091_D_973565052[[i]]==1 |
-                                                        irb$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  Ot=ifelse((irb$D_384191091_D_384191091_D_807835037[[i]]==1 & (irb$D_384191091_D_384191091_D_583826374[[i]]==1 | irb$D_384191091_D_384191091_D_636411467[[i]]==1|
-                                                        irb$D_384191091_D_384191091_D_458435048[[i]]==1 | irb$D_384191091_D_384191091_D_706998638[[i]]==1 |
-                                                        irb$D_384191091_D_384191091_D_586825330[[i]]==1 | irb$D_384191091_D_384191091_D_973565052[[i]]==1 |
-                                                        irb$D_384191091_D_384191091_D_412790539[[i]]==1)), 1, 0)
-  multi_race= multi_race + sum(AI+As+Bl+Hs+Me+Hw+Wh+Ot, na.rm=T)
+# All data is currently string values, need to convert "1" and "0" to 1 and 0 to be summarized
+irb[race_columns] <- lapply(irb[race_columns], as.numeric)
 
-}
-
-#cat("Percentage of multirace participants:", (multi_race/(dim(irb)[1]))*100)
-   
-   
-
-irb$multi_racial <- c(rep(1, times=multi_race), rep(0, times=(dim(irb)[1]- multi_race)))
+irb$multi_racial <- ifelse(rowSums(irb[race_columns], na.rm = TRUE) > 1, 1, 0)
 
 
 
@@ -266,15 +237,16 @@ irb = irb %>%  mutate(race= case_when(d_949302066==231311385 & multi_racial==1 ~
                                              TRUE ~"Unknown/Not Reported"),
                      DOB = as.Date(paste(d_544150384, d_564964481, d_795827569, sep = "-")),
                      consent_date = as.Date(d_454445267),
-                     rough_age=lubridate::time_length(consent_date-DOB, "year"),
-                     age= round(rough_age,digits=0))
+                     age_at_consent=lubridate::time_length(consent_date-DOB, "year"),
+                     age= round(age_at_consent,digits=0))
 
                      
 ```
  
 ```{r Documenting, echo=FALSE, message=FALSE, warning=FALSE, collapse=TRUE}
 
-wd_ver <- "SELECT Connect_ID,d_821247024,d_747006172  FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` where Connect_ID IS NOT NULL" 
+wd_ver <- "SELECT Connect_ID,d_821247024,d_747006172  FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` where Connect_ID IS NOT NULL
+and DATE(d_914594314) < '2024-10-01'" 
 wd_ver_table <- bq_project_query(project, wd_ver)
 wd_ver_data <- bq_table_download(wd_ver_table, bigint = "integer64",n_max = Inf, page_size = 10000)
 
@@ -284,7 +256,9 @@ ver <- wd_ver_data %>%  filter(d_821247024=='197316935') #d_747006172!='35335890
 finished_m1 <- irb %>% filter(d_949302066=='231311385')
 current_date <- Sys.Date()
 
-cat("Run on data extracted: 2024-07-01")
+cat("Data Extracted and Report Ran: 2025-04-23")
+
+cat("Data includes enrollment through 2024-09-30")
 
 cat("Total number of verified participants= ", nrow(ver))
 
@@ -321,7 +295,7 @@ they are defined as Ethnicity = Hispanic or Latino.
 
 If RACETH was entirely missing, Ethnicity = Unknown.
 
-
+\newpage
  
 ```{r Table1, warning=FALSE, echo=FALSE, message=FALSE}
 
@@ -335,17 +309,37 @@ count_table <- irb %>%
 colnames(count_table) <- c("Race", "Ethnicity", "Sex", "Total")
 
 
-count_table %>%  gt::gt(rowname_col = "row_lab")  %>%
-  tab_header(title = md("Cumulative Inclusion Enrollment Report")) %>%
-  grand_summary_rows(column=Total,fns = ~sum(.,na.rm = T))|>
-  tab_options(stub.font.weight = "bold",
-              table.font.size = 6) 
+# count_table %>%  gt::gt(rowname_col = "row_lab")  %>%
+#   tab_header(title = md("Cumulative Inclusion Enrollment Report")) %>%
+#   grand_summary_rows(column=Total,fns = ~sum(.,na.rm = T))|>
+#   tab_options(stub.font.weight = "bold",
+#               table.font.size = 6) 
+
+# Add a total row
+count_table <- count_table %>%
+  bind_rows(
+    data.frame(
+      Race = "Total",
+      Ethnicity = "",
+      Sex = "",
+      Total = sum(count_table$Total, na.rm = TRUE)
+    )
+  )
+
+
+knitr::kable(count_table, format.args = list(big.mark = ","),
+             caption="Cumulative Inclusion Enrollment Report", 
+             row.names=FALSE,align=c("l","c","c","c"),
+             booktabs = TRUE) %>%  
+  add_indent(seq(1, nrow(count_table) - 1))  %>% 
+  kable_styling(latex_options = "scale_down")
     
   
 ```
 
 
 ```{r Table2, warning=FALSE, echo=FALSE, message=FALSE}
+
 irb$age_unit <- rep("Years", times=nrow(irb))
 
 table2csv <- irb %>%  group_by(Connect_ID) %>%  select(Connect_ID, race,race_hisp, sex_at_birth,age, age_unit) 
@@ -410,8 +404,12 @@ eth_crosswalk_totals <- as.data.frame(eth_crosswalk)
 eth_crosswalk_totals <- eth_crosswalk_totals[-1, ]
 
 
-cross_eth <- knitr::kable(eth_crosswalk_totals , caption='RACEETH Options from Module 1 vs Ethnicity for the inclusion', row.names=FALSE,align=c("l","c","c","c","c","c","c"), booktabs = TRUE)  %>% kable_styling(latex_options = "scale_down")
-landscape(cross_eth)
+knitr::kable(eth_crosswalk_totals , 
+             caption='RACEETH Options from Module 1 vs Ethnicity for the inclusion', 
+             row.names=FALSE,align=c("l","c","c","c","c","c","c"), 
+             booktabs = TRUE)  %>% 
+  add_indent(seq(1, nrow(eth_crosswalk_totals) - 1))  %>% 
+  kable_styling(latex_options = "scale_down") %>% landscape()
 
 
 ```
