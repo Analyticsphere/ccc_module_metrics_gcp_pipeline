@@ -461,7 +461,7 @@ if (nrow(pref_lang) == 0) {
 ## 12. If the Mod1 survey completion timestamp is populated, then the Mod1 survey flag must be 'completed'
 ```{r comptime_m1, echo=FALSE, warning=FALSE, message=FALSE}
 
-comp_m1 <- partsbq %>%  filter(!is.na(d_517311251) & (d_949302066==972455046 | is.na(d_949302066)))  
+comp_m1 <- partsbq %>%  filter(!is.na(d_517311251) & (d_949302066!=231311385)) 
       
 
 if (nrow(comp_m1) == 0) {
@@ -482,7 +482,7 @@ if (nrow(comp_m1) == 0) {
 ## 13. If the Mod2 survey completion timestamp is populated, then the Mod2 survey flag must be 'completed'
 ```{r comptime_m2, echo=FALSE, warning=FALSE, message=FALSE}
 
-comp_m2 <- partsbq %>%  filter(!is.na(d_832139544) & (d_536735468==972455046 | is.na(d_536735468)))
+comp_m2 <- partsbq %>%  filter(!is.na(d_832139544) & (d_536735468!=231311385))
 
 if (nrow(comp_m2) == 0) {
   cat("No errors\n")
@@ -503,7 +503,7 @@ if (nrow(comp_m2) == 0) {
 ## 14. If the Mod3 survey completion timestamp is populated, then the Mod3 survey flag must be 'completed'
 ```{r comptime_m3, echo=FALSE, warning=FALSE, message=FALSE}
 
-comp_m3 <- partsbq %>%  filter(!is.na(d_770257102) & (d_976570371==972455046 | is.na(d_976570371))) 
+comp_m3 <- partsbq %>%  filter(!is.na(d_770257102) & (d_976570371!=231311385)) 
      
 
 if (nrow(comp_m3) == 0) {
@@ -525,7 +525,7 @@ if (nrow(comp_m3) == 0) {
 ## 15. If the Mod4 survey completion timestamp is populated, then the Mod4 survey flag must be 'completed'
 ```{r comptime_m4, echo=FALSE, warning=FALSE, message=FALSE}
 
-comp_m4 <- partsbq %>%  filter(!is.na(d_264644252) & (d_663265240==972455046 | is.na(d_663265240)))
+comp_m4 <- partsbq %>%  filter(!is.na(d_264644252) & (d_663265240!=231311385))
 
 
 if (nrow(comp_m4) == 0) {
@@ -547,7 +547,7 @@ if (nrow(comp_m4) == 0) {
 ## 16. If the PROMIS survey completion timestamp is populated, then the PROMIS survey flag must be 'completed'
 ```{r comptime_qol, echo=FALSE, warning=FALSE, message=FALSE}
 
-comp_qol <- partsbq %>%  filter(!is.na(d_843688458) & (d_320303124==972455046 | is.na(d_320303124)))
+comp_qol <- partsbq %>%  filter(!is.na(d_843688458) & (d_320303124!=231311385))
 
 
 if (nrow(comp_qol) == 0) {
@@ -570,7 +570,7 @@ if (nrow(comp_qol) == 0) {
 ## 17. If the CES survey completion timestamp is populated, then the CES survey flag must be 'completed'
 ```{r comptime_ces, echo=FALSE, warning=FALSE, message=FALSE}
 
-comp_ces <- partsbq %>%  filter(!is.na(d_199471989) & (d_956490759==972455046 | is.na(d_956490759))) 
+comp_ces <- partsbq %>%  filter(!is.na(d_199471989) & (d_956490759!=231311385)) 
 
 if (nrow(comp_ces) == 0) {
   cat("No errors\n")
@@ -592,7 +592,7 @@ if (nrow(comp_ces) == 0) {
 ## 18. If the BUM survey completion timestamp is populated, then the BUM survey flag must be 'completed'
 ```{r comptime_bum, echo=FALSE, warning=FALSE, message=FALSE}
 
-comp_bum <- partsbq %>%  filter(!is.na(d_222161762) & (d_265193023==972455046 | is.na(d_265193023))) 
+comp_bum <- partsbq %>%  filter(!is.na(d_222161762) & (d_265193023!=231311385)) 
 
 
 if (nrow(comp_bum) == 0) {
@@ -614,7 +614,7 @@ if (nrow(comp_bum) == 0) {
 ## 19. If the BU survey completion timestamp is populated, then the BU survey flag must be 'completed'
 ```{r comptime_bu, echo=FALSE, warning=FALSE, message=FALSE}
 
-comp_bu <- partsbq %>%  filter(!is.na(d_764863765) & (d_253883960==972455046 | is.na(d_253883960)))
+comp_bu <- partsbq %>%  filter(!is.na(d_764863765) & (d_253883960!=231311385))
 
 
 if (nrow(comp_bu) == 0) {
@@ -637,7 +637,7 @@ if (nrow(comp_bu) == 0) {
 ## 20. If the MW survey completion timestamp is populated, then the MW survey flag must be 'completed'
 ```{r comptime_mw, echo=FALSE, warning=FALSE, message=FALSE}
 
-comp_mw <- partsbq %>%  filter(!is.na(d_195145666) & (d_547363263==972455046 | is.na(d_547363263))) 
+comp_mw <- partsbq %>%  filter(!is.na(d_195145666) & (d_547363263!=231311385)) 
 
 
 if (nrow(comp_mw) == 0) {
@@ -660,7 +660,7 @@ if (nrow(comp_mw) == 0) {
 ## 21. If the COVID survey completion timestamp is populated, then the COVID survey flag must be 'completed'
 ```{r comptime_cv, echo=FALSE, warning=FALSE, message=FALSE}
 
-comp_cv <- partsbq %>%  filter(!is.na(d_784810139) & (d_220186468==972455046 | is.na(d_220186468)))
+comp_cv <- partsbq %>%  filter(!is.na(d_784810139) & (d_220186468!=231311385))
 
 
 if (nrow(comp_cv) == 0) {
@@ -683,7 +683,7 @@ if (nrow(comp_cv) == 0) {
 ## 22. If the Menstrual History survey completion timestamp is populated, then the Menstrual History survey flag must be 'completed'
 ```{r comptime_mens, echo=FALSE, warning=FALSE, message=FALSE}
 
-comp_mns <- partsbq %>%  filter(!is.na(d_217640691) & (d_459098666==972455046 | is.na(d_459098666)))  
+comp_mns <- partsbq %>%  filter(!is.na(d_217640691) & (d_459098666!=231311385))  
 
 
 if (nrow(comp_mns) == 0) {
@@ -706,7 +706,7 @@ if (nrow(comp_mns) == 0) {
 ## 23. If the SSN survey completion timestamp is populated, then the SSN survey flag must be 'completed'
 ```{r comptime_ssn, echo=FALSE, warning=FALSE, message=FALSE}
 
-comp_ssn <- partsbq %>%  filter(!is.na(d_315032037) & (d_126331570==972455046 | is.na(d_126331570))) 
+comp_ssn <- partsbq %>%  filter(!is.na(d_315032037) & (d_126331570!=231311385)) 
 
 
 if (nrow(comp_ssn) == 0) {
@@ -729,7 +729,7 @@ if (nrow(comp_ssn) == 0) {
 ## 24. If the CSH survey completion timestamp is populated, then the CHS History survey flag must be 'completed'
 ```{r comptime_chs, echo=FALSE, warning=FALSE, message=FALSE}
 
-comp_csh <- partsbq %>%  filter(!is.na(d_389890053) & (d_176068627==972455046 | is.na(d_176068627)))
+comp_csh <- partsbq %>%  filter(!is.na(d_389890053) & (d_176068627!=231311385))
 
 
 if (nrow(comp_csh) == 0) {
