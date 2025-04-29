@@ -1,0 +1,174 @@
+---
+title: "MCS Early Completion by Month"
+author: "Kelsey Sanchez"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r libraries, include=FALSE}
+# 
+# library(bigrquery)
+# library(tinytex)
+# library(sqldf)
+# library(gt)
+# library(gtsummary)
+# library(tidyverse)
+# library(glue)
+# library(knitr)
+# library(kableExtra)
+# library(flextable)
+
+library(bigrquery)
+library(dplyr)
+library(gmodels)
+library(epiDisplay)
+library(lubridate)
+library(tidyverse)
+library(knitr)
+#install_tinytex()
+library(tinytex)
+#library(vtable)
+library(kableExtra)
+library(gtsummary)
+library(data.table)
+
+
+library(arsenal)
+library(rio)
+library(scales)
+library(gt)
+library(stringr)
+
+bq_auth()
+
+```
+
+
+```{r BQ_pull, include=FALSE}
+
+project = "nih-nci-dceg-connect-prod-6d04"
+
+#Elg if SrvBLM_ResSrvCompl_v1r0 (299215535.265193023) = submitted (231311385) AND SrvBlU_MENST60_v2r0 (112151599) = yes (353358909 OR if SrvBlU_BaseComplete_v1r0 (826163434.253883960) = submitted (231311385) AND SrvBlU_MENST60_v2r0 (112151599) = yes
+
+pts_pull <- "SELECT Connect_ID, d_822499427 as BUM_start, d_222161762 as BUM_comp,
+d_534669573 as BU_start, d_764863765 as BU_comp, 
+d_459098666 as MC_status, d_844088537 as MC_start, d_217640691 as MC_comp,
+d_289750687 as Elg_flag, d_265193023 as BUM_status, d_253883960 as BU_status
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` 
+where d_265193023='231311385' or  d_253883960='231311385'"
+
+
+bu_pull <- "SELECT Connect_ID, d_112151599 as bu_mens
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.clinicalBioSurvey_v1_JP` 
+where Connect_ID is not null"
+  
+  
+bum_pull <- "SELECT Connect_ID, d_112151599 as bum_mens
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.bioSurvey_v1_JP` 
+where Connect_ID is not null"
+
+
+
+pts_bq <- bq_project_query(project, pts_pull)
+parts_data <- bq_table_download(pts_bq, bigint = "integer64",n_max = Inf, page_size = 10000)
+
+bu_bq <- bq_project_query(project, bu_pull)
+bu_data <- bq_table_download(bu_bq, bigint = "integer64",n_max = Inf, page_size = 10000)
+
+bum_bq <- bq_project_query(project, bum_pull)
+bum_data <- bq_table_download(bum_bq, bigint = "integer64",n_max = Inf, page_size = 10000)
+
+parts_data$Connect_ID <- as.numeric(parts_data$Connect_ID)
+bu_data$Connect_ID <- as.numeric(bu_data$Connect_ID)
+bum_data$Connect_ID <- as.numeric(bum_data$Connect_ID)
+
+
+mc_elg= left_join(parts_data, bum_data, by="Connect_ID") %>%  left_join(bu_data, by="Connect_ID")
+
+
+mc_elg <- mc_elg %>%  filter(bum_mens=="353358909" | bu_mens=="353358909")
+dim(mc_elg)
+
+
+```
+
+
+
+```{r simplified, warning=FALSE, echo=FALSE, message=FALSE}
+
+## Just MENS1 is null but MCS submitted?
+
+MCS_pull <- "SELECT 
+    FORMAT_DATE('%Y-%m', DATE(d_217640691)) AS month_year,
+    COUNT(*) as n
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` pts
+LEFT JOIN `nih-nci-dceg-connect-prod-6d04.FlatConnect.menstrualSurvey_v1_JP` mens
+ON pts.Connect_ID = mens.Connect_ID
+WHERE 
+    D_951357171 IS NULL 
+    AND d_459098666 = '231311385'
+GROUP BY month_year
+ORDER BY month_year;
+"
+
+MCS_bq <- bq_project_query(project, MCS_pull)
+MCS_data <- bq_table_download(MCS_bq, bigint = "integer64",n_max = Inf, page_size = 10000)
+
+
+
+summary_MCS <- MCS_data %>%
+    # group_by(month_year) %>%
+    # summarize(n = n(), percentage = 100 * n / nrow(data)) %>%
+    # ungroup() %>%
+    mutate(percentage = 100 * as.numeric(n) / nrow(MCS_data)) 
+    #select(month_year, n, percentage)
+
+
+
+summary_row <- summary_MCS %>%
+    summarize(n = sum(n), percentage = 100, 
+              month_year = "Total")
+  
+summary_MCS <- bind_rows(summary_MCS, summary_row)
+  
+early_MC_totals <- summary_MCS %>%
+    mutate(np = paste0(n, " (", round(percentage, digits = 2), "%)")) %>%
+    select(month_year, np)
+
+knitr::kable(early_MC_totals,
+             caption = 'Early Menstrual Cycle Survey by Month and Year',
+             row.names=FALSE,align=c("l","c"),
+             col.names=c("Month and Year", "Count"),
+             booktabs = TRUE) %>%
+  add_indent(seq(1, (nrow(early_MC_totals) - 1)))  %>%
+  kable_styling(latex_options = "scale_down") %>%  
+  footnote(general=paste0("Note: SrvBlU_MENS1 is null but SrvMC_BaseComplete is Submitted."),
+         general_title = "")
+# add_footnote(MC_error, paste0("Note: Early completion defined as SrvBlU_MENS1_v1r0 does not equal yes", "\n", "but SrvMC_BaseComplete_v1r0 does equal Submitted."))
+   # footnote(general = "Note: Early completion defined as SrvBlU_MENS1_v1r0 does not equal yes, but SrvMC_BaseComplete_v1r0 does equal Submitted.",
+   #          general_title = "",
+   #          #footnote_as_chunk = TRUE,
+   #        escape = FALSE)
+   #        #threeparttable = TRUE)
+
+
+# knitr::kable(early_MC_totals,
+#              caption = 'Early Menstrual Cycle Survey by Month and Year',
+#              col.names=c("Month and Year", "Count"),
+#              booktabs=TRUE, linesep = "", row.names=FALSE, align=c("l", "c")) %>%
+#   kable_styling(latex_options = "scale_down") %>%
+#   footnote(general = "Note: Early completion defined as SrvBlU_MENS1_v1r0 does not equal yes, but SrvMC_BaseComplete_v1r0 does equal Submitted.",
+#            general_title = "",
+#          footnote_as_chunk = FALSE,
+#          escape = FALSE)
+#          #threeparttable = TRUE)
+
+
+```
+
+
+
+
+
+
+

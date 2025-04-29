@@ -1,0 +1,1301 @@
+---
+title: "Rectruitment Derived Variable QC"
+author: "Kelsey Sanchez"
+date: "`r Sys.Date()`"
+header-includes:  
+    \usepackage{placeins}
+
+
+output:
+  pdf_document:
+    extra_dependencies: ["float"]
+    toc: false
+    keep_tex: yes
+    fig_caption: true
+---
+
+
+
+
+```{r library, include=FALSE}
+#rm(list = ls())
+
+
+#update.packages("tinytex")
+#require(devtools)
+#install_version("ggplot2", version = "0.9.1", repos = "http://cran.us.r-project.org")
+#tinytex::install_tinytex(version = "2020.10")
+#tinytex::reinstall_tinytex(repository = "illinois")
+
+
+
+library(bigrquery)
+library(lubridate)
+library(dplyr)
+library(stringr)
+library(gt)
+library(expss)
+library(knitr)
+library(kableExtra)
+library(glue)
+
+options(tinytex.verbose = TRUE)
+
+bq_auth()
+```
+
+
+```{r BQ_Pull, include=FALSE}
+
+project <- "nih-nci-dceg-connect-prod-6d04"
+
+
+parts_bq <- "SELECT Connect_ID, token, D_512820379, D_471593703, state_d_934298480, D_230663853, state_d_697256759, state_d_158291096,
+D_335767902, D_982402227, D_919254129, D_699625233, d_827220437, d_371067537, d_544150384, d_564964481, d_795827569, d_685002411_d_994064239, d_912301837, 
+d_685002411_d_194410742,d_685002411_d_949501163,d_685002411_d_277479354,d_685002411_d_867203506,d_685002411_d_352996056,d_685002411_d_217367618,d_747006172,
+d_906417725,d_773707518,d_831041022,d_987563196,
+D_371067537, D_430551721, D_821247024, D_914594314,  state_d_725929722, d_126331570, d_536735468, d_130371375_d_266600170_d_945795905, d_130371375_d_266600170_d_320023644,
+d_663265240, d_878865966, d_684635302, d_167958071,d_371067537, d_130371375_d_266600170_d_731498909, d_130371375_d_266600170_d_222373868, d_130371375_d_266600170_d_787567527,
+d_949302066 , d_517311251, d_205553981, d_117249500, d_976570371, d_914639140, d_311580100, d_454445267,d_255077064, d_832139544, 
+d_263355177, d_199471989, d_222161762, d_822499427, d_764863765, d_534669573, d_195145666, d_286191859, d_541836531, d_770257102, d_386488297, d_264644252, d_452942800, 
+d_217640691, d_844088537, d_784810139, d_268176409, d_843688458, d_870643066, d_315032037, d_943232079, 
+d_956490759,d_265193023,d_253883960,d_547363263,d_459098666,d_220186468,d_320303124, d_609630315, d_389890053, d_176068627
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` 
+where Connect_ID IS NOT NULL and d_831041022='104430631'"
+partsbq_table <- bq_project_query(project, parts_bq)
+partsbq <- bq_table_download(partsbq_table, bigint = "integer64")
+
+
+biobq <- "SELECT Connect_ID, token, d_299553921_d_593843561, d_299553921_d_883732523, d_703954371_d_593843561, d_703954371_d_883732523, d_838567176_d_593843561, d_838567176_d_883732523, d_454453939_d_593843561, d_454453939_d_883732523, d_652357376_d_593843561, d_652357376_d_883732523, d_505347689_d_593843561, d_505347689_d_883732523 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.biospecimen` 
+where Connect_ID IS NOT NULL"
+biobq_table <- bq_project_query(project, biobq)
+biobq <- bq_table_download(biobq_table, bigint = "integer64")
+
+partsbq$Connect_ID <- as.numeric(partsbq$Connect_ID)
+biobq$Connect_ID <- as.numeric(biobq$Connect_ID)
+
+partsbq <-
+  partsbq %>%  mutate(
+    Site = case_when(
+      d_827220437 == 125001209 ~ "Kaiser Permanente Colorado",
+      d_827220437 == 181769837 ~ "Other",
+      d_827220437 == 300267574 ~ "Kaiser Permanente Hawaii",
+      d_827220437 == 303349821 ~ "Marshfield Clinic Health System",
+      d_827220437 == 327912200 ~ "Kaiser Permanente Georgia",
+      d_827220437 == 452412599 ~ "Kaiser Permanente Northwest",
+      d_827220437 == 517700004 ~ "National Cancer Institute",
+      d_827220437 == 531629870 ~ "HealthPartners",
+      d_827220437 == 548392715 ~ "Henry Ford Health System",
+      d_827220437 == 657167265 ~ "Sanford Health",
+      d_827220437 == 809703864 ~ "University of Chicago Medicine"
+    )
+  )
+
+
+
+base_vars= left_join(partsbq, biobq, by="Connect_ID")
+
+
+```
+
+
+
+
+## 1. If all BL Modules are completed and the participant has a baseline research collection where the tube is collected and the reason tube wasn't collected wasn't refusal, then SMPaym_TmPaymEligBL_v1r0 must be populated.
+
+```{r Incentive_Rule2, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+
+
+incentive2 <- base_vars %>%  filter(d_949302066 == '231311385' & d_536735468 == '231311385' & d_976570371 == '231311385' & d_663265240 == '231311385' & 
+                                      ((d_299553921_d_593843561==353358909 & d_299553921_d_883732523 != 681745422) |
+                                         (d_703954371_d_593843561==353358909 & d_703954371_d_883732523 != 681745422) |
+                                         (d_838567176_d_593843561==353358909 & d_838567176_d_883732523 != 681745422) |
+                                         (d_454453939_d_593843561==353358909 & d_454453939_d_883732523 != 681745422) |
+                                         (d_652357376_d_593843561==353358909 & d_652357376_d_883732523 != 681745422) |
+                                         (d_505347689_d_593843561==353358909 & d_505347689_d_883732523 != 681745422)) &
+  (d_130371375_d_266600170_d_731498909!=353358909 | d_130371375_d_266600170_d_222373868!=353358909 | is.na(d_130371375_d_266600170_d_787567527)))
+
+
+
+
+if (nrow(incentive2) == 0) {
+  cat("No errors\n")
+} else {
+  
+  incentive2 <- incentive2  %>% select(Site, Connect_ID, d_130371375_d_266600170_d_731498909, d_130371375_d_266600170_d_222373868, d_130371375_d_266600170_d_787567527)  %>%  sort_by(Site)
+  colnames(incentive2) <- c("Site", "Connect ID", "SMPaym_PaymEligBL", "SMPaym_NORCPaymEligBL", "SMPaym_TmPaymEligBL")
+  
+  knitr::kable(incentive2) %>%
+    kable_styling(latex_options = "scale_down")
+}
+```
+
+\FloatBarrier
+
+## 2. If either the BUM Survey or the BU Survey was completed with SrvBlU_MENST60_v2r0 answered yes, then SrvMC_MenstSrvElig_v1r0 must be yes. 
+
+```{r Menstrual_Eligibility, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+mens_ccc <- "WITH combined_survey AS (
+  SELECT Connect_ID
+  FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.bioSurvey_v1`
+  WHERE d_112151599 = '353358909'
+
+  UNION DISTINCT
+
+  SELECT Connect_ID
+  FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.clinicalBioSurvey_v1`
+  WHERE d_112151599 = '353358909'
+)
+
+SELECT p.Connect_ID, p.d_827220437, p.d_459098666, p.d_253883960, p.d_265193023, p.d_289750687, 
+p.d_764863765, p.d_222161762, p.d_459098666
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
+JOIN combined_survey c ON p.Connect_ID = c.Connect_ID
+WHERE (p.d_253883960 = '231311385' OR p.d_265193023 = '231311385')"
+
+mens_table <- bq_project_query(project, mens_ccc)
+mens <- bq_table_download(mens_table, bigint = "integer64")
+
+
+mens <-
+  mens %>%  mutate(
+    Site = case_when(
+      d_827220437 == 125001209 ~ "Kaiser Permanente Colorado",
+      d_827220437 == 181769837 ~ "Other",
+      d_827220437 == 300267574 ~ "Kaiser Permanente Hawaii",
+      d_827220437 == 303349821 ~ "Marshfield Clinic Health System",
+      d_827220437 == 327912200 ~ "Kaiser Permanente Georgia",
+      d_827220437 == 452412599 ~ "Kaiser Permanente Northwest",
+      d_827220437 == 517700004 ~ "National Cancer Institute",
+      d_827220437 == 531629870 ~ "HealthPartners",
+      d_827220437 == 548392715 ~ "Henry Ford Health System",
+      d_827220437 == 657167265 ~ "Sanford Health",
+      d_827220437 == 809703864 ~ "University of Chicago Medicine"
+    )
+  )
+
+can_no_longer_contact <- list("6673328645", "1156167603", "5950274173", "1674063031", "5460895468", "9586303599", 
+                              "2009345083", "8140966374", "4038472238", "3379215871", "6592021474", "1721018129", 
+                              "3023733685", "5085319740", "8682077118", "1441310478", "4177949257", "6384048173", 
+                              "1186358664", "2510716583", "1782585066")
+
+mens_elg <- mens %>%  filter(is.na(d_289750687) & (d_764863765>=as.Date("2022-12-09") | d_222161762>=as.Date("2022-12-09")) & 
+                               !(Connect_ID %in% can_no_longer_contact)) 
+ 
+
+
+if (nrow(mens_elg) == 0) {
+  cat("No errors\n")
+} else {
+  
+  mens_elg <- mens_elg %>%  select(Site, Connect_ID, d_289750687)  %>%  sort_by(Site) 
+  
+  colnames(mens_elg) <- c("Site", "Connect ID", "SrvMC_MenstSrvElig_v1r0")
+  
+  knitr::kable(mens_elg) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+```
+
+
+
+\FloatBarrier
+
+## 3. If SrvMC_MenstSrvElig_v1r0, then SrvMC_BaseComplete_v1r0 cannot be 'Started' or 'Submitted'. Note, this excludes those who started the survey prior to December 10th, 2022 as the eligibility has since been corrected. 
+
+```{r Menstrual_NOT_Eligible, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+MC_ccc_NE <- "SELECT CASE
+  WHEN d_827220437 = 125001209  THEN 'Kaiser Permanente Colorado'
+  WHEN  d_827220437 = 181769837  THEN 'Other'
+  WHEN d_827220437 = 300267574  THEN 'Kaiser Permanente Hawaii'
+  WHEN d_827220437 = 303349821  THEN 'Marshfield Clinic Health System'
+  WHEN   d_827220437 = 327912200  THEN 'Kaiser Permanente Georgia'
+  WHEN d_827220437 = 452412599  THEN 'Kaiser Permanente Northwest'
+  WHEN d_827220437 = 517700004  THEN 'National Cancer Institute'
+  WHEN d_827220437 = 531629870  THEN 'HealthPartners'
+  WHEN d_827220437 = 548392715  THEN 'Henry Ford Health System'
+  WHEN d_827220437 = 657167265  THEN 'Sanford Health'
+  WHEN d_827220437 = 809703864  THEN 'University of Chicago Medicine'
+END AS Site,
+
+Connect_ID, 
+CASE 
+    WHEN d_289750687 is null THEN 'No'
+    WHEN d_289750687 = 353358909 THEN 'Yes'
+  END AS Derived_Eligibility_Flag, 
+CASE 
+    WHEN d_459098666 = 231311385 THEN 'Completed'
+    WHEN d_459098666 = 615768760 THEN 'Started'
+  END AS Completion_Status,
+d_844088537 as Time_Survey_Started  
+ FROM `nih-nci-dceg-connect-prod-6d04.Connect.participants` 
+where d_289750687 is null and (d_459098666=231311385 or d_459098666=615768760)
+and date(d_844088537) >= '2023-01-01'
+order by d_844088537 desc"
+
+MC_ccc_NE_table <- bq_project_query(project, MC_ccc_NE)
+MC_not_elg <- bq_table_download(MC_ccc_NE_table, bigint = "integer64")
+
+if (nrow(MC_not_elg) == 0) {
+  cat("No errors\n")
+} else {
+  knitr::kable(MC_not_elg) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+```
+
+
+
+
+
+
+\FloatBarrier
+
+##  4. If HDPaym_PaymChosenBL_v2r0 = "cash" and SMPaym_PaymEligBL_v1r0=yes, then HDPaym_CaseNumberBL_v1r0 should not be populated. Or conversely, if SMPaym_PaymEligBL_v1r0=yes"and HDPaym_CaseNumberBL_v1r0 is populated, then HDPaym_PaymChosenBL_v2r0 should not be "cash".
+```{r Cash_NO_NORC, echo=FALSE, warning=FALSE, message=FALSE}
+
+cash_NORC <- base_vars %>%  filter(d_130371375_d_266600170_d_731498909==353358909 & d_130371375_d_266600170_d_945795905=="cash" & !is.na(d_130371375_d_266600170_d_320023644))
+
+
+
+
+if (nrow(cash_NORC) == 0) {
+  cat("No errors\n")
+} else {
+  cash_NORC <- cash_NORC %>%  select(Site, Connect_ID, d_130371375_d_266600170_d_945795905, d_130371375_d_266600170_d_320023644) %>%  sort_by(Site)
+
+  colnames(cash_NORC) <- c("Site", "Connect ID", "HDPaym_PaymChosenBL", "HDPaym_CaseNumberBL")
+
+  knitr::kable(cash_NORC) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+```
+
+
+
+
+\FloatBarrier
+
+## 5. RcrtUP_DOB must equal the concatenation of RcrtUP_YOB, RcrtUP_MOB, and RcrtUP_BD. This excludes those with a null concatenated DOB as it was implements after Module 1 was in production.
+```{r Bday, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+bday <- partsbq %>%  filter(!is.na(d_371067537) & 
+                                d_371067537 != paste0(d_544150384, d_564964481, d_795827569)) 
+
+
+if (nrow(bday) == 0) {
+  cat("No errors\n")
+} else {
+
+  bday <- bday %>% select(Site, Connect_ID, d_371067537, d_544150384, d_564964481, d_795827569) %>%  sort_by(Site)
+
+  colnames(bday) <- c("Site", "Connect ID", "RcrtUP_DOB", "RcrtUP_YOB", "RcrtUP_MOB", "RcrtUP_BD")
+
+  knitr::kable(bday) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+```
+
+
+
+\FloatBarrier
+## 6. If HdRef_Basesrv_v1r0 = "no" AND HdRef_Baseblood_v1r0 = "no" AND HdRef_Baseurine_v1r0 and HdRef_Basesaliva_v1r0 = "no" AND HdRef_Allsrv_v1r0 = "no" AND HdRef_Allsample_v1r0 = "no" AND HdRef_BlSpecSrv_v1r0 = "no" AND HdWd_WdConsent_v1r0 = "no" AND HdWd_Activepart_v1r0 = "no" AND HdWd_HIPAArevoked_v1r0 = "no" AND HdWd_Destroydata_v1r0 = "no" AND HdWd_Deceased_v1r0 = "no", then SMMet_PartStatus_v1r0= "No Refusal"
+```{r SMMet_PartStatus0, echo=FALSE, warning=FALSE, message=FALSE}
+
+smmet0 <- partsbq %>%  filter(d_685002411_d_994064239==104430631 & d_685002411_d_194410742==104430631 & d_685002411_d_949501163==104430631 & 
+                                d_685002411_d_277479354==104430631 & d_685002411_d_867203506==104430631 & d_685002411_d_352996056==104430631 & 
+                                d_685002411_d_217367618==104430631 & d_747006172==104430631 & d_906417725==104430631 & d_773707518==104430631 & 
+                                d_831041022==104430631 & d_987563196==104430631 & d_912301837!=208325815) %>% 
+  select(Site, Connect_ID, d_912301837) %>%  sort_by(Site)
+
+colnames(smmet0) <- c("Site", "Connect ID", "SMMet_PartStatus_v1r0")
+
+if (nrow(smmet0) == 0) {
+  cat("No errors\n")
+} else {
+    
+  knitr::kable(smmet0) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+```
+
+
+```{r SMMet_PartStatus1, echo=FALSE, warning=FALSE, message=FALSE}
+
+# \FloatBarrier
+# ### If HdWd_WdConsent_v1r0 = "no" AND HdWd_Activepart_v1r0 = "no" AND HdWd_HIPAArevoked_v1r0 = "no" AND HdWd_Destroydata_v1r0 = "no" AND HdWd_Deceased_v1r0 = "no", then SMMet_PartStatus_v1r0= "Refused some activities"
+# 
+# smmet1 <- partsbq %>%  filter(d_747006172==104430631 & d_906417725==104430631 & d_773707518==104430631 & d_831041022==104430631 & d_987563196==104430631 & d_912301837!=622008261) %>%  
+#     select(Site, Connect_ID, d_912301837) %>%  sort_by(Site)
+# 
+# colnames(smmet1) <- c("Site", "Connect ID", "SMMet_PartStatus_v1r0")
+# knitr::kable(smmet1)  %>% kable_styling(latex_options = "scale_down")
+
+```
+
+
+\FloatBarrier
+## 7. If HdWd_Activepart_v1r0 = yes" AND HdWd_HIPAArevoked_v1r0 = "no" And HdWd_WdConsent_v1r0 = "no" AND HdWd_Deceased_v1r0 = "no" AND HdWd_Destroydata_v1r0 = "no", then SMMet_PartStatus_v1r0= "Refused All Future Activities"
+```{r SMMet_PartStatus2, echo=FALSE, warning=FALSE, message=FALSE}
+
+smmet2 <- partsbq %>%  filter( d_906417725==353358909 & d_773707518==104430631 & d_747006172==104430631 & d_831041022==104430631 & d_987563196==104430631 & d_912301837!=458508122) 
+     
+
+
+if (nrow(smmet2) == 0) {
+  cat("No errors\n")
+} else {
+  
+  smmet2 <- smmet2 %>%  select(Site, Connect_ID, d_912301837) %>% sort_by(Site)
+
+  colnames(smmet2) <- c("Site", "Connect ID", "SMMet_PartStatus_v1r0")
+  
+  knitr::kable(smmet2) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+```
+
+
+\FloatBarrier
+## 8. If HdWd_HIPAArevoked_v1r0 = yes" And HdWd_WdConsent_v1r0 = "no" And HdWd_Deceased_v1r0 = "no" AND HdWd_Destroydata_v1r0 = "no", then SMMet_PartStatus_v1r0= "Revoked HIPAA Only"
+```{r SMMet_PartStatus3, echo=FALSE, warning=FALSE, message=FALSE}
+
+smmet3 <- partsbq %>%  filter(d_773707518==353358909 & d_747006172==104430631 & d_831041022==104430631 & d_987563196==104430631 & d_912301837!=872012139)
+
+
+if (nrow(smmet3) == 0) {
+  cat("No errors\n")
+} else {
+  
+  smmet3 <- smmet3 %>%  select(Site, Connect_ID, d_912301837) %>%  sort_by(Site)
+
+  colnames(smmet3) <- c("Site", "Connect ID", "SMMet_PartStatus_v1r0")
+  
+  knitr::kable(smmet3) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+```
+
+
+\FloatBarrier
+## 9. If HdWd_HIPAArevoked_v1r0 = yes" AND HdWd_WdConsent_v1r0 = "yes" AND HdWd_Deceased_v1r0 = "no" AND HdWd_Destroydata_v1r0 = "no", then SMMet_PartStatus_v1r0= "Withdrew Consent"
+```{r SMMet_PartStatus4, echo=FALSE, warning=FALSE, message=FALSE}
+
+smmet4 <- partsbq %>%  filter(d_773707518==353358909 &  d_747006172==353358909 & d_831041022==104430631 & d_987563196==104430631 & d_912301837!=854021266) 
+
+
+if (nrow(smmet4) == 0) {
+  cat("No errors\n")
+} else {
+  
+  smmet4 <- smmet4 %>% select(Site, Connect_ID, d_912301837) %>%  sort_by(Site)
+
+  colnames(smmet4) <- c("Site", "Connect ID", "SMMet_PartStatus_v1r0")
+  
+  knitr::kable(smmet4) %>%
+    kable_styling(latex_options = "scale_down")
+}
+```
+
+
+
+\FloatBarrier
+## 10. If RcrtSI_OptOutTm_v1r0 is a valid date, then RcrtSI_OptOut_v1r0 must be "yes"
+```{r OptOut, echo=FALSE, warning=FALSE, message=FALSE}
+
+opt_out <- partsbq %>%  filter(!is.na(state_d_697256759) & state_d_158291096==104430631)
+      
+
+if (nrow(opt_out) == 0) {
+  cat("No errors\n")
+} else {
+  
+  opt_out <- opt_out %>% select(Site, Connect_ID, state_d_158291096) %>%  sort_by(Site)
+
+  colnames(opt_out) <- c("Site", "Connect ID", "RcrtSI_OptOut_v1r0")
+
+  knitr::kable(opt_out) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+```
+
+
+
+\FloatBarrier
+## 11. If RcrtCS_ConsentSumit_v1r0 was on or after August 1, 2024 then RcrtCS_PrefLang_v1r0 must be populated.
+```{r preflang, echo=FALSE, warning=FALSE, message=FALSE}
+
+pref_lang <- partsbq %>%  filter(is.na(d_255077064) & as.Date(d_454445267) > "2024-07-31") %>% 
+  mutate(RcrtCS_ConsentSumit_v1r0=as.Date(d_454445267),
+         RcrtCS_PrefLang_v1r0=d_255077064) 
+
+
+if (nrow(pref_lang) == 0) {
+  cat("No errors\n")
+} else {
+  
+  pref_lang <- pref_lang %>%  select(Site, Connect_ID, RcrtCS_PrefLang_v1r0, RcrtCS_ConsentSumit_v1r0) %>%  sort_by(Site)
+  
+  knitr::kable(pref_lang) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+```
+
+\FloatBarrier
+## 12. If the Mod1 survey completion timestamp is populated, then the Mod1 survey flag must be 'completed'
+```{r comptime_m1, echo=FALSE, warning=FALSE, message=FALSE}
+
+comp_m1 <- partsbq %>%  filter(!is.na(d_517311251) & (d_949302066==972455046 | is.na(d_949302066)))  
+      
+
+if (nrow(comp_m1) == 0) {
+  cat("No errors\n")
+} else {
+  
+  comp_m1 <- comp_m1 %>% select(Site, Connect_ID, d_517311251, d_949302066) %>%  sort_by(Site)
+
+  colnames(comp_m1) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
+  
+  knitr::kable(comp_m1) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+```
+
+\FloatBarrier
+## 13. If the Mod2 survey completion timestamp is populated, then the Mod2 survey flag must be 'completed'
+```{r comptime_m2, echo=FALSE, warning=FALSE, message=FALSE}
+
+comp_m2 <- partsbq %>%  filter(!is.na(d_832139544) & (d_536735468==972455046 | is.na(d_536735468)))
+
+if (nrow(comp_m2) == 0) {
+  cat("No errors\n")
+} else {
+  
+  comp_m2 <- comp_m2 %>%  select(Site, Connect_ID, d_832139544, d_536735468) %>%  sort_by(Site)
+
+  colnames(comp_m2) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
+  
+  knitr::kable(comp_m2) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+
+```
+
+\FloatBarrier
+## 14. If the Mod3 survey completion timestamp is populated, then the Mod3 survey flag must be 'completed'
+```{r comptime_m3, echo=FALSE, warning=FALSE, message=FALSE}
+
+comp_m3 <- partsbq %>%  filter(!is.na(d_770257102) & (d_976570371==972455046 | is.na(d_976570371))) 
+     
+
+if (nrow(comp_m3) == 0) {
+  cat("No errors\n")
+} else {
+  
+  comp_m3 <- comp_m3 %>% select(Site, Connect_ID, d_770257102, d_976570371) %>%  sort_by(Site)
+
+  colnames(comp_m3) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
+
+  knitr::kable(comp_m3) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+
+```
+
+\FloatBarrier
+## 15. If the Mod4 survey completion timestamp is populated, then the Mod4 survey flag must be 'completed'
+```{r comptime_m4, echo=FALSE, warning=FALSE, message=FALSE}
+
+comp_m4 <- partsbq %>%  filter(!is.na(d_264644252) & (d_663265240==972455046 | is.na(d_663265240)))
+
+
+if (nrow(comp_m4) == 0) {
+  cat("No errors\n")
+} else {
+  
+  comp_m4 <- comp_m4 %>% select(Site, Connect_ID, d_264644252, d_663265240) %>%  sort_by(Site)
+
+  colnames(comp_m4) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
+  
+  knitr::kable(comp_m4) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+
+```
+
+\FloatBarrier
+## 16. If the PROMIS survey completion timestamp is populated, then the PROMIS survey flag must be 'completed'
+```{r comptime_qol, echo=FALSE, warning=FALSE, message=FALSE}
+
+comp_qol <- partsbq %>%  filter(!is.na(d_843688458) & (d_320303124==972455046 | is.na(d_320303124)))
+
+
+if (nrow(comp_qol) == 0) {
+  cat("No errors\n")
+} else {
+  
+  comp_qol <- comp_qol %>%  select(Site, Connect_ID, d_843688458, d_320303124) %>%  sort_by(Site)
+
+  colnames(comp_qol) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
+  
+  knitr::kable(comp_qol) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+
+```
+
+
+\FloatBarrier
+## 17. If the CES survey completion timestamp is populated, then the CES survey flag must be 'completed'
+```{r comptime_ces, echo=FALSE, warning=FALSE, message=FALSE}
+
+comp_ces <- partsbq %>%  filter(!is.na(d_199471989) & (d_956490759==972455046 | is.na(d_956490759))) 
+
+if (nrow(comp_ces) == 0) {
+  cat("No errors\n")
+} else {
+  
+  comp_ces <- comp_ces %>%  select(Site, Connect_ID, d_199471989, d_956490759) %>%  sort_by(Site)
+
+  colnames(comp_ces) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
+
+  knitr::kable(comp_ces) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+
+```
+
+
+\FloatBarrier
+## 18. If the BUM survey completion timestamp is populated, then the BUM survey flag must be 'completed'
+```{r comptime_bum, echo=FALSE, warning=FALSE, message=FALSE}
+
+comp_bum <- partsbq %>%  filter(!is.na(d_222161762) & (d_265193023==972455046 | is.na(d_265193023))) 
+
+
+if (nrow(comp_bum) == 0) {
+  cat("No errors\n")
+} else {
+  
+  comp_bum <- comp_bum %>%  select(Site, Connect_ID, d_222161762, d_265193023) %>%  sort_by(Site)
+
+  colnames(comp_bum) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
+  
+  knitr::kable(comp_bum) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+
+```
+
+\FloatBarrier
+## 19. If the BU survey completion timestamp is populated, then the BU survey flag must be 'completed'
+```{r comptime_bu, echo=FALSE, warning=FALSE, message=FALSE}
+
+comp_bu <- partsbq %>%  filter(!is.na(d_764863765) & (d_253883960==972455046 | is.na(d_253883960)))
+
+
+if (nrow(comp_bu) == 0) {
+  cat("No errors\n")
+} else {
+  
+  comp_bu <- comp_bu %>% select(Site, Connect_ID, d_764863765, d_253883960) %>%  sort_by(Site)
+
+  colnames(comp_bu) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
+  
+  knitr::kable(comp_bu) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+
+```
+
+
+\FloatBarrier
+## 20. If the MW survey completion timestamp is populated, then the MW survey flag must be 'completed'
+```{r comptime_mw, echo=FALSE, warning=FALSE, message=FALSE}
+
+comp_mw <- partsbq %>%  filter(!is.na(d_195145666) & (d_547363263==972455046 | is.na(d_547363263))) 
+
+
+if (nrow(comp_mw) == 0) {
+  cat("No errors\n")
+} else {
+  
+  comp_mw <- comp_mw %>% select(Site, Connect_ID, d_195145666, d_547363263) %>%  sort_by(Site)
+
+  colnames(comp_mw) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
+  
+  knitr::kable(comp_mw) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+
+```
+
+
+\FloatBarrier
+## 21. If the COVID survey completion timestamp is populated, then the COVID survey flag must be 'completed'
+```{r comptime_cv, echo=FALSE, warning=FALSE, message=FALSE}
+
+comp_cv <- partsbq %>%  filter(!is.na(d_784810139) & (d_220186468==972455046 | is.na(d_220186468)))
+
+
+if (nrow(comp_cv) == 0) {
+  cat("No errors\n")
+} else {
+  
+  comp_cv <- comp_cv %>%  select(Site, Connect_ID, d_784810139, d_220186468) %>%  sort_by(Site)
+
+  colnames(comp_cv) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
+  
+  knitr::kable(comp_cv) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+
+```
+
+
+\FloatBarrier
+## 22. If the Menstrual History survey completion timestamp is populated, then the Menstrual History survey flag must be 'completed'
+```{r comptime_mens, echo=FALSE, warning=FALSE, message=FALSE}
+
+comp_mns <- partsbq %>%  filter(!is.na(d_217640691) & (d_459098666==972455046 | is.na(d_459098666)))  
+
+
+if (nrow(comp_mns) == 0) {
+  cat("No errors\n")
+} else {
+  
+  comp_mns <- comp_mns %>%select(Site, Connect_ID, d_217640691, d_459098666) %>%  sort_by(Site)
+
+  colnames(comp_mns) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
+
+  knitr::kable(comp_mns) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+
+```
+
+
+\FloatBarrier
+## 23. If the SSN survey completion timestamp is populated, then the SSN survey flag must be 'completed'
+```{r comptime_ssn, echo=FALSE, warning=FALSE, message=FALSE}
+
+comp_ssn <- partsbq %>%  filter(!is.na(d_315032037) & (d_126331570==972455046 | is.na(d_126331570))) 
+
+
+if (nrow(comp_ssn) == 0) {
+  cat("No errors\n")
+} else {
+  
+  comp_ssn <- comp_ssn %>% select(Site, Connect_ID, d_315032037, d_126331570) %>%  sort_by(Site)
+
+  colnames(comp_ssn) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
+  
+  knitr::kable(comp_ssn) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+
+```
+
+
+\FloatBarrier
+## 24. If the CSH survey completion timestamp is populated, then the CHS History survey flag must be 'completed'
+```{r comptime_chs, echo=FALSE, warning=FALSE, message=FALSE}
+
+comp_csh <- partsbq %>%  filter(!is.na(d_389890053) & (d_176068627==972455046 | is.na(d_176068627)))
+
+
+if (nrow(comp_csh) == 0) {
+  cat("No errors\n")
+} else {
+  
+  comp_csh <- comp_csh %>% select(Site, Connect_ID, d_389890053, d_176068627) %>%  sort_by(Site)
+
+  colnames(comp_csh) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
+  
+  knitr::kable(comp_csh) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+
+```
+
+
+
+\FloatBarrier
+## 25. If the Mod1 survey start timestamp is populated, then the Mod1 survey flag must be 'completed' or 'started'
+```{r starttime_m1, echo=FALSE, warning=FALSE, message=FALSE}
+
+start_m1 <- partsbq %>%  filter(!is.na(d_205553981) & (d_949302066==972455046 | is.na(d_949302066)))
+
+
+if (nrow(start_m1) == 0) {
+  cat("No errors\n")
+} else {
+  
+  start_m1 <- start_m1 %>% select(Site, Connect_ID, d_205553981, d_949302066) %>%  sort_by(Site)
+
+  colnames(start_m1) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
+  
+  knitr::kable(start_m1) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+
+```
+
+\FloatBarrier
+## 26. If the Mod2 survey start timestamp is populated, then the Mod2 survey flag must be 'completed' or 'started'
+```{r starttime_m2, echo=FALSE, warning=FALSE, message=FALSE}
+
+start_m2 <- partsbq %>%  filter(!is.na(d_541836531) & (d_536735468==972455046 | is.na(d_536735468))) 
+
+
+if (nrow(start_m2) == 0) {
+  cat("No errors\n")
+} else {
+  
+  start_m2 <- start_m2 %>% select(Site, Connect_ID, d_541836531, d_536735468) %>%  sort_by(Site)
+
+  colnames(start_m2) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
+  
+  knitr::kable(start_m2) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+
+
+```
+
+\FloatBarrier
+## 27. If the Mod3 survey start timestamp is populated, then the Mod3 survey flag must be 'completed' or 'started'
+```{r starttime_m3, echo=FALSE, warning=FALSE, message=FALSE}
+
+start_m3 <- partsbq %>%  filter(!is.na(d_386488297) & (d_976570371==972455046 | is.na(d_976570371)))
+
+
+if (nrow(start_m3) == 0) {
+  cat("No errors\n")
+} else {
+  
+  start_m3 <- start_m2 %>% select(Site, Connect_ID, d_386488297, d_976570371) %>%  sort_by(Site)
+
+  colnames(start_m3) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
+  
+  knitr::kable(start_m3) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+
+
+```
+
+\FloatBarrier
+## 28. If the Mod4 survey start timestamp is populated, then the Mod4 survey flag must be 'completed' or 'started'
+```{r starttime_m4, echo=FALSE, warning=FALSE, message=FALSE}
+
+start_m4 <- partsbq %>%  filter(!is.na(d_452942800) & (d_663265240==972455046 | is.na(d_663265240)))  
+
+
+if (nrow(start_m4) == 0) {
+  cat("No errors\n")
+} else {
+  
+  start_m4 <- start_m4 %>% select(Site, Connect_ID, d_452942800, d_663265240) %>%  sort_by(Site)
+
+  colnames(start_m4) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
+  
+  knitr::kable(start_m4) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+
+
+```
+
+\FloatBarrier
+## 29. If the PROMIS survey start timestamp is populated, then the PROMIS survey flag must be 'completed' or 'started'
+```{r starttime_qol, echo=FALSE, warning=FALSE, message=FALSE}
+
+start_qol <- partsbq %>%  filter(!is.na(d_870643066) & (d_320303124==972455046 | is.na(d_320303124)))  
+
+
+if (nrow(start_qol) == 0) {
+  cat("No errors\n")
+} else {
+  
+  start_qol <- start_qol %>% select(Site, Connect_ID, d_870643066, d_320303124) %>%  sort_by(Site)
+
+  colnames(start_qol) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
+
+  knitr::kable(start_qol) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+
+
+```
+
+
+\FloatBarrier
+## 30. If the CES survey start timestamp is populated, then the CES survey flag must be 'completed' or 'started'
+```{r starttime_ces, echo=FALSE, warning=FALSE, message=FALSE}
+
+start_ces <- partsbq %>%  filter(!is.na(d_263355177) & (d_956490759==972455046 | is.na(d_956490759))) 
+
+
+if (nrow(start_ces) == 0) {
+  cat("No errors\n")
+} else {
+  
+  start_ces <- start_ces %>% select(Site, Connect_ID, d_263355177, d_956490759) %>%  sort_by(Site)
+
+  colnames(start_ces) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
+
+  knitr::kable(start_ces) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+
+
+```
+
+
+\FloatBarrier
+## 31. If the BUM survey start timestamp is populated, then the BUM survey flag must be 'completed' or 'started'
+```{r starttime_bum, echo=FALSE, warning=FALSE, message=FALSE}
+
+start_bum <- partsbq %>%  filter(!is.na(d_822499427) & (d_265193023==972455046 | is.na(d_265193023)))
+
+
+if (nrow(start_bum) == 0) {
+  cat("No errors\n")
+} else {
+  
+  start_bum <- start_bum %>% select(Site, Connect_ID, d_822499427, d_265193023) %>%  sort_by(Site)
+
+  colnames(start_bum) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
+
+  knitr::kable(start_bum) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+
+
+```
+
+\FloatBarrier
+## 32. If the BU survey start timestamp is populated, then the BU survey flag must be 'completed' or 'started'
+```{r starttime_bu, echo=FALSE, warning=FALSE, message=FALSE}
+
+start_bu <- partsbq %>%  filter(!is.na(d_534669573) & (d_253883960==972455046 | is.na(d_253883960))) 
+
+if (nrow(start_bu) == 0) {
+  cat("No errors\n")
+} else {
+  
+  start_bu <- start_bu %>% select(Site, Connect_ID, d_534669573, d_253883960) %>%  sort_by(Site)
+
+  colnames(start_bu) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
+
+  knitr::kable(start_bu) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+
+
+```
+
+
+\FloatBarrier
+## 33. If the MW survey start timestamp is populated, then the MW survey flag must be 'completed' or 'started'
+```{r starttime_mw, echo=FALSE, warning=FALSE, message=FALSE}
+
+start_mw <- partsbq %>%  filter(!is.na(d_286191859) & (d_547363263==972455046 | is.na(d_547363263))) 
+
+
+if (nrow(start_mw) == 0) {
+  cat("No errors\n")
+} else {
+  
+  start_mw <- start_mw %>% select(Site, Connect_ID, d_286191859, d_547363263) %>%  sort_by(Site)
+
+  colnames(start_mw) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
+
+  knitr::kable(start_mw) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+
+
+```
+
+
+\FloatBarrier
+## 34. If the COVID survey start timestamp is populated, then the COVID survey flag must be 'completed' or 'started'
+```{r starttime_cv, echo=FALSE, warning=FALSE, message=FALSE}
+
+start_cv <- partsbq %>%  filter(!is.na(d_268176409) & (d_220186468==972455046 | is.na(d_220186468))) 
+
+
+if (nrow(start_cv) == 0) {
+  cat("No errors\n")
+} else {
+  
+  start_cv <- start_cv %>% select(Site, Connect_ID, d_268176409, d_220186468) %>%  sort_by(Site)
+
+  colnames(start_cv) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
+
+  knitr::kable(start_cv) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+
+
+```
+
+
+\FloatBarrier
+## 35. If the Menstrual History survey start timestamp is populated, then the Menstrual History survey flag must be 'completed' or 'started'
+```{r starttime_mns, echo=FALSE, warning=FALSE, message=FALSE}
+
+start_mns <- partsbq %>%  filter(!is.na(d_844088537) & (d_459098666==972455046 | is.na(d_459098666))) 
+
+
+if (nrow(start_mns) == 0) {
+  cat("No errors\n")
+} else {
+  
+  start_mns <- start_mns %>% select(Site, Connect_ID, d_844088537, d_459098666) %>%  sort_by(Site)
+
+  colnames(start_mns) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
+
+  knitr::kable(start_mns) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+
+
+```
+
+
+\FloatBarrier
+## 36. If the SSN survey start timestamp is populated, then the SSN survey flag must be 'completed' or 'started'
+```{r starttime_ssn, echo=FALSE, warning=FALSE, message=FALSE}
+
+start_ssn <- partsbq %>%  filter(!is.na(d_943232079) & (d_126331570==972455046 | is.na(d_126331570)))
+
+
+if (nrow(start_ssn) == 0) {
+  cat("No errors\n")
+} else {
+  
+  start_ssn <- start_ssn %>% select(Site, Connect_ID, d_943232079, d_126331570) %>%  sort_by(Site)
+
+  colnames(start_ssn) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
+
+  knitr::kable(start_ssn) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+
+
+```
+
+
+\FloatBarrier
+## 37. If the CSH survey start timestamp is populated, then the CSH History survey flag must be 'completed' or 'started'
+```{r starttime_chs, echo=FALSE, warning=FALSE, message=FALSE}
+
+start_csh <- partsbq %>%  filter(!is.na(d_609630315) & (d_176068627==972455046 | is.na(d_176068627))) 
+
+
+if (nrow(start_csh) == 0) {
+  cat("No errors\n")
+} else {
+  
+  start_csh <- start_csh %>% select(Site, Connect_ID, d_609630315, d_176068627) %>%  sort_by(Site)
+
+  colnames(start_csh) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
+
+  knitr::kable(start_csh) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+
+
+```
+
+
+\FloatBarrier
+## 38. If the Cancer Screening History flag is null, there should be no survey data.
+
+```{r survey_data_m1, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+csh_null_bq <-
+"SELECT Connect_ID,
+CASE
+    WHEN d_827220437 = '125001209' THEN 'Kaiser Permanente Colorado'
+    WHEN d_827220437 = '181769837' THEN 'Other'
+    WHEN d_827220437 = '300267574' THEN 'Kaiser Permanente Hawaii'
+    WHEN d_827220437 = '303349821' THEN 'Marshfield Clinic Health System'
+    WHEN d_827220437 = '327912200' THEN 'Kaiser Permanente Georgia'
+    WHEN d_827220437 = '452412599' THEN 'Kaiser Permanente Northwest'
+    WHEN d_827220437 = '517700004' THEN 'National Cancer Institute'
+    WHEN d_827220437 = '531629870' THEN 'HealthPartners'
+    WHEN d_827220437 = '548392715' THEN 'Henry Ford Health System'
+    WHEN d_827220437 = '657167265' THEN 'Sanford Health'
+    WHEN d_827220437 = '809703864' THEN 'University of Chicago Medicine'
+    ELSE NULL
+END AS Site
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants`
+where d_176068627 is null and
+Connect_ID in (select Connect_ID from `nih-nci-dceg-connect-prod-6d04.FlatConnect.cancerScreeningHistorySurvey` )
+order by Site"
+
+csh_null_bq_table <- bq_project_query(project, csh_null_bq)
+csh_null <- bq_table_download(csh_null_bq_table, bigint = "integer64")
+
+
+if (nrow(csh_null) == 0) {
+  cat("No errors\n")
+} else {
+  knitr::kable(csh_null) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+
+```
+
+
+
+
+
+\FloatBarrier
+## 39. The Autogenerated date/time stamp for HIPAA Authorization and Time consent submitted should match down to the minute (after 12/1/2023).
+
+```{r hipaa_cnst_match, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+hipaa_consent_match_pull <-
+"SELECT Connect_ID FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` 
+where 
+FORMAT_DATETIME('%Y-%m-%d %H:%M', TIMESTAMP(d_262613359)) 
+  != FORMAT_DATETIME('%Y-%m-%d %H:%M', TIMESTAMP(d_454445267))
+  AND DATE(d_454445267) > '2023-12-01'"
+
+hipaa_consent_match_table <- bq_project_query(project, hipaa_consent_match_pull)
+hipaa_consent_match <- bq_table_download(hipaa_consent_match_table, bigint = "integer64")
+
+
+if (nrow(hipaa_consent_match) == 0) {
+  cat("No errors\n")
+} else {
+  knitr::kable(hipaa_consent_match) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+
+```
+
+
+
+
+
+
+
+
+```{r bday_card_table, echo=FALSE, include=FALSE}
+
+bdaybq <- "SELECT * FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.birthdayCard` where Connect_ID IS NOT NULL"
+bdaybq_table <- bq_project_query(project, bdaybq)
+bdaybq <- bq_table_download(bdaybq_table, bigint = "integer64")
+
+bdaybq$Connect_ID <- as.numeric(bdaybq$Connect_ID)
+bday_base_vars= left_join(partsbq, bdaybq, by="Connect_ID")
+
+```
+
+
+\FloatBarrier
+## 40. If maildate is populated then cardVersion should be populated.
+```{r bday1, echo=FALSE, warning=FALSE, message=FALSE}
+
+bday1 <- bday_base_vars %>%  filter(!is.na(d_768313785) & is.na(d_194486780)) %>%
+      select(Site, Connect_ID, d_768313785, d_194486780) %>%  sort_by(Site)
+
+colnames(bday1) <- c("Site", "Connect ID", "NORCBC_CardMailingDt", "NORCBC_CardVersion")
+
+if (nrow(bday1) == 0) {
+  cat("No errors\n")
+} else {
+  knitr::kable(bday1) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+```
+
+
+\FloatBarrier
+## 41. If cardVersion d_194486780 is populated then maildate d_768313785 should be populated
+```{r bday2, echo=FALSE, warning=FALSE, message=FALSE}
+
+bday2 <- bday_base_vars %>%  filter(is.na(d_768313785) & !is.na(d_194486780)) %>%
+      select(Site, Connect_ID, d_768313785, d_194486780) %>%  sort_by(Site)
+
+colnames(bday2) <- c("Site", "Connect ID", "NORCBC_CardMailingDt", "NORCBC_CardVersion")
+
+if (nrow(bday2) == 0) {
+  cat("No errors\n")
+} else {
+  knitr::kable(bday2) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+```
+
+
+
+\FloatBarrier
+## 42. If maildate d_768313785 is populated then dispCode d_916186376 should be values 01, 02, 06, 07, or N/A
+```{r bday3, echo=FALSE, warning=FALSE, message=FALSE}
+
+bday3 <- bday_base_vars %>%  filter(!is.na(d_768313785) & !(d_916186376 %in% c("01", "02", "06", "07") | is.na(d_916186376))) %>%
+      select(Site, Connect_ID, d_768313785, d_916186376) %>%  sort_by(Site)
+
+colnames(bday3) <- c("Site", "Connect ID", "NORCBC_CardMailingDt", "NORCBC_CardDispCode")
+
+if (nrow(bday3) == 0) {
+  cat("No errors\n")
+} else {
+  knitr::kable(bday3) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+```
+
+
+\FloatBarrier
+## 43. If dispCode d_916186376 is populated then maildate d_768313785 should be populated
+```{r bday4, echo=FALSE, warning=FALSE, message=FALSE}
+
+bday4 <- bday_base_vars %>%  filter(is.na(d_768313785) & !is.na(d_916186376)) %>%
+      select(Site, Connect_ID, d_768313785, d_916186376) %>%  sort_by(Site)
+
+colnames(bday4) <- c("Site", "Connect ID", "NORCBC_CardMailingDt", "NORCBC_CardDispCode")
+
+if (nrow(bday4) == 0) {
+  cat("No errors\n")
+} else {
+  knitr::kable(bday4) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+```
+
+
+\FloatBarrier
+## 44. If maildate d_768313785 is populated then returnDate d_902078073 should be submitted as an ISO 8601 timestamp or be N/A
+```{r bday5, echo=FALSE, warning=FALSE, message=FALSE}
+
+bday5 <- bday_base_vars %>%  filter(!is.na(d_768313785) & !(is.na(ymd_hms(d_194486780, quiet = TRUE)) | is.na(d_194486780))) %>%
+      select(Site, Connect_ID, d_768313785, d_902078073) %>%  sort_by(Site)
+
+colnames(bday5) <- c("Site", "Connect ID", "NORCBC_CardMailingDt", "NORCBC_CardReturnDt")
+
+if (nrow(bday5) == 0) {
+  cat("No errors\n")
+} else {
+  knitr::kable(bday5) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+```
+
+
+\FloatBarrier
+## 45. If returnDate d_902078073 is populated then maildate d_768313785 should be populated
+```{r bday6, echo=FALSE, warning=FALSE, message=FALSE}
+
+bday6 <- bday_base_vars %>%  filter(is.na(d_768313785) & !is.na(d_902078073)) %>%
+      select(Site, Connect_ID, d_768313785, d_902078073) %>%  sort_by(Site)
+
+colnames(bday6) <- c("Site", "Connect ID", "NORCBC_CardMailingDt", "NORCBC_CardReturnDt")
+
+if (nrow(bday6) == 0) {
+  cat("No errors\n")
+} else {
+  knitr::kable(bday6) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+```
+
+
+
+<!-- ## 46. If re-invitation date set, then re-invitation campaign type data should be sent -->
+<!-- reinvite_date_type <- base_vars %>%  filter(!is.na(d_439351436) & is.na(d_280021666)) -->
+
+
+
+
+<!-- if (nrow(reinvite_date_type) == 0) { -->
+<!--   cat("No errors\n") -->
+<!-- } else { -->
+
+<!--   reinvite_date_type <- reinvite_date_type  %>% select(Site, Connect_ID, d_439351436, d_280021666)  %>%  sort_by(Site) -->
+<!--   colnames(reinvite_date_type) <- c("Site", "Connect ID", "RcrtSI_RInvTimeStamp_v1r0", "RcrtSI_RInvCampaignType_v1r0") -->
+
+<!--   knitr::kable(reinvite_date_type) %>% -->
+<!--     kable_styling(latex_options = "scale_down") -->
+<!-- } -->
+
+
+
+
+
+<!-- ## 47. There should not be any re-invitation data sent before 2/6/2025 -->
+<!-- reinvite_start <- base_vars %>%  filter(as.Date(d_439351436) < "2025-02-06")  -->
+
+
+
+
+<!-- if (nrow(reinvite_start) == 0) { -->
+<!--   cat("No errors\n") -->
+<!-- } else { -->
+
+<!--   reinvite_start <- reinvite_start  %>% select(Site, Connect_ID, d_439351436, d_280021666)  %>%  sort_by(Site) -->
+<!--   colnames(reinvite_start) <- c("Site", "Connect ID", "RcrtSI_RInvTimeStamp_v1r0", "RcrtSI_RInvCampaignType_v1r0") -->
+
+<!--   knitr::kable(reinvite_start) %>% -->
+<!--     kable_styling(latex_options = "scale_down") -->
+<!-- } -->
+
