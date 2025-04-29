@@ -1,0 +1,409 @@
+---
+title: "PROMIS QC"
+author: "Kelsey Sanchez and Brittany Crawford"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r libraries, include=FALSE}
+## Description =================================================================
+# Title:        PROMIS QC
+# Author:       Brittany Crawford
+# Date:         2025-02-13
+# Objective:    Checking scenarios to confirm data is as expected 
+#=================================================================
+
+library(bigrquery)
+library(foreach)
+library(stringr)
+library(plyr)
+library(epiDisplay) 
+library(gmodels)
+library(magrittr)
+library(arsenal)
+library(gtsummary)
+library(rio)
+library(ggplot2)
+library(gridExtra)
+library(scales)
+library(gt)
+library(tinytex)
+library(data.table) 
+library(tidyverse)
+library(dplyr) 
+library(reshape)  
+library(listr) 
+library(sqldf) 
+library(lubridate)
+library(stringr) 
+library(kableExtra)
+
+bq_auth()
+2
+
+```
+
+
+
+```{r data_pull, include=FALSE}
+
+project <- "nih-nci-dceg-connect-prod-6d04"
+billing <- "nih-nci-dceg-connect-prod-6d04" ##project and billing should be consistent
+
+#selecting relevant variables  
+test_promis <- "SELECT *
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.promis_v1_JP`
+where Connect_ID IS NOT NULL"
+promis_table <- bq_project_query(project, test_promis)
+promis_data <- bq_table_download(promis_table, bigint = "integer64")
+
+#merging in data from participants table so that only those who are active or passive, completed PROMIS, and verified are included
+parts <- "SELECT Connect_ID, d_311580100, d_371067537, d_870643066, d_843688458
+ FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` where Connect_ID IS NOT NULL and 
+(d_512820379='486306141' OR d_512820379 = '854703046') and d_320303124 = '231311385' and d_821247024 = '197316935'"
+
+parts_table <- bq_project_query(project, parts)
+parts_data <- bq_table_download(parts_table, bigint = "integer64")
+
+promis_full = left_join(parts_data, promis_data, by="Connect_ID")
+
+```
+
+
+
+```{r Errors, echo=FALSE, warning=FALSE, message=FALSE}
+
+#If a participant skipped any question in a given section, they should not have a t-score for that section, spot checks
+any_physical <- promis_full %>% filter(!is.na(D_608953994) & (is.na(D_284353934_D_559540891) | is.na(D_284353934_D_780866928) | 
+                                                               is.na(D_284353934_D_783201540) | is.na(D_284353934_D_917425212))) %>% 
+  select(Connect_ID, D_608953994, D_284353934_D_559540891, D_284353934_D_780866928, D_284353934_D_783201540, D_284353934_D_917425212)    #94
+colnames(any_physical) <- c("Connect_ID", "physical_score", "physical1", "physical2", "physical3", "physical4")
+
+any_anxiety <- promis_full %>% filter(!is.na(D_328149278) & (is.na(D_404946076_D_179665441) | is.na(D_404946076_D_195292223) | 
+                                                              is.na(D_404946076_D_429680247) | is.na(D_404946076_D_829976839))) %>% 
+  select(Connect_ID, D_328149278, D_404946076_D_179665441, D_404946076_D_195292223, D_404946076_D_429680247, D_404946076_D_829976839) #111
+colnames(any_anxiety) <- c("Connect_ID","anxiety_score", "anxiety1", "anxiety2", "anxiety3", "anxiety4")
+
+any_depression <- promis_full %>% filter(!is.na(D_297016093) & (is.na(D_715048033_D_168582270) | is.na(D_715048033_D_361835532) | 
+                                                                 is.na(D_715048033_D_468039454) | is.na(D_715048033_D_803322918))) %>% 
+  select(Connect_ID, D_297016093, D_715048033_D_168582270, D_715048033_D_361835532, D_715048033_D_468039454, D_715048033_D_803322918)  #105
+colnames(any_depression) <- c("Connect_ID", "depression_score","depression1", "depression2", "depression3", "depression4")
+
+any_fatigue <- promis_full %>% filter(!is.na(D_410751656) & (is.na(D_907490539_D_105063268) | is.na(D_907490539_D_467404576) | 
+                                                              is.na(D_907490539_D_658945347) | is.na(D_907490539_D_787436735))) %>% 
+  select(Connect_ID, D_410751656, D_907490539_D_105063268, D_907490539_D_467404576, D_907490539_D_658945347, D_907490539_D_787436735)  #97
+colnames(any_fatigue) <- c("Connect_ID","fatigue_score", "fatigue1", "fatigue2", "fatigue3", "fatigue4")
+
+any_sleep <- promis_full %>% filter(!is.na(D_990793746) & (is.na(D_336566965_D_526006101) | is.na(D_336566965_D_624200915) | 
+                                                            is.na(D_336566965_D_644233792) | is.na(D_336566965_D_992194402))) %>%
+  select(Connect_ID, D_990793746, D_336566965_D_526006101, D_336566965_D_624200915, D_336566965_D_644233792, D_336566965_D_992194402)  #78
+colnames(any_sleep) <- c("Connect_ID","sleep_score", "sleep1", "sleep2", "sleep3", "sleep4")
+
+any_pain <- promis_full %>% filter(!is.na(D_370227545) & (is.na(D_420560514_D_380975443) | is.na(D_420560514_D_426764225) |
+                                                           is.na(D_420560514_D_693503159) | is.na(D_420560514_D_754781311))) %>% 
+  select(Connect_ID, D_370227545, D_420560514_D_380975443, D_420560514_D_426764225, D_420560514_D_693503159, D_420560514_D_754781311)  #80
+colnames(any_pain) <- c("Connect_ID","pain_score", "pain1", "pain2", "pain3", "pain4")
+
+any_social <- promis_full %>% filter(!is.na(D_393186700) & (is.na(D_420392309_D_226478149) | is.na(D_420392309_D_271090432) |
+                                                             is.na(D_420392309_D_828608766) | is.na(D_420392309_D_886047084))) %>% 
+  select(Connect_ID, D_393186700, D_420392309_D_226478149, D_420392309_D_271090432, D_420392309_D_828608766, D_420392309_D_886047084) #94
+colnames(any_social) <- c("Connect_ID","social_score", "social1", "social2", "social3", "social4")
+
+any_satisfaction <- promis_full %>% filter(!is.na(D_697423629) & (is.na(D_261177801_D_313287837) | is.na(D_261177801_D_542492755) |
+      is.na(D_261177801_D_598001940) | is.na(D_261177801_D_733106290))) %>% 
+      select(Connect_ID, D_697423629, D_261177801_D_313287837, D_261177801_D_542492755,D_261177801_D_598001940, D_261177801_D_733106290)
+colnames(any_satisfaction) <- c("Connect_ID","satisfaction_score", "satisfaction1", "satisfaction2", "satisfaction3", "satisfaction4")
+
+any_isolation <- promis_full %>% filter(!is.na(D_129202138) & (is.na(D_326712049_D_311938392) | is.na(D_326712049_D_387564567) |
+      is.na(D_326712049_D_437905191) | is.na(D_326712049_D_479680555))) %>% 
+      select(Connect_ID, D_129202138, D_326712049_D_311938392, D_326712049_D_387564567, D_326712049_D_437905191, D_326712049_D_479680555)
+colnames(any_isolation) <- c("Connect_ID","isolation_score", "isolation1", "isolation2", "isolation3", "isolation4")
+
+any_cognitive <- promis_full %>% filter(!is.na(D_755066850) & (is.na(D_230486322_D_115480943) | is.na(D_230486322_D_650091514) |
+      is.na(D_230486322_D_960308206) | is.na(D_230486322_D_974618086))) %>% 
+      select(Connect_ID, D_755066850, D_230486322_D_115480943, D_230486322_D_650091514, D_230486322_D_960308206, D_230486322_D_974618086) 
+colnames(any_cognitive) <- c("Connect_ID","cognitive_score", "cognitive1", "cognitive2", "cognitive3", "cognitive4")
+
+
+raw_data <- bind_rows(any_physical, any_anxiety, any_depression, any_fatigue, any_sleep, any_pain, any_social, any_satisfaction, any_isolation, any_cognitive)  %>% sample_n(20)
+raw_data_finsih <- promis_full %>%  select(Connect_ID, d_843688458) %>%  filter(Connect_ID %in% raw_data$Connect_ID)  %>% 
+  dplyr::rename(completion_time=d_843688458) %>% 
+  mutate(completion_time = as.Date(completion_time))
+raw_data_finsihed <- left_join(raw_data, raw_data_finsih)
+openxlsx::write.xlsx(raw_data_finsihed[, c(1,52,2:51)],"PROMIS_rawdata_SomeSkipped_WithScore.xlsx",row.names = F,na="")
+
+any_connect_ids <- bind_rows(any_physical, any_anxiety, any_depression, any_fatigue, any_sleep, any_pain, any_social, any_satisfaction, any_isolation, any_cognitive) %>%
+  distinct(Connect_ID)
+
+
+Skipped_Some_w_Score <- dim(any_connect_ids)  ##584
+
+# promis_full %>% filter(Connect_ID %in% any_connect_ids) %>%  select(Connect_ID, "physical_score", "physical1", "physical2", "physical3", "physical4",
+#                                                                     "anxiety_score", "anxiety1", "anxiety2", "anxiety3", "anxiety4",
+#                                                                     )
+
+
+
+
+
+## According to the literature, there may be an alternative way to get scores with skipped questions. BUT its not consistent; compare inconsistencies 
+any_physical2 <- promis_full %>% filter(is.na(D_608953994) & (is.na(D_284353934_D_559540891) | is.na(D_284353934_D_780866928) | 
+                                                               is.na(D_284353934_D_783201540) | is.na(D_284353934_D_917425212)) & 
+                                          !(is.na(D_284353934_D_559540891) & is.na(D_284353934_D_780866928) & 
+                                                               is.na(D_284353934_D_783201540) & is.na(D_284353934_D_917425212))) %>% 
+  select(Connect_ID, D_608953994, D_284353934_D_559540891, D_284353934_D_780866928, D_284353934_D_783201540, D_284353934_D_917425212)    #94
+colnames(any_physical2) <- c("Connect_ID", "physical_score", "physical1", "physical2", "physical3", "physical4")
+
+any_anxiety2 <- promis_full %>% filter(is.na(D_328149278) & (is.na(D_404946076_D_179665441) | is.na(D_404946076_D_195292223) | 
+                                                              is.na(D_404946076_D_429680247) | is.na(D_404946076_D_829976839)) & 
+                                         !(is.na(D_404946076_D_179665441) & is.na(D_404946076_D_195292223) & 
+                                                              is.na(D_404946076_D_429680247) & is.na(D_404946076_D_829976839))) %>% 
+  select(Connect_ID, D_328149278, D_404946076_D_179665441, D_404946076_D_195292223, D_404946076_D_429680247, D_404946076_D_829976839) #111
+colnames(any_anxiety2) <- c("Connect_ID","anxiety_score", "anxiety1", "anxiety2", "anxiety3", "anxiety4")
+
+any_depression2 <- promis_full %>% filter(is.na(D_297016093) & (is.na(D_715048033_D_168582270) | is.na(D_715048033_D_361835532) | 
+                                                                 is.na(D_715048033_D_468039454) | is.na(D_715048033_D_803322918)) & 
+                                            !(is.na(D_715048033_D_168582270) & is.na(D_715048033_D_361835532) & 
+                                                                 is.na(D_715048033_D_468039454) & is.na(D_715048033_D_803322918))) %>% 
+  select(Connect_ID, D_297016093, D_715048033_D_168582270, D_715048033_D_361835532, D_715048033_D_468039454, D_715048033_D_803322918)  #105
+colnames(any_depression2) <- c("Connect_ID", "depression_score","depression1", "depression2", "depression3", "depression4")
+
+any_fatigue2 <- promis_full %>% filter(is.na(D_410751656) & (is.na(D_907490539_D_105063268) | is.na(D_907490539_D_467404576) | 
+                                                              is.na(D_907490539_D_658945347) | is.na(D_907490539_D_787436735)) & 
+                                         !(is.na(D_907490539_D_105063268) & is.na(D_907490539_D_467404576) &
+                                                              is.na(D_907490539_D_658945347) & is.na(D_907490539_D_787436735))) %>% 
+  select(Connect_ID, D_410751656, D_907490539_D_105063268, D_907490539_D_467404576, D_907490539_D_658945347, D_907490539_D_787436735)  #97
+colnames(any_fatigue2) <- c("Connect_ID","fatigue_score", "fatigue1", "fatigue2", "fatigue3", "fatigue4")
+
+any_sleep2 <- promis_full %>% filter(is.na(D_990793746) & (is.na(D_336566965_D_526006101) | is.na(D_336566965_D_624200915) | 
+                                                            is.na(D_336566965_D_644233792) | is.na(D_336566965_D_992194402)) &
+                                       !(is.na(D_336566965_D_526006101) & is.na(D_336566965_D_624200915) & 
+                                                            is.na(D_336566965_D_644233792) & is.na(D_336566965_D_992194402))) %>%
+  select(Connect_ID, D_990793746, D_336566965_D_526006101, D_336566965_D_624200915, D_336566965_D_644233792, D_336566965_D_992194402)  #78
+colnames(any_sleep2) <- c("Connect_ID","sleep_score", "sleep1", "sleep2", "sleep3", "sleep4")
+
+any_pain2 <- promis_full %>% filter(is.na(D_370227545) & (is.na(D_420560514_D_380975443) | is.na(D_420560514_D_426764225) |
+                                                           is.na(D_420560514_D_693503159) | is.na(D_420560514_D_754781311)) & 
+                                      !(is.na(D_420560514_D_380975443) & is.na(D_420560514_D_426764225) &
+                                                           is.na(D_420560514_D_693503159) & is.na(D_420560514_D_754781311))) %>% 
+  select(Connect_ID, D_370227545, D_420560514_D_380975443, D_420560514_D_426764225, D_420560514_D_693503159, D_420560514_D_754781311)  #80
+colnames(any_pain2) <- c("Connect_ID","pain_score", "pain1", "pain2", "pain3", "pain4")
+
+any_social2 <- promis_full %>% filter(is.na(D_393186700) & (is.na(D_420392309_D_226478149) | is.na(D_420392309_D_271090432) |
+                                                             is.na(D_420392309_D_828608766) | is.na(D_420392309_D_886047084)) &
+                                        !(is.na(D_420392309_D_226478149) & is.na(D_420392309_D_271090432) &
+                                                             is.na(D_420392309_D_828608766) & is.na(D_420392309_D_886047084))) %>% 
+  select(Connect_ID, D_393186700, D_420392309_D_226478149, D_420392309_D_271090432, D_420392309_D_828608766, D_420392309_D_886047084) #94
+colnames(any_social2) <- c("Connect_ID","social_score", "social1", "social2", "social3", "social4")
+
+any_satisfaction2 <- promis_full %>% filter(is.na(D_697423629) & (is.na(D_261177801_D_313287837) | is.na(D_261177801_D_542492755) |
+                                                                    is.na(D_261177801_D_598001940) | is.na(D_261177801_D_733106290)) &
+                                              !(is.na(D_261177801_D_313287837) & is.na(D_261177801_D_542492755) &
+                                                  is.na(D_261177801_D_598001940) & is.na(D_261177801_D_733106290))) %>% 
+      select(Connect_ID, D_697423629, D_261177801_D_313287837, D_261177801_D_542492755,D_261177801_D_598001940, D_261177801_D_733106290)
+colnames(any_satisfaction2) <- c("Connect_ID","satisfaction_score", "satisfaction1", "satisfaction2", "satisfaction3", "satisfaction4")
+
+any_isolation2 <- promis_full %>% filter(is.na(D_129202138) & (is.na(D_326712049_D_311938392) | is.na(D_326712049_D_387564567) |
+                                                                 is.na(D_326712049_D_437905191) | is.na(D_326712049_D_479680555)) &
+                                           !(is.na(D_326712049_D_311938392) & is.na(D_326712049_D_387564567) &
+                                                                 is.na(D_326712049_D_437905191) & is.na(D_326712049_D_479680555))) %>% 
+      select(Connect_ID, D_129202138, D_326712049_D_311938392, D_326712049_D_387564567, D_326712049_D_437905191, D_326712049_D_479680555)
+colnames(any_isolation2) <- c("Connect_ID","isolation_score", "isolation1", "isolation2", "isolation3", "isolation4")
+
+any_cognitive2 <- promis_full %>% filter(is.na(D_755066850) & (is.na(D_230486322_D_115480943) | is.na(D_230486322_D_650091514) |
+                                                                 is.na(D_230486322_D_960308206) | is.na(D_230486322_D_974618086)) &
+                                           !((is.na(D_230486322_D_115480943) & is.na(D_230486322_D_650091514) &
+                                                                 is.na(D_230486322_D_960308206) & is.na(D_230486322_D_974618086)))) %>% 
+      select(Connect_ID, D_755066850, D_230486322_D_115480943, D_230486322_D_650091514, D_230486322_D_960308206, D_230486322_D_974618086)
+colnames(any_cognitive2) <- c("Connect_ID","cognitive_score", "cognitive1", "cognitive2", "cognitive3", "cognitive4")
+
+
+## No one- that's good! As to be expected according to the rules
+raw_data2 <- bind_rows(any_physical2, any_anxiety2, any_depression2, any_fatigue2, any_sleep2, any_pain2, any_social2, any_satisfaction2, any_isolation2, any_cognitive2)
+
+
+
+cat(paste0("If a participant skips any question in the section, they should have no score. ","\n", Skipped_Some_w_Score, " still have a score."))
+
+
+
+#Participant answered all questions in a section- must have a score
+all_physical <- promis_full %>% filter(is.na(D_608953994) & (!is.na(D_284353934_D_559540891) & !is.na(D_284353934_D_780866928) & 
+                                                               !is.na(D_284353934_D_783201540) & !is.na(D_284353934_D_917425212))) %>% 
+  select(Connect_ID, D_608953994, D_284353934_D_559540891, D_284353934_D_780866928, D_284353934_D_783201540, D_284353934_D_917425212)
+colnames(all_physical) <- c("Connect_ID", "physical_score", "physical1", "physical2", "physical3", "physical4")
+
+all_anxiety <- promis_full %>% filter(is.na(D_328149278) & (!is.na(D_404946076_D_179665441) & !is.na(D_404946076_D_195292223) & 
+                                                              !is.na(D_404946076_D_429680247) & !is.na(D_404946076_D_829976839))) %>% 
+  select(Connect_ID, D_328149278, D_404946076_D_179665441, D_404946076_D_195292223, D_404946076_D_429680247, D_404946076_D_829976839)
+colnames(all_anxiety) <- c("Connect_ID","anxiety_score", "anxiety1", "anxiety2", "anxiety3", "anxiety4")
+
+all_depression <- promis_full %>% filter(is.na(D_297016093) & (!is.na(D_715048033_D_168582270) & !is.na(D_715048033_D_361835532) & 
+                                                                 !is.na(D_715048033_D_468039454) & !is.na(D_715048033_D_803322918))) %>% 
+  select(Connect_ID, D_297016093, D_715048033_D_168582270, D_715048033_D_361835532, D_715048033_D_468039454, D_715048033_D_803322918)
+colnames(all_depression) <- c("Connect_ID", "depression_score","depression1", "depression2", "depression3", "depression4")
+
+all_fatigue <- promis_full %>% filter(is.na(D_410751656) & (!is.na(D_907490539_D_105063268) & !is.na(D_907490539_D_467404576) & 
+                                                              !is.na(D_907490539_D_658945347) & !is.na(D_907490539_D_787436735))) %>% 
+  select(Connect_ID, D_410751656, D_907490539_D_105063268, D_907490539_D_467404576, D_907490539_D_658945347, D_907490539_D_787436735)
+colnames(all_fatigue) <- c("Connect_ID","fatigue_score", "fatigue1", "fatigue2", "fatigue3", "fatigue4")
+
+all_sleep <- promis_full %>% filter(is.na(D_990793746) & (!is.na(D_336566965_D_526006101) & !is.na(D_336566965_D_624200915) & 
+                                                            !is.na(D_336566965_D_644233792) & !is.na(D_336566965_D_992194402))) %>%
+  select(Connect_ID, D_990793746, D_336566965_D_526006101, D_336566965_D_624200915, D_336566965_D_644233792, D_336566965_D_992194402)
+colnames(all_sleep) <- c("Connect_ID","sleep_score", "sleep1", "sleep2", "sleep3", "sleep4")
+
+all_pain <- promis_full %>% filter(is.na(D_370227545) & (!is.na(D_420560514_D_380975443) & !is.na(D_420560514_D_426764225) & 
+                                                           !is.na(D_420560514_D_693503159) & !is.na(D_420560514_D_754781311))) %>% 
+  select(Connect_ID, D_370227545, D_420560514_D_380975443, D_420560514_D_426764225, D_420560514_D_693503159, D_420560514_D_754781311)
+colnames(all_pain) <- c("Connect_ID","pain_score", "pain1", "pain2", "pain3", "pain4")
+
+all_social <- promis_full %>% filter(is.na(D_393186700) & (!is.na(D_420392309_D_226478149) & !is.na(D_420392309_D_271090432) &
+                                                             !is.na(D_420392309_D_828608766) & !is.na(D_420392309_D_886047084))) %>% 
+  select(Connect_ID, D_393186700, D_420392309_D_226478149, D_420392309_D_271090432, D_420392309_D_828608766, D_420392309_D_886047084)
+colnames(all_social) <- c("Connect_ID","social_score", "social1", "social2", "social3", "social4")
+
+all_satisfaction <- promis_full %>% filter(is.na(D_697423629) & (!is.na(D_261177801_D_313287837) & !is.na(D_261177801_D_542492755) &
+      !is.na(D_261177801_D_598001940) & !is.na(D_261177801_D_733106290))) %>% 
+      select(Connect_ID, D_697423629, D_261177801_D_313287837, D_261177801_D_542492755,D_261177801_D_598001940, D_261177801_D_733106290)
+colnames(all_satisfaction) <- c("Connect_ID","satisfaction_score", "satisfaction1", "satisfaction2", "satisfaction3", "satisfaction4")
+
+all_isolation <- promis_full %>% filter(is.na(D_129202138) & (!is.na(D_326712049_D_311938392) & !is.na(D_326712049_D_387564567) &
+      !is.na(D_326712049_D_437905191) & !is.na(D_326712049_D_479680555))) %>% 
+      select(Connect_ID, D_129202138, D_326712049_D_311938392, D_326712049_D_387564567, D_326712049_D_437905191, D_326712049_D_479680555)
+colnames(all_isolation) <- c("Connect_ID","isolation_score", "isolation1", "isolation2", "isolation3", "isolation4")
+
+all_cognitive <- promis_full %>% filter(is.na(D_755066850) & (!is.na(D_230486322_D_115480943) & !is.na(D_230486322_D_650091514) &
+      !is.na(D_230486322_D_960308206) & !is.na(D_230486322_D_974618086))) %>% 
+      select(Connect_ID, D_755066850, D_230486322_D_115480943, D_230486322_D_650091514, D_230486322_D_960308206, D_230486322_D_974618086)
+colnames(all_cognitive) <- c("Connect_ID","cognitive_score", "cognitive1", "cognitive2", "cognitive3", "cognitive4")
+
+
+raw_data3 <- bind_rows(all_physical, all_anxiety, all_depression, all_fatigue, all_sleep, all_pain, all_social, all_satisfaction, all_isolation, all_cognitive)
+raw_data_finsih3 <- promis_full %>%  select(Connect_ID, d_843688458) %>%  filter(Connect_ID %in% raw_data3$Connect_ID)  %>% 
+  dplyr::rename(completion_time=d_843688458) %>% 
+  mutate(completion_time = as.Date(completion_time))
+raw_data_finsihed3 <- left_join(raw_data3, raw_data_finsih3)
+openxlsx::write.xlsx(raw_data_finsihed3[, c(1,52,2:51)],"PROMIS_rawdata_AnsweredAll_WithNoScore.xlsx",row.names = F,na="")
+
+
+all_connect_ids <- bind_rows(all_physical, all_anxiety, all_depression, all_fatigue, all_sleep, all_pain, all_social, all_satisfaction, all_isolation, all_cognitive) %>%
+  distinct(Connect_ID)
+
+
+Answered_All <- nrow(all_connect_ids)  ##79 
+
+cat(paste0("Participants that answered all questions in a section must have a score. ", Answered_All, " have no score.", "\n"))
+
+
+#Participant answered no questions in a section- should have no score
+no_physical <- promis_full %>% filter(!is.na(D_608953994) & (is.na(D_284353934_D_559540891) & is.na(D_284353934_D_780866928) & 
+                                                               is.na(D_284353934_D_783201540) & is.na(D_284353934_D_917425212))) %>% 
+  select(Connect_ID, D_608953994, D_284353934_D_559540891, D_284353934_D_780866928, D_284353934_D_783201540, D_284353934_D_917425212)
+
+no_anxiety <- promis_full %>% filter(!is.na(D_328149278) & (is.na(D_404946076_D_179665441) & is.na(D_404946076_D_195292223) & 
+                                                              is.na(D_404946076_D_429680247) & is.na(D_404946076_D_829976839))) %>% 
+  select(Connect_ID, D_328149278, D_404946076_D_179665441, D_404946076_D_195292223, D_404946076_D_429680247, D_404946076_D_829976839)
+
+no_depression <- promis_full %>% filter(!is.na(D_297016093) & (is.na(D_715048033_D_168582270) & is.na(D_715048033_D_361835532) & 
+                                                                 is.na(D_715048033_D_468039454) & is.na(D_715048033_D_803322918))) %>% 
+  select(Connect_ID, D_297016093, D_715048033_D_168582270, D_715048033_D_361835532, D_715048033_D_468039454, D_715048033_D_803322918)
+
+no_fatigue <- promis_full %>% filter(!is.na(D_410751656) & (is.na(D_907490539_D_105063268) & is.na(D_907490539_D_467404576) & 
+                                                              is.na(D_907490539_D_658945347) & is.na(D_907490539_D_787436735))) %>% 
+  select(Connect_ID, D_410751656, D_907490539_D_105063268, D_907490539_D_467404576, D_907490539_D_658945347, D_907490539_D_787436735)
+
+no_sleep <- promis_full %>% filter(!is.na(D_990793746) & (is.na(D_336566965_D_526006101) & is.na(D_336566965_D_624200915) & 
+                                                            is.na(D_336566965_D_644233792) & is.na(D_336566965_D_992194402))) %>%
+  select(Connect_ID, D_990793746, D_336566965_D_526006101, D_336566965_D_624200915, D_336566965_D_644233792, D_336566965_D_992194402)
+
+no_pain <- promis_full %>% filter(!is.na(D_370227545) & (is.na(D_420560514_D_380975443) & is.na(D_420560514_D_426764225) & 
+                                                           is.na(D_420560514_D_693503159) & is.na(D_420560514_D_754781311))) %>% 
+  select(Connect_ID, D_370227545, D_420560514_D_380975443, D_420560514_D_426764225, D_420560514_D_693503159, D_420560514_D_754781311)
+
+no_social <- promis_full %>% filter(!is.na(D_393186700) & (is.na(D_420392309_D_226478149) & is.na(D_420392309_D_271090432) &
+                                                             is.na(D_420392309_D_828608766) & is.na(D_420392309_D_886047084))) %>% 
+  select(Connect_ID, D_393186700, D_420392309_D_226478149, D_420392309_D_271090432, D_420392309_D_828608766, D_420392309_D_886047084)
+
+no_satisfaction <- promis_full %>% filter(!is.na(D_697423629) & (is.na(D_261177801_D_313287837) & is.na(D_261177801_D_542492755) &
+      is.na(D_261177801_D_598001940) & is.na(D_261177801_D_733106290))) %>% 
+      select(Connect_ID, D_697423629, D_261177801_D_313287837, D_261177801_D_542492755,D_261177801_D_598001940, D_261177801_D_733106290)
+
+no_isolation <- promis_full %>% filter(!is.na(D_129202138) & (is.na(D_326712049_D_311938392) & is.na(D_326712049_D_387564567) &
+      is.na(D_326712049_D_437905191) & is.na(D_326712049_D_479680555))) %>% 
+      select(Connect_ID, D_129202138, D_326712049_D_311938392, D_326712049_D_387564567, D_326712049_D_437905191, D_326712049_D_479680555)
+
+no_cognitive <- promis_full %>% filter(!is.na(D_755066850) & (is.na(D_230486322_D_115480943) & is.na(D_230486322_D_650091514) &
+      is.na(D_230486322_D_960308206) & is.na(D_230486322_D_974618086))) %>% 
+      select(Connect_ID, D_755066850, D_230486322_D_115480943, D_230486322_D_650091514, D_230486322_D_960308206, D_230486322_D_974618086)
+
+no_connect_ids <- bind_rows(no_physical, no_anxiety, no_depression, no_fatigue, no_sleep, no_pain, no_social, no_satisfaction, no_isolation, no_cognitive) %>%
+  distinct(Connect_ID)
+
+
+Answered_None <- nrow(no_connect_ids)  ##79 
+
+cat(paste0("Participants that answered no questions in a section must not have a score. ", Answered_None, " have a score."))
+
+
+
+```
+
+\newpage 
+```{r UV_distr, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.show='asis'}
+
+## unviariate distributions
+
+scores <- c("D_608953994","D_328149278","D_297016093","D_410751656","D_990793746","D_393186700", "D_370227545", "D_697423629", "D_129202138", "D_755066850")
+score_group <- c("Physical Function", "Anxiety", "Depressive Symptoms", "Fatigue", "Sleep Disturbance", "Social Roles and Activities", "Pain Interference", "Social Interactions", "Social Isolation", "Cognitive Function")
+
+for(i in 1:length(scores)){
+  
+  
+  unv_promis = promis_full %>% select(all_of(scores[i])) %>%  filter(!is.na(.data[[scores[i]]])) %>% 
+    mutate(!!scores[i] := as.numeric(.data[[scores[i]]])) %>% 
+    dplyr::summarize('N'=n(),
+                     Min = min(.data[[scores[i]]], na.rm = TRUE),
+                     Q1 = quantile(.data[[scores[i]]], 0.25, na.rm = TRUE),
+                     Median = median(.data[[scores[i]]], na.rm = TRUE),
+                     Mean = mean(.data[[scores[i]]], na.rm = TRUE), 
+                     SD= sd(.data[[scores[i]]], na.rm = TRUE),
+                     Q3 = quantile(.data[[scores[i]]], 0.75, na.rm = TRUE),
+                     'Perc.85' = quantile(.data[[scores[i]]], 0.85, na.rm = TRUE),
+                     'Perc.90' = quantile(.data[[scores[i]]], 0.90, na.rm = TRUE),
+                     'Perc.95' = quantile(.data[[scores[i]]], 0.95, na.rm = TRUE),
+                     Max = max(.data[[scores[i]]], na.rm = TRUE))
+  
+  unv_output <- knitr::kable(unv_promis,format.args = list(big.mark = ","),
+                             caption=paste0('Univariate Distribution of', score_group[i], " T-Scores"), 
+                             row.names=FALSE,digits=2, booktabs = TRUE)%>% 
+    kable_styling(latex_options = "scale_down") 
+  
+  cat(as.character(unv_output), sep="\n")
+  
+  
+}
+
+
+```
+
+
+```{r UV_distr_hist, echo=FALSE, warning=FALSE, message=FALSE, results='asis', eval=TRUE, fig.show='asis'}
+
+for(i in 1:length(scores)){
+  
+  column_data <- as.numeric(promis_full[[scores[i]]])
+  
+  print(ggplot(promis_full, aes(x = column_data)) +
+    geom_histogram(bins = 30, fill = "steelblue", color = "black") +
+    labs(title = paste0("Histogram of ", score_group[i], " T-Scores"),
+         x = score_group[i], y = "Frequency") +
+    geom_histogram(color="black")+ scale_y_continuous(breaks=pretty_breaks()) +
+    geom_vline(aes(xintercept=mean(column_data, na.rm = TRUE)), colour="#2973A5", linetype="solid"))
+  
+}
+
+```
+
+
+

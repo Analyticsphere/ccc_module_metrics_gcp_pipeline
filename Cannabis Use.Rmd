@@ -1,0 +1,346 @@
+---
+title: "Cannabis Use"
+author: "Kelsey Sanchez"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+
+
+```{r libraries, include=FALSE}
+
+
+#  pdf-engine: xelatex
+#tinytex::install_tinytex()
+
+library(bigrquery)
+library(epiDisplay) ##recommended applied here crosstable, tab1
+library(gmodels) ##recommended
+library(arsenal)
+library(gtsummary)
+library(rio)
+
+
+
+library(ggplot2)
+library(gridExtra)
+library(scales)
+library(gt)
+library(tinytex)
+library(data.table) ###to write or read and data management 
+library(tidyverse) ###for data management
+library(dplyr) ###data management
+library(lubridate) ###date time
+library(stringr) ###to work on patterns, charaters
+library(knitr)
+library(kableExtra)
+options(tinytex.verbose = TRUE)
+
+bq_auth()
+```
+
+
+
+
+
+
+
+```{r query3, include=FALSE}
+project <- "nih-nci-dceg-connect-prod-6d04"
+parts <- "SELECT Connect_ID, token, d_512820379, D_471593703, state_d_934298480, D_230663853,D_335767902, D_982402227, D_919254129, D_699625233, D_564964481, D_795827569, D_544150384,D_371067537, D_430551721, D_821247024, D_914594314,  state_d_725929722, d_126331570, d_536735468, d_663265240, d_878865966, d_684635302, d_167958071, d_949302066 , D_517311251, D_205553981, D_117249500, d_976570371, d_914639140, d_311580100, d_371067537 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` where Connect_ID IS NOT NULL and (d_512820379='486306141' OR d_512820379='854703046') and (D_919254129='353358909') and (D_699625233='353358909') and (d_949302066='231311385')" 
+parts_table <- bq_project_query(project, parts)
+parts_data <- bq_table_download(parts_table, bigint = "integer64",n_max = Inf, page_size = 10000)
+
+parts_data$Connect_ID <- as.numeric(parts_data$Connect_ID)
+
+querymod3 <- "SELECT * FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module3_v1_JP` where Connect_ID IS NOT NULL"
+mod3_table <- bq_project_query(project, querymod3)
+mod3_data <- bq_table_download(mod3_table, bigint = "integer64")
+mod3_data$Connect_ID <- as.numeric(mod3_data$Connect_ID)
+
+
+data_all3= left_join( mod3_data,parts_data, by="Connect_ID")
+
+data_all3 <- data_all3 %>% filter(d_976570371==231311385)
+
+data_tib_m3 <- as_tibble(data_all3)
+
+
+```
+
+
+
+```{r FREQ_ALL, echo=FALSE, warning=FALSE, message=FALSE}
+
+mj_freq = data_tib_m3 %>%
+  mutate(often = case_when(
+    (D_830608495_D_535003378==1 |
+    if_any(c(D_830608495_D_760521319, D_830608495_D_158841370, D_830608495_D_349034127, D_830608495_D_713594719, D_830608495_D_675129470), ~ . == 1 &  
+                (D_763164658 == 151488193 | D_763164658 == 805449318) | #SMMAR
+                (D_524914900 == 151488193 | D_524914900 == 805449318) | #TOMAR
+                (D_325229459 == 151488193 | D_325229459 == 805449318) | #ELMAR
+                (D_101170268 == 151488193 | D_101170268 == 805449318) | #EAMAR
+                (D_355689185 == 151488193 | D_355689185 == 805449318)  )) ~ "Never a Cannabis User", ##THMAR
+    if_any(c(D_830608495_D_760521319, D_830608495_D_158841370, D_830608495_D_349034127, D_830608495_D_713594719, D_830608495_D_675129470), ~ . == 1 & 
+             (((D_763164658 == 486319890 | D_763164658 == 132232896)  & D_180308733 == 317567178) | #SMMAR
+              ((D_524914900 == 486319890 | D_524914900 == 132232896)  & D_444759994 == 317567178) | #TOMAR
+              ((D_325229459 == 486319890 | D_325229459 == 132232896)  & D_859228803 == 317567178) | #ELMAR
+              ((D_101170268 == 486319890 | D_101170268 == 132232896)  & D_921663542 == 317567178) | #EAMAR
+              ((D_355689185 == 486319890 | D_355689185 == 132232896)  & D_532755074 == 317567178)  )) ~ "Currently a Cannabis User", #THMAR
+    if_any(c(D_830608495_D_760521319, D_830608495_D_158841370, D_830608495_D_349034127, D_830608495_D_713594719, D_830608495_D_675129470), ~ . == 1 & 
+             (((D_763164658 == 486319890 | D_763164658 == 132232896)  & (D_180308733 == 484055234 | D_180308733 == 802197176)) | #SMMAR
+              ((D_524914900 == 486319890 | D_524914900 == 132232896)  & (D_444759994 == 484055234 | D_444759994 == 802197176)) | #TOMAR
+              ((D_325229459 == 486319890 | D_325229459 == 132232896)  & (D_859228803 == 484055234 | D_859228803 == 802197176)) | #ELMAR
+              ((D_101170268 == 486319890 | D_101170268 == 132232896)  & (D_921663542 == 484055234 | D_921663542 == 802197176)) | #EAMAR
+              ((D_355689185 == 486319890 | D_355689185 == 132232896)  & (D_532755074 == 484055234 | D_532755074 == 802197176))  )) ~ "Formerly a Cannabis User", #THMAR
+    TRUE ~ "Missingness of CANNABIS Section"
+  ))
+
+mj_freq$often <- factor(mj_freq$often, levels=c("Never a Cannabis User","Formerly a Cannabis User","Currently a Cannabis User","Missingness of CANNABIS Section"))
+
+dt_cig_frequency_summary <- mj_freq %>% group_by(often) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(often, n, percentage)
+
+cat1 <- dim(data_tib_m3)[[1]]
+cat2 <- as.numeric(dt_cig_frequency_summary[2,2]+dt_cig_frequency_summary[3,2])
+cat3 <- round(dt_cig_frequency_summary[3,3],digits=2)
+cat4 <- round(dt_cig_frequency_summary[2,3], digits=2)
+
+```
+
+
+```{r Intro, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+
+cat(paste0("Among the first ", cat1, " participants who submitted Baseline Survey- Module 3, ", cat2 ," had ever \n used cannabis, including ", cat3 , "% of current users and ", cat4, "% of former users (see Tables) 2 & 3."))
+
+```
+
+\newpage 
+
+
+```{r AllMairjuana, warning=FALSE, echo=FALSE, message=FALSE, include=FALSE}
+
+MJ_pd= data_tib_m3 %>%  mutate(products= case_when(D_830608495_D_760521319==1 ~ "Smoking",
+                                             D_830608495_D_158841370==1 ~ "Smoking combined with Tobacco",
+                                             D_830608495_D_349034127==1 ~ "Electronic Vaping",
+                                             D_830608495_D_713594719==1 ~ "Consuming through Food or Drink",
+                                             D_830608495_D_675129470==1 ~ "THC Dabbing",
+                                             D_830608495_D_535003378==1 ~ "None of the Above", 
+                                            TRUE ~ "Skipped this question"))
+
+ 
+tmp_1<- MJ_pd[, grepl("830608495", colnames(MJ_pd))]
+tmp1 <- tmp_1[, c(6,1,2,5,4,3)]
+tobac_dx <- NULL
+for (i in 1:6){
+  dt <- as.data.frame(tab1(tmp1[,i])$output.table)
+  dt$tobac_dx <- colnames(tmp1)[i]
+  tobac_dx <- rbind(tobac_dx,dt[2,])
+  
+}
+tobac_dx$tobac_dx ### how are their race variables being assigned here?? wrong variable matching. Flattening issue?
+
+tobac_dx$tobac_dx <- c("Smoking","Smoking combined with Tobacco","Electronic Vaping","Consuming through Food or Drink", "THC Dabbing","None of the Above")
+```
+```{r, warning=FALSE, echo=FALSE, message=FALSE}
+# colnames(tobac_dx) <- c("Frequency", "Percentage" , "  %(NA-)",  "Condition")
+# testt2_1 <- tobac_dx[, c(4,1,2)]
+# 
+# colnames(tobac_dx) <- c("Frequency", "Percentage" , "  %(NA+)",  "Condition")
+# testt2_2 <- tobac_dx[, c(4,1,2)]
+
+colnames(tobac_dx) <- c("Frequency", "Percentage" , "  %(NA+)",  "Condition")
+tobac <- tobac_dx[, c(4,1,2)]
+
+skipped_mhg1 <- sum(table(MJ_pd$products=="Skipped this question")[2])
+tobac[as.numeric(dim(tobac)[[1]])+1,] <- c("Skipped this Question", skipped_mhg1, round((skipped_mhg1/dim(MJ_pd)[[1]])*100,2))
+
+
+dt_tobac <- tobac %>%  gt::gt() %>%  
+  fmt_number(columns = "Percentage", decimals = 2) %>% 
+  tab_header(title = md("Method of Consuming Cannabis")) %>% 
+  cols_label(Frequency= md("**Number of Participants**"), Percentage=md("**Percentge of Participants**"),  Condition = md("**Condition**")) %>% 
+  # summary_rows( groups=F,
+  #   column = c(Frequency,Percentage),
+  #   fns= list(
+  #     Sum= ~sum(.)
+  #   ), decimals=0) %>%
+  #grand_summary_rows(columns=c(Frequency, Percentage),fns = ~sum(.,na.rm = T))|>
+  tab_options(
+      stub.font.weight = "bold"
+    ) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      columns = Condition,
+    )
+  )
+tab_footnote(
+  dt_tobac,
+  md("As this is a select all question, participants may select multiple responses."),
+  locations = cells_column_labels(columns = Percentage),
+  placement = c("left")
+)
+
+
+
+
+```
+
+
+
+\newpage 
+Currently a (Product) Smoker responded with the following: 
+
+(1) 'Yes' to 'Have you ever used any of these cannabis products, even once?' 
+
+(2)  Either ‘50-99’ or ‘100+’ to 'How many (products) have you smoked in your entire life? 
+
+(3) ‘In the past month’ to 'When was the last time you smoked (products)?'
+
+
+    
+    
+Formerly a (Product) Smoker responded with the following: 
+
+(1) 'Yes' to 'Have you ever used any of these cannabis products, even once?', 
+
+(2) Either ‘50-99’ or ‘100+’ to 'How many (products) have you smoked in your entire life?', 
+
+(3) Either ‘More than a month ago, but in the past year’ or ‘More than 1 year ago’ to 'When was the last time you smoked (products)?'
+
+
+## Frequency Cannabis Use
+
+```{r Table_ALL, echo=FALSE, warning=FALSE, message=FALSE}
+
+sas_cann <- dt_cig_frequency_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
+  fmt_number(columns = "percentage", decimals = 2) %>% 
+  tab_header(title = md("Frequency of Cannabis Use \nAmong Participants Who Completed SAS")) %>% 
+  cols_label(n= md("**Number of Participants**"), often = md("**Answer**"), percentage = md("**Percentage of Participants**")) %>% 
+  grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  tab_options(
+    stub.font.weight = "bold"
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      columns = often,
+    )
+  )  
+tab_footnote(
+  sas_cann,
+  md("Missingness of CANNABIS Section are those that did not select any products (including 'None of the Above')."),
+  locations = cells_column_labels(columns = often),
+  placement = c("left")
+)
+#"Missingness of CANNABIS Section are those that did not select any products (including 'None of the Above'), selected a product but used that product less than 50 times, or selected the use of a product 50+ times but skipped the last time that product was used
+
+```
+
+
+
+
+
+\newpage
+
+## Product Type Among Current Users
+
+```{r, warning=FALSE, echo=FALSE, message=FALSE}
+
+curr_mj <- mj_freq %>%  filter(often=="Currently a Cannabis User")
+
+
+MJ_long <- curr_mj %>%
+  pivot_longer(cols = starts_with("D_830608495_"), names_to = "ProductCode", values_to = "Selected") %>%
+  filter(Selected == 1) %>%
+  mutate(Product = case_when(
+    ProductCode == "D_830608495_D_760521319" ~ "Smoking cannabis",
+    ProductCode == "D_830608495_D_158841370" ~ "Smoking a combination of cannabis with tobacco",
+    ProductCode == "D_830608495_D_349034127" ~ "Vaping an electronic delivery devices",
+    ProductCode == "D_830608495_D_713594719" ~ "Consuming edibles, drinks, or capsules",
+    ProductCode == "D_830608495_D_675129470" ~ "Dabbing THC concentrates",
+    ProductCode == "D_830608495_D_535003378" ~ "None of the Above",
+    TRUE ~ "Skipped this question"
+  )) %>%
+  count(Product)
+
+MJ_long <- MJ_long %>%  mutate(percentage = paste0(round(100*n/nrow(curr_mj), digits=2), "%"))
+
+dt_MJ_long <- MJ_long %>%  gt::gt(rowname_col = "row_lab") %>%  
+  fmt_number(columns = "percentage", decimals = 2) %>% 
+  tab_header(title = md("Cannabis Products Among Current Users")) %>% 
+  cols_label(n= md("**Number of Participants**"), Product = md("**Product**"), percentage = md(" ")) %>% 
+  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  tab_options(
+    stub.font.weight = "bold"
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      columns = Product,
+    )
+  )
+tab_footnote(
+  dt_MJ_long,
+  md("As this is a select all question, participants may select multiple responses."),
+  locations = cells_column_labels(columns = percentage),
+  placement = c("left"))
+
+
+```
+
+
+## Product Type Among Former Users
+```{r FORMER, warning=FALSE, echo=FALSE, message=FALSE}
+
+form_mj <- mj_freq %>%  filter(often=="Formerly a Cannabis User")
+
+
+MJ_long <- form_mj %>%
+  pivot_longer(cols = starts_with("D_830608495_"), names_to = "ProductCode", values_to = "Selected") %>%
+  filter(Selected == 1) %>%
+  mutate(Product = case_when(
+    ProductCode == "D_830608495_D_760521319" ~ "Smoking cannabis",
+    ProductCode == "D_830608495_D_158841370" ~ "Smoking a combination of cannabis with tobacco",
+    ProductCode == "D_830608495_D_349034127" ~ "Vaping an electronic delivery devices",
+    ProductCode == "D_830608495_D_713594719" ~ "Consuming edibles, drinks, or capsules",
+    ProductCode == "D_830608495_D_675129470" ~ "Dabbing THC concentrates",
+    ProductCode == "D_830608495_D_535003378" ~ "None of the Above",
+    TRUE ~ "Skipped this question"
+  )) %>%
+  count(Product)
+
+MJ_long <- MJ_long %>%  mutate(percentage = paste0(round(100*n/nrow(form_mj), digits=2), "%"))
+
+dt_MJ_long <- MJ_long %>%  gt::gt(rowname_col = "row_lab") %>%  
+  fmt_number(columns = "percentage", decimals = 2) %>% 
+  tab_header(title = md("Cannabis Products Among Former Users")) %>% 
+  cols_label(n= md("**Number of Participants**"), Product = md("**Product**"), percentage = md(" ")) %>% 
+  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  tab_options(
+    stub.font.weight = "bold"
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      columns = Product,
+    )
+  )
+tab_footnote(
+  dt_MJ_long,
+  md("As this is a select all question, participants may select multiple responses."),
+  locations = cells_column_labels(columns = percentage),
+  placement = c("left")
+)
+
+```
+
+
