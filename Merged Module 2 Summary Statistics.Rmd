@@ -3952,7 +3952,7 @@ dt_walk= data_tib_m2 %>%  filter(data_tib_m2$D_517976064_D_904954920==1)
 
 
 ex_type= dt_walk %>%  mutate(multiple = rowSums(select(., starts_with("D_894610280_")) == 1, na.rm = TRUE),
-                             ex= case_when(multiple=4 ~ "All Four Seasons", 
+                             ex= case_when(multiple==4 ~ "All Four Seasons", 
                                            multiple>1 ~ "Multiple Seasons",
                                            D_894610280_D_917302906==1 ~ "Winter",
                                              D_894610280_D_152773041==1 ~ "Spring",
@@ -4006,7 +4006,7 @@ dt_run= data_tib_m2 %>%  filter(data_tib_m2$D_517976064_D_619501806==1)
 
 
 ex_type= dt_run %>%  mutate(multiple = rowSums(select(., starts_with("D_222110888_")) == 1, na.rm = TRUE),
-                             season= case_when(multiple=4 ~ "All Four Seasons", 
+                             season= case_when(multiple==4 ~ "All Four Seasons", 
                                            multiple>1 ~ "Multiple Seasons",
                                             D_222110888_D_917302906==1 ~ "Winter",
                                              D_222110888_D_152773041==1 ~ "Spring",
@@ -4063,7 +4063,7 @@ dt_tennis= data_tib_m2 %>%  filter(data_tib_m2$D_517976064_D_203192394==1)
 
 
 ex_type= dt_tennis %>%  mutate(multiple = rowSums(select(., starts_with("D_564242877_")) == 1, na.rm = TRUE),
-                             season= case_when(multiple=4 ~ "All Four Seasons", 
+                             season= case_when(multiple==4 ~ "All Four Seasons", 
                                            multiple>1 ~ "Multiple Seasons",
                                            D_564242877_D_917302906==1 ~ "Winter",
                                            D_564242877_D_152773041==1 ~ "Spring",
@@ -4116,7 +4116,7 @@ dt_golf= data_tib_m2 %>%  filter(data_tib_m2$D_517976064_D_261267696==1)
 
 
 ex_type= dt_golf %>%  mutate(multiple = rowSums(select(., starts_with("D_635874413_")) == 1, na.rm = TRUE),
-                             season= case_when(multiple=4 ~ "All Four Seasons", 
+                             season= case_when(multiple==4 ~ "All Four Seasons", 
                                            multiple>1 ~ "Multiple Seasons",
                                            D_635874413_D_152773041==1 ~ "Spring",
                                            D_635874413_D_249341444==1 ~ "Summer",
@@ -4167,7 +4167,7 @@ dt_swim= data_tib_m2 %>%  filter(data_tib_m2$D_517976064_D_926584500==1)
 
 
 ex_type= dt_swim %>%  mutate(multiple = rowSums(select(., starts_with("D_371748514_")) == 1, na.rm = TRUE),
-                             season= case_when(multiple=4 ~ "All Four Seasons", 
+                             season= case_when(multiple==4 ~ "All Four Seasons", 
                                                multiple>1 ~ "Multiple Seasons",
                                                D_371748514_D_917302906==1 ~ "Winter",
                                                D_371748514_D_152773041==1 ~ "Spring",
@@ -4222,7 +4222,7 @@ dt_bike= data_tib_m2 %>%  filter(data_tib_m2$D_517976064_D_420058896==1)
 
 
 ex_type= dt_bike %>%  mutate(multiple = rowSums(select(., starts_with("D_858525957_")) == 1, na.rm = TRUE),
-                             season= case_when(multiple=4 ~ "All Four Seasons", 
+                             season= case_when(multiple==4 ~ "All Four Seasons", 
                                                multiple>1 ~ "Multiple Seasons",
                                                D_858525957_D_152773041==1 ~ "Spring",
                                                D_858525957_D_249341444==1 ~ "Summer",
@@ -4274,7 +4274,7 @@ dt_strength= data_tib_m2 %>%  filter(data_tib_m2$D_517976064_D_868685663==1)
 
 
 ex_type= dt_strength %>%  mutate(multiple = rowSums(select(., starts_with("D_787591805_")) == 1, na.rm = TRUE),
-                                 season= case_when(multiple=4 ~ "All Four Seasons", 
+                                 season= case_when(multiple==4 ~ "All Four Seasons", 
                                                    multiple>1 ~ "Multiple Seasons",
                                                    D_787591805_D_917302906==1 ~ "Winter",
                                                    D_787591805_D_152773041==1 ~ "Spring",
@@ -4330,7 +4330,7 @@ dt_yoga= data_tib_m2 %>%  filter(data_tib_m2$D_517976064_D_760484278==1)
 
 
 ex_type= dt_yoga %>%  mutate(multiple = rowSums(select(., starts_with("D_900299856_")) == 1, na.rm = TRUE),
-                             season= case_when(multiple=4 ~ "All Four Seasons", 
+                             season= case_when(multiple==4 ~ "All Four Seasons", 
                                                multiple>1 ~ "Multiple Seasons",
                                                D_900299856_D_917302906==1 ~ "Winter",
                                                D_900299856_D_152773041==1 ~ "Spring",
@@ -4381,7 +4381,7 @@ dt_martial= data_tib_m2 %>%  filter(data_tib_m2$D_517976064_D_345916806==1)
 
 
 ex_type= dt_martial %>%  mutate(multiple = rowSums(select(., starts_with("D_149884127_")) == 1, na.rm = TRUE),
-                                season= case_when(multiple=4 ~ "All Four Seasons", 
+                                season= case_when(multiple==4 ~ "All Four Seasons", 
                                                   multiple>1 ~ "Multiple Seasons",
                                                   D_149884127_D_917302906==1 ~ "Winter",
                                                   D_149884127_D_152773041==1 ~ "Spring",
@@ -4432,7 +4432,7 @@ dt_dance= data_tib_m2 %>%  filter(data_tib_m2$D_517976064_D_936042582==1)
 
 
 ex_type= dt_dance %>%  mutate(multiple = rowSums(select(., starts_with("D_845164425_")) == 1, na.rm = TRUE),
-                              season= case_when(multiple=4 ~ "All Four Seasons", 
+                              season= case_when(multiple==4 ~ "All Four Seasons", 
                                                 multiple>1 ~ "Multiple Seasons",
                                                 D_845164425_D_917302906==1 ~ "Winter",
                                                 D_845164425_D_152773041==1 ~ "Spring",
@@ -4486,7 +4486,7 @@ dt_ski= data_tib_m2 %>%  filter(data_tib_m2$D_517976064_D_182827107==1)
 
 
 ex_type= dt_ski %>%  mutate(multiple = rowSums(select(., starts_with("D_187772368_")) == 1, na.rm = TRUE),
-                              season= case_when(multiple=4 ~ "All Four Seasons", 
+                              season= case_when(multiple==4 ~ "All Four Seasons", 
                                                 multiple>1 ~ "Multiple Seasons",
                                              D_187772368_D_917302906==1 ~ "Winter",
                                              D_187772368_D_152773041==1 ~ "Spring",
@@ -4540,7 +4540,7 @@ dt_crossc= data_tib_m2 %>%  filter(data_tib_m2$D_517976064_D_734860227==1)
 
 
 ex_type= dt_crossc %>%  mutate(multiple = rowSums(select(., starts_with("D_815229596_")) == 1, na.rm = TRUE),
-                               season= case_when(multiple=4 ~ "All Four Seasons", 
+                               season= case_when(multiple==4 ~ "All Four Seasons", 
                                                  multiple>1 ~ "Multiple Seasons",
                                                  D_815229596_D_917302906==1 ~ "Winter",
                                                  D_815229596_D_152773041==1 ~ "Spring",
@@ -4594,7 +4594,7 @@ dt_surf= data_tib_m2 %>%  filter(data_tib_m2$D_517976064_D_371531887==1)
 
 
 ex_type= dt_surf %>%  mutate(multiple = rowSums(select(., starts_with("D_262305264_")) == 1, na.rm = TRUE),
-                               season= case_when(multiple=4 ~ "All Four Seasons", 
+                               season= case_when(multiple==4 ~ "All Four Seasons", 
                                                  multiple>1 ~ "Multiple Seasons",
                                              D_262305264_D_917302906==1 ~ "Winter",
                                              D_262305264_D_152773041==1 ~ "Spring",
@@ -4646,7 +4646,7 @@ one_logic_funct2(D_621878019, D_517976064_D_371531887, 1, "EXEREC4M: Time Spent 
 dt_circ= data_tib_m2 %>%  filter(data_tib_m2$D_517976064_D_423631576==1)
 
 ex_type= dt_circ %>%  mutate(multiple = rowSums(select(., starts_with("D_409324592_")) == 1, na.rm = TRUE),
-                               season= case_when(multiple=4 ~ "All Four Seasons", 
+                               season= case_when(multiple==4 ~ "All Four Seasons", 
                                                  multiple>1 ~ "Multiple Seasons",
                                              D_409324592_D_917302906==1 ~ "Winter",
                                              D_409324592_D_152773041==1 ~ "Spring",
@@ -4700,7 +4700,7 @@ dt_oth_ex= data_tib_m2 %>%  filter(data_tib_m2$D_517976064_D_181769837==1)
 
 
 ex_type= dt_oth_ex %>%  mutate(multiple = rowSums(select(., starts_with("D_895837106_")) == 1, na.rm = TRUE),
-                               season= case_when(multiple=4 ~ "All Four Seasons", 
+                               season= case_when(multiple==4 ~ "All Four Seasons", 
                                                  multiple>1 ~ "Multiple Seasons",
                                              D_895837106_D_917302906==1 ~ "Winter",
                                              D_895837106_D_152773041==1 ~ "Spring",
@@ -4820,7 +4820,7 @@ dtLAWN2A= data_tib_m2 %>% filter(D_204421360_D_797221287==1)
 
 
 mod_ss= dtLAWN2A %>%  mutate(multiple = rowSums(select(., starts_with("D_442059084_")) == 1, na.rm = TRUE),
-                             season= case_when(multiple=4 ~ "All Four Seasons", 
+                             season= case_when(multiple==4 ~ "All Four Seasons", 
                                                multiple>1 ~ "Multiple Seasons",
                                                D_442059084_D_917302906==1 ~ "Winter",
                                                D_442059084_D_152773041==1 ~ "Spring",
@@ -4872,7 +4872,7 @@ dtLAWN2B= data_tib_m2 %>%  filter(D_204421360_D_500744195==1)
 
 
 vig_ss= dtLAWN2B %>%  mutate(multiple = rowSums(select(., starts_with("D_829749579_")) == 1, na.rm = TRUE),
-                             season= case_when(multiple=4 ~ "All Four Seasons", 
+                             season= case_when(multiple==4 ~ "All Four Seasons", 
                                                multiple>1 ~ "Multiple Seasons",
                                                D_829749579_D_917302906==1 ~ "Winter",
                                                D_829749579_D_152773041==1 ~ "Spring",
@@ -4929,7 +4929,7 @@ dtLAWN2C= data_tib_m2 %>% filter(D_204421360_D_383015037==1)
 
 
 home_ss= dtLAWN2C %>%  mutate(multiple = rowSums(select(., starts_with("D_618482103_")) == 1, na.rm = TRUE),
-                              season= case_when(multiple=4 ~ "All Four Seasons", 
+                              season= case_when(multiple==4 ~ "All Four Seasons", 
                                                 multiple>1 ~ "Multiple Seasons",
                                                 D_618482103_D_917302906==1 ~ "Winter",
                                                 D_618482103_D_152773041==1 ~ "Spring",

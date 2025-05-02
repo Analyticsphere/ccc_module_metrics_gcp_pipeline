@@ -330,7 +330,7 @@ dt_home1skip_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Address 1 Components Skipped")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -380,7 +380,7 @@ Followup1__skip %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Address 1 Follow-up Skipped")) %>% 
   cols_label(n= md("**Number of Participants**"),Address = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -420,7 +420,7 @@ dt_home_add3_1 %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Address 1 Cross-Streets")) %>% 
   cols_label(n= md("**Number of Participants**"),Address = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -448,7 +448,7 @@ dt_home_addoth %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("HOMEADDOTH")) %>% 
   cols_label(n= md("**Number of Participants**"),Address = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -476,7 +476,7 @@ dt_home_addsum1 %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("HOMEADDSUM1")) %>% 
   cols_label(n= md("**Number of Participants**"),Address = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -543,7 +543,7 @@ dt_home2skip_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Address 2 Components Skipped")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -597,7 +597,7 @@ Followup2__skip %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Address 2 Follow-up Skipped")) %>% 
   cols_label(n= md("**Number of Participants**"),Address = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -635,7 +635,7 @@ dt_home_add3_2 %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Address 2 Cross-Streets")) %>% 
   cols_label(n= md("**Number of Participants**"),Address = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -661,7 +661,7 @@ dt_home_addoth2 %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("HOMEADDOTH2")) %>% 
   cols_label(n= md("**Number of Participants**"),Address = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -690,7 +690,7 @@ dt_home_addsum2 %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("HOMEADDSUM2")) %>% 
   cols_label(n= md("**Number of Participants**"),Address = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -757,7 +757,7 @@ dt_home3skip_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Address 3 Components Skipped")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -802,7 +802,7 @@ Followup3__skip %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Address 3 Follow-up Skipped")) %>% 
   cols_label(n= md("**Number of Participants**"),Address = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -841,7 +841,7 @@ dt_home_add3_3 %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Address 3 Cross-Streets")) %>% 
   cols_label(n= md("**Number of Participants**"),Address = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -867,7 +867,7 @@ dt_home_addoth3 %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("HOMEADDOTH3")) %>% 
   cols_label(n= md("**Number of Participants**"),Address = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -896,7 +896,7 @@ dt_home_addsum3 %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("HOMEADDSUM3")) %>% 
   cols_label(n= md("**Number of Participants**"),Address = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -962,7 +962,7 @@ dt_home4skip_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Address 4 Components Skipped")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -1003,7 +1003,7 @@ Followup4__skip %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Address 4 Follow-up Skipped")) %>% 
   cols_label(n= md("**Number of Participants**"),Address = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -1041,7 +1041,7 @@ dt_home_add3_4 %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Address 4 Cross-Streets")) %>% 
   cols_label(n= md("**Number of Participants**"),Address = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -1067,7 +1067,7 @@ dt_home_addoth4 %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("HOMEADDOTH4")) %>% 
   cols_label(n= md("**Number of Participants**"),Address = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -1096,7 +1096,7 @@ dt_home_addsum4 %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("HOMEADDSUM4")) %>% 
   cols_label(n= md("**Number of Participants**"),Address = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -1162,7 +1162,7 @@ dt_home5skip_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Address 5 Components Skipped")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -1203,7 +1203,7 @@ Followup5__skip %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Address 5 Follow-up Skipped")) %>% 
   cols_label(n= md("**Number of Participants**"),Address = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -1242,7 +1242,7 @@ dt_home_add3_5 %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Address 5 Cross-Streets")) %>% 
   cols_label(n= md("**Number of Participants**"),Address = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -1268,7 +1268,7 @@ dt_home_addoth6 %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("HOMEADDOTH5")) %>% 
   cols_label(n= md("**Number of Participants**"),Address = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -1297,7 +1297,7 @@ dt_home_addsum5 %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("HOMEADDSUM5")) %>% 
   cols_label(n= md("**Number of Participants**"),Address = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -1358,7 +1358,7 @@ dt_home6skip_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Address 6 Components Skipped")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -1399,7 +1399,7 @@ Followup6__skip %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Address 6 Follow-up Skipped")) %>% 
   cols_label(n= md("**Number of Participants**"),Address = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -1438,7 +1438,7 @@ dt_home_add3_6 %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Address 6 Cross-Streets")) %>% 
   cols_label(n= md("**Number of Participants**"),Address = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -1464,7 +1464,7 @@ dt_home_addoth6 %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("HOMEADDOTH6")) %>% 
   cols_label(n= md("**Number of Participants**"),Address = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -1493,7 +1493,7 @@ dt_home_addsum6 %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("HOMEADDSUM6")) %>% 
   cols_label(n= md("**Number of Participants**"),Address = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -1534,7 +1534,7 @@ dt_home1_inout_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Home 1 Move-In & Move-Out")) %>% 
   cols_label(n= md("**Number of Participants**"),Answer = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -1567,7 +1567,7 @@ dt_home2_inout_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Home 2 Move-In & Move-Out")) %>% 
   cols_label(n= md("**Number of Participants**"),Answer = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -1599,7 +1599,7 @@ dt_home3_inout_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Home 3 Move-In & Move-Out")) %>% 
   cols_label(n= md("**Number of Participants**"),Answer = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -1631,7 +1631,7 @@ dt_home4_inout_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Home 4 Move-In & Move-Out")) %>% 
   cols_label(n= md("**Number of Participants**"),Answer = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -1662,7 +1662,7 @@ dt_home5_inout_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Home 5 Move-In & Move-Out")) %>% 
   cols_label(n= md("**Number of Participants**"),Answer = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -1693,7 +1693,7 @@ dt_home6_inout_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Home 5 Move-In & Move-Out")) %>% 
   cols_label(n= md("**Number of Participants**"),Answer = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -1734,7 +1734,7 @@ dt_home1_water_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Primary Water Sources of Home 1")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -1770,7 +1770,7 @@ dt_home2_water_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Primary Water Sources of Home 2")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -1807,7 +1807,7 @@ dt_home3_water_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Primary Water Sources of Home 3")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -1843,7 +1843,7 @@ dt_home4_water_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Primary Water Sources of Home 4")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -1881,7 +1881,7 @@ dt_home5_water_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Primary Water Sources of Home 5")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -1917,7 +1917,7 @@ dt_home6_water_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Primary Water Sources of Home 6")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -1949,7 +1949,7 @@ dt_sea_home_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Seasonal or Vacation Home")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -1974,7 +1974,7 @@ dt_sea_home_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Confirm No Seasonal or Vacation Home")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -2017,7 +2017,7 @@ dt_seahome_add1_1_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Vacation Home 1 Address Components Skipped")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -2055,7 +2055,7 @@ FollowupV1__skip %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Vacation Home Address 1 Follow-up Skipped")) %>% 
   cols_label(n= md("**Number of Participants**"),Address = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -2093,7 +2093,7 @@ seahome_add3_1__skip %>%  gt::gt() %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Vacation Home Address 1 Cross-Streets Skipped")) %>% 
   cols_label(n= md("**Number of Participants**"),Address = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -2120,7 +2120,7 @@ dt_seaaddoth_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Skipped if Other Vacation Homes Stayed At")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -2146,7 +2146,7 @@ dt_seaaddsum1_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Skipped Confirmation of Complete Vacation Homes List")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -2185,7 +2185,7 @@ dt_SEASADDYRS_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Years and Months at Vacation Home 1")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -2223,7 +2223,7 @@ dt_seahome_water_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Vacation Home 1 Water Sources")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -2279,7 +2279,7 @@ dt_childhome_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Childhood Address Components")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -2318,7 +2318,7 @@ FollowupC1__skip %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Childhood Home Address Follow-up Skipped")) %>% 
   cols_label(n= md("**Number of Participants**"),Address = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -2355,7 +2355,7 @@ child_add3_1__skip %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Childhood Home Cross-Streets Skipped")) %>% 
   cols_label(n= md("**Number of Participants**"),Address = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -2388,7 +2388,7 @@ dt_childinout_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Childhood Home Move-In and Move-Out")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -2422,7 +2422,7 @@ dt_childwater_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Childhood Home Water Supply")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -2473,7 +2473,7 @@ dt_adultwater_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Drinking Tap Water")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -2521,7 +2521,7 @@ dt_adultwater2_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Frequency of Drinking Beverages Made with Tap Water")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -2570,7 +2570,7 @@ dt_work19_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Number of Showers or Baths per Week")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -2588,19 +2588,21 @@ dt_work19_summary %>%  gt::gt(rowname_col = "row_lab") %>%
 ```
 
 # Section 2: Commuting
-```{r Commuting, warning=FALSE, echo=FALSE, message=FALSE}
 
-work19= Mod4 %>%  
-  mutate(Address1= case_when(is.na(D_694113343)~"Skipped WORK2019"))
+## Post-Pandemic/Current
+```{r Commuting_Current, warning=FALSE, echo=FALSE, message=FALSE}
 
-dt_work19_summary <- work19 %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
-dt_work19_summary <- dt_work19_summary[1,]
+work19_postpan= Mod4 %>%  filter(as.Date(d_452942800) > "2025-03-24") %>% 
+  mutate(Address1= case_when(is.na(D_699873889)~"Skipped WORK2019POSTPAN"))
 
-dt_work19_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
+dt_work19_postpan_summary <- work19_postpan %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
+dt_work19_postpan_summary <- dt_work19_postpan_summary[1,]
+
+dt_work19_postpan_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
   fmt_number(columns = "percentage", decimals = 2) %>% 
-  tab_header(title = md("Worked in 2019")) %>% 
+  tab_header(title = md("Currently Working for Pay")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -2616,7 +2618,1096 @@ dt_work19_summary %>%  gt::gt(rowname_col = "row_lab") %>%
 
 
 
-days_work19= Mod4 %>%  filter(Mod4$D_694113343==353358909) %>%  
+days_work19_postpan= Mod4 %>%  filter(as.Date(d_452942800) > "2025-03-24" & D_699873889==353358909) %>%  
+  mutate(Address1= case_when(is.na(D_774087638)~"Skipped DAYSWORKPOSTPAN"))
+
+dt_days_work19_postpan_summary <- days_work19_postpan %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
+dt_days_work19_postpan_summary <- dt_days_work19_postpan_summary[1,]
+
+dt_days_work19_postpan_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
+  fmt_number(columns = "percentage", decimals = 2) %>% 
+  tab_header(title = md("Days per Week Currently Working")) %>% 
+  cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
+  
+  tab_options(
+      stub.font.weight = "bold"
+    ) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      columns = Address1,
+    )
+  )
+
+
+longest_postpan= Mod4 %>%  filter(as.Date(d_452942800) > "2025-03-24" & D_699873889==353358909) %>%  
+  mutate(Address1= case_when(is.na(D_858178137)~"Skipped LONGESTJOBPOSTPAN]"))
+
+dt_longest_postpan_summary <- longest_postpan %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
+dt_longest_postpan_summary <- dt_longest_postpan_summary[1,]
+
+dt_longest_postpan_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
+  fmt_number(columns = "percentage", decimals = 2) %>% 
+  tab_header(title = md("Current Job the Longest Held Job")) %>% 
+  cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
+  
+  tab_options(
+    stub.font.weight = "bold"
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      columns = Address1,
+    )
+  )
+
+```
+
+
+
+
+## Work Commute After the COVID-19 Pandemic
+```{r Post_COVID, warning=FALSE, echo=FALSE, message=FALSE}
+days_work19_postpan= Mod4 %>%  filter(as.Date(d_452942800) > "2025-03-24" & D_699873889==353358909) %>%  
+  mutate(Address1= case_when(is.na(D_871276836)~"Skipped WORKRESPOSTPAN"))
+
+dt_days_work19_postpan_summary <- days_work19_postpan %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
+dt_days_work19_postpan_summary <- dt_days_work19_postpan_summary[1,]
+
+dt_days_work19_postpan_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
+  fmt_number(columns = "percentage", decimals = 2) %>% 
+  tab_header(title = md("Daily Current Work Tasks Include Driving")) %>% 
+  cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
+  
+  tab_options(
+    stub.font.weight = "bold"
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      columns = Address1,
+    )
+  )
+
+
+
+
+commute_postpan_num= Mod4 %>%  filter(as.Date(d_452942800) > "2025-03-24" & D_871276836==104430631) %>%  
+  mutate(Address1= case_when(is.na(D_660218333)~"Skipped NUMWORKPOSTPAN"))
+
+dt_commute_postpan_num_summary <- commute_postpan_num %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
+dt_commute_postpan_num_summary <- dt_commute_postpan_num_summary[1,]
+
+dt_commute_postpan_num_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
+  fmt_number(columns = "percentage", decimals = 2) %>% 
+  tab_header(title = md("Number of Current Commutes to Different Workplaces per Week")) %>% 
+  cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
+  
+  tab_options(
+    stub.font.weight = "bold"
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      columns = Address1,
+    )
+  )
+
+
+
+curwork_postpan= Mod4 %>%  filter(as.Date(d_452942800) > "2025-03-24" & 
+                                    Mod4$D_660218333==759356722 | Mod4$D_660218333==185036360) %>%  
+  mutate(Address1= case_when(is.na(D_263959391_D_560853245) & is.na(D_263959391_D_307515427)& is.na(D_263959391_D_422521705) & is.na(D_263959391_D_627183798)& 
+                               is.na(D_263959391_D_901141257)& is.na(D_263959391_D_599770535)& is.na(D_263959391_D_268600708) ~"Skipped All Current Employer Info"))
+
+dt_curwork_postpan_summary <- curwork_postpan %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
+dt_curwork_postpan_summary <- dt_curwork_postpan_summary[1,]
+
+dt_curwork_postpan_summary[2,1] <- "Skipped Employer Name" 
+dt_curwork_postpan_summary[2,2] <- sum(is.na(curwork_postpan$D_263959391_D_560853245))
+dt_curwork_postpan_summary[2,3] <- (sum(is.na(curwork_postpan$D_263959391_D_560853245))/dim(curwork_postpan)[[1]])*100
+
+dt_curwork_postpan_summary[3,1] <- "Skipped Employer Street Number" 
+dt_curwork_postpan_summary[3,2] <- sum(is.na(curwork_postpan$D_263959391_D_307515427))
+dt_curwork_postpan_summary[3,3] <- (sum(is.na(curwork_postpan$D_263959391_D_307515427))/dim(curwork_postpan)[[1]])*100
+
+dt_curwork_postpan_summary[4,1] <- "Skipped Employer Street Name" 
+dt_curwork_postpan_summary[4,2] <- sum(is.na(curwork_postpan$D_263959391_D_422521705))
+dt_curwork_postpan_summary[4,3] <- (sum(is.na(curwork_postpan$D_263959391_D_422521705))/dim(curwork_postpan)[[1]])*100
+
+dt_curwork_postpan_summary[5,1] <- "Skipped Employer City" 
+dt_curwork_postpan_summary[5,2] <- sum(is.na(curwork_postpan$D_263959391_D_627183798))
+dt_curwork_postpan_summary[5,3] <- (sum(is.na(curwork_postpan$D_263959391_D_627183798))/dim(curwork_postpan)[[1]])*100
+
+dt_curwork_postpan_summary[6,1] <- "Skipped Employer State" 
+dt_curwork_postpan_summary[6,2] <- sum(is.na(curwork_postpan$D_263959391_D_901141257))
+dt_curwork_postpan_summary[6,3] <- (sum(is.na(curwork_postpan$D_263959391_D_901141257))/dim(curwork_postpan)[[1]])*100
+
+dt_curwork_postpan_summary[7,1] <- "Skipped Employer ZIP" 
+dt_curwork_postpan_summary[7,2] <- sum(is.na(curwork_postpan$D_263959391_D_599770535 ))
+dt_curwork_postpan_summary[7,3] <- (sum(is.na(curwork_postpan$D_263959391_D_599770535 ))/dim(curwork_postpan)[[1]])*100
+
+dt_curwork_postpan_summary[8,1] <- "Skipped Employer Country" 
+dt_curwork_postpan_summary[8,2] <- sum(is.na(curwork_postpan$D_263959391_D_268600708))
+dt_curwork_postpan_summary[8,3] <- (sum(is.na(curwork_postpan$D_263959391_D_268600708))/dim(curwork_postpan)[[1]])*100
+
+
+
+dt_curwork_postpan_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
+  fmt_number(columns = "percentage", decimals = 2) %>% 
+  tab_header(title = md("Current Employer (Most Often Commuted to)")) %>% 
+  cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
+  
+  tab_options(
+    stub.font.weight = "bold"
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      columns = Address1,
+    )
+  )
+
+
+
+
+
+
+curwork_postpan2= Mod4 %>%  filter(as.Date(d_452942800) > "2025-03-24" & Mod4$D_871276836!=353358909 & Mod4$D_263588196_D_263588196!="[178420302]" & (Mod4$D_660218333==759356722 | Mod4$D_660218333==185036360)) %>%  
+  mutate(Address1= case_when(is.na(D_263959391_D_627183798) & is.na(D_986316055_D_515150210) ~"Skipped City"))
+
+dt_curwork_postpan2_summary <- curwork_postpan2 %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
+dt_curwork_postpan2_summary <- dt_curwork_postpan2_summary[1,]
+
+dt_curwork_postpan2_summary[2,1] <- "Skipped Employer State" 
+dt_curwork_postpan2_summary[2,2] <- sum(is.na(curwork_postpan2$D_263959391_D_901141257) & is.na(curwork_postpan2$D_986316055_D_182449282))
+dt_curwork_postpan2_summary[2,3] <- (sum(is.na(curwork_postpan2$D_263959391_D_901141257) & is.na(curwork_postpan2$D_986316055_D_182449282))/dim(curwork_postpan2)[[1]])*100
+
+dt_curwork_postpan2_summary[3,1] <- "Skipped Employer ZIP" 
+dt_curwork_postpan2_summary[3,2] <- sum(is.na(curwork_postpan2$D_263959391_D_599770535) & is.na(curwork_postpan2$D_986316055_D_609408466))
+dt_curwork_postpan2_summary[3,3] <- (sum(is.na(curwork_postpan2$D_263959391_D_599770535) & is.na(curwork_postpan2$D_986316055_D_609408466))/dim(curwork_postpan2)[[1]])*100
+
+dt_curwork_postpan2_summary[4,1] <- "Skipped Employer Country" 
+dt_curwork_postpan2_summary[4,2] <- sum(is.na(curwork_postpan2$D_263959391_D_268600708) & is.na(curwork_postpan2$D_986316055_D_702591232))
+dt_curwork_postpan2_summary[4,3] <- (sum(is.na(curwork_postpan2$D_263959391_D_268600708) & is.na(curwork_postpan2$D_986316055_D_702591232))/dim(curwork_postpan2)[[1]])*100
+
+
+
+dt_curwork_postpan2_summary %>%  gt::gt() %>%  
+  fmt_number(columns = "percentage", decimals = 2) %>% 
+  tab_header(title = md("Current Employer Address Follow-Up")) %>% 
+  cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
+  
+  tab_options(
+    stub.font.weight = "bold"
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      columns = Address1,
+    )
+  )
+
+
+
+
+
+curwork_postpan3= Mod4 %>% 
+  filter(as.Date(d_452942800) > "2025-03-24" & 
+           (Mod4$D_660218333==759356722 | Mod4$D_660218333==185036360) &
+           Mod4$D_116032363_D_116032363!="[178420302]" & Mod4$D_871276836!=353358909 &
+           is.na(Mod4$D_263959391_D_307515427) & is.na(Mod4$D_263959391_D_422521705) & ((!is.na(Mod4$D_263959391_D_627183798) | !is.na(Mod4$D_263959391_D_901141257) | 
+                                                                                           !is.na(Mod4$D_263959391_D_599770535) | !is.na(Mod4$D_263959391_D_268600708)) | 
+                                                                                          (!is.na(Mod4$D_986316055_D_515150210) | !is.na(Mod4$D_986316055_D_182449282) |
+                                                                                             !is.na(Mod4$D_986316055_D_609408466) |!is.na(Mod4$D_986316055_D_702591232))))
+
+
+curwork_postpan3= curwork_postpan3 %>%  mutate(Address1= case_when(is.na(D_116032363_D_330163034) ~"Skipped Cross Street 1"))
+
+dt_curwork_postpan3_summary <- curwork_postpan3 %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
+dt_curwork_postpan3_summary <- dt_curwork_postpan3_summary[1,]
+
+dt_curwork_postpan3_summary[2,1] <- "Skipped Cross Street 2" 
+dt_curwork_postpan3_summary[2,2] <- sum(is.na(curwork_postpan3$D_116032363_D_555595404))
+dt_curwork_postpan3_summary[2,3] <- (sum(is.na(curwork_postpan3$D_116032363_D_555595404))/dim(curwork_postpan3)[[1]])*100
+
+dt_curwork_postpan3_summary <- dt_curwork_postpan3_summary[2,]
+dt_curwork_postpan3_summary %>%  gt::gt() %>%  
+  fmt_number(columns = "percentage", decimals = 2) %>% 
+  tab_header(title = md("Current Employer Buidling Cross Streets")) %>% 
+  cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
+  
+  tab_options(
+    stub.font.weight = "bold"
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      columns = Address1,
+    )
+  )
+
+
+
+
+
+
+curwork_postpanYR1_MOS= Mod4 %>%   
+  filter(as.Date(d_452942800) > "2025-03-24" & 
+           Mod4$D_871276836!=353358909 & (Mod4$D_660218333==759356722 | Mod4$D_660218333==185036360))
+
+
+curwork_postpanYR1_MOS= curwork_postpanYR1_MOS %>%  mutate(Address1= case_when(is.na(D_870675371_D_900611792) ~"Skipped Month Job Started"))
+
+dt_curwork_postpanYR1_MOS_summary <- curwork_postpanYR1_MOS %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
+dt_curwork_postpanYR1_MOS_summary <- dt_curwork_postpanYR1_MOS_summary[1,]
+
+dt_curwork_postpanYR1_MOS_summary[2,1] <- "Skipped Year Job Started" 
+dt_curwork_postpanYR1_MOS_summary[2,2] <- sum(is.na(curwork_postpanYR1_MOS$D_870675371_D_594558885))
+dt_curwork_postpanYR1_MOS_summary[2,3] <- (sum(is.na(curwork_postpanYR1_MOS$D_870675371_D_594558885))/dim(curwork_postpanYR1_MOS)[[1]])*100
+
+dt_curwork_postpanYR1_MOS_summary[3,1] <- "Skipped Months a Year Commuting" 
+dt_curwork_postpanYR1_MOS_summary[3,2] <- sum(is.na(curwork_postpanYR1_MOS$D_788065155))
+dt_curwork_postpanYR1_MOS_summary[3,3] <- (sum(is.na(curwork_postpanYR1_MOS$D_788065155))/dim(curwork_postpanYR1_MOS)[[1]])*100
+
+dt_curwork_postpanYR1_MOS_summary %>%  gt::gt() %>%  
+  fmt_number(columns = "percentage", decimals = 2) %>% 
+  tab_header(title = md("Commuting to Current Employer")) %>% 
+  cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
+  
+  tab_options(
+    stub.font.weight = "bold"
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      columns = Address1,
+    )
+  )
+
+
+
+
+
+
+curwork_postpanT1= Mod4 %>%   
+  filter(as.Date(d_452942800) > "2025-03-24" &  Mod4$D_871276836!=353358909 & (Mod4$D_660218333==759356722 | Mod4$D_660218333==185036360))
+
+curwork_postpanT1= curwork_postpanT1 %>%  mutate(Address1= case_when(is.na(D_421586693_D_421586693_D_767755239) ~"Skipped if Commute Inlcudes a Car"))
+
+dt_curwork_postpanT1_summary <- curwork_postpanT1 %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
+dt_curwork_postpanT1_summary <- dt_curwork_postpanT1_summary[1,]
+
+dt_curwork_postpanT1_summary[2,1] <- "Skipped if Commute Inlcudes a Taxi" 
+dt_curwork_postpanT1_summary[2,2] <- ifelse (exists("curwork_postpanT1$D_421586693_D_421586693_D_385609081"), sum(is.na(curwork_postpanT1$D_421586693_D_421586693_D_385609081)), 0)
+dt_curwork_postpanT1_summary[2,3] <- (sum(is.na(curwork_postpanT1$D_421586693_D_421586693_D_385609081))/dim(curwork_postpanT1)[[1]])*100
+
+dt_curwork_postpanT1_summary[3,1] <- "Skipped if Commute Inlcudes a Motorcycle" 
+dt_curwork_postpanT1_summary[3,2] <- sum(is.na(curwork_postpanT1$D_421586693_D_421586693_D_502946054))
+dt_curwork_postpanT1_summary[3,3] <- (sum(is.na(curwork_postpanT1$D_421586693_D_421586693_D_502946054))/dim(curwork_postpanT1)[[1]])*100
+
+dt_curwork_postpanT1_summary[4,1] <- "Skipped if Commute Inlcudes a Bus" 
+dt_curwork_postpanT1_summary[4,2] <- sum(is.na(curwork_postpanT1$D_421586693_D_421586693_D_151757360))
+dt_curwork_postpanT1_summary[4,3] <- (sum(is.na(curwork_postpanT1$D_421586693_D_421586693_D_151757360))/dim(curwork_postpanT1)[[1]])*100
+
+dt_curwork_postpanT1_summary[5,1] <- "Skipped if Commute Inlcudes a Subway" 
+dt_curwork_postpanT1_summary[5,2] <- sum(is.na(curwork_postpanT1$D_421586693_D_421586693_D_363747463))
+dt_curwork_postpanT1_summary[5,3] <- (sum(is.na(curwork_postpanT1$D_421586693_D_421586693_D_363747463))/dim(curwork_postpanT1)[[1]])*100
+
+dt_curwork_postpanT1_summary[6,1] <- "Skipped if Commute Inlcudes Biking" 
+dt_curwork_postpanT1_summary[6,2] <- sum(is.na(curwork_postpanT1$D_421586693_D_421586693_D_626380300))
+dt_curwork_postpanT1_summary[6,3] <- (sum(is.na(curwork_postpanT1$D_421586693_D_421586693_D_626380300))/dim(curwork_postpanT1)[[1]])*100
+
+dt_curwork_postpanT1_summary[7,1] <- "Skipped if Commute Inlcudes Walking" 
+dt_curwork_postpanT1_summary[7,2] <- sum(is.na(curwork_postpanT1$D_421586693_D_421586693_D_817932069))
+dt_curwork_postpanT1_summary[7,3] <- (sum(is.na(curwork_postpanT1$D_421586693_D_421586693_D_817932069))/dim(curwork_postpanT1)[[1]])*100
+
+dt_curwork_postpanT1_summary[8,1] <- "Skipped if Commute Inlcudes Another Method" 
+dt_curwork_postpanT1_summary[8,2] <- sum(is.na(curwork_postpanT1$D_421586693_D_421586693_D_466212511))
+dt_curwork_postpanT1_summary[8,3] <- (sum(is.na(curwork_postpanT1$D_421586693_D_421586693_D_466212511))/dim(curwork_postpanT1)[[1]])*100
+
+
+dt_curwork_postpanT1_summary %>%  gt::gt() %>%  
+  fmt_number(columns = "percentage", decimals = 2) %>% 
+  tab_header(title = md("Commuting Methods to Work (Current Position)")) %>% 
+  cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
+  
+  tab_options(
+    stub.font.weight = "bold"
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      columns = Address1,
+    )
+  )
+
+
+
+
+
+curwork_postpanT2A_H= Mod4 %>%   
+  # filter( (is.na(D_440093675_D_593010802) & D_421586693_D_421586693_D_767755239==1 | 
+  #            is.na(D_440093675_D_453004768) & D_421586693_D_421586693_D_385609081==1 |
+  #            is.na(D_440093675_D_511991969) & D_421586693_D_421586693_D_502946054==1 |
+  #            is.na(D_440093675_D_546570171) & D_421586693_D_421586693_D_151757360==1 |
+  #            is.na(D_440093675_D_242761203) & D_421586693_D_421586693_D_363747463==1 |
+  #            is.na(D_440093675_D_587434250) & D_421586693_D_421586693_D_626380300==1 |
+  #            is.na(D_440093675_D_569993305) & D_421586693_D_421586693_D_817932069==1 |
+  #            is.na(D_440093675_D_662584384) & D_421586693_D_421586693_D_466212511==1 ) &
+  #           Mod4$D_871276836!=353358909 & (Mod4$D_660218333==759356722 | Mod4$D_660218333==185036360) & 
+  #          (Mod4$D_421586693_D_421586693_D_385609081==1 | Mod4$D_421586693_D_421586693_D_767755239==1 | Mod4$D_421586693_D_421586693_D_502946054==1 |
+  #             Mod4$D_421586693_D_421586693_D_151757360==1 | is.na(Mod4$D_440093675_D_453004768) | is.na(Mod4$D_440093675_D_453004768)))
+    filter(as.Date(d_452942800) > "2025-03-24" & 
+             D_421586693_D_421586693_D_767755239==1 | 
+           #D_421586693_D_421586693_D_385609081==1 |
+           D_421586693_D_421586693_D_502946054==1 |
+           D_421586693_D_421586693_D_151757360==1 |
+           D_421586693_D_421586693_D_363747463==1 |
+           D_421586693_D_421586693_D_626380300==1 |
+           D_421586693_D_421586693_D_817932069==1 |
+           D_421586693_D_421586693_D_466212511==1) 
+
+curwork_postpanT2A_H= curwork_postpanT2A_H %>%  
+  mutate(Address1= case_when(is.na(D_733638576_D_583216333) & D_421586693_D_421586693_D_767755239==1 ~"Skipped Time Spent in a Car"))
+
+dt_curwork_postpanT2A_H_summary <- curwork_postpanT2A_H %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
+dt_curwork_postpanT2A_H_summary <- dt_curwork_postpanT2A_H_summary[1,]
+
+dt_curwork_postpanT2A_H_summary[2,1] <- "Skipped Time Spent in a Taxi"
+#taxi <- curwork_postpanT2A_H %>% filter(D_421586693_D_421586693_D_385609081==1)
+#ifelse (exists("D_404863614_D_404863614_D_638833327"), taxi <- curwork_postpanT2A_H %>% filter(D_404863614_D_404863614_D_638833327==1), taxi <- curwork_postpanT2A_H)
+dt_curwork_postpanT2A_H_summary[2,2] <- ifelse (exists("D_733638576_D_920653797"),  sum(is.na(taxi$D_733638576_D_920653797)), 0)
+dt_curwork_postpanT2A_H_summary[2,3] <- ifelse (exists("D_733638576_D_920653797"), (sum(is.na(taxi$D_733638576_D_920653797))/dim(taxi)[[1]])*100, 0)
+
+dt_curwork_postpanT2A_H_summary[3,1] <- "Skipped Time Spent in a Motorcycle" 
+motorcycle <- curwork_postpanT2A_H %>% filter(D_421586693_D_421586693_D_502946054==1)
+dt_curwork_postpanT2A_H_summary[3,2] <- sum(is.na(motorcycle$D_733638576_D_843066684))
+dt_curwork_postpanT2A_H_summary[3,3] <- (sum(is.na(motorcycle$D_733638576_D_843066684))/dim(motorcycle)[[1]])*100
+
+dt_curwork_postpanT2A_H_summary[4,1] <- "Skipped Time Spent in a Bus" 
+bus <- curwork_postpanT2A_H %>% filter(D_421586693_D_421586693_D_151757360==1)
+dt_curwork_postpanT2A_H_summary[4,2] <- sum(is.na(bus$D_733638576_D_101850740))
+dt_curwork_postpanT2A_H_summary[4,3] <- (sum(is.na(bus$D_733638576_D_101850740))/dim(bus)[[1]])*100
+
+dt_curwork_postpanT2A_H_summary[5,1] <- "Skipped Time Spent in a Subway" 
+subway <- curwork_postpanT2A_H %>% filter(D_421586693_D_421586693_D_363747463==1)
+dt_curwork_postpanT2A_H_summary[5,2] <- sum(is.na(subway$D_733638576_D_317194063))
+dt_curwork_postpanT2A_H_summary[5,3] <- (sum(is.na(subway$D_733638576_D_317194063))/dim(subway)[[1]])*100
+
+dt_curwork_postpanT2A_H_summary[6,1] <- "Skipped Time Spent Biking" 
+bike <- curwork_postpanT2A_H %>% filter(D_421586693_D_421586693_D_626380300==1)
+dt_curwork_postpanT2A_H_summary[6,2] <- sum(is.na(bike$D_733638576_D_621948602))
+dt_curwork_postpanT2A_H_summary[6,3] <- (sum(is.na(bike$D_733638576_D_621948602))/dim(bike)[[1]])*100
+
+dt_curwork_postpanT2A_H_summary[7,1] <- "Skipped Time Spent Walking" 
+walk <- curwork_postpanT2A_H %>% filter(D_421586693_D_421586693_D_817932069==1)
+dt_curwork_postpanT2A_H_summary[7,2] <- sum(is.na(walk$D_733638576_D_175502589))
+dt_curwork_postpanT2A_H_summary[7,3] <- (sum(is.na(walk$D_733638576_D_175502589))/dim(walk)[[1]])*100
+
+dt_curwork_postpanT2A_H_summary[8,1] <- "Skipped Time Spent in Another Method" 
+method <- curwork_postpanT2A_H %>% filter(D_421586693_D_421586693_D_466212511==1)
+dt_curwork_postpanT2A_H_summary[8,2] <- sum(is.na(method$D_733638576_D_614443767))
+dt_curwork_postpanT2A_H_summary[8,3] <- (sum(is.na(method$D_733638576_D_614443767))/dim(method)[[1]])*100
+
+
+dt_curwork_postpanT2A_H_summary %>%  gt::gt() %>%  
+  fmt_number(columns = "percentage", decimals = 2) %>% 
+  tab_header(title = md("Time Spent in Each Commuting Method (Current Position)")) %>% 
+  cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
+  
+  tab_options(
+    stub.font.weight = "bold"
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      columns = Address1,
+    )
+  )
+
+
+
+
+curwork_postpanT3= Mod4 %>%  filter(#(Mod4$D_733638576_D_583216333!=428999623 & !is.na(Mod4$D_733638576_D_583216333))
+                                    as.Date(d_452942800) > "2025-03-24" & 
+                                    (Mod4$D_733638576_D_583216333!=428999623 & !is.na(Mod4$D_733638576_D_583216333)) | #(Mod4$D_733638576_D_920653797!=428999623 & !is.na(Mod4$D_733638576_D_920653797)) |
+                                    (Mod4$D_733638576_D_843066684!=428999623 & !is.na(Mod4$D_733638576_D_843066684)) | (Mod4$D_733638576_D_101850740!=428999623 & !is.na(Mod4$D_733638576_D_101850740))) %>% 
+  mutate(Address1= case_when(is.na(D_166943843) ~"Skipped Time on Highways"))
+
+dt_curwork_postpanT3_summary <- curwork_postpanT3 %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
+dt_curwork_postpanT3_summary <- dt_curwork_postpanT3_summary[1,]
+
+dt_curwork_postpanT3_summary[2,1] <- "Skipped Time on Major Roads" 
+dt_curwork_postpanT3_summary[2,2] <- sum(is.na(curwork_postpanT3$D_173155090))
+dt_curwork_postpanT3_summary[2,3] <- (sum(is.na(curwork_postpanT3$D_173155090))/dim(curwork_postpanT3)[[1]])*100
+
+dt_curwork_postpanT3_summary[3,1] <- "Skipped Time on  Local Roads" 
+dt_curwork_postpanT3_summary[3,2] <- sum(is.na(curwork_postpanT3$D_234136107))
+dt_curwork_postpanT3_summary[3,3] <- (sum(is.na(curwork_postpanT3$D_234136107))/dim(curwork_postpanT3)[[1]])*100
+
+
+dt_curwork_postpanT3_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
+  fmt_number(columns = "percentage", decimals = 2) %>% 
+  tab_header(title = md("Time Commuting on Highways, Parkways, Freeways or \n Toll Roads (Current Position)")) %>% 
+  cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
+  
+  tab_options(
+    stub.font.weight = "bold"
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      columns = Address1,
+    )
+  )
+
+
+
+
+curwork_postpanT4_5= Mod4 %>%  filter( #(is.na(Mod4$D_166943843) | is.na(Mod4$D_173155090) | is.na(Mod4$D_234136107)) & 
+                                   #Mod4$D_871276836!=353358909 & (Mod4$D_660218333==759356722 | Mod4$D_660218333==185036360) &
+            as.Date(d_452942800) > "2025-03-24" & 
+            (Mod4$D_733638576_D_583216333!=428999623 & !is.na(Mod4$D_733638576_D_583216333)) | #(Mod4$D_733638576_D_920653797!=428999623 & !is.na(Mod4$D_733638576_D_920653797)) |
+            (Mod4$D_733638576_D_843066684!=428999623 & !is.na(Mod4$D_733638576_D_843066684)) | (Mod4$D_733638576_D_101850740!=428999623 & !is.na(Mod4$D_733638576_D_101850740)) |
+            (Mod4$D_733638576_D_317194063!=428999623 & !is.na(Mod4$D_733638576_D_317194063)) | (Mod4$D_733638576_D_621948602!=428999623 & !is.na(Mod4$D_733638576_D_621948602)) |
+            (Mod4$D_733638576_D_175502589!=428999623 & !is.na(Mod4$D_733638576_D_175502589)) |(Mod4$D_733638576_D_614443767!=428999623 & !is.na(Mod4$D_733638576_D_614443767))) %>% 
+  mutate(Address1= case_when(is.na(D_173155090) ~"Skipped Time on Major Roads"))
+
+dt_curwork_postpanT4_5_summary <- curwork_postpanT4_5 %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
+dt_curwork_postpanT4_5_summary <- dt_curwork_postpanT4_5_summary[1,]
+
+dt_curwork_postpanT4_5_summary[2,1] <- "Skipped Time on  Local Roads" 
+dt_curwork_postpanT4_5_summary[2,2] <- sum(is.na(curwork_postpanT4_5$D_234136107))
+dt_curwork_postpanT4_5_summary[2,3] <- (sum(is.na(curwork_postpanT4_5$D_234136107))/dim(curwork_postpanT4_5)[[1]])*100
+
+
+dt_curwork_postpanT4_5_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
+  fmt_number(columns = "percentage", decimals = 2) %>% 
+  tab_header(title = md("Time Commuting on Road Types (Current Position)")) %>% 
+  cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
+  
+  tab_options(
+    stub.font.weight = "bold"
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      columns = Address1,
+    )
+  )
+
+
+
+curwork_postpanT6_7= Mod4 %>%  filter(as.Date(d_452942800) > "2025-03-24" & 
+                                        (D_421586693_D_421586693_D_767755239==0 &  #D_421586693_D_421586693_D_385609081==0 & 
+                                         D_421586693_D_421586693_D_502946054==0 &
+                                         D_421586693_D_421586693_D_151757360==0 & D_421586693_D_421586693_D_363747463==0 & D_421586693_D_421586693_D_626380300==0 &
+                                         D_421586693_D_421586693_D_817932069==0 & D_421586693_D_421586693_D_466212511==0) |
+                                        ((Mod4$D_733638576_D_583216333==428999623 | is.na(Mod4$D_733638576_D_583216333)) & #(Mod4$D_733638576_D_920653797==428999623 | is.na(Mod4$D_733638576_D_920653797)) &
+                                           (Mod4$D_733638576_D_843066684==428999623 | is.na(Mod4$D_733638576_D_843066684)) & (Mod4$D_733638576_D_101850740==428999623 | is.na(Mod4$D_733638576_D_101850740)) &
+                                           (Mod4$D_733638576_D_317194063==428999623 | is.na(Mod4$D_733638576_D_317194063)) & (Mod4$D_733638576_D_621948602==428999623 | is.na(Mod4$D_733638576_D_621948602)) &
+                                           (Mod4$D_733638576_D_175502589==428999623 | is.na(Mod4$D_733638576_D_175502589)) & (Mod4$D_733638576_D_614443767==428999623 | is.na(Mod4$D_733638576_D_614443767)))) %>% 
+  mutate(Address1= case_when(is.na(D_666629067) ~"Days per Week"))
+
+dt_curwork_postpanT6_7_summary <- curwork_postpanT6_7 %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
+dt_curwork_postpanT6_7_summary <- dt_curwork_postpanT6_7_summary[1,]
+
+dt_curwork_postpanT6_7_summary[2,1] <- "Same Transportation to and from" 
+dt_curwork_postpanT6_7_summary[2,2] <- sum(is.na(curwork_postpanT6_7$D_614208066))
+dt_curwork_postpanT6_7_summary[2,3] <- (sum(is.na(curwork_postpanT6_7$D_614208066))/dim(curwork_postpanT6_7)[[1]])*100
+
+
+dt_curwork_postpanT6_7_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
+  fmt_number(columns = "percentage", decimals = 2) %>% 
+  tab_header(title = md("Commuting from Home to Work (Current Position)")) %>% 
+  cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
+  
+  tab_options(
+    stub.font.weight = "bold"
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      columns = Address1,
+    )
+  )
+
+
+
+
+curwork_postpanT8= Mod4  %>%  filter(as.Date(d_452942800) > "2025-03-24" & D_614208066==353358909) %>%  
+  mutate(Address1= case_when(is.na(D_308634850) ~"Skipped curwork_postpanT8"))
+         
+dt_curwork_postpanT8_summary <- curwork_postpanT8 %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
+dt_curwork_postpanT8_summary <- dt_curwork_postpanT8_summary[1,]
+
+dt_curwork_postpanT8_summary %>%  gt::gt() %>%  
+  fmt_number(columns = "percentage", decimals = 2) %>% 
+  tab_header(title = md("Time of Commute Home versus Commute to Work (Current Position)")) %>% 
+  cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
+  
+  tab_options(
+    stub.font.weight = "bold"
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      columns = Address1,
+    )
+  )
+
+
+
+
+curwork_postpanT9= Mod4 %>% filter(as.Date(d_452942800) > "2025-03-24" & D_614208066!=353358909)
+
+curwork_postpanT9= curwork_postpanT9 %>%  mutate(Address1= case_when(is.na(D_799598595_D_799598595_D_339946103) ~"Skipped if Commute Inlcudes a Car"))
+
+dt_curwork_postpanT9_summary <- curwork_postpanT9 %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
+dt_curwork_postpanT9_summary <- dt_curwork_postpanT9_summary[1,]
+
+dt_curwork_postpanT9_summary[2,1] <- "Skipped if Commute Inlcudes a Taxi" 
+dt_curwork_postpanT9_summary[2,2] <- sum(is.na(curwork_postpanT9$D_799598595_D_799598595_D_364857371))
+dt_curwork_postpanT9_summary[2,3] <- (sum(is.na(curwork_postpanT9$D_799598595_D_799598595_D_364857371))/dim(curwork_postpanT9)[[1]])*100
+
+dt_curwork_postpanT9_summary[3,1] <- "Skipped if Commute Inlcudes a Motorcycle" 
+dt_curwork_postpanT9_summary[3,2] <- sum(is.na(curwork_postpanT9$D_799598595_D_799598595_D_315356220))
+dt_curwork_postpanT9_summary[3,3] <- (sum(is.na(curwork_postpanT9$D_799598595_D_799598595_D_315356220))/dim(curwork_postpanT9)[[1]])*100
+
+dt_curwork_postpanT9_summary[4,1] <- "Skipped if Commute Inlcudes a Bus" 
+dt_curwork_postpanT9_summary[4,2] <- sum(is.na(curwork_postpanT9$D_799598595_D_799598595_D_363036517))
+dt_curwork_postpanT9_summary[4,3] <- (sum(is.na(curwork_postpanT9$D_799598595_D_799598595_D_363036517))/dim(curwork_postpanT9)[[1]])*100
+
+dt_curwork_postpanT9_summary[5,1] <- "Skipped if Commute Inlcudes a Subway" 
+dt_curwork_postpanT9_summary[5,2] <- sum(is.na(curwork_postpanT9$D_799598595_D_799598595_D_978362655))
+dt_curwork_postpanT9_summary[5,3] <- (sum(is.na(curwork_postpanT9$D_799598595_D_799598595_D_978362655))/dim(curwork_postpanT9)[[1]])*100
+
+dt_curwork_postpanT9_summary[6,1] <- "Skipped if Commute Inlcudes Biking" 
+dt_curwork_postpanT9_summary[6,2] <- sum(is.na(curwork_postpanT9$D_799598595_D_799598595_D_175003260))
+dt_curwork_postpanT9_summary[6,3] <- (sum(is.na(curwork_postpanT9$D_799598595_D_799598595_D_175003260))/dim(curwork_postpanT9)[[1]])*100
+
+dt_curwork_postpanT9_summary[7,1] <- "Skipped if Commute Inlcudes Walking" 
+dt_curwork_postpanT9_summary[7,2] <- sum(is.na(curwork_postpanT9$D_799598595_D_799598595_D_648051649))
+dt_curwork_postpanT9_summary[7,3] <- (sum(is.na(curwork_postpanT9$D_799598595_D_799598595_D_648051649))/dim(curwork_postpanT9)[[1]])*100
+
+dt_curwork_postpanT9_summary[8,1] <- "Skipped if Commute Inlcudes Another Method" 
+dt_curwork_postpanT9_summary[8,2] <- sum(is.na(curwork_postpanT9$D_799598595_D_799598595_D_957052257) & is.na(curwork_postpanT9$D_799598595_D_968445508))
+dt_curwork_postpanT9_summary[8,3] <- (sum(is.na(curwork_postpanT9$D_799598595_D_799598595_D_957052257) & is.na(curwork_postpanT9$D_799598595_D_968445508))/dim(curwork_postpanT9)[[1]])*100
+
+
+dt_curwork_postpanT9_summary %>%  gt::gt() %>%  
+  fmt_number(columns = "percentage", decimals = 2) %>% 
+  tab_header(title = md("Commuting Methods Home From Work (Current Position)")) %>% 
+  cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
+  
+  tab_options(
+    stub.font.weight = "bold"
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      columns = Address1,
+    )
+  )
+
+
+
+###############   So far the only response is for car, so the rest is commented out
+
+curwork_postpanT10A= Mod4 %>%   
+  # filter(is.na(Mod4$D_532260562_D_659799855) & Mod4$D_203943120!=353358909 & Mod4$D_871276836!=353358909 & (Mod4$D_660218333==759356722 | Mod4$D_660218333==185036360) &
+  #          ifelse(Mod4$D_684542266==104430631, Mod4$D_799598595_D_799598595_D_339946103==1,
+  #                 ifelse(is.na(Mod4$D_684542266), Mod4$D_799598595_D_799598595_D_339946103==1,
+  #                        ifelse(Mod4$D_203943120==104430631, Mod4$D_421586693_D_421586693_D_767755239==1,
+  #                               ifelse(is.na(Mod4$D_203943120), Mod4$D_421586693_D_421586693_D_767755239==1, TRUE))))) ##should this be else true or else NA? Doesn't seem to change outcome
+  filter(as.Date(d_452942800) > "2025-03-24" & D_799598595_D_799598595_D_339946103==1) 
+curwork_postpanT10A= curwork_postpanT10A %>%  mutate(Address1= case_when(is.na(D_532260562_D_827461454) ~"Skipped curwork_postpanT10A"))
+
+dt_curwork_postpanT10A_summary <- curwork_postpanT10A %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
+
+
+dt_curwork_postpanT10A_summary %>%  gt::gt() %>%  
+  fmt_number(columns = "percentage", decimals = 2) %>% 
+  tab_header(title = md("Time Commuting Home in the Car (Current Position)")) %>% 
+  cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
+  
+  tab_options(
+    stub.font.weight = "bold"
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      columns = Address1,
+    )
+  )
+
+
+
+
+# curwork_postpanT10B= Mod4 %>%   
+#   # filter(is.na(Mod4$D_532260562_D_552410034) & Mod4$D_203943120!=353358909 & Mod4$D_871276836!=353358909 & (Mod4$D_660218333==759356722 | Mod4$D_660218333==185036360) &
+#   #          ifelse(Mod4$D_684542266==104430631, Mod4$D_799598595_D_799598595_D_364857371==1,
+#   #                 ifelse(is.na(Mod4$D_684542266), Mod4$D_799598595_D_799598595_D_364857371==1,
+#   #                        ifelse(Mod4$D_203943120==104430631, Mod4$D_421586693_D_421586693_D_385609081==1,
+#   #                               ifelse(is.na(Mod4$D_203943120), Mod4$D_421586693_D_421586693_D_385609081==1, NA)))))
+#   filter(as.Date(d_452942800) > "2025-03-24" & D_799598595_D_799598595_D_364857371==1)
+# curwork_postpanT10B= curwork_postpanT10B %>%  mutate(Address1= case_when(is.na(D_532260562_D_306356124) ~"Skipped curwork_postpanT10B"))
+# 
+# dt_curwork_postpanT10B_summary <- curwork_postpanT10B %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
+# 
+# 
+# dt_curwork_postpanT10B_summary %>%  gt::gt() %>%  
+#   fmt_number(columns = "percentage", decimals = 2) %>% 
+#   tab_header(title = md("Time Commuting Home in a Taxi (Current Position)")) %>% 
+#   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
+#   
+#   tab_options(
+#     stub.font.weight = "bold"
+#   ) %>%
+#   tab_style(
+#     style = list(
+#       cell_text(weight = "bold")
+#     ),
+#     locations = cells_body(
+#       columns = Address1,
+#     )
+#   )
+
+
+
+
+# curwork_postpanT10C= Mod4 %>%  
+#   # filter(is.na(Mod4$D_532260562_D_772382520)  & Mod4$D_203943120!=353358909 & Mod4$D_871276836!=353358909 & (Mod4$D_660218333==759356722 | Mod4$D_660218333==185036360) &
+#   #          ifelse(Mod4$D_684542266==104430631, Mod4$D_799598595_D_799598595_D_315356220==1,
+#   #                 ifelse(is.na(Mod4$D_684542266), Mod4$D_799598595_D_799598595_D_315356220==1,
+#   #                        ifelse(Mod4$D_203943120==104430631, Mod4$D_421586693_D_421586693_D_502946054==1,
+#   #                               ifelse(is.na(Mod4$D_203943120), Mod4$D_421586693_D_421586693_D_502946054==1, NA)))))
+#   filter(as.Date(d_452942800) > "2025-03-24" & D_799598595_D_799598595_D_315356220==1)
+# curwork_postpanT10C= curwork_postpanT10C %>%  mutate(Address1= case_when(is.na(D_532260562_D_884514292) ~"Skipped curwork_postpanT10C"))
+# 
+# dt_curwork_postpanT10C_summary <- curwork_postpanT10C %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
+# 
+# 
+# dt_curwork_postpanT10C_summary %>%  gt::gt() %>%
+#   fmt_number(columns = "percentage", decimals = 2) %>%
+#   tab_header(title = md("Time Commuting Home in a Motorcycle (Current Position)")) %>%
+#   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>%
+# 
+#   tab_options(
+#     stub.font.weight = "bold"
+#   ) %>%
+#   tab_style(
+#     style = list(
+#       cell_text(weight = "bold")
+#     ),
+#     locations = cells_body(
+#       columns = Address1,
+#     )
+#   )
+
+
+
+# 
+# curwork_postpanT10D= Mod4 %>%   
+#   # filter(is.na(Mod4$D_532260562_D_146307133) & Mod4$D_203943120!=353358909 & Mod4$D_871276836!=353358909 & (Mod4$D_660218333==759356722 | Mod4$D_660218333==185036360) &
+#   #          ifelse(Mod4$D_684542266==104430631, Mod4$D_799598595_D_799598595_D_363036517==1,
+#   #                 ifelse(is.na(Mod4$D_684542266), Mod4$D_799598595_D_799598595_D_363036517==1,
+#   #                        ifelse(Mod4$D_203943120==104430631, Mod4$D_421586693_D_421586693_D_151757360==1,
+#   #                               ifelse(is.na(Mod4$D_203943120), Mod4$D_421586693_D_421586693_D_151757360==1, NA)))))
+#   filter(as.Date(d_452942800) > "2025-03-24" & D_799598595_D_799598595_D_363036517==1)
+# curwork_postpanT10D= curwork_postpanT10D %>%  mutate(Address1= case_when(is.na(D_532260562_D_570556451) ~"Skipped curwork_postpanT10D"))
+# 
+# dt_curwork_postpanT10D_summary <- curwork_postpanT10D %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
+# 
+# 
+# dt_curwork_postpanT10D_summary %>%  gt::gt() %>%  
+#   fmt_number(columns = "percentage", decimals = 2) %>% 
+#   tab_header(title = md("Time Commuting Home on a Bus (Current Position)")) %>% 
+#   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
+#   
+#   tab_options(
+#     stub.font.weight = "bold"
+#   ) %>%
+#   tab_style(
+#     style = list(
+#       cell_text(weight = "bold")
+#     ),
+#     locations = cells_body(
+#       columns = Address1,
+#     )
+#   )
+
+
+
+
+# curwork_postpanT10E= Mod4 %>%  
+#   # filter(is.na(Mod4$D_532260562_D_100591237) & Mod4$D_203943120!=353358909 & Mod4$D_871276836!=353358909 & (Mod4$D_660218333==759356722 | Mod4$D_660218333==185036360) &
+#   #          ifelse(Mod4$D_684542266==104430631, Mod4$D_799598595_D_799598595_D_978362655==1,
+#   #                 ifelse(is.na(Mod4$D_684542266), Mod4$D_799598595_D_799598595_D_978362655==1,
+#   #                        ifelse(Mod4$D_203943120==104430631, Mod4$D_421586693_D_421586693_D_363747463==1,
+#   #                               ifelse(is.na(Mod4$D_203943120), Mod4$D_421586693_D_421586693_D_363747463==1, NA)))))
+#   filter(as.Date(d_452942800) > "2025-03-24" & D_799598595_D_799598595_D_978362655==1)
+# curwork_postpanT10E= curwork_postpanT10E %>%  mutate(Address1= case_when(is.na(D_532260562_D_303089793) ~"Skipped curwork_postpanT10E"))
+# 
+# dt_curwork_postpanT10E_summary <- curwork_postpanT10E %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
+# 
+# 
+# dt_curwork_postpanT10E_summary %>%  gt::gt() %>%  
+#   fmt_number(columns = "percentage", decimals = 2) %>% 
+#   tab_header(title = md("Time Commuting Home on a Subway (Current Position)")) %>% 
+#   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
+#   
+#   tab_options(
+#     stub.font.weight = "bold"
+#   ) %>%
+#   tab_style(
+#     style = list(
+#       cell_text(weight = "bold")
+#     ),
+#     locations = cells_body(
+#       columns = Address1,
+#     )
+#   )
+
+
+
+
+# curwork_postpanT10F= Mod4 %>%   
+#   # filter(is.na(Mod4$D_532260562_D_823402922) & Mod4$D_203943120!=353358909 & Mod4$D_871276836!=353358909 & (Mod4$D_660218333==759356722 | Mod4$D_660218333==185036360) &
+#   #          ifelse(Mod4$D_684542266==104430631, Mod4$D_799598595_D_799598595_D_175003260==1,
+#   #                 ifelse(is.na(Mod4$D_684542266), Mod4$D_799598595_D_799598595_D_175003260==1,
+#   #                        ifelse(Mod4$D_203943120==104430631, Mod4$D_421586693_D_421586693_D_626380300==1,
+#   #                               ifelse(is.na(Mod4$D_203943120), Mod4$D_421586693_D_421586693_D_626380300==1, NA)))))
+#   filter(as.Date(d_452942800) > "2025-03-24" & D_799598595_D_799598595_D_175003260==1)
+# curwork_postpanT10F= curwork_postpanT10F %>%  mutate(Address1= case_when(is.na(D_532260562_D_848543458) ~"Skipped curwork_postpanT10F"))
+# 
+# dt_curwork_postpanT10F_summary <- curwork_postpanT10F %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
+# 
+# 
+# dt_curwork_postpanT10F_summary %>%  gt::gt() %>%  
+#   fmt_number(columns = "percentage", decimals = 2) %>% 
+#   tab_header(title = md("Time Commuting Home on a Bike (Current Position)")) %>% 
+#   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
+#   
+#   tab_options(
+#     stub.font.weight = "bold"
+#   ) %>%
+#   tab_style(
+#     style = list(
+#       cell_text(weight = "bold")
+#     ),
+#     locations = cells_body(
+#       columns = Address1,
+#     )
+#   )
+
+
+
+
+# curwork_postpanT10G= Mod4 %>%  
+#   # filter(is.na(Mod4$D_532260562_D_289302451) & Mod4$D_203943120!=353358909 & Mod4$D_871276836!=353358909 & (Mod4$D_660218333==759356722 | Mod4$D_660218333==185036360) &
+#   #          ifelse(Mod4$D_684542266==104430631, Mod4$D_799598595_D_799598595_D_648051649==1,
+#   #                 ifelse(is.na(Mod4$D_684542266), Mod4$D_799598595_D_799598595_D_648051649==1,
+#   #                        ifelse(Mod4$D_203943120==104430631, Mod4$D_421586693_D_421586693_D_817932069==1,
+#   #                               ifelse(is.na(Mod4$D_203943120), Mod4$D_421586693_D_421586693_D_817932069==1, NA)))))
+#   filter(as.Date(d_452942800) > "2025-03-24" & D_799598595_D_799598595_D_648051649==1)
+# curwork_postpanT10F= curwork_postpanT10F %>%  mutate(Address1= case_when(is.na(D_532260562_D_543804307) ~"Skipped curwork_postpanT10G"))
+# 
+# dt_curwork_postpanT10F_summary <- curwork_postpanT10F %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
+# 
+# 
+# dt_curwork_postpanT10F_summary %>%  gt::gt() %>%  
+#   fmt_number(columns = "percentage", decimals = 2) %>% 
+#   tab_header(title = md("Time Commuting Home by Walking (Current Position)")) %>% 
+#   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
+#   
+#   tab_options(
+#     stub.font.weight = "bold"
+#   ) %>%
+#   tab_style(
+#     style = list(
+#       cell_text(weight = "bold")
+#     ),
+#     locations = cells_body(
+#       columns = Address1,
+#     )
+#   )
+
+
+
+
+# curwork_postpanT10H= Mod4 %>%  select(D_532260562_D_654108399) %>%  
+#   # filter(Mod4$D_203943120!=353358909 & Mod4$D_871276836!=353358909 & (Mod4$D_660218333==759356722 | Mod4$D_660218333==185036360) &
+#   #          ifelse(Mod4$D_684542266==104430631, is.na(Mod4$D_799598595_D_799598595_D_968445508),
+#   #                 ifelse(is.na(Mod4$D_684542266), is.na(Mod4$D_799598595_D_799598595_D_968445508),
+#   #                        ifelse(Mod4$D_203943120==104430631, is.na(Mod4$D_421586693_D_421586693_D_421586693_D_466212511),
+#   #                               ifelse(is.na(Mod4$D_203943120), is.na(Mod4$D_421586693_D_421586693_D_421586693_D_466212511), NA)))))
+#   filter(as.Date(d_452942800) > "2025-03-24" & D_799598595_D_799598595_D_957052257==1)
+# curwork_postpanT10F= curwork_postpanT10H %>%  mutate(Address1= case_when(is.na(D_532260562_D_654108399) ~"Skipped curwork_postpanT10H"))
+
+
+
+
+
+### This will have to be updated once more responses above are selected
+curwork_postpanT11= Mod4 %>%   
+  filter(as.Date(d_452942800) > "2025-03-24" & (Mod4$D_532260562_D_827461454!=428999623 & !is.na(Mod4$D_532260562_D_827461454)) | #(Mod4$D_532260562_D_306356124!=428999623 & !is.na(Mod4$D_532260562_D_306356124)) |
+            (Mod4$D_532260562_D_884514292!=428999623 & !is.na(Mod4$D_532260562_D_884514292))) #| (Mod4$D_532260562_D_570556451!=428999623 & !is.na(Mod4$D_532260562_D_570556451)))
+
+
+
+curwork_postpanT11= curwork_postpanT11 %>%  mutate(Address1= case_when(is.na(D_186636914) ~"Skipped if it Includes Highways"))
+
+dt_curwork_postpanT11_summary <- curwork_postpanT11 %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
+dt_curwork_postpanT11_summary <- dt_curwork_postpanT11_summary[1,]
+
+dt_curwork_postpanT11_summary[2,1] <- "Skipped if it Includes Major Roads" 
+dt_curwork_postpanT11_summary[2,2] <- sum(is.na(curwork_postpanT11$D_936393993))
+dt_curwork_postpanT11_summary[2,3] <- (sum(is.na(curwork_postpanT11$D_936393993))/dim(curwork_postpanT11)[[1]])*100
+
+dt_curwork_postpanT11_summary[3,1] <- "Skipped if it Includes Local Roads" 
+dt_curwork_postpanT11_summary[3,2] <- sum(is.na(curwork_postpanT11$D_168563469))
+dt_curwork_postpanT11_summary[3,3] <- (sum(is.na(curwork_postpanT11$D_168563469))/dim(curwork_postpanT11)[[1]])*100
+
+dt_curwork_postpanT11_summary <- dt_curwork_postpanT11_summary[c(2,3),]
+dt_curwork_postpanT11_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
+  fmt_number(columns = "percentage", decimals = 2) %>% 
+  tab_header(title = md("Travel Commute Type (Current Position)")) %>% 
+  cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
+  
+  tab_options(
+    stub.font.weight = "bold"
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      columns = Address1,
+    )
+  )
+
+
+### This will have to be updated once more responses above are selected
+
+curwork_postpanT12_13= Mod4 %>%   
+  filter( #Mod4$D_871276836!=353358909 & (Mod4$D_660218333==759356722 | Mod4$D_660218333==185036360) &
+            as.Date(d_452942800) > "2025-03-24" & 
+              (Mod4$D_532260562_D_827461454!=428999623 & !is.na(Mod4$D_532260562_D_827461454)) | #(Mod4$D_532260562_D_306356124!=428999623 & !is.na(Mod4$D_532260562_D_306356124)) |
+            (Mod4$D_532260562_D_884514292!=428999623 & !is.na(Mod4$D_532260562_D_884514292)) | #(Mod4$D_532260562_D_570556451!=428999623 & !is.na(Mod4$D_532260562_D_570556451)) |
+            #(Mod4$D_532260562_D_303089793!=428999623 & !is.na(Mod4$D_532260562_D_303089793)) | 
+              (Mod4$D_532260562_D_848543458!=428999623 & !is.na(Mod4$D_532260562_D_848543458)) |
+            (Mod4$D_532260562_D_543804307!=428999623 & !is.na(Mod4$D_532260562_D_543804307)) |(Mod4$D_532260562_D_654108399!=428999623 & !is.na(Mod4$D_532260562_D_654108399)))
+
+
+
+curwork_postpanT12_13= curwork_postpanT12_13 %>%  mutate(Address1= case_when(is.na(D_568581510) ~"Skipped Major City"))
+
+dt_curwork_postpanT12_13_summary <- curwork_postpanT12_13 %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
+dt_curwork_postpanT12_13_summary <- dt_curwork_postpanT12_13_summary[1,]
+
+dt_curwork_postpanT12_13_summary[2,1] <- "Skipped Local or neighborhood Roadway" 
+dt_curwork_postpanT12_13_summary[2,2] <- sum(is.na(curwork_postpanT12_13$D_277953784))
+dt_curwork_postpanT12_13_summary[2,3] <- (sum(is.na(curwork_postpanT12_13$D_277953784))/dim(curwork_postpanT12_13)[[1]])*100
+
+
+dt_curwork_postpanT12_13_summary <- dt_curwork_postpanT12_13_summary[c(2,3),]
+dt_curwork_postpanT12_13_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
+  fmt_number(columns = "percentage", decimals = 2) %>% 
+  tab_header(title = md("Travel Path Commuting Home (Current Position)")) %>% 
+  cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
+  
+  tab_options(
+    stub.font.weight = "bold"
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      columns = Address1,
+    )
+  )
+
+
+
+
+curwork_postpanT14= Mod4 %>%  filter(as.Date(d_452942800) > "2025-03-24" & D_871276836!=353358909 & (Mod4$D_660218333==759356722 | Mod4$D_660218333==185036360)) %>% 
+  mutate(Address1= case_when(is.na(D_510872569) ~"Skipped curwork_postpanT14"))
+
+dt_curwork_postpanT14_summary <- curwork_postpanT14 %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
+dt_curwork_postpanT14_summary <- dt_curwork_postpanT14_summary[1,]
+
+dt_curwork_postpanT14_summary %>%  gt::gt() %>%  
+  fmt_number(columns = "percentage", decimals = 2) %>% 
+  tab_header(title = md("Days per Week Commuting Home (Current Position)")) %>% 
+  cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
+  
+  tab_options(
+    stub.font.weight = "bold"
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      columns = Address1,
+    )
+  )
+
+
+
+```
+
+
+
+
+
+
+## Pre-Pandemic
+
+```{r Commuting_Before, warning=FALSE, echo=FALSE, message=FALSE}
+
+work19= Mod4 %>%  
+  filter(D_699873889!=353358909 | D_871276836!=353358909 | 
+           (D_660218333==684900118 | is.na(D_660218333))) %>% 
+  mutate(Address1= case_when(is.na(D_694113343)~"Skipped WORK2019"))
+
+dt_work19_summary <- work19 %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
+dt_work19_summary <- dt_work19_summary[1,]
+
+dt_work19_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
+  fmt_number(columns = "percentage", decimals = 2) %>% 
+  tab_header(title = md("Worked in 2019")) %>% 
+  cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
+  
+  tab_options(
+      stub.font.weight = "bold"
+    ) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      columns = Address1,
+    )
+  ) 
+
+
+
+
+samejobprepan= Mod4 %>%  filter(Mod4$D_694113343==353358909 & D_699873889==353358909) %>%  
+  mutate(Address1= case_when(is.na(D_576417612)~"Skipped SAMEJOBPREPAN"))
+
+dt_samejobprepan_summary <- samejobprepan %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
+dt_samejobprepan_summary <- dt_samejobprepan_summary[1,]
+
+dt_samejobprepan_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
+  fmt_number(columns = "percentage", decimals = 2) %>% 
+  tab_header(title = md("If Job from 2019 is the Same Job Held Now")) %>% 
+  cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
+  
+  tab_options(
+      stub.font.weight = "bold"
+    ) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      columns = Address1,
+    )
+  )
+
+
+
+workres= Mod4 %>%  filter(D_576417612!=353358909 | 
+                            (D_694113343==353358909 & D_699873889!=353358909)) %>%  
+  mutate(Address1= case_when(is.na(D_374639590)~"Skipped WORKRES"))
+
+dt_workres_summary <- workres %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
+dt_workres_summary <- dt_workres_summary[1,]
+
+dt_workres_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
+  fmt_number(columns = "percentage", decimals = 2) %>% 
+  tab_header(title = md("Daily Work Tasks Include Driving")) %>% 
+  cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
+  
+  tab_options(
+    stub.font.weight = "bold"
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      columns = Address1,
+    )
+  )
+
+
+
+### SAMEJOBPAN=1 AND WORKRESPOSTPAN=0
+days_work19= Mod4 %>%  filter(D_576417612==353358909 & D_871276836==104430631) %>%  
+  mutate(Address1= case_when(is.na(D_970148613)~"Skipped PREPANDIFF"))
+
+dt_days_work19_summary <- days_work19 %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
+dt_days_work19_summary <- dt_days_work19_summary[1,]
+
+dt_days_work19_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
+  fmt_number(columns = "percentage", decimals = 2) %>% 
+  tab_header(title = md("Workplace Commuting Pattern Change Because of COVID-19")) %>% 
+  cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
+  
+  tab_options(
+      stub.font.weight = "bold"
+    ) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      columns = Address1,
+    )
+  )
+
+
+
+### WORK2019=1 AND (WORKRES=0 ore PREPANDIFF=1) 
+days_work19= Mod4 %>%  filter(D_694113343==353358909 & (D_871276836==104430631 | D_970148613==353358909)) %>%  
   mutate(Address1= case_when(is.na(D_774087638)~"Skipped DAYSWORK"))
 
 dt_days_work19_summary <- days_work19 %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
@@ -2626,7 +3717,7 @@ dt_days_work19_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Days per Week Worked in 2019")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
       stub.font.weight = "bold"
     ) %>%
@@ -2646,34 +3737,10 @@ dt_days_work19_summary %>%  gt::gt(rowname_col = "row_lab") %>%
 
 
 ## Work Commute Before the COVID-19 Pandemic
-```{r PreCOVID, warning=FALSE, echo=FALSE, message=FALSE}
-days_work19= Mod4 %>%  filter(Mod4$D_694113343==353358909) %>%  
-  mutate(Address1= case_when(is.na(D_374639590)~"Skipped WORKRES"))
-
-dt_days_work19_summary <- days_work19 %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
-dt_days_work19_summary <- dt_days_work19_summary[1,]
-
-dt_days_work19_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
-  fmt_number(columns = "percentage", decimals = 2) %>% 
-  tab_header(title = md("Daily Work Tasks Include Driving")) %>% 
-  cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
-  tab_options(
-    stub.font.weight = "bold"
-  ) %>%
-  tab_style(
-    style = list(
-      cell_text(weight = "bold")
-    ),
-    locations = cells_body(
-      columns = Address1,
-    )
-  )
+```{r PreCOVID_before, warning=FALSE, echo=FALSE, message=FALSE}
 
 
-
-
-commute_num= Mod4 %>%  filter(Mod4$D_374639590!=353358909) %>%  
+commute_num= Mod4 %>%  filter(D_694113343==353358909 | D_374639590==104430631 | D_970148613==353358909) %>%  
   mutate(Address1= case_when(is.na(D_828801156)~"Skipped NUMWORK"))
 
 dt_commute_num_summary <- commute_num %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
@@ -2683,7 +3750,36 @@ dt_commute_num_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Number of Commutes to Different Workplaces per Week")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
+  tab_options(
+    stub.font.weight = "bold"
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      columns = Address1,
+    )
+  )
+
+
+## PREPANDIFF= 1 AND (ADDRESS ENTERED IN CURWORKPOSTPAN1_SRC, CURWORKPOSTPAN2_SRC, OR CURWORKPOSTPAN3_SRC)
+curwork0= Mod4 %>%  filter(D_970148613==353358909 &
+                             (!is.na(D_263959391_D_268600708) | !is.na(D_263959391_D_560853245) | !is.na(D_263959391_D_307515427) | !is.na(D_263959391_D_422521705) |
+                                !is.na(D_263959391_D_627183798) | !is.na(D_263959391_D_901141257) |  !is.na(D_263959391_D_599770535) | !is.na(D_263959391_D_268600708) | 
+                                !is.na(D_986316055_D_515150210) | !is.na(D_986316055_D_182449282) |!is.na(D_986316055_D_609408466) |!is.na(D_986316055_D_702591232) | 
+                                !is.na(D_116032363_D_330163034) | !is.na(D_116032363_D_555595404))) %>%  
+  mutate(Address1= case_when(is.na(D_211472150)~"Skipped CURWORK0"))
+
+dt_curwork0_summary <- curwork0 %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
+dt_curwork0_summary <- dt_curwork0_summary[1,]
+
+dt_curwork0_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
+  fmt_number(columns = "percentage", decimals = 2) %>% 
+  tab_header(title = md("Before COVID-19, was Current Workplace Still \n the Same Workplace Most Often Commuted to")) %>% 
+  cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
+  
   tab_options(
     stub.font.weight = "bold"
   ) %>%
@@ -2698,7 +3794,15 @@ dt_commute_num_summary %>%  gt::gt(rowname_col = "row_lab") %>%
 
 
 
-curwork= Mod4 %>%  filter(Mod4$D_374639590!=353358909 & (Mod4$D_828801156==759356722 | Mod4$D_828801156==185036360)) %>%  
+
+### (CURWORK0= 0, NR) OR ([NUMWORK= 0 OR 1] AND [WORKRES= 0]) OR ([PREPANDIFF= 1] AND [NO ADDRESS ENTERED IN CURWORKPOSTPAN1_SRC, CURWORKPOSTPAN2_SRC, OR CURWORKPOSTPAN3_SRC])
+curwork= Mod4 %>%  filter(D_211472150!=353358909 | 
+                            ((Mod4$D_828801156==759356722 | Mod4$D_828801156==185036360) & D_374639590==104430631) |
+                            (D_970148613==353358909 &
+                             !(!is.na(D_263959391_D_268600708) | !is.na(D_263959391_D_560853245) | !is.na(D_263959391_D_307515427) | !is.na(D_263959391_D_422521705) |
+                                !is.na(D_263959391_D_627183798) | !is.na(D_263959391_D_901141257) |  !is.na(D_263959391_D_599770535) | !is.na(D_263959391_D_268600708) | 
+                                !is.na(D_986316055_D_515150210) | !is.na(D_986316055_D_182449282) |!is.na(D_986316055_D_609408466) |!is.na(D_986316055_D_702591232) | 
+                                !is.na(D_116032363_D_330163034) | !is.na(D_116032363_D_555595404)))) %>%  
   mutate(Address1= case_when(is.na(D_596318751_D_411791779) & is.na(D_596318751_D_493984171)& is.na(D_596318751_D_253017624) & is.na(D_596318751_D_959804472)& 
                                is.na(D_596318751_D_774707280)& is.na(D_596318751_D_182144476)& is.na(D_596318751_D_294634899) ~"Skipped All Employer Info"))
 
@@ -2737,9 +3841,9 @@ dt_curwork_summary[8,3] <- (sum(is.na(curwork$D_596318751_D_294634899))/dim(curw
 
 dt_curwork_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
   fmt_number(columns = "percentage", decimals = 2) %>% 
-  tab_header(title = md("Current Employer (Most Often Commuted to)")) %>% 
+  tab_header(title = md("Previous Employer (Most Often Commuted to)")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
     stub.font.weight = "bold"
   ) %>%
@@ -2779,9 +3883,9 @@ dt_curwork2_summary[4,3] <- (sum(is.na(curwork2$D_596318751_D_294634899) & is.na
 
 dt_curwork2_summary %>%  gt::gt() %>%  
   fmt_number(columns = "percentage", decimals = 2) %>% 
-  tab_header(title = md("Current Employer Address Follow-Up")) %>% 
+  tab_header(title = md("Previous Employer Address Follow-Up")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
     stub.font.weight = "bold"
   ) %>%
@@ -2819,9 +3923,9 @@ dt_CURWORK3_summary[2,3] <- (sum(is.na(CURWORK3$D_845811202_D_520264332))/dim(CU
 dt_CURWORK3_summary <- dt_CURWORK3_summary[2,]
 dt_CURWORK3_summary %>%  gt::gt() %>%  
   fmt_number(columns = "percentage", decimals = 2) %>% 
-  tab_header(title = md("Current Employer Buidling Cross Streets")) %>% 
+  tab_header(title = md("Previous Employer Buidling Cross Streets")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
     stub.font.weight = "bold"
   ) %>%
@@ -2858,9 +3962,9 @@ dt_CURWORKYR1_MOS_summary[3,3] <- (sum(is.na(CURWORKYR1_MOS$D_138397553))/dim(CU
 
 dt_CURWORKYR1_MOS_summary %>%  gt::gt() %>%  
   fmt_number(columns = "percentage", decimals = 2) %>% 
-  tab_header(title = md("Commuting to Current Employer")) %>% 
+  tab_header(title = md("Commuting to Previous Employer")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
     stub.font.weight = "bold"
   ) %>%
@@ -2878,8 +3982,7 @@ dt_CURWORKYR1_MOS_summary %>%  gt::gt() %>%
 
 
 
-CURWORKT1= Mod4 %>%   
-  filter(Mod4$D_374639590!=353358909 & (Mod4$D_828801156==759356722 | Mod4$D_828801156==185036360))
+CURWORKT1= Mod4 %>% filter(D_211472150==353358909)
 
 CURWORKT1= CURWORKT1 %>%  mutate(Address1= case_when(is.na(D_635467479_D_635467479_D_158795242) ~"Skipped if Commute Inlcudes a Car"))
 
@@ -2917,9 +4020,9 @@ dt_CURWORKT1_summary[8,3] <- (sum(is.na(CURWORKT1$D_635467479_D_635467479_D_5091
 
 dt_CURWORKT1_summary %>%  gt::gt() %>%  
   fmt_number(columns = "percentage", decimals = 2) %>% 
-  tab_header(title = md("Commuting Methods to Work (Current Position)")) %>% 
+  tab_header(title = md("Commuting Methods to Work (Previous Position)")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
     stub.font.weight = "bold"
   ) %>%
@@ -2937,17 +4040,25 @@ dt_CURWORKT1_summary %>%  gt::gt() %>%
 
 
 CURWORKT2A_H= Mod4 %>%   
-  filter( (is.na(D_440093675_D_593010802) & D_635467479_D_635467479_D_158795242==1 | 
-             is.na(D_440093675_D_453004768) & D_635467479_D_635467479_D_443596662==1 |
-             is.na(D_440093675_D_511991969) & D_635467479_D_635467479_D_892894242==1 |
-             is.na(D_440093675_D_546570171) & D_635467479_D_635467479_D_177539753==1 |
-             is.na(D_440093675_D_242761203) & D_635467479_D_635467479_D_107659596==1 |
-             is.na(D_440093675_D_587434250) & D_635467479_D_635467479_D_575883949==1 |
-             is.na(D_440093675_D_569993305) & D_635467479_D_635467479_D_248168118==1 |
-             is.na(D_440093675_D_662584384) & D_635467479_D_902077989==1 ) &
-            Mod4$D_374639590!=353358909 & (Mod4$D_828801156==759356722 | Mod4$D_828801156==185036360) & 
-           (Mod4$D_635467479_D_635467479_D_443596662==1 | Mod4$D_635467479_D_635467479_D_158795242==1 | Mod4$D_635467479_D_635467479_D_892894242==1 |
-              Mod4$D_635467479_D_635467479_D_177539753==1 | is.na(Mod4$D_440093675_D_453004768) | is.na(Mod4$D_440093675_D_453004768)))
+  # filter( (is.na(D_440093675_D_593010802) & D_635467479_D_635467479_D_158795242==1 | 
+  #            is.na(D_440093675_D_453004768) & D_635467479_D_635467479_D_443596662==1 |
+  #            is.na(D_440093675_D_511991969) & D_635467479_D_635467479_D_892894242==1 |
+  #            is.na(D_440093675_D_546570171) & D_635467479_D_635467479_D_177539753==1 |
+  #            is.na(D_440093675_D_242761203) & D_635467479_D_635467479_D_107659596==1 |
+  #            is.na(D_440093675_D_587434250) & D_635467479_D_635467479_D_575883949==1 |
+  #            is.na(D_440093675_D_569993305) & D_635467479_D_635467479_D_248168118==1 |
+  #            is.na(D_440093675_D_662584384) & D_635467479_D_902077989==1 ) &
+  #           Mod4$D_374639590!=353358909 & (Mod4$D_828801156==759356722 | Mod4$D_828801156==185036360) & 
+  #          (Mod4$D_635467479_D_635467479_D_443596662==1 | Mod4$D_635467479_D_635467479_D_158795242==1 | Mod4$D_635467479_D_635467479_D_892894242==1 |
+  #             Mod4$D_635467479_D_635467479_D_177539753==1 | is.na(Mod4$D_440093675_D_453004768) | is.na(Mod4$D_440093675_D_453004768)))
+    filter(D_635467479_D_635467479_D_158795242==1 | 
+           D_635467479_D_635467479_D_443596662==1 |
+           D_635467479_D_635467479_D_892894242==1 |
+           D_635467479_D_635467479_D_177539753==1 |
+           D_635467479_D_635467479_D_107659596==1 |
+           D_635467479_D_635467479_D_575883949==1 |
+           D_635467479_D_635467479_D_248168118==1 |
+           D_635467479_D_635467479_D_509121242==1)
 
 CURWORKT2A_H= CURWORKT2A_H %>%  
   mutate(Address1= case_when(is.na(D_440093675_D_593010802) & D_635467479_D_635467479_D_158795242==1 ~"Skipped Time Spent in a Car"))
@@ -2993,9 +4104,9 @@ dt_CURWORKT2A_H_summary[8,3] <- (sum(is.na(method$D_440093675_D_662584384))/dim(
 
 dt_CURWORKT2A_H_summary %>%  gt::gt() %>%  
   fmt_number(columns = "percentage", decimals = 2) %>% 
-  tab_header(title = md("Time Spent in Each Commuting Method (Current Position)")) %>% 
+  tab_header(title = md("Time Spent in Each Commuting Method (Previous Position)")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
     stub.font.weight = "bold"
   ) %>%
@@ -3011,31 +4122,69 @@ dt_CURWORKT2A_H_summary %>%  gt::gt() %>%
 
 
 
-CURWORKT3_4_5= Mod4 %>%  filter( (is.na(Mod4$D_155199731) | is.na(Mod4$D_181422361) | is.na(Mod4$D_333362587)) & 
-                                   Mod4$D_374639590!=353358909 & (Mod4$D_828801156==759356722 | Mod4$D_828801156==185036360) &
+CURWORKT3= Mod4 %>%  filter( #(is.na(Mod4$D_155199731) | is.na(Mod4$D_181422361) | is.na(Mod4$D_333362587)) & 
+                                   #Mod4$D_374639590!=353358909 & (Mod4$D_828801156==759356722 | Mod4$D_828801156==185036360) &
+            (Mod4$D_440093675_D_593010802!=428999623 & !is.na(Mod4$D_440093675_D_593010802)) | (Mod4$D_440093675_D_453004768!=428999623 & !is.na(Mod4$D_440093675_D_453004768)) |
+            (Mod4$D_440093675_D_511991969!=428999623 & !is.na(Mod4$D_440093675_D_511991969)) | (Mod4$D_440093675_D_546570171!=428999623 & !is.na(Mod4$D_440093675_D_546570171))) %>% 
+  mutate(Address1= case_when(is.na(D_155199731) ~"Skipped Time on Highways"))
+
+dt_CURWORKT3_summary <- CURWORKT3 %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
+dt_CURWORKT3_summary <- dt_CURWORKT3_summary[1,]
+
+dt_CURWORKT3_summary[2,1] <- "Skipped Time on Major Roads" 
+dt_CURWORKT3_summary[2,2] <- sum(is.na(CURWORKT3$D_181422361))
+dt_CURWORKT3_summary[2,3] <- (sum(is.na(CURWORKT3$D_181422361))/dim(CURWORKT3)[[1]])*100
+
+dt_CURWORKT3_summary[3,1] <- "Skipped Time on  Local Roads" 
+dt_CURWORKT3_summary[3,2] <- sum(is.na(CURWORKT3$D_333362587))
+dt_CURWORKT3_summary[3,3] <- (sum(is.na(CURWORKT3$D_333362587))/dim(CURWORKT3)[[1]])*100
+
+
+dt_CURWORKT3_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
+  fmt_number(columns = "percentage", decimals = 2) %>% 
+  tab_header(title = md("Time Commuting on Road Types (Previous Position)")) %>% 
+  cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
+  
+  tab_options(
+    stub.font.weight = "bold"
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      columns = Address1,
+    )
+  )
+
+
+
+
+CURWORKT4_5= Mod4 %>%  filter( #(is.na(Mod4$D_155199731) | is.na(Mod4$D_181422361) | is.na(Mod4$D_333362587)) & 
+                                   #Mod4$D_374639590!=353358909 & (Mod4$D_828801156==759356722 | Mod4$D_828801156==185036360) &
             (Mod4$D_440093675_D_593010802!=428999623 & !is.na(Mod4$D_440093675_D_593010802)) | (Mod4$D_440093675_D_453004768!=428999623 & !is.na(Mod4$D_440093675_D_453004768)) |
             (Mod4$D_440093675_D_511991969!=428999623 & !is.na(Mod4$D_440093675_D_511991969)) | (Mod4$D_440093675_D_546570171!=428999623 & !is.na(Mod4$D_440093675_D_546570171)) |
             (Mod4$D_440093675_D_242761203!=428999623 & !is.na(Mod4$D_440093675_D_242761203)) | (Mod4$D_440093675_D_587434250!=428999623 & !is.na(Mod4$D_440093675_D_587434250)) |
             (Mod4$D_440093675_D_569993305!=428999623 & !is.na(Mod4$D_440093675_D_569993305)) |(Mod4$D_440093675_D_662584384!=428999623 & !is.na(Mod4$D_440093675_D_662584384))) %>% 
   mutate(Address1= case_when(is.na(D_155199731) ~"Skipped Time on Highways"))
 
-dt_CURWORKT3_4_5_summary <- CURWORKT3_4_5 %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
-dt_CURWORKT3_4_5_summary <- dt_CURWORKT3_4_5_summary[1,]
+dt_CURWORKT4_5_summary <- CURWORKT4_5 %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
+dt_CURWORKT4_5_summary <- dt_CURWORKT4_5_summary[1,]
 
-dt_CURWORKT3_4_5_summary[2,1] <- "Skipped Time on Major Roads" 
-dt_CURWORKT3_4_5_summary[2,2] <- sum(is.na(CURWORKT3_4_5$D_181422361))
-dt_CURWORKT3_4_5_summary[2,3] <- (sum(is.na(CURWORKT3_4_5$D_181422361))/dim(CURWORKT3_4_5)[[1]])*100
+dt_CURWORKT4_5_summary[2,1] <- "Skipped Time on Major Roads" 
+dt_CURWORKT4_5_summary[2,2] <- sum(is.na(CURWORKT4_5$D_181422361))
+dt_CURWORKT4_5_summary[2,3] <- (sum(is.na(CURWORKT4_5$D_181422361))/dim(CURWORKT4_5)[[1]])*100
 
-dt_CURWORKT3_4_5_summary[3,1] <- "Skipped Time on  Local Roads" 
-dt_CURWORKT3_4_5_summary[3,2] <- sum(is.na(CURWORKT3_4_5$D_333362587))
-dt_CURWORKT3_4_5_summary[3,3] <- (sum(is.na(CURWORKT3_4_5$D_333362587))/dim(CURWORKT3_4_5)[[1]])*100
+dt_CURWORKT4_5_summary[3,1] <- "Skipped Time on  Local Roads" 
+dt_CURWORKT4_5_summary[3,2] <- sum(is.na(CURWORKT4_5$D_333362587))
+dt_CURWORKT4_5_summary[3,3] <- (sum(is.na(CURWORKT4_5$D_333362587))/dim(CURWORKT4_5)[[1]])*100
 
 
-dt_CURWORKT3_4_5_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
+dt_CURWORKT4_5_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
   fmt_number(columns = "percentage", decimals = 2) %>% 
-  tab_header(title = md("Time Commuting on Road Types (Current Position)")) %>% 
+  tab_header(title = md("Time Commuting on Road Types (Previous Position)")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
     stub.font.weight = "bold"
   ) %>%
@@ -3049,18 +4198,32 @@ dt_CURWORKT3_4_5_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   )
 
 
+###  [CURWORKT1=NR] OR [CURWORKT2A:H=0, NR]
+CURWORKT6_summary <- Mod4 %>% 
+  #filter(Mod4$D_374639590!=353358909 & (Mod4$D_828801156==759356722 | Mod4$D_828801156==185036360) & is.na(D_839454121) ) %>% 
+  filter(!(D_635467479_D_635467479_D_158795242==1 | 
+           D_635467479_D_635467479_D_443596662==1 |
+           D_635467479_D_635467479_D_892894242==1 |
+           D_635467479_D_635467479_D_177539753==1 |
+           D_635467479_D_635467479_D_107659596==1 |
+           D_635467479_D_635467479_D_575883949==1 |
+           D_635467479_D_635467479_D_248168118==1 |
+           D_635467479_D_635467479_D_509121242==1) & 
+           !(Mod4$D_440093675_D_593010802!=428999623 & !is.na(Mod4$D_440093675_D_593010802)) | (Mod4$D_440093675_D_453004768!=428999623 & !is.na(Mod4$D_440093675_D_453004768)) |
+            (Mod4$D_440093675_D_511991969!=428999623 & !is.na(Mod4$D_440093675_D_511991969)) | (Mod4$D_440093675_D_546570171!=428999623 & !is.na(Mod4$D_440093675_D_546570171)) |
+            (Mod4$D_440093675_D_242761203!=428999623 & !is.na(Mod4$D_440093675_D_242761203)) | (Mod4$D_440093675_D_587434250!=428999623 & !is.na(Mod4$D_440093675_D_587434250)) |
+            (Mod4$D_440093675_D_569993305!=428999623 & !is.na(Mod4$D_440093675_D_569993305)) |(Mod4$D_440093675_D_662584384!=428999623 & !is.na(Mod4$D_440093675_D_662584384))) %>% 
+  mutate(Address1= case_when(is.na(D_839454121) ~"Skipped CURWORKT6")) 
 
-CURWORKT6_summary <- Mod4 %>% filter(Mod4$D_374639590!=353358909 & (Mod4$D_828801156==759356722 | Mod4$D_828801156==185036360) & is.na(D_839454121) ) %>% 
-  mutate(Address1= case_when(is.na(D_839454121) ~"Skipped CURWORKT6"))
 CURWORKT6 <- CURWORKT6_summary %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
 CURWORKT6 <- CURWORKT6[1,]
 
 
 CURWORKT6 %>%  gt::gt(rowname_col = "row_lab") %>%  
   fmt_number(columns = "percentage", decimals = 2) %>% 
-  tab_header(title = md("Days per Week Commuting to Current Workplace")) %>% 
+  tab_header(title = md("Days per Week Commuting to Previous Workplace")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
     stub.font.weight = "bold"
   ) %>%
@@ -3072,6 +4235,8 @@ CURWORKT6 %>%  gt::gt(rowname_col = "row_lab") %>%
       columns = Address1,
     )
   )
+
+
 
 
 CURWORKT7_summary <- Mod4 %>% filter(Mod4$D_374639590!=353358909 & (Mod4$D_828801156==759356722 | Mod4$D_828801156==185036360) & is.na(D_684542266)) %>% 
@@ -3082,9 +4247,9 @@ CURWORKT7 <- CURWORKT7[1,]
 
 CURWORKT7 %>%  gt::gt(rowname_col = "row_lab") %>%  
   fmt_number(columns = "percentage", decimals = 2) %>% 
-  tab_header(title = md("Same Type of Transportation on Commute Home (Current Position)")) %>% 
+  tab_header(title = md("Same Type of Transportation on Commute Home (Previous Position)")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
     stub.font.weight = "bold"
   ) %>%
@@ -3106,9 +4271,9 @@ dt_CURWORKT8_summary <- dt_CURWORKT8_summary[1,]
 
 dt_CURWORKT8_summary %>%  gt::gt() %>%  
   fmt_number(columns = "percentage", decimals = 2) %>% 
-  tab_header(title = md("Time of Commute Home versus Commute to Work (Current Position)")) %>% 
+  tab_header(title = md("Time of Commute Home versus Commute to Work (Previous Position)")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
     stub.font.weight = "bold"
   ) %>%
@@ -3163,9 +4328,9 @@ dt_CURWORKT9_summary[8,3] <- (sum(is.na(CURWORKT9$D_404697804_D_404697804_D_2444
 
 dt_CURWORKT9_summary %>%  gt::gt() %>%  
   fmt_number(columns = "percentage", decimals = 2) %>% 
-  tab_header(title = md("Commuting Methods Home From Work (Current Position)")) %>% 
+  tab_header(title = md("Commuting Methods Home From Work (Previous Position)")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
     stub.font.weight = "bold"
   ) %>%
@@ -3183,11 +4348,13 @@ dt_CURWORKT9_summary %>%  gt::gt() %>%
 
 
 CURWORKT10A= Mod4 %>%   
-  filter(is.na(Mod4$D_786253125_D_659799855) & Mod4$D_203943120!=353358909 & Mod4$D_374639590!=353358909 & (Mod4$D_828801156==759356722 | Mod4$D_828801156==185036360) &
-           ifelse(Mod4$D_684542266==104430631, Mod4$D_404697804_D_404697804_D_581991828==1,
-                  ifelse(is.na(Mod4$D_684542266), Mod4$D_404697804_D_404697804_D_581991828==1,
-                         ifelse(Mod4$D_203943120==104430631, Mod4$D_635467479_D_635467479_D_158795242==1,
-                                ifelse(is.na(Mod4$D_203943120), Mod4$D_635467479_D_635467479_D_158795242==1, TRUE))))) ##should this be else true or else NA? Doesn't seem to change outcome
+  # filter(is.na(Mod4$D_786253125_D_659799855) & Mod4$D_203943120!=353358909 & Mod4$D_374639590!=353358909 & (Mod4$D_828801156==759356722 | Mod4$D_828801156==185036360) &
+  #          ifelse(Mod4$D_684542266==104430631, Mod4$D_404697804_D_404697804_D_581991828==1,
+  #                 ifelse(is.na(Mod4$D_684542266), Mod4$D_404697804_D_404697804_D_581991828==1,
+  #                        ifelse(Mod4$D_203943120==104430631, Mod4$D_635467479_D_635467479_D_158795242==1,
+  #                               ifelse(is.na(Mod4$D_203943120), Mod4$D_635467479_D_635467479_D_158795242==1, TRUE))))) ##should this be else true or else NA? Doesn't seem to change outcome
+  filter(D_203943120!=353358909 & D_404697804_D_404697804_D_581991828==1)
+  
 CURWORKT10A= CURWORKT10A %>%  mutate(Address1= case_when(is.na(D_786253125_D_659799855) ~"Skipped CURWORKT10A"))
 
 dt_CURWORKT10A_summary <- CURWORKT10A %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
@@ -3195,9 +4362,9 @@ dt_CURWORKT10A_summary <- CURWORKT10A %>% dplyr::group_by(Address1) %>%  dplyr::
 
 dt_CURWORKT10A_summary %>%  gt::gt() %>%  
   fmt_number(columns = "percentage", decimals = 2) %>% 
-  tab_header(title = md("Time Commuting Home in the Car (Current Position)")) %>% 
+  tab_header(title = md("Time Commuting Home in the Car (Previous Position)")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
     stub.font.weight = "bold"
   ) %>%
@@ -3214,11 +4381,13 @@ dt_CURWORKT10A_summary %>%  gt::gt() %>%
 
 
 CURWORKT10B= Mod4 %>%   
-  filter(is.na(Mod4$D_786253125_D_552410034) & Mod4$D_203943120!=353358909 & Mod4$D_374639590!=353358909 & (Mod4$D_828801156==759356722 | Mod4$D_828801156==185036360) &
-           ifelse(Mod4$D_684542266==104430631, Mod4$D_404697804_D_404697804_D_846844103==1,
-                  ifelse(is.na(Mod4$D_684542266), Mod4$D_404697804_D_404697804_D_846844103==1,
-                         ifelse(Mod4$D_203943120==104430631, Mod4$D_635467479_D_635467479_D_443596662==1,
-                                ifelse(is.na(Mod4$D_203943120), Mod4$D_635467479_D_635467479_D_443596662==1, NA)))))
+  # filter(is.na(Mod4$D_786253125_D_552410034) & Mod4$D_203943120!=353358909 & Mod4$D_374639590!=353358909 & (Mod4$D_828801156==759356722 | Mod4$D_828801156==185036360) &
+  #          ifelse(Mod4$D_684542266==104430631, Mod4$D_404697804_D_404697804_D_846844103==1,
+  #                 ifelse(is.na(Mod4$D_684542266), Mod4$D_404697804_D_404697804_D_846844103==1,
+  #                        ifelse(Mod4$D_203943120==104430631, Mod4$D_635467479_D_635467479_D_443596662==1,
+  #                               ifelse(is.na(Mod4$D_203943120), Mod4$D_635467479_D_635467479_D_443596662==1, NA)))))
+  filter(D_203943120!=353358909 & D_404697804_D_404697804_D_846844103==1)
+  
 CURWORKT10B= CURWORKT10B %>%  mutate(Address1= case_when(is.na(D_786253125_D_552410034) ~"Skipped CURWORKT10B"))
 
 dt_CURWORKT10B_summary <- CURWORKT10B %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
@@ -3226,9 +4395,9 @@ dt_CURWORKT10B_summary <- CURWORKT10B %>% dplyr::group_by(Address1) %>%  dplyr::
 
 dt_CURWORKT10B_summary %>%  gt::gt() %>%  
   fmt_number(columns = "percentage", decimals = 2) %>% 
-  tab_header(title = md("Time Commuting Home in a Taxi (Current Position)")) %>% 
+  tab_header(title = md("Time Commuting Home in a Taxi (Previous Position)")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
     stub.font.weight = "bold"
   ) %>%
@@ -3245,11 +4414,13 @@ dt_CURWORKT10B_summary %>%  gt::gt() %>%
 
 
 CURWORKT10C= Mod4 %>%  
-  filter(is.na(Mod4$D_786253125_D_772382520)  & Mod4$D_203943120!=353358909 & Mod4$D_374639590!=353358909 & (Mod4$D_828801156==759356722 | Mod4$D_828801156==185036360) &
-           ifelse(Mod4$D_684542266==104430631, Mod4$D_404697804_D_404697804_D_660927579==1,
-                  ifelse(is.na(Mod4$D_684542266), Mod4$D_404697804_D_404697804_D_660927579==1,
-                         ifelse(Mod4$D_203943120==104430631, Mod4$D_635467479_D_635467479_D_892894242==1,
-                                ifelse(is.na(Mod4$D_203943120), Mod4$D_635467479_D_635467479_D_892894242==1, NA)))))
+  # filter(is.na(Mod4$D_786253125_D_772382520)  & Mod4$D_203943120!=353358909 & Mod4$D_374639590!=353358909 & (Mod4$D_828801156==759356722 | Mod4$D_828801156==185036360) &
+  #          ifelse(Mod4$D_684542266==104430631, Mod4$D_404697804_D_404697804_D_660927579==1,
+  #                 ifelse(is.na(Mod4$D_684542266), Mod4$D_404697804_D_404697804_D_660927579==1,
+  #                        ifelse(Mod4$D_203943120==104430631, Mod4$D_635467479_D_635467479_D_892894242==1,
+  #                               ifelse(is.na(Mod4$D_203943120), Mod4$D_635467479_D_635467479_D_892894242==1, NA)))))
+  filter(D_203943120!=353358909 & D_404697804_D_404697804_D_660927579==1)
+  
 CURWORKT10C= CURWORKT10C %>%  mutate(Address1= case_when(is.na(D_786253125_D_772382520) ~"Skipped CURWORKT10C"))
 
 dt_CURWORKT10C_summary <- CURWORKT10C %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
@@ -3257,9 +4428,9 @@ dt_CURWORKT10C_summary <- CURWORKT10C %>% dplyr::group_by(Address1) %>%  dplyr::
 
 # dt_CURWORKT10C_summary %>%  gt::gt() %>%  
 #   fmt_number(columns = "percentage", decimals = 2) %>% 
-#   tab_header(title = md("Time Commuting Home in a Motorcycle (Current Position)")) %>% 
+#   tab_header(title = md("Time Commuting Home in a Motorcycle (Previous Position)")) %>% 
 #   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-#   #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+#   
 #   tab_options(
 #     stub.font.weight = "bold"
 #   ) %>%
@@ -3276,11 +4447,13 @@ dt_CURWORKT10C_summary <- CURWORKT10C %>% dplyr::group_by(Address1) %>%  dplyr::
 
 
 CURWORKT10D= Mod4 %>%   
-  filter(is.na(Mod4$D_786253125_D_146307133) & Mod4$D_203943120!=353358909 & Mod4$D_374639590!=353358909 & (Mod4$D_828801156==759356722 | Mod4$D_828801156==185036360) &
-           ifelse(Mod4$D_684542266==104430631, Mod4$D_404697804_D_404697804_D_940452831==1,
-                  ifelse(is.na(Mod4$D_684542266), Mod4$D_404697804_D_404697804_D_940452831==1,
-                         ifelse(Mod4$D_203943120==104430631, Mod4$D_635467479_D_635467479_D_177539753==1,
-                                ifelse(is.na(Mod4$D_203943120), Mod4$D_635467479_D_635467479_D_177539753==1, NA)))))
+  # filter(is.na(Mod4$D_786253125_D_146307133) & Mod4$D_203943120!=353358909 & Mod4$D_374639590!=353358909 & (Mod4$D_828801156==759356722 | Mod4$D_828801156==185036360) &
+  #          ifelse(Mod4$D_684542266==104430631, Mod4$D_404697804_D_404697804_D_940452831==1,
+  #                 ifelse(is.na(Mod4$D_684542266), Mod4$D_404697804_D_404697804_D_940452831==1,
+  #                        ifelse(Mod4$D_203943120==104430631, Mod4$D_635467479_D_635467479_D_177539753==1,
+  #                               ifelse(is.na(Mod4$D_203943120), Mod4$D_635467479_D_635467479_D_177539753==1, NA)))))
+  filter(D_203943120!=353358909 & D_404697804_D_404697804_D_940452831==1)
+  
 CURWORKT10D= CURWORKT10D %>%  mutate(Address1= case_when(is.na(D_786253125_D_146307133) ~"Skipped CURWORKT10D"))
 
 dt_CURWORKT10D_summary <- CURWORKT10D %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
@@ -3288,9 +4461,9 @@ dt_CURWORKT10D_summary <- CURWORKT10D %>% dplyr::group_by(Address1) %>%  dplyr::
 
 dt_CURWORKT10D_summary %>%  gt::gt() %>%  
   fmt_number(columns = "percentage", decimals = 2) %>% 
-  tab_header(title = md("Time Commuting Home on a Bus (Current Position)")) %>% 
+  tab_header(title = md("Time Commuting Home on a Bus (Previous Position)")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
     stub.font.weight = "bold"
   ) %>%
@@ -3307,11 +4480,13 @@ dt_CURWORKT10D_summary %>%  gt::gt() %>%
 
 
 CURWORKT10E= Mod4 %>%  
-  filter(is.na(Mod4$D_786253125_D_100591237) & Mod4$D_203943120!=353358909 & Mod4$D_374639590!=353358909 & (Mod4$D_828801156==759356722 | Mod4$D_828801156==185036360) &
-           ifelse(Mod4$D_684542266==104430631, Mod4$D_404697804_D_404697804_D_669359763==1,
-                  ifelse(is.na(Mod4$D_684542266), Mod4$D_404697804_D_404697804_D_669359763==1,
-                         ifelse(Mod4$D_203943120==104430631, Mod4$D_635467479_D_635467479_D_107659596==1,
-                                ifelse(is.na(Mod4$D_203943120), Mod4$D_635467479_D_635467479_D_107659596==1, NA)))))
+  # filter(is.na(Mod4$D_786253125_D_100591237) & Mod4$D_203943120!=353358909 & Mod4$D_374639590!=353358909 & (Mod4$D_828801156==759356722 | Mod4$D_828801156==185036360) &
+  #          ifelse(Mod4$D_684542266==104430631, Mod4$D_404697804_D_404697804_D_669359763==1,
+  #                 ifelse(is.na(Mod4$D_684542266), Mod4$D_404697804_D_404697804_D_669359763==1,
+  #                        ifelse(Mod4$D_203943120==104430631, Mod4$D_635467479_D_635467479_D_107659596==1,
+  #                               ifelse(is.na(Mod4$D_203943120), Mod4$D_635467479_D_635467479_D_107659596==1, NA)))))
+  filter(D_203943120!=353358909 & D_404697804_D_404697804_D_669359763==1)
+  
 CURWORKT10E= CURWORKT10E %>%  mutate(Address1= case_when(is.na(D_786253125_D_100591237) ~"Skipped CURWORKT10E"))
 
 dt_CURWORKT10E_summary <- CURWORKT10E %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
@@ -3319,9 +4494,9 @@ dt_CURWORKT10E_summary <- CURWORKT10E %>% dplyr::group_by(Address1) %>%  dplyr::
 
 dt_CURWORKT10E_summary %>%  gt::gt() %>%  
   fmt_number(columns = "percentage", decimals = 2) %>% 
-  tab_header(title = md("Time Commuting Home on a Subway (Current Position)")) %>% 
+  tab_header(title = md("Time Commuting Home on a Subway (Previous Position)")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
     stub.font.weight = "bold"
   ) %>%
@@ -3338,11 +4513,13 @@ dt_CURWORKT10E_summary %>%  gt::gt() %>%
 
 
 CURWORKT10F= Mod4 %>%   
-  filter(is.na(Mod4$D_786253125_D_823402922) & Mod4$D_203943120!=353358909 & Mod4$D_374639590!=353358909 & (Mod4$D_828801156==759356722 | Mod4$D_828801156==185036360) &
-           ifelse(Mod4$D_684542266==104430631, Mod4$D_404697804_D_404697804_D_950972496==1,
-                  ifelse(is.na(Mod4$D_684542266), Mod4$D_404697804_D_404697804_D_950972496==1,
-                         ifelse(Mod4$D_203943120==104430631, Mod4$D_635467479_D_635467479_D_575883949==1,
-                                ifelse(is.na(Mod4$D_203943120), Mod4$D_635467479_D_635467479_D_575883949==1, NA)))))
+  # filter(is.na(Mod4$D_786253125_D_823402922) & Mod4$D_203943120!=353358909 & Mod4$D_374639590!=353358909 & (Mod4$D_828801156==759356722 | Mod4$D_828801156==185036360) &
+  #          ifelse(Mod4$D_684542266==104430631, Mod4$D_404697804_D_404697804_D_950972496==1,
+  #                 ifelse(is.na(Mod4$D_684542266), Mod4$D_404697804_D_404697804_D_950972496==1,
+  #                        ifelse(Mod4$D_203943120==104430631, Mod4$D_635467479_D_635467479_D_575883949==1,
+  #                               ifelse(is.na(Mod4$D_203943120), Mod4$D_635467479_D_635467479_D_575883949==1, NA)))))
+  filter(D_203943120!=353358909 & D_404697804_D_404697804_D_950972496==1)
+
 CURWORKT10F= CURWORKT10F %>%  mutate(Address1= case_when(is.na(D_786253125_D_823402922) ~"Skipped CURWORKT10F"))
 
 dt_CURWORKT10F_summary <- CURWORKT10F %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
@@ -3350,9 +4527,9 @@ dt_CURWORKT10F_summary <- CURWORKT10F %>% dplyr::group_by(Address1) %>%  dplyr::
 
 dt_CURWORKT10F_summary %>%  gt::gt() %>%  
   fmt_number(columns = "percentage", decimals = 2) %>% 
-  tab_header(title = md("Time Commuting Home on a Bike (Current Position)")) %>% 
+  tab_header(title = md("Time Commuting Home on a Bike (Previous Position)")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
     stub.font.weight = "bold"
   ) %>%
@@ -3369,11 +4546,13 @@ dt_CURWORKT10F_summary %>%  gt::gt() %>%
 
 
 CURWORKT10G= Mod4 %>%  
-  filter(is.na(Mod4$D_786253125_D_289302451) & Mod4$D_203943120!=353358909 & Mod4$D_374639590!=353358909 & (Mod4$D_828801156==759356722 | Mod4$D_828801156==185036360) &
-           ifelse(Mod4$D_684542266==104430631, Mod4$D_404697804_D_404697804_D_137216656==1,
-                  ifelse(is.na(Mod4$D_684542266), Mod4$D_404697804_D_404697804_D_137216656==1,
-                         ifelse(Mod4$D_203943120==104430631, Mod4$D_635467479_D_635467479_D_248168118==1,
-                                ifelse(is.na(Mod4$D_203943120), Mod4$D_635467479_D_635467479_D_248168118==1, NA)))))
+  # filter(is.na(Mod4$D_786253125_D_289302451) & Mod4$D_203943120!=353358909 & Mod4$D_374639590!=353358909 & (Mod4$D_828801156==759356722 | Mod4$D_828801156==185036360) &
+  #          ifelse(Mod4$D_684542266==104430631, Mod4$D_404697804_D_404697804_D_137216656==1,
+  #                 ifelse(is.na(Mod4$D_684542266), Mod4$D_404697804_D_404697804_D_137216656==1,
+  #                        ifelse(Mod4$D_203943120==104430631, Mod4$D_635467479_D_635467479_D_248168118==1,
+  #                               ifelse(is.na(Mod4$D_203943120), Mod4$D_635467479_D_635467479_D_248168118==1, NA)))))
+  filter(D_203943120!=353358909 & D_404697804_D_404697804_D_137216656==1)
+
 CURWORKT10F= CURWORKT10F %>%  mutate(Address1= case_when(is.na(D_786253125_D_289302451) ~"Skipped CURWORKT10F"))
 
 dt_CURWORKT10F_summary <- CURWORKT10F %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
@@ -3381,9 +4560,9 @@ dt_CURWORKT10F_summary <- CURWORKT10F %>% dplyr::group_by(Address1) %>%  dplyr::
 
 dt_CURWORKT10F_summary %>%  gt::gt() %>%  
   fmt_number(columns = "percentage", decimals = 2) %>% 
-  tab_header(title = md("Time Commuting Home by Walking (Current Position)")) %>% 
+  tab_header(title = md("Time Commuting Home by Walking (Previous Position)")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
     stub.font.weight = "bold"
   ) %>%
@@ -3399,18 +4578,59 @@ dt_CURWORKT10F_summary %>%  gt::gt() %>%
 
 
 
-# CURWORKT10H= Mod4 %>%  select(D_786253125_D_419151253) %>%  
-#   filter(Mod4$D_203943120!=353358909 & Mod4$D_374639590!=353358909 & (Mod4$D_828801156==759356722 | Mod4$D_828801156==185036360) &
-#            ifelse(Mod4$D_684542266==104430631, is.na(Mod4$D_404697804_D_404697804_D_631088397),
-#                   ifelse(is.na(Mod4$D_684542266), is.na(Mod4$D_404697804_D_404697804_D_631088397),
-#                          ifelse(Mod4$D_203943120==104430631, is.na(Mod4$D_635467479_D_635467479_D_902077989),
-#                                 ifelse(is.na(Mod4$D_203943120), is.na(Mod4$D_635467479_D_635467479_D_902077989), NA)))))
-# vis_miss(CURWORKT10H)+labs(y= "Participants", title="CURWORKT10H")
+# CURWORKT10H= Mod4 %>%  select(D_786253125_D_419151253) %>%
+#   # filter(Mod4$D_203943120!=353358909 & Mod4$D_374639590!=353358909 & (Mod4$D_828801156==759356722 | Mod4$D_828801156==185036360) &
+#   #          ifelse(Mod4$D_684542266==104430631, is.na(Mod4$D_404697804_D_404697804_D_631088397),
+#   #                 ifelse(is.na(Mod4$D_684542266), is.na(Mod4$D_404697804_D_404697804_D_631088397),
+#   #                        ifelse(Mod4$D_203943120==104430631, is.na(Mod4$D_635467479_D_635467479_D_902077989),
+#   #                               ifelse(is.na(Mod4$D_203943120), is.na(Mod4$D_635467479_D_635467479_D_902077989), NA)))))
+#   filter(D_203943120!=353358909 & D_404697804_D_404697804_D_244488084==1)
 
 
 
-CURWORKT11_12_13= Mod4 %>%   
-  filter( Mod4$D_374639590!=353358909 & (Mod4$D_828801156==759356722 | Mod4$D_828801156==185036360) &
+CURWORKT11= Mod4 %>%   
+  filter( #Mod4$D_374639590!=353358909 & (Mod4$D_828801156==759356722 | Mod4$D_828801156==185036360) &
+            (Mod4$D_786253125_D_659799855!=428999623 & !is.na(Mod4$D_786253125_D_659799855)) | (Mod4$D_786253125_D_552410034!=428999623 & !is.na(Mod4$D_786253125_D_552410034)) |
+            (Mod4$D_786253125_D_772382520!=428999623 & !is.na(Mod4$D_786253125_D_772382520)) | (Mod4$D_786253125_D_146307133!=428999623 & !is.na(Mod4$D_786253125_D_146307133)))
+
+
+
+CURWORKT11= CURWORKT11 %>%  mutate(Address1= case_when(is.na(D_186636914) ~"Skipped if it Includes Highways"))
+
+dt_CURWORKT11_summary <- CURWORKT11 %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
+dt_CURWORKT11_summary <- dt_CURWORKT11_summary[1,]
+
+dt_CURWORKT11_summary[2,1] <- "Skipped if it Includes Major Roads" 
+dt_CURWORKT11_summary[2,2] <- sum(is.na(CURWORKT11$D_936393993))
+dt_CURWORKT11_summary[2,3] <- (sum(is.na(CURWORKT11$D_936393993))/dim(CURWORKT11)[[1]])*100
+
+dt_CURWORKT11_summary[3,1] <- "Skipped if it Includes Local Roads" 
+dt_CURWORKT11_summary[3,2] <- sum(is.na(CURWORKT11$D_168563469))
+dt_CURWORKT11_summary[3,3] <- (sum(is.na(CURWORKT11$D_168563469))/dim(CURWORKT11)[[1]])*100
+
+dt_CURWORKT11_summary <- dt_CURWORKT11_summary[c(2,3),]
+dt_CURWORKT11_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
+  fmt_number(columns = "percentage", decimals = 2) %>% 
+  tab_header(title = md("Travel Commute Type (Previous Position)")) %>% 
+  cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
+  
+  tab_options(
+    stub.font.weight = "bold"
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      columns = Address1,
+    )
+  )
+
+
+
+
+CURWORKT12_13= Mod4 %>%   
+  filter( #Mod4$D_374639590!=353358909 & (Mod4$D_828801156==759356722 | Mod4$D_828801156==185036360) &
             (Mod4$D_786253125_D_659799855!=428999623 & !is.na(Mod4$D_786253125_D_659799855)) | (Mod4$D_786253125_D_552410034!=428999623 & !is.na(Mod4$D_786253125_D_552410034)) |
             (Mod4$D_786253125_D_772382520!=428999623 & !is.na(Mod4$D_786253125_D_772382520)) | (Mod4$D_786253125_D_146307133!=428999623 & !is.na(Mod4$D_786253125_D_146307133)) |
             (Mod4$D_786253125_D_100591237!=428999623 & !is.na(Mod4$D_786253125_D_100591237)) | (Mod4$D_786253125_D_823402922!=428999623 & !is.na(Mod4$D_786253125_D_823402922)) |
@@ -3418,25 +4638,25 @@ CURWORKT11_12_13= Mod4 %>%
 
 
 
-curworkT11_12_13= CURWORKT11_12_13 %>%  mutate(Address1= case_when(is.na(D_186636914) ~"Skipped if it Includes Highways"))
+CURWORKT12_13= CURWORKT12_13 %>%  mutate(Address1= case_when(is.na(D_186636914) ~"Skipped if it Includes Highways"))
 
-dt_curworkT11_12_13_summary <- curworkT11_12_13 %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
-dt_curworkT11_12_13_summary <- dt_curworkT11_12_13_summary[1,]
+dt_CURWORKT12_13_summary <- CURWORKT12_13 %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
+dt_CURWORKT12_13_summary <- dt_CURWORKT12_13_summary[1,]
 
-dt_curworkT11_12_13_summary[2,1] <- "Skipped if it Includes Major Roads" 
-dt_curworkT11_12_13_summary[2,2] <- sum(is.na(curworkT11_12_13$D_936393993))
-dt_curworkT11_12_13_summary[2,3] <- (sum(is.na(curworkT11_12_13$D_936393993))/dim(curworkT11_12_13)[[1]])*100
+dt_CURWORKT12_13_summary[2,1] <- "Skipped if it Includes Major Roads" 
+dt_CURWORKT12_13_summary[2,2] <- sum(is.na(CURWORKT12_13$D_936393993))
+dt_CURWORKT12_13_summary[2,3] <- (sum(is.na(CURWORKT12_13$D_936393993))/dim(CURWORKT12_13)[[1]])*100
 
-dt_curworkT11_12_13_summary[3,1] <- "Skipped if it Includes Local Roads" 
-dt_curworkT11_12_13_summary[3,2] <- sum(is.na(curworkT11_12_13$D_168563469))
-dt_curworkT11_12_13_summary[3,3] <- (sum(is.na(curworkT11_12_13$D_168563469))/dim(curworkT11_12_13)[[1]])*100
+dt_CURWORKT12_13_summary[3,1] <- "Skipped if it Includes Local Roads" 
+dt_CURWORKT12_13_summary[3,2] <- sum(is.na(CURWORKT12_13$D_168563469))
+dt_CURWORKT12_13_summary[3,3] <- (sum(is.na(CURWORKT12_13$D_168563469))/dim(CURWORKT12_13)[[1]])*100
 
-dt_curworkT11_12_13_summary <- dt_curworkT11_12_13_summary[c(2,3),]
-dt_curworkT11_12_13_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
+dt_CURWORKT12_13_summary <- dt_CURWORKT12_13_summary[c(2,3),]
+dt_CURWORKT12_13_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
   fmt_number(columns = "percentage", decimals = 2) %>% 
-  tab_header(title = md("Travel Commute Type (Current Position)")) %>% 
+  tab_header(title = md("Travel Commute Type (Previous Position)")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
     stub.font.weight = "bold"
   ) %>%
@@ -3455,7 +4675,11 @@ dt_curworkT11_12_13_summary %>%  gt::gt(rowname_col = "row_lab") %>%
 
 
 
-CURWORKT14= Mod4 %>%  filter(Mod4$D_374639590!=353358909 & (Mod4$D_828801156==759356722 | Mod4$D_828801156==185036360)) %>% 
+CURWORKT14= Mod4 %>%  filter(D_203943120==353358909  | is.na(D_581991828) |
+                               !((D_786253125_D_659799855!=428999623 & !is.na(D_786253125_D_659799855)) | (D_786253125_D_552410034!=428999623 & !is.na(D_786253125_D_552410034)) |
+                                   (D_786253125_D_772382520!=428999623 & !is.na(D_786253125_D_772382520)) | (D_786253125_D_146307133!=428999623 & !is.na(D_786253125_D_146307133)) |
+                                   (D_786253125_D_100591237!=428999623 & !is.na(D_786253125_D_100591237)) | (D_786253125_D_823402922!=428999623 & !is.na(D_786253125_D_823402922)) |
+                                   (D_786253125_D_289302451!=428999623 & !is.na(D_786253125_D_289302451)) |(D_786253125_D_419151253!=428999623 & !is.na(D_786253125_D_419151253)))) %>% 
   mutate(Address1= case_when(is.na(D_219893040) ~"Skipped CURWORKT14"))
 
 dt_CURWORKT14_summary <- CURWORKT14 %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
@@ -3463,9 +4687,9 @@ dt_CURWORKT14_summary <- dt_CURWORKT14_summary[1,]
 
 dt_CURWORKT14_summary %>%  gt::gt() %>%  
   fmt_number(columns = "percentage", decimals = 2) %>% 
-  tab_header(title = md("Days per Week Commuting Home (Current Position)")) %>% 
+  tab_header(title = md("Days per Week Commuting Home (Previous Position)")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
     stub.font.weight = "bold"
   ) %>%
@@ -3482,10 +4706,22 @@ dt_CURWORKT14_summary %>%  gt::gt() %>%
 
 ```
 
+
+
+
+
+
+
+
+
+
+
+
 ## Work Commutes in the Past
 ```{r PastCommute, warning=FALSE, echo=FALSE, message=FALSE}
 
-PREWORK= Mod4 %>%  mutate(Address1= case_when(is.na(D_995620555) ~"Skipped PREWORK"))
+PREWORK= Mod4 %>%  filter(D_694113343!=353358909 & D_699873889!=353358909) %>% 
+  mutate(Address1= case_when(is.na(D_995620555) ~"Skipped PREWORK"))
 
 dt_PREWORK_summary <- PREWORK %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
 dt_PREWORK_summary <- dt_PREWORK_summary[1,]
@@ -3494,7 +4730,7 @@ dt_PREWORK_summary %>%  gt::gt() %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Commute Weekly Over the Past 20 Years")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
     stub.font.weight = "bold"
   ) %>%
@@ -3509,8 +4745,8 @@ dt_PREWORK_summary %>%  gt::gt() %>%
 
 
 
-PREWORKRES= Mod4 %>%  filter(Mod4$D_995620555==353358909 & is.na(Mod4$D_980007418)) %>%  mutate(Address1= case_when(is.na(D_980007418) ~"Skipped PREWORKRES",
-TRUE ~ "Answered"))
+PREWORKRES= Mod4 %>%  filter(Mod4$D_995620555==353358909) %>%  
+  mutate(Address1= case_when(is.na(D_980007418) ~"Skipped PREWORKRES"))
 
 
 dt_PREWORKRES_summary <- PREWORKRES %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
@@ -3520,7 +4756,7 @@ dt_PREWORKRES_summary %>%  gt::gt() %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Daily Work Responsibilities Include Driving (Longest Held Position)")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
     stub.font.weight = "bold"
   ) %>%
@@ -3545,7 +4781,7 @@ dt_PREWORK1A_summary %>%  gt::gt() %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Current Job Also the Longest Held Job")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
     stub.font.weight = "bold"
   ) %>%
@@ -3563,7 +4799,7 @@ dt_PREWORK1A_summary %>%  gt::gt() %>%
 
 
 
-PREWORK1B= Mod4 %>%  filter(Mod4$D_291959537==104430631) %>%  
+PREWORK1B= Mod4 %>%  filter(D_995620555==353358909 & D_980007418==104430631) %>%  
   mutate(Address1= case_when(is.na(D_992180692_D_452053599) ~"Skipped Employer Name"))
 
 dt_PREWORK1B_summary <- PREWORK1B %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
@@ -3599,7 +4835,7 @@ dt_PREWORK1B_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Employer Info of Longest Held Job ")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
     stub.font.weight = "bold"
   ) %>%
@@ -3644,7 +4880,7 @@ dt_PREWORK2_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Follow-up Workplace Address of Longest Held Position")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
     stub.font.weight = "bold"
   ) %>%
@@ -3681,7 +4917,7 @@ dt_PREWORK3_1_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Cross Streets of Longest Held Position Workplace Address")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
     stub.font.weight = "bold"
   ) %>%
@@ -3711,7 +4947,7 @@ dt_PREWORKYR1_2_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("First and Last Year of Commute to Longest Held Position")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
     stub.font.weight = "bold"
   ) %>%
@@ -3766,7 +5002,7 @@ dt_PREWORKT1_summary %>%  gt::gt() %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Commuting Methods to Work (Longest Held Position)")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
     stub.font.weight = "bold"
   ) %>%
@@ -3785,7 +5021,14 @@ dt_PREWORKT1_summary %>%  gt::gt() %>%
 
 
 PREWORKT2A_H= Mod4 %>%   
-  filter(D_291959537==104430631) %>%  
+  filter(D_311891586_D_311891586_D_172103427==1 |
+           D_311891586_D_311891586_D_794959813==1 |
+           D_311891586_D_311891586_D_683306241==1 |
+           D_311891586_D_311891586_D_116442173==1 |
+           D_311891586_D_311891586_D_639735881==1 | 
+           D_311891586_D_311891586_D_296254034==1 |
+           D_311891586_D_311891586_D_807973203==1 |
+           D_311891586_D_311891586_D_766970054==1) %>%  
   mutate(Address1= case_when(is.na(D_968388901_D_169499951) & D_311891586_D_311891586_D_172103427==1 ~"Skipped Time Spent in a Car"))
 
 dt_PREWORKT2A_H_summary <- PREWORKT2A_H %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
@@ -3831,7 +5074,7 @@ dt_PREWORKT2A_H_summary %>%  gt::gt() %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Time Spent in Each Commuting Method (Lonest Held Position)")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
     stub.font.weight = "bold"
   ) %>%
@@ -3845,8 +5088,15 @@ dt_PREWORKT2A_H_summary %>%  gt::gt() %>%
   )
 
 
-
-PREWORKT3= Mod4 %>%   filter(Mod4$D_291959537==104430631) %>%  
+###[PREWORKT1=NR] OR [PREWORKT2A:H=0,1,2,3,4, or NR]-- second part is irrelevant, thats all the possible responses
+PREWORKT3= Mod4 %>%   filter(!(D_311891586_D_311891586_D_172103427==1 |
+                                 D_311891586_D_311891586_D_794959813==1 |
+                                 D_311891586_D_311891586_D_683306241==1 |
+                                 D_311891586_D_311891586_D_116442173==1 |
+                                 D_311891586_D_311891586_D_639735881==1 | 
+                                 D_311891586_D_311891586_D_296254034==1 |
+                                 D_311891586_D_311891586_D_807973203==1 |
+                                 D_311891586_D_311891586_D_766970054==1)) %>%  
   mutate(Address1= case_when(is.na(D_335218615) ~"Skipped PREWORKT3"))
 
 dt_PREWORKT3_summary <- PREWORKT3 %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
@@ -3856,7 +5106,7 @@ dt_PREWORKT3_summary %>%  gt::gt() %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Days per Week Commuting (Longest Held Job)")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
     stub.font.weight = "bold"
   ) %>%
@@ -3881,7 +5131,7 @@ dt_PREWORKT4_summary %>%  gt::gt() %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Same Transportation Commuting to Work as Commuting Home (Longest Held Job)")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
     stub.font.weight = "bold"
   ) %>%
@@ -3908,7 +5158,7 @@ dt_PREWORKT5_summary %>%  gt::gt() %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Commuting Time to Work the Same as Commuting Time Home (Longest Held Job)")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
     stub.font.weight = "bold"
   ) %>%
@@ -3967,7 +5217,7 @@ dt_PREWORKT6_summary %>%  gt::gt() %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Commuting Methods Home From Work (Longest Held Position)")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
     stub.font.weight = "bold"
   ) %>%
@@ -3981,6 +5231,9 @@ dt_PREWORKT6_summary %>%  gt::gt() %>%
   )
 
 
+
+
+####################    NEED TO SWITCH OVER TO EDDIE'S FLATTEN BEFORE THIS CAN BE UPDATED. OTHERWISE WOULD NEED TO USE THE ENTITIY VARIABLE VERSIONS
 
 # PREWORKT7A= Mod4 %>% 
 #   filter(Mod4$D_291959537==104430631 & Mod4$D_839233937!=353358909 & 
@@ -3998,7 +5251,7 @@ dt_PREWORKT6_summary %>%  gt::gt() %>%
 #   fmt_number(columns = "percentage", decimals = 2) %>% 
 #   tab_header(title = md("Use a Car to Commute Home (Longest Held Job)")) %>% 
 #   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-#   #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+#   
 #   tab_options(
 #     stub.font.weight = "bold"
 #   ) %>%
@@ -4030,7 +5283,7 @@ dt_PREWORKT6_summary %>%  gt::gt() %>%
 #   fmt_number(columns = "percentage", decimals = 2) %>% 
 #   tab_header(title = md("Use a Taxi to Commute Home (Longest Held Job)")) %>% 
 #   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-#   #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+#   
 #   tab_options(
 #     stub.font.weight = "bold"
 #   ) %>%
@@ -4061,7 +5314,7 @@ dt_PREWORKT6_summary %>%  gt::gt() %>%
 #   fmt_number(columns = "percentage", decimals = 2) %>% 
 #   tab_header(title = md("Use a Motorcycle to Commute Home (Longest Held Job)")) %>% 
 #   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-#   #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+#   
 #   tab_options(
 #     stub.font.weight = "bold"
 #   ) %>%
@@ -4093,7 +5346,7 @@ dt_PREWORKT6_summary %>%  gt::gt() %>%
 #   fmt_number(columns = "percentage", decimals = 2) %>% 
 #   tab_header(title = md("Use a Bus to Commute Home (Longest Held Job)")) %>% 
 #   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-#   #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+#   
 #   tab_options(
 #     stub.font.weight = "bold"
 #   ) %>%
@@ -4125,7 +5378,7 @@ dt_PREWORKT6_summary %>%  gt::gt() %>%
 #   fmt_number(columns = "percentage", decimals = 2) %>% 
 #   tab_header(title = md("Use a Subway to Commute Home (Longest Held Job)")) %>% 
 #   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-#   #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+#   
 #   tab_options(
 #     stub.font.weight = "bold"
 #   ) %>%
@@ -4157,7 +5410,7 @@ dt_PREWORKT6_summary %>%  gt::gt() %>%
 #   fmt_number(columns = "percentage", decimals = 2) %>% 
 #   tab_header(title = md("Use a Bike to Commute Home (Longest Held Job)")) %>% 
 #   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-#   #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+#   
 #   tab_options(
 #     stub.font.weight = "bold"
 #   ) %>%
@@ -4189,7 +5442,7 @@ dt_PREWORKT6_summary %>%  gt::gt() %>%
 #   fmt_number(columns = "percentage", decimals = 2) %>% 
 #   tab_header(title = md("Walking to Commute Home (Longest Held Job)")) %>% 
 #   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-#   #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+#   
 #   tab_options(
 #     stub.font.weight = "bold"
 #   ) %>%
@@ -4221,7 +5474,7 @@ dt_PREWORKT6_summary %>%  gt::gt() %>%
 #   fmt_number(columns = "percentage", decimals = 2) %>% 
 #   tab_header(title = md("Use Another Method to Commute Home (Longest Held Job)")) %>% 
 #   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-#   #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+#   
 #   tab_options(
 #     stub.font.weight = "bold"
 #   ) %>%
@@ -4239,7 +5492,10 @@ dt_PREWORKT6_summary %>%  gt::gt() %>%
 
 
 
-PREWORKT8= Mod4 %>%   filter(Mod4$D_291959537==104430631) %>%  
+PREWORKT8= Mod4 %>%   filter(is.na(D_251048648_D_251048648_D_197093427) & is.na(D_251048648_D_251048648_D_368973683) & 
+                               is.na(D_251048648_D_251048648_D_450075248) & is.na(D_251048648_D_251048648_D_471142791) & 
+                               is.na(D_251048648_D_251048648_D_572643998) & is.na(D_251048648_D_251048648_D_779421821) & 
+                               is.na(D_251048648_D_251048648_D_830201925) & is.na(D_251048648_D_251048648_D_925663113)) %>%  
   mutate(Address1= case_when(is.na(D_475144270) ~"Skipped PREWORKT8"))
 
 dt_PREWORKT8_summary <- PREWORKT8 %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
@@ -4249,7 +5505,7 @@ dt_PREWORKT8_summary %>%  gt::gt() %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Days per Week Commuting Home (Longest Held Job)")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
     stub.font.weight = "bold"
   ) %>%
@@ -4441,7 +5697,7 @@ dt_CURSCHT1_summary[2,3] <- (sum(is.na(CURSCHT1$D_404863614_D_404863614_D_207263
 
 
 dt_CURSCHT1_summary[3,1] <- "Skipped if Commute Inlcudes a Motorcycle" 
-dt_CURSCHT1_summary[3,2] <- ifelse (exists("CURSCHT1$D_404863614_D_404863614_D_638833327"), sum(is.na(CURSCHT1$D_404863614_D_404863614_D_638833327)), 0)
+dt_CURSCHT1_summary[3,2] <- sum(is.na(CURSCHT1$D_404863614_D_404863614_D_638833327))
 dt_CURSCHT1_summary[3,3] <- (sum(is.na(CURSCHT1$D_404863614_D_404863614_D_638833327))/dim(CURSCHT1)[[1]])*100
 
 
@@ -4470,7 +5726,7 @@ dt_CURSCHT1_summary %>%  gt::gt() %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Commuting Methods to School")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
     stub.font.weight = "bold"
   ) %>%
@@ -4486,7 +5742,14 @@ dt_CURSCHT1_summary %>%  gt::gt() %>%
 
 
 
-CURSCHT2A_H= STU %>% filter(STU$D_449752653==353358909) %>%  
+CURSCHT2A_H= STU %>% filter(D_404863614_D_404863614_D_782113721==1 |
+                              D_404863614_D_404863614_D_207263450==1 |
+                              D_404863614_D_404863614_D_638833327==1 |
+                              D_404863614_D_404863614_D_736981982==1 |
+                              D_404863614_D_404863614_D_932195315==1 |
+                              D_404863614_D_404863614_D_279026426==1 |
+                              D_404863614_D_404863614_D_691579493==1 |
+                              D_404863614_D_404863614_D_211269389==1 ) %>%  
   mutate(Address1= case_when(is.na(D_716117817_D_135529881_D_891237683) & D_404863614_D_404863614_D_782113721==1 ~"Skipped Time Spent in a Car"))
 
 dt_CURSCHT2A_H_summary <- CURSCHT2A_H %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
@@ -4498,9 +5761,9 @@ dt_CURSCHT2A_H_summary[2,2] <- sum(is.na(taxi$D_716117817_D_135529881_D_98069507
 dt_CURSCHT2A_H_summary[2,3] <- (sum(is.na(taxi$D_716117817_D_135529881_D_980695076))/dim(taxi)[[1]])*100
 
 dt_CURSCHT2A_H_summary[3,1] <- "Skipped Time Spent in a Motorcycle" 
-#ifelse (exists("D_404863614_D_404863614_D_638833327"), motorcycle <- CURSCHT2A_H %>% filter(D_404863614_D_404863614_D_638833327==1), motorcycle <- CURSCHT2A_H)
-dt_CURSCHT2A_H_summary[3,2] <- ifelse (exists("D_716117817_D_135529881_D_265423096"),  sum(is.na(motorcycle$D_716117817_D_135529881_D_265423096)), 0)
-dt_CURSCHT2A_H_summary[3,3] <- ifelse (exists("D_716117817_D_135529881_D_265423096"), (sum(is.na(motorcycle$D_716117817_D_135529881_D_265423096))/dim(motorcycle)[[1]])*100, 0)
+motorcycle <- CURSCHT2A_H %>% filter(D_404863614_D_404863614_D_638833327==1)
+dt_CURSCHT2A_H_summary[3,2] <- sum(is.na(motorcycle$D_716117817_D_135529881_D_265423096))
+dt_CURSCHT2A_H_summary[3,3] <- (sum(is.na(motorcycle$D_716117817_D_135529881_D_265423096))/dim(motorcycle)[[1]])*100
 
 dt_CURSCHT2A_H_summary[4,1] <- "Skipped Time Spent in a Bus" 
 bus <- CURSCHT2A_H %>% filter(D_404863614_D_404863614_D_736981982==1)
@@ -4532,7 +5795,7 @@ dt_CURSCHT2A_H_summary %>%  gt::gt() %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Time Spent in Each Commuting Method (Current Position)")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
     stub.font.weight = "bold"
   ) %>%
@@ -4574,27 +5837,42 @@ dt_CURSCHT3_4_5_summary[3,2] <- sum(is.na(CURSCHT3_4_5$D_559488982))
 dt_CURSCHT3_4_5_summary[3,3] <- (sum(is.na(CURSCHT3_4_5$D_559488982))/dim(dt_CURSCHT3_4_5_summary)[[1]])*100
 
 
-# dt_CURSCHT3_4_5_summary %>%  gt::gt() %>%  
-#   fmt_number(columns = "percentage", decimals = 2) %>% 
-#   tab_header(title = md("Road Type for School Commute")) %>% 
-#   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-#   tab_options(
-#     stub.font.weight = "bold"
-#   ) %>%
-#   tab_style(
-#     style = list(
-#       cell_text(weight = "bold")
-#     ),
-#     locations = cells_body(
-#       columns = Address1,
-#     )
-#   )
+dt_CURSCHT3_4_5_summary %>%  gt::gt() %>%
+  fmt_number(columns = "percentage", decimals = 2) %>%
+  tab_header(title = md("Road Type for School Commute")) %>%
+  cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>%
+  tab_options(
+    stub.font.weight = "bold"
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      columns = Address1,
+    )
+  )
 
 
 
 
-
-CURSCHT6= STU %>%  filter(STU$D_449752653==353358909) %>% 
+### [CURSCHT1 = NR] OR [CURSCHT2A:H=0, NR]
+CURSCHT6= STU %>%  filter(!(D_404863614_D_404863614_D_782113721==1 |
+                              D_404863614_D_404863614_D_207263450==1 |
+                              D_404863614_D_404863614_D_638833327==1 |
+                              D_404863614_D_404863614_D_736981982==1 |
+                              D_404863614_D_404863614_D_932195315==1 |
+                              D_404863614_D_404863614_D_279026426==1 |
+                              D_404863614_D_404863614_D_691579493==1 |
+                              D_404863614_D_404863614_D_211269389==1) |
+                            !(D_716117817_D_135529881_D_891237683!=428999623 & !is.na(D_716117817_D_135529881_D_891237683)) |
+                            (D_716117817_D_135529881_D_980695076!=428999623 & !is.na(D_716117817_D_135529881_D_980695076)) |
+                            (D_716117817_D_135529881_D_265423096!=428999623 & !is.na(D_716117817_D_135529881_D_265423096)) |
+                            (D_716117817_D_135529881_D_185533250!=428999623 & !is.na(D_716117817_D_135529881_D_185533250)) |
+                            (D_716117817_D_135529881_D_769785846!=428999623 & !is.na(D_716117817_D_135529881_D_769785846)) |
+                            (D_716117817_D_135529881_D_330492115!=428999623 & !is.na(D_716117817_D_135529881_D_330492115)) |
+                            (D_716117817_D_135529881_D_173979298!=428999623 & !is.na(D_716117817_D_135529881_D_173979298)) |
+                            (D_716117817_D_135529881_D_154229258!=428999623 & !is.na(D_716117817_D_135529881_D_154229258))) %>% 
   mutate(Address1= case_when(is.na(D_940631293) ~"Skipped CURSCHT6"))
 
 dt_CURSCHT6_summary <- CURSCHT6 %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
@@ -4604,7 +5882,7 @@ dt_CURSCHT6_summary %>%  gt::gt() %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Days per Week Commuting from School")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
     stub.font.weight = "bold"
   ) %>%
@@ -4629,7 +5907,7 @@ dt_CURSCHT7_summary %>%  gt::gt() %>%
   fmt_number(columns = "percentage", decimals = 2) %>%
   tab_header(title = md("Same Transportation Type To and From School")) %>%
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>%
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
     stub.font.weight = "bold"
   ) %>%
@@ -4655,7 +5933,7 @@ dt_CURSCHT8_summary <- dt_CURSCHT8_summary[1,]
 #   fmt_number(columns = "percentage", decimals = 2) %>% 
 #   tab_header(title = md("Commuting Timw To and From School the Same")) %>% 
 #   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-#   #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+#   
 #   tab_options(
 #     stub.font.weight = "bold"
 #   ) %>%
@@ -4711,7 +5989,7 @@ dt_CURSCHT9_summary %>%  gt::gt() %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Commuting Methods to School")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  
   tab_options(
     stub.font.weight = "bold"
   ) %>%
@@ -4726,7 +6004,7 @@ dt_CURSCHT9_summary %>%  gt::gt() %>%
 
 
 
-
+#########   NEED TO FIX THE ENTITY ISSUE HERE
 
 # CURSCHT10A= STU %>%  select(D_219317801_D_990162153) %>% filter(STU$D_449752653==353358909 & STU$D_230528407!=353358909 &
 #                                                                   ifelse(STU$D_496801729==104430631, STU$D_345355061_D_345355061_D_467242967==1,
@@ -4766,33 +6044,28 @@ dt_CURSCHT9_summary %>%  gt::gt() %>%
 # 
 
 
-CURSCHT11_12_13= STU %>%  
-  filter(STU$D_449752653==353358909  & 
-           ((STU$D_219317801_D_990162153!=428999623 & !is.na(STU$D_219317801_D_990162153)) |
-              (STU$D_219317801_D_576149634!=428999623 & !is.na(STU$D_219317801_D_576149634)) |
-              (STU$D_219317801_D_291458877!=428999623 & !is.na(STU$D_219317801_D_291458877)) |
-              (STU$D_219317801_D_453417964!=428999623 & !is.na(STU$D_219317801_D_453417964)) |
-              (STU$D_219317801_D_550646850!=428999623 & !is.na(STU$D_219317801_D_550646850)) |
-              (STU$D_219317801_D_949549557!=428999623 & !is.na(STU$D_219317801_D_949549557)) |
-              (STU$D_219317801_D_214274185!=428999623 & !is.na(STU$D_219317801_D_214274185)) |
-              (STU$D_219317801_D_533003859!=428999623 & !is.na(STU$D_219317801_D_533003859)))) 
+CURSCHT11= STU %>%  
+  filter((D_219317801_D_990162153!=428999623 & !is.na(D_219317801_D_990162153)) |
+           (D_219317801_D_576149634!=428999623 & !is.na(D_219317801_D_576149634)) |
+           (D_219317801_D_291458877!=428999623 & !is.na(D_219317801_D_291458877)) |
+           (D_219317801_D_453417964!=428999623 & !is.na(D_219317801_D_453417964))) 
 
-CURSCHT11_12_13= CURSCHT11_12_13 %>%   
+CURSCHT11= CURSCHT11 %>%   
   mutate(Address1= case_when(is.na(D_705673076) ~"Skipped if Includes Highway(s)"))
 
-dt_CURSCHT11_12_13_summary <- CURSCHT11_12_13 %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
-dt_CURSCHT11_12_13_summary <- dt_CURSCHT11_12_13_summary[1,]
+dt_CURSCHT11_summary <- CURSCHT11 %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
+dt_CURSCHT11_summary <- dt_CURSCHT11_summary[1,]
 
-dt_CURSCHT11_12_13_summary[2,1] <- "Skipped if Includes Major Road(s)" 
-dt_CURSCHT11_12_13_summary[2,2] <- sum(is.na(CURSCHT11_12_13$D_333852852))
-dt_CURSCHT11_12_13_summary[2,3] <- (sum(is.na(CURSCHT11_12_13$D_333852852))/dim(dt_CURSCHT11_12_13_summary)[[1]])*100
+dt_CURSCHT11_summary[2,1] <- "Skipped if Includes Major Road(s)" 
+dt_CURSCHT11_summary[2,2] <- sum(is.na(CURSCHT11$D_333852852))
+dt_CURSCHT11_summary[2,3] <- (sum(is.na(CURSCHT11$D_333852852))/dim(dt_CURSCHT11_summary)[[1]])*100
 
-dt_CURSCHT11_12_13_summary[3,1] <- "Skipped if Includes Local Road(s)" 
-dt_CURSCHT11_12_13_summary[3,2] <- sum(is.na(CURSCHT11_12_13$D_776580384))
-dt_CURSCHT11_12_13_summary[3,3] <- (sum(is.na(CURSCHT11_12_13$D_776580384))/dim(dt_CURSCHT11_12_13_summary)[[1]])*100
+dt_CURSCHT11_summary[3,1] <- "Skipped if Includes Local Road(s)" 
+dt_CURSCHT11_summary[3,2] <- sum(is.na(CURSCHT11$D_776580384))
+dt_CURSCHT11_summary[3,3] <- (sum(is.na(CURSCHT11$D_776580384))/dim(dt_CURSCHT11_summary)[[1]])*100
 
-dt_CURSCHT11_12_13_summary <- dt_CURSCHT11_12_13_summary[c(2,3),]
-dt_CURSCHT11_12_13_summary %>%  gt::gt() %>%  
+dt_CURSCHT11_summary <- dt_CURSCHT11_summary[c(2,3),]
+dt_CURSCHT11_summary %>%  gt::gt() %>%  
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md("Road Type for School Commute Home")) %>% 
   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
@@ -4810,8 +6083,67 @@ dt_CURSCHT11_12_13_summary %>%  gt::gt() %>%
 
 
 
+CURSCHT12_13= STU %>%  
+  filter((D_219317801_D_990162153!=428999623 & !is.na(D_219317801_D_990162153)) |
+           (D_219317801_D_576149634!=428999623 & !is.na(D_219317801_D_576149634)) |
+           (D_219317801_D_291458877!=428999623 & !is.na(D_219317801_D_291458877)) |
+           (D_219317801_D_453417964!=428999623 & !is.na(D_219317801_D_453417964)) |
+           (D_219317801_D_550646850!=428999623 & !is.na(D_219317801_D_550646850)) |
+           (D_219317801_D_949549557!=428999623 & !is.na(D_219317801_D_949549557)) |
+           (D_219317801_D_214274185!=428999623 & !is.na(D_219317801_D_214274185)) |
+           (D_219317801_D_533003859!=428999623 & !is.na(D_219317801_D_533003859))) 
 
-CURSCHT14= STU %>% filter(STU$D_449752653==353358909 & is.na(D_849811593)) %>%   
+CURSCHT12_13= CURSCHT12_13 %>%   
+  mutate(Address1= case_when(is.na(D_705673076) ~"Skipped if Includes Highway(s)"))
+
+dt_CURSCHT12_13_summary <- CURSCHT12_13 %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
+dt_CURSCHT12_13_summary <- dt_CURSCHT12_13_summary[1,]
+
+dt_CURSCHT12_13_summary[2,1] <- "Skipped if Includes Major Road(s)" 
+dt_CURSCHT12_13_summary[2,2] <- sum(is.na(CURSCHT12_13$D_333852852))
+dt_CURSCHT12_13_summary[2,3] <- (sum(is.na(CURSCHT12_13$D_333852852))/dim(dt_CURSCHT12_13_summary)[[1]])*100
+
+dt_CURSCHT12_13_summary[3,1] <- "Skipped if Includes Local Road(s)" 
+dt_CURSCHT12_13_summary[3,2] <- sum(is.na(CURSCHT12_13$D_776580384))
+dt_CURSCHT12_13_summary[3,3] <- (sum(is.na(CURSCHT12_13$D_776580384))/dim(dt_CURSCHT12_13_summary)[[1]])*100
+
+dt_CURSCHT12_13_summary <- dt_CURSCHT12_13_summary[c(2,3),]
+dt_CURSCHT12_13_summary %>%  gt::gt() %>%  
+  fmt_number(columns = "percentage", decimals = 2) %>% 
+  tab_header(title = md("Road Type for School Commute Home")) %>% 
+  cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
+  tab_options(
+    stub.font.weight = "bold"
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      columns = Address1,
+    )
+  )
+
+
+
+## CURSCHT8=1] OR [CURSCHT9=NR] OR [CURSCHT10A:H=0, NR]
+CURSCHT14= STU %>% filter(D_230528407==353358909 |
+                            !(D_345355061_D_345355061_D_467242967==1 |
+                                D_345355061_D_345355061_D_645051966==1 |
+                                #D_345355061_D_345355061_D_756061540==1 |
+                                D_345355061_D_345355061_D_198883577==1 |
+                                D_345355061_D_345355061_D_634680635==1 |
+                                #D_345355061_D_345355061_D_790657437==1 |
+                                D_345355061_D_345355061_D_107428524==1) |
+                                #D_345355061_D_345355061_D_804918983==1) |
+                            !((D_219317801_D_990162153!=428999623 & !is.na(D_219317801_D_990162153)) |
+                                (D_219317801_D_576149634!=428999623 & !is.na(D_219317801_D_576149634)) |
+                                (D_219317801_D_291458877!=428999623 & !is.na(D_219317801_D_291458877)) |
+                                (D_219317801_D_453417964!=428999623 & !is.na(D_219317801_D_453417964)) |
+                                (D_219317801_D_550646850!=428999623 & !is.na(D_219317801_D_550646850)) |
+                                (D_219317801_D_949549557!=428999623 & !is.na(D_219317801_D_949549557)) |
+                                (D_219317801_D_214274185!=428999623 & !is.na(D_219317801_D_214274185)) |
+                                (D_219317801_D_533003859!=428999623 & !is.na(D_219317801_D_533003859)))) %>%   
   mutate(Address1= case_when(is.na(D_849811593) ~"Skipped CURSCHT14"))
 
 dt_CURSCHT14_summary <- CURSCHT14 %>% dplyr::group_by(Address1) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Address1, n, percentage)
