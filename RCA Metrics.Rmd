@@ -403,7 +403,7 @@ Diag_Verif_Table <- Diag_Verif_Table %>%
 
 
 
-tbd_table <- knitr::kable(Diag_Verif_Table, 
+knitr::kable(Diag_Verif_Table, 
                caption = "Table 6. Diagnosis Date Realtive to Verification Date Among Cancer Occurences", 
                col.names = c("Number of Occurrence", "Number of Participants"), 
                row.names = FALSE, align = c("l", "c"), digits = 1, booktabs = TRUE) %>%  
@@ -444,7 +444,7 @@ for (i in 1:length(unique_sites)) {
  
   table_output <- pivot_data %>%
     kable("latex", booktabs = TRUE, 
-          caption = paste("Table", 5 + i, ". Number of Cancer Occurrences by Cancer Site for", unique_sites[i]),
+          caption = paste("Table", 6 + i, ". Number of Cancer Occurrences by Cancer Site for", unique_sites[i]),
           col.names = c("Cancer Site", "Total Participants with Cancer")) %>%
     kable_styling(latex_options = c("hold_position", "repeat_header"))
   
