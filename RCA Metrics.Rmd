@@ -404,7 +404,7 @@ Diag_Verif_Table <- Diag_Verif_Table %>%
 
 
 knitr::kable(Diag_Verif_Table, 
-               caption = "Table 6. Diagnosis Date Realtive to Verification Date Among Cancer Occurences", 
+               caption = "Table 6. Diagnosis Date Relative to Verification Date Among Cancer Occurrences", 
                col.names = c("Number of Occurrence", "Number of Participants"), 
                row.names = FALSE, align = c("l", "c"), digits = 1, booktabs = TRUE) %>%  
     add_indent(seq(1, nrow(Diag_Verif_Table) - 1)) %>% 
