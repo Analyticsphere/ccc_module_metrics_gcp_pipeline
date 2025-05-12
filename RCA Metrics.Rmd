@@ -370,13 +370,13 @@ Diag_Verif <- cancer_loc %>%
   mutate(months_diff =difftime(as.Date(d_345545422), as.Date(d_914594314), units = "weeks")*.25,
          time_diff = case_when( months_diff < 0 ~ "Prior to verification",
                                 months_diff < 7 ~ "Within 6 months post-verification",
-                                months_diff < 13 ~ "6-12 months post-veriification",
-                                months_diff <=24 ~ "12-24 months post-veriification",
+                                months_diff < 13 ~ "6-12 months post-verification",
+                                months_diff <=24 ~ "12-24 months post-verification",
                                 months_diff >24 ~ "More than 24 months post verification",
                                 is.na(d_345545422) | is.na(d_914594314) ~ "Missing Verification or Diagnosis Date")) %>%
   mutate(time_diff = factor(time_diff,
-                                      levels = c("Prior to verification","Within 6 months post-verification","6-12 months post-veriification",
-                                                 "12-24 months post-veriification","More than 24 months post verification","Missing Verification or Diagnosis Date")))
+                                      levels = c("Prior to verification","Within 6 months post-verification","6-12 months post-verification",
+                                                 "12-24 months post-verification","More than 24 months post verification","Missing Verification or Diagnosis Date")))
 
 
 Diag_Verif_Table <- Diag_Verif %>%
@@ -396,15 +396,15 @@ Diag_Verif_Table <- bind_rows(Diag_Verif_Table, total_row)
 
 Diag_Verif_Table <- Diag_Verif_Table %>%
   mutate(time_diff = factor(time_diff,
-                                      levels = c("Prior to verification","Within 6 months post-verification","6-12 months post-veriification",
-                                                 "12-24 months post-veriification","More than 24 months post verification","Missing Verification or Diagnosis Date",
+                                      levels = c("Prior to verification","Within 6 months post-verification","6-12 months post-verification",
+                                                 "12-24 months post-verification","More than 24 months post verification","Missing Verification or Diagnosis Date",
                                                  "Total"))) %>% 
   select(time_diff, `N (%)`)
 
 
 
 knitr::kable(Diag_Verif_Table, 
-               caption = "Table 6. Diagnosis Date Realtive to Verification Date Among Cancer Occurences", 
+               caption = "Table 6. Diagnosis Date Relative to Verification Date Among Cancer Occurrences", 
                col.names = c("Number of Occurrence", "Number of Participants"), 
                row.names = FALSE, align = c("l", "c"), digits = 1, booktabs = TRUE) %>%  
     add_indent(seq(1, nrow(Diag_Verif_Table) - 1)) %>% 
