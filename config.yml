@@ -71,23 +71,15 @@ mod4_stats:
     cloud_scheduler: ccc-module4-statistics
     frequency: "0 13 1 * *" # first of the month at 1 PM
 
-baseline_high_priority:
-  r_file_name: "Baseline Ranked Variables- High Priority.Rmd"
-  report_file_name: "Baseline_Ranked_Varialbes_High_Priority.pdf"
+monthly_derived_vars:
+  r_file_name: "Monthly Derived Survey Variables.Rmd"
+  report_file_name: "Monthly_Derived_Survey_Variables.pdf"
   box_folders:
     - "251314285484"
   gcp_info:
-    cloud_scheduler: ccc-baseline-ranked-variables-high-priority
+    cloud_scheduler: ccc-monthly-derived-variables
     frequency: "30 13 1 * *" # first of the month at 1:30 PM
 
-baseline_low_priority:
-  r_file_name: "Baseline Ranked Variables- Low Priority.Rmd"
-  report_file_name: "Baseline_Ranked_Variables_Low_Priority.pdf"
-  box_folders:
-    - "251314285484"
-  gcp_info:
-    cloud_scheduler: ccc-baseline-ranked-variables-low-priority
-    frequency: "30 14 1 * *" # first of the month at 2:30 PM
     
 module1_qc_metrics:
   r_file_name: "Module 1 Custom QC Rule Errors.Rmd"
