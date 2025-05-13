@@ -17,7 +17,7 @@ steps:
    args: ['run','deploy','ccc-module-metrics-api', 
    '--image=gcr.io/nih-nci-dceg-connect-prod-6d04/ccc-module-metrics-api:$COMMIT_SHA', 
    '--concurrency=1', 
-   '--cpu=9','--memory=36Gi', 
+   '--cpu=8','--memory=32Gi', 
    '--region=us-central1', 
    '--service-account=qa-qc-prod@nih-nci-dceg-connect-prod-6d04.iam.gserviceaccount.com']
 
