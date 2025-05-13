@@ -387,3 +387,393 @@ dt_e_cig_frequency_summary %>%  gt::gt(rowname_col = "row_lab") %>%
 
 
 ```
+=======
+---
+title: "Monthly Derived Survey Variables"
+author: "Kelsey Sanchez"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+
+
+
+```{r libraries, include=FALSE}
+
+
+#  pdf-engine: xelatex
+#tinytex::install_tinytex()   ## only needs to be installed once 
+
+library(bigrquery)
+library(epiDisplay) ##recommended applied here crosstable, tab1
+library(gmodels) ##recommended
+library(arsenal)
+library(gtsummary)
+library(rio)
+
+
+
+library(ggplot2)
+library(gridExtra)
+library(scales)
+library(gt)
+library(tinytex)
+library(data.table) ###to write or read and data management 
+library(tidyverse) ###for data management
+library(dplyr) ###data management
+library(lubridate) ###date time
+library(stringr) ###to work on patterns, characters
+options(tinytex.verbose = TRUE)
+
+bq_auth()
+
+```
+
+
+
+
+```{r merge1, include=FALSE, warning=FALSE}
+
+
+#Data Dictionary for column names
+dictionary <- rio::import("https://episphere.github.io/conceptGithubActions/aggregate.json",format = "json")
+dd <- dplyr::bind_rows(dictionary,.id="CID")
+dd <-rbindlist(dictionary,fill=TRUE,use.names=TRUE,idcol="CID")
+dd$`Variable Label`[is.na(dd$`Variable Label`)] <- replace_na(dd$'Variable Name')
+dd <- as.data.frame.matrix(do.call("rbind",dictionary)) 
+dd$CID <- rownames(dd)
+#https://shaivyakodan.medium.com/7-useful-r-packages-for-analysis-7f60d28dca98
+devtools::install_github("tidyverse/reprex")
+
+
+
+
+
+## BQ Pull from the participants table just to use for versioning
+project <- "nih-nci-dceg-connect-prod-6d04"
+billing <- "nih-nci-dceg-connect-prod-6d04" 
+recr_M1 <- bq_project_query(project, query="SELECT token,Connect_ID, d_821247024, d_914594314,  d_827220437,d_512820379,
+                            d_949302066 , d_517311251  FROM  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` WHERE  d_821247024='197316935' and d_949302066 ='231311385'")
+recr_m1 <- bq_table_download(recr_M1,bigint = "integer64")
+cnames <- names(recr_m1)
+# Check that it doesn't match any non-number
+numbers_only <- function(x) !grepl("\\D", x)
+# to check variables in recr_noinact_wl1
+for (i in 1: length(cnames)){
+  varname <- cnames[i]
+  var<-pull(recr_m1,varname)
+  recr_m1[,cnames[i]] <- ifelse(numbers_only(var), as.numeric(as.character(var)), var)
+}
+
+
+
+
+#### Handling participants that somehow completed both Mod1 version 1 and Mod1 version 2
+
+sql_M1_1 <- bq_project_query(project, 
+                             query = "SELECT D_276353712, D_659784914, D_607773106_1_1, D_607773106_2_2, D_607773106_3_3, D_607773106_4_4, D_607773106_5_5, D_607773106_6_6, 
+                             D_607773106_7_7,  D_607773106_8_8, D_607773106_9_9,  D_607773106_10_10, D_607773106_11_11, D_607773106_12_12, D_607773106_13_13, D_718867914_1_1, 
+                             D_718867914_2_2, D_718867914_3_3, D_718867914_4_4, D_718867914_5_5,D_718867914_6_6, D_718867914_7_7, D_718867914_8_8, D_718867914_9_9, 
+                             D_718867914_10_10, D_114314839_D_340854069, D_114314839_D_600462977, D_746012894, Connect_ID
+                             FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v1_JP` WHERE Connect_ID IS NOT NULL")
+
+sql_M1_2 <- bq_project_query(project, 
+                             query = "SELECT D_276353712, D_659784914, D_607773106_1_1, D_607773106_2_2, D_607773106_3_3, D_607773106_4_4, D_607773106_5_5, D_607773106_6_6, 
+                             D_607773106_7_7,  D_607773106_8_8, D_607773106_9_9,  D_607773106_10_10, D_607773106_11_11, D_607773106_12_12, D_607773106_13_13, D_718867914_1_1, 
+                             D_718867914_2_2, D_718867914_3_3, D_718867914_4_4, D_718867914_5_5,D_718867914_6_6, D_718867914_7_7, D_718867914_8_8, D_718867914_9_9, 
+                             D_718867914_10_10, D_114314839_D_340854069, D_114314839_D_600462977, D_746012894, Connect_ID
+                             FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v2_JP` WHERE Connect_ID IS NOT NULL")
+
+M1_V1 <- bq_table_download(sql_M1_1, bigint = "integer64")
+M1_V2 <- bq_table_download(sql_M1_2, bigint = "integer64")
+
+# Select matching column names
+M1_V1_vars <- colnames(M1_V1)
+M1_V2_vars <- colnames(M1_V2)
+common_vars <- intersect(M1_V1_vars, M1_V2_vars)
+
+# Subset to common columns
+M1_V1_common <- M1_V1[, common_vars]
+M1_V2_common <- M1_V2[, common_vars]
+
+# Add version indicator
+M1_V1_common$version <- 1
+M1_V2_common$version <- 2
+
+# Identify columns with mismatched types
+mismatched_cols <- names(M1_V1_common)[sapply(names(M1_V1_common), function(col) {
+  class(M1_V1_common[[col]]) != class(M1_V2_common[[col]])
+})]
+
+# Convert mismatched columns to character for consistency
+M1_V1_common <- M1_V1_common %>%
+  mutate(across(all_of(mismatched_cols), as.character))
+M1_V2_common <- M1_V2_common %>%
+  mutate(across(all_of(mismatched_cols), as.character))
+
+# Combine both versions for participants who completed both
+M1_common <- bind_rows(M1_V1_common, M1_V2_common) %>%
+  arrange(Connect_ID, desc(version))
+
+# For columns unique to each version
+V1_only_vars <- setdiff(M1_V1_vars, common_vars)
+V2_only_vars <- setdiff(M1_V2_vars, common_vars)
+
+# Subset each version for unique columns and add version indicator
+m1_v1_only <- M1_V1[, c("Connect_ID", V1_only_vars)] %>%
+  mutate(version = 1)
+m1_v2_only <- M1_V2[, c("Connect_ID", V2_only_vars)] %>%
+  mutate(version = 2)
+
+# Combine the unique and common data
+m1_common_v1 <- left_join(M1_common, m1_v1_only, by = c("Connect_ID", "version"))
+m1_combined_v1v2 <- left_join(m1_common_v1, m1_v2_only, by = c("Connect_ID", "version"))
+
+# Filter for complete cases where specific completion criteria are met
+m1_complete <- m1_combined_v1v2 %>%
+  filter(Connect_ID %in% recr_m1$Connect_ID[recr_m1$d_949302066 == 231311385]) %>%
+  arrange(desc(version))
+
+# Remove duplicates, keeping only the most recent version for each Connect_ID
+m1_complete_nodup <- m1_complete[!duplicated(m1_complete$Connect_ID),]
+
+m1_complete_nodup$Connect_ID <- as.numeric(m1_complete_nodup$Connect_ID)
+
+
+## Define requirements of the data: active or passive,  user profile done, consented, mod1 done, verified
+parts <- "SELECT Connect_ID, token,  state_d_934298480, d_564964481, d_795827569, d_544150384,  d_126331570, 
+d_536735468, d_663265240, d_878865966, d_684635302, d_167958071, d_949302066 ,  d_976570371, d_914639140, d_311580100, d_100767870
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` 
+where Connect_ID IS NOT NULL and (d_512820379='486306141' OR d_512820379='854703046') and d_919254129='353358909' and d_699625233='353358909' and 
+d_949302066='231311385'  and d_821247024='197316935'" 
+
+
+parts_table <- bq_project_query(project, parts)
+parts_data <- bq_table_download(parts_table, bigint = "integer64",n_max = Inf, page_size = 10000)
+
+parts_data$Connect_ID <- as.numeric(parts_data$Connect_ID)
+
+
+merged= left_join(parts_data, m1_complete_nodup, by="Connect_ID")
+dim(merged)
+
+
+data_tib_base <- as_tibble(merged)
+
+
+knitr::opts_chunk$set(comment = NA)
+
+```
+
+
+\newpage
+
+# BMI
+```{r bmi, echo=FALSE, warning=FALSE, message=FALSE}
+
+knitr::opts_chunk$set(dev = "png", fig.path = "")
+
+
+data_tib_base$D_114314839_D_340854069=as.numeric(data_tib_base$D_114314839_D_340854069)
+data_tib_base$D_114314839_D_600462977=as.numeric(data_tib_base$D_114314839_D_600462977)
+
+data_tib_base$in_D_inches= (ifelse(is.na(data_tib_base$D_114314839_D_340854069), 0,(data_tib_base$D_114314839_D_340854069*12)))+ 
+  (ifelse(is.na(data_tib_base$D_114314839_D_600462977), 0, (data_tib_base$D_114314839_D_600462977))) 
+
+data_tib_base$D_746012894=as.numeric(data_tib_base$D_746012894) 
+data_tib_base$D_746012894=round(data_tib_base$D_746012894, digits=0)
+
+data_tib_base= data_tib_base %>%  mutate(BMI= (D_746012894/in_D_inches^2)*703)
+
+bmi_box= data_tib_base %>%  filter(!is.na(BMI)) %>%  ggplot(aes(x=BMI))+
+    xlab("Score") + geom_boxplot()+  ggtitle("BMI Distribution of Participants") + xlim(c(0,100))
+
+bmi_box
+
+```
+
+
+# Primary Relative Diagnosed with Cancer
+```{r PrimRelCancer, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+
+family= data_tib_base  %>%  mutate(status= case_when((D_276353712==353358909 | D_659784914==353358909 | D_607773106_1_1==353358909 | D_607773106_2_2==353358909 | 
+                                      D_607773106_3_3==353358909 | D_607773106_4_4==353358909 | D_607773106_5_5==353358909 | D_607773106_6_6==353358909 |
+                                      D_607773106_7_7==353358909| D_607773106_8_8==353358909 | D_607773106_9_9==353358909| D_607773106_10_10==353358909 |
+                                      D_607773106_11_11==353358909 | D_607773106_12_12==353358909 | D_607773106_13_13==353358909 | D_718867914_1_1==353358909 | 
+                                      D_718867914_2_2==353358909 | D_718867914_3_3==353358909 | D_718867914_4_4==353358909 | D_718867914_5_5==353358909 |
+                                      D_718867914_6_6==353358909 | D_718867914_7_7==353358909 | D_718867914_8_8==353358909 | D_718867914_9_9==353358909 |
+                                      D_718867914_10_10==353358909) ~ "Yes", 
+                                                    TRUE ~ "No"))
+
+
+dt_fam_canc_summary <- family %>% group_by(status) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(status, n, percentage)
+
+#gt_total_func(dt_fam_canc_summary, "status", "Primary Relative(s) Diagnosed With Cancer")
+
+dt_fam_canc_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
+  fmt_number(columns = "percentage", decimals = 2) %>% 
+  fmt_number(column = "n", decimals=0, use_seps = TRUE) %>% 
+  tab_header(title = md("Primary Relative(s) Diagnosed With Cancer")) %>% 
+  cols_label(n= md("**N**"), status = md("**Answer**"), percentage = md("**%**")) %>% 
+  grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  tab_options(
+    stub.font.weight = "bold"
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      columns = status,
+    )
+  ) %>% 
+  tab_footnote(footnote="Primary relatives consist of parents, siblings, and children.",
+               placement = "left")
+
+```
+
+
+
+
+
+
+
+
+
+
+\newpage
+
+```{r query3, include=FALSE}
+
+
+querymod3 <- "SELECT Connect_ID, D_947205597_D_712653855, D_798549704, D_763164658, D_947205597_D_198133418, D_182431332, D_798549704, D_789271762, D_947205597_D_706254326, D_624111331, D_238422161
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module3_v1_JP` where Connect_ID IS NOT NULL"
+mod3_table <- bq_project_query(project, querymod3)
+mod3_data <- bq_table_download(mod3_table, bigint = "integer64")
+mod3_data$Connect_ID <- as.numeric(mod3_data$Connect_ID)
+
+
+data_all3= left_join(parts_data, mod3_data, by="Connect_ID")
+
+data_all3 <- data_all3 %>% filter(d_976570371==231311385)
+
+data_tib_all3 <- as_tibble(data_all3)
+
+
+```
+
+
+
+
+# Frequency of Cigarette Smoking
+
+```{r cigerette, echo=FALSE, warning=FALSE, message=FALSE}
+
+cig_frequency= data_tib_all3  %>% 
+  mutate(often= case_when((D_947205597_D_712653855==0 | (D_947205597_D_712653855==1 & (D_763164658==151488193| D_763164658==805449318)))~"Never a Cigarette Smoker",
+                             (D_947205597_D_712653855==1 & (D_763164658==486319890| D_763164658==132232896) & D_798549704==317567178)~"Currently a Cigarette Smoker",
+                             (D_947205597_D_712653855==1 & (D_763164658==486319890| D_763164658==132232896)  & (D_798549704==484055234 | D_798549704==802197176))~"Formerly a Cigarette Smoker",
+                             TRUE~"Skipped all these questions"))
+
+dt_cig_frequency_summary <- cig_frequency %>% group_by(often) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(often, n, percentage)
+
+
+dt_cig_frequency_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
+  fmt_number(columns = "percentage", decimals = 2) %>% 
+  fmt_number(column = "n", decimals=0, use_seps = TRUE) %>% 
+  tab_header(title = md("Frequency of Cigarette Smoking")) %>% 
+  cols_label(n= md("**N**"), often = md("**Answer**"), percentage = md("**%**")) %>% 
+  grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  tab_options(
+    stub.font.weight = "bold"
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      columns = often,
+    )
+  ) 
+
+
+```
+
+
+
+# Frequency of Cigar Smoking
+
+```{r cigar, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+cigar_frequency= data_tib_all3  %>% 
+  mutate(often= case_when(D_947205597_D_198133418==0 | (D_947205597_D_198133418==1 & (D_182431332==151488193| D_182431332==805449318))~"Never a Cigar Smoker",
+                             D_947205597_D_198133418==1 & (D_182431332==486319890| D_182431332==132232896) & D_798549704==317567178~"Currently a Cigar Smoker",
+                             D_947205597_D_198133418==1 & (D_182431332==486319890| D_182431332==132232896)  & (D_789271762==484055234 | D_789271762==802197176)~"Formerly a Cigar Smoker",
+                             TRUE~"Skipped all These Questions"))
+
+
+
+dt_cigar_frequency_summary <- cigar_frequency %>% group_by(often) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(often, n, percentage)
+
+dt_cigar_frequency_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
+  fmt_number(columns = "percentage", decimals = 2) %>% 
+  fmt_number(column = "n", decimals=0, use_seps = TRUE) %>% 
+  tab_header(title = md("Frequency of Cigar Smoking")) %>% 
+  cols_label(n= md("**N**"), often = md("**Answer**"), percentage = md("**%**")) %>% 
+  grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  tab_options(
+    stub.font.weight = "bold"
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      columns = often,
+    )
+  ) 
+
+
+```
+
+
+
+
+# Frequency of E-cig Smoking
+
+```{r ecig, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+e_cig_frequency= data_tib_all3  %>% 
+  mutate(often= case_when(D_947205597_D_706254326==0 | (D_947205597_D_706254326==1 & (D_624111331==151488193| D_624111331==805449318))~"Never a E-cigarette Smoker",
+                             D_947205597_D_706254326==1 & (D_624111331==486319890| D_624111331==132232896) & D_238422161==317567178~"Currently a E-cigarette Smoker",
+                             D_947205597_D_706254326==1 & (D_624111331==486319890| D_624111331==132232896)  & (D_238422161==484055234 | D_238422161==802197176)~"Formerly a E-cigarette Smoker",
+                             TRUE~"Skipped all These Questions"))
+
+
+
+dt_e_cig_frequency_summary <- e_cig_frequency %>% group_by(often) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(often, n, percentage)
+
+dt_e_cig_frequency_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
+  fmt_number(columns = "percentage", decimals = 2) %>% 
+  fmt_number(column = "n", decimals=0, use_seps = TRUE) %>% 
+  tab_header(title = md("Frequency of Electronic Cigarette Smoking")) %>% 
+  cols_label(n= md("**N**"), often = md("**Answer**"), percentage = md("**%**")) %>% 
+  grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+  tab_options(
+    stub.font.weight = "bold"
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      columns = often,
+    )
+  ) 
+
+
+```
