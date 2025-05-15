@@ -64,8 +64,6 @@ COPY ["./ccc_module_metrics_api.R", "./ccc_module_metrics_api.R"]
 COPY ["./config.yml", "./config.yml"]
 COPY ["./preamble.tex", "./preamble.tex"]
 COPY ["./CCC Weekly Module Metrics_RMD.Rmd", "./CCC Weekly Module Metrics_RMD.Rmd"]
-COPY ["./Baseline Ranked Variables- High Priority.Rmd", "./Baseline Ranked Variables- High Priority.Rmd"]
-COPY ["./Baseline Ranked Variables- Low Priority.Rmd", "./Baseline Ranked Variables- Low Priority.Rmd"]
 COPY ["./Merged Module 1 Summary Statistics.Rmd", "./Merged Module 1 Summary Statistics.Rmd"]
 COPY ["./Merged Module 2 Summary Statistics.Rmd", "./Merged Module 2 Summary Statistics.Rmd"]
 COPY ["./Module 3 Summary Statatistics.Rmd", "./Module 3 Summary Statatistics.Rmd"]
@@ -81,7 +79,7 @@ COPY ["./RCA Custom QC.Rmd", "RCA Custom QC.Rmd"]
 COPY ["./Module_2_Custom_QC.Rmd", "Module_2_Custom_QC.Rmd"]
 COPY ["./Module_3_Custom_QC.Rmd", "Module_3_Custom_QC.Rmd"]
 COPY ["./Cancer Screening Summary Statistics.Rmd", "Cancer Screening Summary Statistics.Rmd"]
-
+COPY ["./Monthly Derived Survey Variables.Rmd", "Monthly Derived Survey Variables.Rmd"]
 
 
 # Run R code
