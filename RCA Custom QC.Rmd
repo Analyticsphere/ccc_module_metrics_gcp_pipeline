@@ -52,8 +52,8 @@ d_421730068 as AccessionID,
     WHEN pts.d_827220437 = '809703864' THEN 'UChicago'
     ELSE 'Unknown Site'
   END AS Site
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.cancerOccurrence_JP` rca
-left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` as pts
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.cancerOccurrence` rca
+left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` as pts
 on rca.Connect_ID=pts.Connect_ID"
 
 rca_qc_table <- bq_project_query(project, rca_qc_sql)
@@ -112,7 +112,7 @@ mult_cnc_site %>%  gt() %>%
 #find duplicate connect IDs via sql, grab connect_ID, date of diagnoiss, cancer site, accession ID, and site
 multiple_occ <- "WITH multiple_rows AS (
   SELECT Connect_ID
-  FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.cancerOccurrence_JP`
+  FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.cancerOccurrence`
   GROUP BY Connect_ID
   HAVING COUNT(*) > 1
 )
@@ -161,8 +161,8 @@ d_421730068 as AccessionID,
     WHEN pts.d_827220437 = '809703864' THEN 'UChicago'
     ELSE 'Unknown Site'
   END AS Site
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.cancerOccurrence_JP` rca
-left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` as pts
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.cancerOccurrence` rca
+left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` as pts
 on rca.Connect_ID=pts.Connect_ID
 WHERE rca.Connect_ID IN (SELECT Connect_ID FROM multiple_rows)
 order by rca.Connect_ID asc"

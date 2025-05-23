@@ -347,7 +347,7 @@ dict <- list("353358909"="Yes", "104430631"="No",  "178420302"="Do not Know", "5
              "198347104"="1-2 times per week","471294296"="3-4 times per week","520089841"="0-1 times per month","632512449"="1-2 times per month","648960871"="Never","718687985"="Almost Every Day",
              "200323667"="In the past yes","249673703"="Currently yes", "310201523"="100 Units per ml", "290716491"="500 unit per ml",
               "582602017" = "Twins", "105727261" = "Triplets", "720288326" = "Four or More", "660308254" = "Cesarean", "936573532" = "Vaginal",
-             "582425113"="Menopause", "330745988"="Began taking female hormones during the menopausal transition or menopause", "909774794"="Hysterectomy or Oophorectomy", "868504994"="After endometrial ablation", 
+             "582425113"="Menopause", "330745988"="Female hormones during menopause/menopausal transition", "909774794"="Hysterectomy or Oophorectomy", "868504994"="After endometrial ablation", 
              "655309065"="Using a hormonal medication or device", "757609794"="Pregnant or breastfeeding during the last year", "585076356"="After radiation or chemotherapy", "351584248"="Unknown")
 
 
@@ -394,14 +394,10 @@ one_logic_funct2 <- function(CID, CID_prev, Prev_Answer, Title){
   gt_yn <- dt_select  %>% dplyr::group_by(!!CID_SYM) %>% dplyr::summarize(n=n(), percentage=100*n/nrow(.)) %>% dplyr::ungroup() %>% dplyr::mutate(answer=recode(!!CID_SYM, !!!dict)) %>% replace_na(list(answer="Skipped this Question")) %>%  dplyr::select(answer, n, percentage)
   
   gt_yn %>%  gt::gt(rowname_col = "row_lab")  %>%  
+    opt_table_float(value = FALSE) %>% ## avoiding latex rendering issue
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md(Title)) %>% 
   cols_label(n= md("**N**"),  answer = md("**Answer**"), percentage = md("**%**")) %>% 
-  # summary_rows( groups=F,
-  #   column = c(n,percentage),
-  #   fns= list(
-  #     Sum= ~sum(.)
-  #   ), decimals=0) %>%
     grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
   tab_options(
       stub.font.weight = "bold"
@@ -5033,7 +5029,7 @@ hist_funct_D(in_minutes,"SLEEP1D: Length of Time to Fall asleep", "Minutes", "Fr
 
 
 #Time you wake up workdays/most days      #DO NOT CHANGE TO AS NUMERIC
-module2 %>% filter(!is.na(module2$D_580367946)) %>% ggplot(aes(x=D_580367946, fill=D_407056417))+ ylab("Count") + 
+module2 %>% filter(!is.na(module2$D_580367946)) %>% ggplot(aes(x=D_580367946))+ ylab("Count") + 
   xlab("Time (Military Time)") +geom_bar()+  ggtitle("SLEEP1F: Time you Wake Up") + theme(axis.text.x = element_text(angle = 90))+
   scale_fill_discrete(name = "Gender",  labels=c("Female", "Male"))
 

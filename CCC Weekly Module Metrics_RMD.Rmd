@@ -82,7 +82,7 @@ state_d_934298480, state_d_706256705, state_d_435027713, d_199471989, d_95649075
 state_d_684926335, state_d_849518448, state_d_119643471, state_d_253532712, d_764863765, d_195145666, 
 d_784810139, d_176068627, d_389890053, d_609630315, d_173836415_d_266600170_d_319972665_d_661940160, 
 d_220186468, d_268176409, d_784810139, d_253883960, d_265193023
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` where Connect_ID IS NOT NULL  and (d_512820379='486306141' OR d_512820379='854703046') " 
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` where Connect_ID IS NOT NULL  and (d_512820379='486306141' OR d_512820379='854703046') " 
 
 #and d_831041022='104430631'-- not needed, according to 3/12/24 decisions we'll be keeping participant journeys in overall counts
 
@@ -90,7 +90,7 @@ rec_table_cc <- bq_project_query(project, queryreccc)
 data_bw <- bq_table_download(rec_table_cc, bigint = "integer64")
 
 #select only the first collection to avoid duplicates
-bio_bqpull <-"SELECT Connect_ID, min(d_556788178) as d_556788178 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.biospecimen_JP` 
+bio_bqpull <-"SELECT Connect_ID, min(d_556788178) as d_556788178 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.biospecimen` 
 where Connect_ID is not null
 group by Connect_ID"
 
@@ -1045,7 +1045,7 @@ add_footnote(Comp_by_Age, "Note: Age defined as the de-identified age data repor
 
 
 recr_M1 <- bq_project_query(project, query="SELECT token,Connect_ID, d_821247024, d_914594314,  d_827220437,d_512820379,
-                            d_949302066 , d_517311251  FROM  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` WHERE  d_821247024='197316935'")
+                            d_949302066 , d_517311251  FROM  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` WHERE  d_821247024='197316935'")
 recr_m1 <- bq_table_download(recr_M1,bigint = "integer64",n_max = Inf, page_size = 10000)
 cnames <- names(recr_m1)
 # Check that it doesn't match any non-number
@@ -1059,8 +1059,8 @@ for (i in 1: length(cnames)){
 
 
 #### Handling participants that somehow completed both Mod1 version 1 and Mod1 version 2
-sql_M1_1 <- bq_project_query(project, query="SELECT Connect_ID, D_384191091_D_384191091_D_583826374, D_384191091_D_384191091_D_636411467, D_384191091_D_384191091_D_458435048, D_384191091_D_384191091_D_706998638, D_384191091_D_384191091_D_973565052, D_384191091_D_384191091_D_586825330, D_384191091_D_384191091_D_412790539, D_384191091_D_384191091_D_807835037,D_384191091_D_747350323,D_384191091_D_384191091_D_746038746 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v1_JP` where Connect_ID is not null")
-sql_M1_2 <- bq_project_query(project, query="SELECT Connect_ID, D_384191091_D_384191091_D_583826374 ,D_384191091_D_384191091_D_636411467, D_384191091_D_384191091_D_458435048, D_384191091_D_384191091_D_706998638, D_384191091_D_384191091_D_973565052, D_384191091_D_384191091_D_586825330,D_384191091_D_384191091_D_412790539,D_384191091_D_384191091_D_807835037,D_384191091_D_747350323,D_384191091_D_384191091_D_746038746 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v2_JP` where Connect_ID is not null")
+sql_M1_1 <- bq_project_query(project, query="SELECT Connect_ID, D_384191091_D_384191091_D_583826374, D_384191091_D_384191091_D_636411467, D_384191091_D_384191091_D_458435048, D_384191091_D_384191091_D_706998638, D_384191091_D_384191091_D_973565052, D_384191091_D_384191091_D_586825330, D_384191091_D_384191091_D_412790539, D_384191091_D_384191091_D_807835037,D_384191091_D_747350323,D_384191091_D_384191091_D_746038746 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v1` where Connect_ID is not null")
+sql_M1_2 <- bq_project_query(project, query="SELECT Connect_ID, D_384191091_D_384191091_D_583826374 ,D_384191091_D_384191091_D_636411467, D_384191091_D_384191091_D_458435048, D_384191091_D_384191091_D_706998638, D_384191091_D_384191091_D_973565052, D_384191091_D_384191091_D_586825330,D_384191091_D_384191091_D_412790539,D_384191091_D_384191091_D_807835037,D_384191091_D_747350323,D_384191091_D_384191091_D_746038746 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v2` where Connect_ID is not null")
 
 
 M1_V1 <- bq_table_download(sql_M1_1, bigint = "integer64")
@@ -1432,7 +1432,7 @@ knitr::kable(QOL_TM, #format.args = list(big.mark = ","),
 # category= 3mo QOL Survey Reminders attempt=1st contact notification_time will be used in place of FIRST_QOL_REMINDER
 
 trig_qol <- bq_project_query(project,
-query="SELECT distinct(token), notification_time FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP`
+query="SELECT distinct(token), notification_time FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications`
 where category='3mo QOL Survey Reminders' and attempt='1st contact'")
 trigger <- bigrquery::bq_table_download(trig_qol,bigint = "integer64")
 
@@ -1502,7 +1502,7 @@ knitr::kable(qol_ver_df,
 #BU
 trig_BU <- bq_project_query(project,
 query="SELECT distinct(token), min(notification_time) as BU_time #distinct token to account for duplicate notifications
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP`
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications`
 where (category='Baseline Clinical Blood and Urine Sample Survey Reminders' and attempt='1st contact') OR
 (category='Baseline Clinical Biospecimen Survey Reminder' and attempt='1st contact')
 group by token")
@@ -1512,7 +1512,7 @@ trigger_BU <- bigrquery::bq_table_download(trig_BU,bigint = "integer64")
 #BUM
 trig_BUM <- bq_project_query(project,
 query="SELECT distinct(token), min(notification_time) as BUM_time #distinct token to account for duplicate notifications
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP`
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications`
 where category='Baseline Research Biospecimen Survey Reminders' and attempt='1st contact' OR 
 category='Biospecimen Survey Reminder' and attempt='1st contact'
 group by token")
@@ -1972,11 +1972,11 @@ knitr::kable(CSH_TM,
 ## Time from CSH trigger to submission of CSH survey- "Cancer Screening History Survey"
 
 trig_csh <- bq_project_query(project,
-                             query="SELECT distinct(Connect_ID), notification_time as CSH_notif FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` notif
-                             left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` pts
+                             query="SELECT distinct(Connect_ID), notification_time as CSH_notif FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` notif
+                             left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
                              on notif.token=pts.token
                              where category LIKE '%Screen%' and attempt='1st contact'")
-                             #query="SELECT distinct(token), notification_time FROM `nih-nci-dceg-connect-dev.FlatConnect.notifications_JP` where category LIKE '%Screen%' and attempt='1st contact'")
+                             #query="SELECT distinct(token), notification_time FROM `nih-nci-dceg-connect-dev.FlatConnect.notifications` where category LIKE '%Screen%' and attempt='1st contact'")
 
 
 trigger_csh <- bigrquery::bq_table_download(trig_csh,bigint = "integer64")
@@ -2185,63 +2185,63 @@ add_footnote(pref_lang_site, "Note: Preferred language is based on language of s
 
 queries <- list(
   m1_lang_c = "SELECT pts.Connect_ID, m1.d_784119588, d_255077064
-                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v2_JP` m1
-                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` pts
+                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v2` m1
+                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
                 on m1.Connect_ID=pts.Connect_ID
                 WHERE pts.Connect_ID IS NOT NULL and d_949302066='231311385'",
   m2_lang_c = "SELECT pts.Connect_ID, m2.d_784119588, d_255077064 
-                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module2_v2_JP` m2
-                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` pts
+                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module2_v2` m2
+                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
                 on m2.Connect_ID=pts.Connect_ID
                 WHERE pts.Connect_ID IS NOT NULL and d_536735468='231311385'",
   m3_lang_c = "SELECT pts.Connect_ID, m3.d_784119588, d_255077064 
-                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module3_v1_JP` m3
-                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` pts
+                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module3_v1` m3
+                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
                 on m3.Connect_ID=pts.Connect_ID
                 WHERE pts.Connect_ID IS NOT NULL and d_976570371='231311385'",
   m4_lang_c = "SELECT pts.Connect_ID, m4.d_784119588, d_255077064 
-                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module4_v1_JP` m4
-                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` pts
+                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module4_v1` m4
+                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
                 on m4.Connect_ID=pts.Connect_ID
                 WHERE pts.Connect_ID IS NOT NULL and pts.d_663265240='231311385'",
   BUM_lang_c = "SELECT pts.Connect_ID, bum.d_784119588, d_255077064 
-                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.bioSurvey_v1_JP` bum
-                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` pts
+                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.bioSurvey_v1` bum
+                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
                 on bum.Connect_ID=pts.Connect_ID
                 WHERE pts.Connect_ID IS NOT NULL and d_265193023='231311385'",
   BU_lang_c = "SELECT pts.Connect_ID, bu.d_784119588, d_255077064
-                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.clinicalBioSurvey_v1_JP` bu 
-                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` pts
+                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.clinicalBioSurvey_v1` bu 
+                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
                 on bu.Connect_ID=pts.Connect_ID
                 WHERE pts.Connect_ID IS NOT NULL and d_253883960='231311385'",
   CV_lang_c = "SELECT pts.Connect_ID, cv.d_784119588, d_255077064 
-                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.covid19Survey_v1_JP` cv
-                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` pts
+                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.covid19Survey_v1` cv
+                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
                 on cv.Connect_ID=pts.Connect_ID
                 WHERE pts.Connect_ID IS NOT NULL and d_220186468='231311385'",
   Mens_lang_c = "SELECT pts.Connect_ID, mns.d_784119588, d_255077064 
-                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.menstrualSurvey_v1_JP` mns
-                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` pts
+                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.menstrualSurvey_v1` mns
+                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
                 on mns.Connect_ID=pts.Connect_ID
                 WHERE pts.Connect_ID IS NOT NULL and d_459098666='231311385'",
   MW_lang_c = "SELECT pts.Connect_ID, mw.d_784119588, d_255077064 
-                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.mouthwash_v1_JP` mw
-                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` pts
+                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.mouthwash_v1` mw
+                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
                 on mw.Connect_ID=pts.Connect_ID
                 WHERE pts.Connect_ID IS NOT NULL and d_547363263='231311385'",
   QOL_lang_c = "SELECT pts.Connect_ID, qol.d_784119588, d_255077064
-                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.promis_v1_JP` qol
-                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` pts
+                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.promis_v1` qol
+                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
                 on qol.Connect_ID=pts.Connect_ID
                 WHERE pts.Connect_ID IS NOT NULL and d_320303124='231311385'",
   CES_lang_c = "SELECT pts.Connect_ID, ces.d_784119588, d_255077064
-                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.experience2024_JP` ces
-                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` pts
+                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.experience2024` ces
+                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
                 on ces.Connect_ID=pts.Connect_ID
                 WHERE pts.Connect_ID IS NOT NULL and d_956490759='231311385'",
   CSH_lang_c = "SELECT pts.Connect_ID, csh.d_784119588, d_255077064
-                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.cancerScreeningHistorySurvey_JP` csh
-                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` pts
+                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.cancerScreeningHistorySurvey` csh
+                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
                 on csh.Connect_ID=pts.Connect_ID
                 WHERE pts.Connect_ID IS NOT NULL and d_176068627='231311385'"
 )

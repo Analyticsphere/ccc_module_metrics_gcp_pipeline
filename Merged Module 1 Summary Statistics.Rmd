@@ -4872,7 +4872,7 @@ grid.arrange(sib6_c33, sib6_c34, nrow=2)
 \newpage
 \FloatBarrier
 ## Children
-```{r Children, warning=FALSE, echo=FALSE, message=FALSE}
+```{r Children_part1, warning=FALSE, echo=FALSE, message=FALSE}
 ##Children 
 #how many children do you have?
 hist_funct(D_446999144, "Number of Children", "Children", "Frequency")
@@ -5214,7 +5214,11 @@ dt_CHILDcanc1_summary %>%  gt::gt(rowname_col = "row_lab") %>%  ## why is this n
       columns = status,
     )
   ) 
+```
 
+```{r Children_part2, warning=FALSE, echo=FALSE, message=FALSE}
+
+##### This table was sinking to the next section of the report for some reason. Had to make it its own section.
 
 #CHILCANC2
 
@@ -5281,7 +5285,7 @@ dt_body_kid_summary <- body_kid %>% dplyr::group_by(bodyp) %>%  dplyr::summarize
 
 kid_bd_canc <- dt_body_kid_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
   fmt_number(columns = "percentage", decimals = 2) %>% 
-  tab_header(title = md("CHILDCAN2: Type of Cancer Children 1-4 Diagnosed With")) %>% 
+  tab_header(title = md("CHILDCANC2: Type of Cancer Children 1-4 Diagnosed With")) %>% 
   cols_label(bodyp = md("**Cancer**"), percentage = md("**%**")) %>% 
   grand_summary_rows(columns=c(percentage),fns = ~sum(.,na.rm = T))|>
   tab_options(
@@ -5297,9 +5301,9 @@ kid_bd_canc <- dt_body_kid_summary %>%  gt::gt(rowname_col = "row_lab") %>%
   ) 
 
 kid_bd_canc
-
- 
-
+```
+\FloatBarrier
+```{r Children_part3, warning=FALSE, echo=FALSE, message=FALSE}
 
 #Age and Year of Diagnosis 
 ch1_c1=boxp_funct(D_900939817_1_1_D_206625031_1_1, "Child 1 Age at Anal Cancer Diagnosis", "Age") #anal
@@ -5546,10 +5550,11 @@ grid.arrange(ch4_c5, ch4_c6, ch4_c7, ch4_c8, nrow=4)
 ```
 
 
-
+\FloatBarrier
 \newpage
 
 # Section 5: Education and Occupation 
+\FloatBarrier
 ```{r edu, warning=FALSE, echo=FALSE, message=FALSE}
 
 #Highest level of ed. achieved 
@@ -5559,7 +5564,10 @@ simple_funct(D_367803647_D_367803647, "EDU: Highest Level of School Completed")
 
 #In school now?
 simple_funct(D_784967158, "STUDENT: Currently Enrolled in School")
+```
 
+\FloatBarrier
+```{r work1, warning=FALSE, echo=FALSE, message=FALSE}
 #do you currently work?
 simple_funct(D_613744428, "WORK: Currently Work for Pay")
 
@@ -5725,7 +5733,10 @@ dt_home1skip_summary %>%  gt::gt(rowname_col = "row_lab") %>%
       columns = Address1,
     )
   ) 
+```
 
+\FloatBarrier
+```{r work3, warning=FALSE, echo=FALSE, message=FALSE}
 
 #yrs at current job--739294356
 module1 %>% mutate(D_739294356=as.numeric(as.character(D_739294356))) %>%
@@ -5927,7 +5938,10 @@ dt_home1skip_summary %>%  gt::gt(rowname_col = "row_lab") %>%
       columns = Address1,
     )
   ) 
+```
 
+\FloatBarrier
+```{r work4, warning=FALSE, echo=FALSE, message=FALSE}
 #yrs at longest held position 
 module1 %>% mutate(D_686172464=as.numeric(as.character(D_686172464))) %>%
      filter((D_403258164==353358909 | D_847533056!=353358909) & !is.na(D_686172464))%>%
