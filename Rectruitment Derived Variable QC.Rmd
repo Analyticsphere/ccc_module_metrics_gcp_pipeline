@@ -60,13 +60,13 @@ d_949302066 , d_517311251, d_205553981, d_117249500, d_976570371, d_914639140, d
 d_263355177, d_199471989, d_222161762, d_822499427, d_764863765, d_534669573, d_195145666, d_286191859, d_541836531, d_770257102, d_386488297, d_264644252, d_452942800, 
 d_217640691, d_844088537, d_784810139, d_268176409, d_843688458, d_870643066, d_315032037, d_943232079, 
 d_956490759,d_265193023,d_253883960,d_547363263,d_459098666,d_220186468,d_320303124, d_609630315, d_389890053, d_176068627, d_439351436, d_280021666
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` 
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` 
 where Connect_ID IS NOT NULL and d_831041022='104430631'"
 partsbq_table <- bq_project_query(project, parts_bq)
 partsbq <- bq_table_download(partsbq_table, bigint = "integer64")
 
 
-biobq <- "SELECT Connect_ID, token, d_299553921_d_593843561, d_299553921_d_883732523, d_703954371_d_593843561, d_703954371_d_883732523, d_838567176_d_593843561, d_838567176_d_883732523, d_454453939_d_593843561, d_454453939_d_883732523, d_652357376_d_593843561, d_652357376_d_883732523, d_505347689_d_593843561, d_505347689_d_883732523 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.biospecimen_JP` 
+biobq <- "SELECT Connect_ID, token, d_299553921_d_593843561, d_299553921_d_883732523, d_703954371_d_593843561, d_703954371_d_883732523, d_838567176_d_593843561, d_838567176_d_883732523, d_454453939_d_593843561, d_454453939_d_883732523, d_652357376_d_593843561, d_652357376_d_883732523, d_505347689_d_593843561, d_505347689_d_883732523 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.biospecimen` 
 where Connect_ID IS NOT NULL"
 biobq_table <- bq_project_query(project, biobq)
 biobq <- bq_table_download(biobq_table, bigint = "integer64")
@@ -94,6 +94,18 @@ partsbq <-
 
 
 base_vars= left_join(partsbq, biobq, by="Connect_ID")
+
+
+#################
+
+## Sorting by Site causes an error message when there are no rows. This function eliminates that problem
+safe_arrange <- function(df, ...) {
+  if (nrow(df) > 0) {
+    df %>% arrange(...)
+  } else {
+    df
+  }
+}
 
 
 ```
@@ -124,7 +136,7 @@ if (nrow(incentive2) == 0) {
   cat("No errors\n")
 } else {
   
-  incentive2 <- incentive2  %>% select(Site, Connect_ID, d_130371375_d_266600170_d_731498909, d_130371375_d_266600170_d_222373868, d_130371375_d_266600170_d_787567527)  %>%  sort_by(Site)
+  incentive2 <- incentive2  %>% select(Site, Connect_ID, d_130371375_d_266600170_d_731498909, d_130371375_d_266600170_d_222373868, d_130371375_d_266600170_d_787567527)  %>%  safe_arrange(Site)
   colnames(incentive2) <- c("Site", "Connect ID", "SMPaym_PaymEligBL", "SMPaym_NORCPaymEligBL", "SMPaym_TmPaymEligBL")
   
   knitr::kable(incentive2) %>%
@@ -141,19 +153,19 @@ if (nrow(incentive2) == 0) {
 
 mens_ccc <- "WITH combined_survey AS (
   SELECT Connect_ID
-  FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.bioSurvey_v1_JP`
+  FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.bioSurvey_v1`
   WHERE d_112151599 = '353358909'
 
   UNION DISTINCT
 
   SELECT Connect_ID
-  FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.clinicalBioSurvey_v1_JP`
+  FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.clinicalBioSurvey_v1`
   WHERE d_112151599 = '353358909'
 )
 
 SELECT p.Connect_ID, p.d_827220437, p.d_459098666, p.d_253883960, p.d_265193023, p.d_289750687, 
 p.d_764863765, p.d_222161762, p.d_459098666
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 JOIN combined_survey c ON p.Connect_ID = c.Connect_ID
 WHERE (p.d_253883960 = '231311385' OR p.d_265193023 = '231311385')"
 
@@ -192,7 +204,7 @@ if (nrow(mens_elg) == 0) {
   cat("No errors\n")
 } else {
   
-  mens_elg <- mens_elg %>%  select(Site, Connect_ID, d_289750687)  %>%  sort_by(Site) 
+  mens_elg <- mens_elg %>%  select(Site, Connect_ID, d_289750687)  %>%  safe_arrange(Site) 
   
   colnames(mens_elg) <- c("Site", "Connect ID", "SrvMC_MenstSrvElig_v1r0")
   
@@ -270,7 +282,7 @@ cash_NORC <- base_vars %>%  filter(d_130371375_d_266600170_d_731498909==35335890
 if (nrow(cash_NORC) == 0) {
   cat("No errors\n")
 } else {
-  cash_NORC <- cash_NORC %>%  select(Site, Connect_ID, d_130371375_d_266600170_d_945795905, d_130371375_d_266600170_d_320023644) %>%  sort_by(Site)
+  cash_NORC <- cash_NORC %>%  select(Site, Connect_ID, d_130371375_d_266600170_d_945795905, d_130371375_d_266600170_d_320023644) %>%  safe_arrange(Site)
 
   colnames(cash_NORC) <- c("Site", "Connect ID", "HDPaym_PaymChosenBL", "HDPaym_CaseNumberBL")
 
@@ -297,7 +309,7 @@ if (nrow(bday) == 0) {
   cat("No errors\n")
 } else {
 
-  bday <- bday %>% select(Site, Connect_ID, d_371067537, d_544150384, d_564964481, d_795827569) %>%  sort_by(Site)
+  bday <- bday %>% select(Site, Connect_ID, d_371067537, d_544150384, d_564964481, d_795827569) %>%  safe_arrange(Site)
 
   colnames(bday) <- c("Site", "Connect ID", "RcrtUP_DOB", "RcrtUP_YOB", "RcrtUP_MOB", "RcrtUP_BD")
 
@@ -317,7 +329,7 @@ smmet0 <- partsbq %>%  filter(d_685002411_d_994064239==104430631 & d_685002411_d
                                 d_685002411_d_277479354==104430631 & d_685002411_d_867203506==104430631 & d_685002411_d_352996056==104430631 & 
                                 d_685002411_d_217367618==104430631 & d_747006172==104430631 & d_906417725==104430631 & d_773707518==104430631 & 
                                 d_831041022==104430631 & d_987563196==104430631 & d_912301837!=208325815) %>% 
-  select(Site, Connect_ID, d_912301837) %>%  sort_by(Site)
+  select(Site, Connect_ID, d_912301837) %>%  safe_arrange(Site)
 
 colnames(smmet0) <- c("Site", "Connect ID", "SMMet_PartStatus_v1r0")
 
@@ -338,7 +350,7 @@ if (nrow(smmet0) == 0) {
 # ### If HdWd_WdConsent_v1r0 = "no" AND HdWd_Activepart_v1r0 = "no" AND HdWd_HIPAArevoked_v1r0 = "no" AND HdWd_Destroydata_v1r0 = "no" AND HdWd_Deceased_v1r0 = "no", then SMMet_PartStatus_v1r0= "Refused some activities"
 # 
 # smmet1 <- partsbq %>%  filter(d_747006172==104430631 & d_906417725==104430631 & d_773707518==104430631 & d_831041022==104430631 & d_987563196==104430631 & d_912301837!=622008261) %>%  
-#     select(Site, Connect_ID, d_912301837) %>%  sort_by(Site)
+#     select(Site, Connect_ID, d_912301837) %>%  safe_arrange(Site)
 # 
 # colnames(smmet1) <- c("Site", "Connect ID", "SMMet_PartStatus_v1r0")
 # knitr::kable(smmet1)  %>% kable_styling(latex_options = "scale_down")
@@ -358,7 +370,7 @@ if (nrow(smmet2) == 0) {
   cat("No errors\n")
 } else {
   
-  smmet2 <- smmet2 %>%  select(Site, Connect_ID, d_912301837) %>% sort_by(Site)
+  smmet2 <- smmet2 %>%  select(Site, Connect_ID, d_912301837) %>% safe_arrange(Site)
 
   colnames(smmet2) <- c("Site", "Connect ID", "SMMet_PartStatus_v1r0")
   
@@ -380,7 +392,7 @@ if (nrow(smmet3) == 0) {
   cat("No errors\n")
 } else {
   
-  smmet3 <- smmet3 %>%  select(Site, Connect_ID, d_912301837) %>%  sort_by(Site)
+  smmet3 <- smmet3 %>%  select(Site, Connect_ID, d_912301837) %>%  safe_arrange(Site)
 
   colnames(smmet3) <- c("Site", "Connect ID", "SMMet_PartStatus_v1r0")
   
@@ -402,7 +414,7 @@ if (nrow(smmet4) == 0) {
   cat("No errors\n")
 } else {
   
-  smmet4 <- smmet4 %>% select(Site, Connect_ID, d_912301837) %>%  sort_by(Site)
+  smmet4 <- smmet4 %>% select(Site, Connect_ID, d_912301837) %>%  safe_arrange(Site)
 
   colnames(smmet4) <- c("Site", "Connect ID", "SMMet_PartStatus_v1r0")
   
@@ -424,7 +436,7 @@ if (nrow(opt_out) == 0) {
   cat("No errors\n")
 } else {
   
-  opt_out <- opt_out %>% select(Site, Connect_ID, state_d_158291096) %>%  sort_by(Site)
+  opt_out <- opt_out %>% select(Site, Connect_ID, state_d_158291096) %>%  safe_arrange(Site)
 
   colnames(opt_out) <- c("Site", "Connect ID", "RcrtSI_OptOut_v1r0")
 
@@ -449,7 +461,7 @@ if (nrow(pref_lang) == 0) {
   cat("No errors\n")
 } else {
   
-  pref_lang <- pref_lang %>%  select(Site, Connect_ID, RcrtCS_PrefLang_v1r0, RcrtCS_ConsentSumit_v1r0) %>%  sort_by(Site)
+  pref_lang <- pref_lang %>%  select(Site, Connect_ID, RcrtCS_PrefLang_v1r0, RcrtCS_ConsentSumit_v1r0) %>%  safe_arrange(Site)
   
   knitr::kable(pref_lang) %>%
     kable_styling(latex_options = "scale_down")
@@ -468,7 +480,7 @@ if (nrow(comp_m1) == 0) {
   cat("No errors\n")
 } else {
   
-  comp_m1 <- comp_m1 %>% select(Site, Connect_ID, d_517311251, d_949302066) %>%  sort_by(Site)
+  comp_m1 <- comp_m1 %>% select(Site, Connect_ID, d_517311251, d_949302066) %>%  safe_arrange(Site)
 
   colnames(comp_m1) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
   
@@ -488,7 +500,7 @@ if (nrow(comp_m2) == 0) {
   cat("No errors\n")
 } else {
   
-  comp_m2 <- comp_m2 %>%  select(Site, Connect_ID, d_832139544, d_536735468) %>%  sort_by(Site)
+  comp_m2 <- comp_m2 %>%  select(Site, Connect_ID, d_832139544, d_536735468) %>%  safe_arrange(Site)
 
   colnames(comp_m2) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
   
@@ -510,7 +522,7 @@ if (nrow(comp_m3) == 0) {
   cat("No errors\n")
 } else {
   
-  comp_m3 <- comp_m3 %>% select(Site, Connect_ID, d_770257102, d_976570371) %>%  sort_by(Site)
+  comp_m3 <- comp_m3 %>% select(Site, Connect_ID, d_770257102, d_976570371) %>%  safe_arrange(Site)
 
   colnames(comp_m3) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
 
@@ -532,7 +544,7 @@ if (nrow(comp_m4) == 0) {
   cat("No errors\n")
 } else {
   
-  comp_m4 <- comp_m4 %>% select(Site, Connect_ID, d_264644252, d_663265240) %>%  sort_by(Site)
+  comp_m4 <- comp_m4 %>% select(Site, Connect_ID, d_264644252, d_663265240) %>%  safe_arrange(Site)
 
   colnames(comp_m4) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
   
@@ -554,7 +566,7 @@ if (nrow(comp_qol) == 0) {
   cat("No errors\n")
 } else {
   
-  comp_qol <- comp_qol %>%  select(Site, Connect_ID, d_843688458, d_320303124) %>%  sort_by(Site)
+  comp_qol <- comp_qol %>%  select(Site, Connect_ID, d_843688458, d_320303124) %>%  safe_arrange(Site)
 
   colnames(comp_qol) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
   
@@ -576,7 +588,7 @@ if (nrow(comp_ces) == 0) {
   cat("No errors\n")
 } else {
   
-  comp_ces <- comp_ces %>%  select(Site, Connect_ID, d_199471989, d_956490759) %>%  sort_by(Site)
+  comp_ces <- comp_ces %>%  select(Site, Connect_ID, d_199471989, d_956490759) %>%  safe_arrange(Site)
 
   colnames(comp_ces) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
 
@@ -599,7 +611,7 @@ if (nrow(comp_bum) == 0) {
   cat("No errors\n")
 } else {
   
-  comp_bum <- comp_bum %>%  select(Site, Connect_ID, d_222161762, d_265193023) %>%  sort_by(Site)
+  comp_bum <- comp_bum %>%  select(Site, Connect_ID, d_222161762, d_265193023) %>%  safe_arrange(Site)
 
   colnames(comp_bum) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
   
@@ -621,7 +633,7 @@ if (nrow(comp_bu) == 0) {
   cat("No errors\n")
 } else {
   
-  comp_bu <- comp_bu %>% select(Site, Connect_ID, d_764863765, d_253883960) %>%  sort_by(Site)
+  comp_bu <- comp_bu %>% select(Site, Connect_ID, d_764863765, d_253883960) %>%  safe_arrange(Site)
 
   colnames(comp_bu) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
   
@@ -644,7 +656,7 @@ if (nrow(comp_mw) == 0) {
   cat("No errors\n")
 } else {
   
-  comp_mw <- comp_mw %>% select(Site, Connect_ID, d_195145666, d_547363263) %>%  sort_by(Site)
+  comp_mw <- comp_mw %>% select(Site, Connect_ID, d_195145666, d_547363263) %>%  safe_arrange(Site)
 
   colnames(comp_mw) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
   
@@ -667,7 +679,7 @@ if (nrow(comp_cv) == 0) {
   cat("No errors\n")
 } else {
   
-  comp_cv <- comp_cv %>%  select(Site, Connect_ID, d_784810139, d_220186468) %>%  sort_by(Site)
+  comp_cv <- comp_cv %>%  select(Site, Connect_ID, d_784810139, d_220186468) %>%  safe_arrange(Site)
 
   colnames(comp_cv) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
   
@@ -690,7 +702,7 @@ if (nrow(comp_mns) == 0) {
   cat("No errors\n")
 } else {
   
-  comp_mns <- comp_mns %>%select(Site, Connect_ID, d_217640691, d_459098666) %>%  sort_by(Site)
+  comp_mns <- comp_mns %>%select(Site, Connect_ID, d_217640691, d_459098666) %>%  safe_arrange(Site)
 
   colnames(comp_mns) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
 
@@ -713,7 +725,7 @@ if (nrow(comp_ssn) == 0) {
   cat("No errors\n")
 } else {
   
-  comp_ssn <- comp_ssn %>% select(Site, Connect_ID, d_315032037, d_126331570) %>%  sort_by(Site)
+  comp_ssn <- comp_ssn %>% select(Site, Connect_ID, d_315032037, d_126331570) %>%  safe_arrange(Site)
 
   colnames(comp_ssn) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
   
@@ -736,7 +748,7 @@ if (nrow(comp_csh) == 0) {
   cat("No errors\n")
 } else {
   
-  comp_csh <- comp_csh %>% select(Site, Connect_ID, d_389890053, d_176068627) %>%  sort_by(Site)
+  comp_csh <- comp_csh %>% select(Site, Connect_ID, d_389890053, d_176068627) %>%  safe_arrange(Site)
 
   colnames(comp_csh) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
   
@@ -760,7 +772,7 @@ if (nrow(start_m1) == 0) {
   cat("No errors\n")
 } else {
   
-  start_m1 <- start_m1 %>% select(Site, Connect_ID, d_205553981, d_949302066) %>%  sort_by(Site)
+  start_m1 <- start_m1 %>% select(Site, Connect_ID, d_205553981, d_949302066) %>%  safe_arrange(Site)
 
   colnames(start_m1) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
   
@@ -782,7 +794,7 @@ if (nrow(start_m2) == 0) {
   cat("No errors\n")
 } else {
   
-  start_m2 <- start_m2 %>% select(Site, Connect_ID, d_541836531, d_536735468) %>%  sort_by(Site)
+  start_m2 <- start_m2 %>% select(Site, Connect_ID, d_541836531, d_536735468) %>%  safe_arrange(Site)
 
   colnames(start_m2) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
   
@@ -805,7 +817,7 @@ if (nrow(start_m3) == 0) {
   cat("No errors\n")
 } else {
   
-  start_m3 <- start_m2 %>% select(Site, Connect_ID, d_386488297, d_976570371) %>%  sort_by(Site)
+  start_m3 <- start_m2 %>% select(Site, Connect_ID, d_386488297, d_976570371) %>%  safe_arrange(Site)
 
   colnames(start_m3) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
   
@@ -828,7 +840,7 @@ if (nrow(start_m4) == 0) {
   cat("No errors\n")
 } else {
   
-  start_m4 <- start_m4 %>% select(Site, Connect_ID, d_452942800, d_663265240) %>%  sort_by(Site)
+  start_m4 <- start_m4 %>% select(Site, Connect_ID, d_452942800, d_663265240) %>%  safe_arrange(Site)
 
   colnames(start_m4) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
   
@@ -851,7 +863,7 @@ if (nrow(start_qol) == 0) {
   cat("No errors\n")
 } else {
   
-  start_qol <- start_qol %>% select(Site, Connect_ID, d_870643066, d_320303124) %>%  sort_by(Site)
+  start_qol <- start_qol %>% select(Site, Connect_ID, d_870643066, d_320303124) %>%  safe_arrange(Site)
 
   colnames(start_qol) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
 
@@ -875,7 +887,7 @@ if (nrow(start_ces) == 0) {
   cat("No errors\n")
 } else {
   
-  start_ces <- start_ces %>% select(Site, Connect_ID, d_263355177, d_956490759) %>%  sort_by(Site)
+  start_ces <- start_ces %>% select(Site, Connect_ID, d_263355177, d_956490759) %>%  safe_arrange(Site)
 
   colnames(start_ces) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
 
@@ -899,7 +911,7 @@ if (nrow(start_bum) == 0) {
   cat("No errors\n")
 } else {
   
-  start_bum <- start_bum %>% select(Site, Connect_ID, d_822499427, d_265193023) %>%  sort_by(Site)
+  start_bum <- start_bum %>% select(Site, Connect_ID, d_822499427, d_265193023) %>%  safe_arrange(Site)
 
   colnames(start_bum) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
 
@@ -921,7 +933,7 @@ if (nrow(start_bu) == 0) {
   cat("No errors\n")
 } else {
   
-  start_bu <- start_bu %>% select(Site, Connect_ID, d_534669573, d_253883960) %>%  sort_by(Site)
+  start_bu <- start_bu %>% select(Site, Connect_ID, d_534669573, d_253883960) %>%  safe_arrange(Site)
 
   colnames(start_bu) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
 
@@ -945,7 +957,7 @@ if (nrow(start_mw) == 0) {
   cat("No errors\n")
 } else {
   
-  start_mw <- start_mw %>% select(Site, Connect_ID, d_286191859, d_547363263) %>%  sort_by(Site)
+  start_mw <- start_mw %>% select(Site, Connect_ID, d_286191859, d_547363263) %>%  safe_arrange(Site)
 
   colnames(start_mw) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
 
@@ -969,7 +981,7 @@ if (nrow(start_cv) == 0) {
   cat("No errors\n")
 } else {
   
-  start_cv <- start_cv %>% select(Site, Connect_ID, d_268176409, d_220186468) %>%  sort_by(Site)
+  start_cv <- start_cv %>% select(Site, Connect_ID, d_268176409, d_220186468) %>%  safe_arrange(Site)
 
   colnames(start_cv) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
 
@@ -993,7 +1005,7 @@ if (nrow(start_mns) == 0) {
   cat("No errors\n")
 } else {
   
-  start_mns <- start_mns %>% select(Site, Connect_ID, d_844088537, d_459098666) %>%  sort_by(Site)
+  start_mns <- start_mns %>% select(Site, Connect_ID, d_844088537, d_459098666) %>%  safe_arrange(Site)
 
   colnames(start_mns) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
 
@@ -1017,7 +1029,7 @@ if (nrow(start_ssn) == 0) {
   cat("No errors\n")
 } else {
   
-  start_ssn <- start_ssn %>% select(Site, Connect_ID, d_943232079, d_126331570) %>%  sort_by(Site)
+  start_ssn <- start_ssn %>% select(Site, Connect_ID, d_943232079, d_126331570) %>%  safe_arrange(Site)
 
   colnames(start_ssn) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
 
@@ -1041,7 +1053,7 @@ if (nrow(start_csh) == 0) {
   cat("No errors\n")
 } else {
   
-  start_csh <- start_csh %>% select(Site, Connect_ID, d_609630315, d_176068627) %>%  sort_by(Site)
+  start_csh <- start_csh %>% select(Site, Connect_ID, d_609630315, d_176068627) %>%  safe_arrange(Site)
 
   colnames(start_csh) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
 
@@ -1076,9 +1088,9 @@ CASE
     WHEN d_827220437 = '809703864' THEN 'University of Chicago Medicine'
     ELSE NULL
 END AS Site
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP`
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants`
 where d_176068627 is null and
-Connect_ID in (select Connect_ID from `nih-nci-dceg-connect-prod-6d04.FlatConnect.cancerScreeningHistorySurvey_JP` )
+Connect_ID in (select Connect_ID from `nih-nci-dceg-connect-prod-6d04.FlatConnect.cancerScreeningHistorySurvey` )
 order by Site"
 
 csh_null_bq_table <- bq_project_query(project, csh_null_bq)
@@ -1106,7 +1118,7 @@ if (nrow(csh_null) == 0) {
 
 
 hipaa_consent_match_pull <-
-"SELECT Connect_ID FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` 
+"SELECT Connect_ID FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` 
 where 
 FORMAT_DATETIME('%Y-%m-%d %H:%M', TIMESTAMP(d_262613359)) 
   != FORMAT_DATETIME('%Y-%m-%d %H:%M', TIMESTAMP(d_454445267))
@@ -1150,7 +1162,7 @@ bday_base_vars= left_join(partsbq, bdaybq, by="Connect_ID")
 ```{r bday1, echo=FALSE, warning=FALSE, message=FALSE}
 
 bday1 <- bday_base_vars %>%  filter(!is.na(d_768313785) & is.na(d_194486780)) %>%
-      select(Site, Connect_ID, d_768313785, d_194486780) %>%  sort_by(Site)
+      select(Site, Connect_ID, d_768313785, d_194486780) %>%  safe_arrange(Site)
 
 colnames(bday1) <- c("Site", "Connect ID", "NORCBC_CardMailingDt", "NORCBC_CardVersion")
 
@@ -1169,7 +1181,7 @@ if (nrow(bday1) == 0) {
 ```{r bday2, echo=FALSE, warning=FALSE, message=FALSE}
 
 bday2 <- bday_base_vars %>%  filter(is.na(d_768313785) & !is.na(d_194486780)) %>%
-      select(Site, Connect_ID, d_768313785, d_194486780) %>%  sort_by(Site)
+      select(Site, Connect_ID, d_768313785, d_194486780) %>%  safe_arrange(Site)
 
 colnames(bday2) <- c("Site", "Connect ID", "NORCBC_CardMailingDt", "NORCBC_CardVersion")
 
@@ -1189,7 +1201,7 @@ if (nrow(bday2) == 0) {
 ```{r bday3, echo=FALSE, warning=FALSE, message=FALSE}
 
 bday3 <- bday_base_vars %>%  filter(!is.na(d_768313785) & !(d_916186376 %in% c("01", "02", "06", "07") | is.na(d_916186376))) %>%
-      select(Site, Connect_ID, d_768313785, d_916186376) %>%  sort_by(Site)
+      select(Site, Connect_ID, d_768313785, d_916186376) %>%  safe_arrange(Site)
 
 colnames(bday3) <- c("Site", "Connect ID", "NORCBC_CardMailingDt", "NORCBC_CardDispCode")
 
@@ -1208,7 +1220,7 @@ if (nrow(bday3) == 0) {
 ```{r bday4, echo=FALSE, warning=FALSE, message=FALSE}
 
 bday4 <- bday_base_vars %>%  filter(is.na(d_768313785) & !is.na(d_916186376)) %>%
-      select(Site, Connect_ID, d_768313785, d_916186376) %>%  sort_by(Site)
+      select(Site, Connect_ID, d_768313785, d_916186376) %>%  safe_arrange(Site)
 
 colnames(bday4) <- c("Site", "Connect ID", "NORCBC_CardMailingDt", "NORCBC_CardDispCode")
 
@@ -1227,7 +1239,7 @@ if (nrow(bday4) == 0) {
 ```{r bday5, echo=FALSE, warning=FALSE, message=FALSE}
 
 bday5 <- bday_base_vars %>%  filter(!is.na(d_768313785) & !(is.na(ymd_hms(d_194486780, quiet = TRUE)) | is.na(d_194486780))) %>%
-      select(Site, Connect_ID, d_768313785, d_902078073) %>%  sort_by(Site)
+      select(Site, Connect_ID, d_768313785, d_902078073) %>%  safe_arrange(Site)
 
 colnames(bday5) <- c("Site", "Connect ID", "NORCBC_CardMailingDt", "NORCBC_CardReturnDt")
 
@@ -1246,7 +1258,7 @@ if (nrow(bday5) == 0) {
 ```{r bday6, echo=FALSE, warning=FALSE, message=FALSE}
 
 bday6 <- bday_base_vars %>%  filter(is.na(d_768313785) & !is.na(d_902078073)) %>%
-      select(Site, Connect_ID, d_768313785, d_902078073) %>%  sort_by(Site)
+      select(Site, Connect_ID, d_768313785, d_902078073) %>%  safe_arrange(Site)
 
 colnames(bday6) <- c("Site", "Connect ID", "NORCBC_CardMailingDt", "NORCBC_CardReturnDt")
 
@@ -1271,7 +1283,7 @@ if (nrow(reinvite_date_type) == 0) {
   cat("No errors\n")
 } else {
 
-  reinvite_date_type <- reinvite_date_type  %>% select(Site, Connect_ID, d_439351436, d_280021666)  %>%  sort_by(Site)
+  reinvite_date_type <- reinvite_date_type  %>% select(Site, Connect_ID, d_439351436, d_280021666)  %>%  safe_arrange(Site)
   colnames(reinvite_date_type) <- c("Site", "Connect ID", "RcrtSI_RInvTimeStamp_v1r0", "RcrtSI_RInvCampaignType_v1r0")
 
   knitr::kable(reinvite_date_type) %>%
@@ -1292,7 +1304,7 @@ if (nrow(reinvite_start) == 0) {
   cat("No errors\n")
 } else {
 
-  reinvite_start <- reinvite_start  %>% select(Site, Connect_ID, d_439351436, d_280021666)  %>%  sort_by(Site)
+  reinvite_start <- reinvite_start  %>% select(Site, Connect_ID, d_439351436, d_280021666)  %>%  safe_arrange(Site)
   colnames(reinvite_start) <- c("Site", "Connect ID", "RcrtSI_RInvTimeStamp_v1r0", "RcrtSI_RInvCampaignType_v1r0")
 
   knitr::kable(reinvite_start) %>%

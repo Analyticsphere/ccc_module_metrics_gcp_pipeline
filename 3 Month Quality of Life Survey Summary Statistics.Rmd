@@ -2,7 +2,15 @@
 title: "3 Month QOL Summary Statistics"
 author: "Kelsey Dowling"
 date: "`r Sys.Date()`"
-output: pdf_document
+header-includes:  
+    \usepackage[labelformat=empty]{caption}
+    \usepackage{placeins}
+    \usepackage{booktabs}
+    \usepackage{pdflscape}
+output:
+  pdf_document:
+      latex_engine: xelatex
+      extra_dependencies: ["float"]
 ---
 
 ```{r libraries, include=FALSE}
@@ -56,8 +64,8 @@ bq_auth()
 ```{r BQ_Pull, include=FALSE}
 
 project <- "nih-nci-dceg-connect-prod-6d04"
-PQOL3 <- "SELECT * FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.promis_v1_JP` where Connect_ID is not null"
-parts <- "SELECT Connect_ID, token,  D_471593703, state_d_934298480, D_230663853,D_335767902, D_982402227, D_564964481, D_795827569, D_544150384,D_371067537, D_430551721, D_821247024, D_914594314,  state_d_725929722, d_126331570, d_536735468, d_663265240, d_878865966, d_684635302, d_167958071, d_914639140, d_311580100, d_371067537 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` where Connect_ID IS NOT NULL and (d_512820379='486306141' OR d_512820379='854703046') and (D_919254129='353358909') and (D_699625233='353358909') and d_320303124='231311385'" 
+PQOL3 <- "SELECT * FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.promis_v1` where Connect_ID is not null"
+parts <- "SELECT Connect_ID, token,  D_471593703, state_d_934298480, D_230663853,D_335767902, D_982402227, D_564964481, D_795827569, D_544150384,D_371067537, D_430551721, D_821247024, D_914594314,  state_d_725929722, d_126331570, d_536735468, d_663265240, d_878865966, d_684635302, d_167958071, d_914639140, d_311580100, d_371067537 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` where Connect_ID IS NOT NULL and (d_512820379='486306141' OR d_512820379='854703046') and (D_919254129='353358909') and (D_699625233='353358909') and d_320303124='231311385'" 
 
 parts_table <- bq_project_query(project, parts)
 parts_data <- bq_table_download(parts_table, bigint = "integer64",n_max = Inf, page_size = 10000)
@@ -116,6 +124,7 @@ simple_funct <- function(CID, Title){
 ```
 
 # Physical Funciton
+\vspace{-0.5em}
 ```{r physical_function, warning=FALSE, echo=FALSE, message=FALSE}
 
 qol3_tib$D_284353934_D_559540891 <- factor(qol3_tib$D_284353934_D_559540891, levels=c(367964536,193058048, 263412634, 734992634, 221192556, "Skipped this Question"))
@@ -133,8 +142,10 @@ simple_funct(D_284353934_D_780866928, "Ability to run errands and shop")
 
 ```
 
-
+\FloatBarrier
 # Anxiety in the last 7 days
+\vspace{-0.5em}
+
 ```{r anxiety, warning=FALSE, echo=FALSE, message=FALSE}
 
 qol3_tib$D_404946076_D_429680247 <- factor(qol3_tib$D_404946076_D_429680247, levels=c(648960871,235613392,132099255,211590917,907579123, "Skipped this Question"))
@@ -149,7 +160,10 @@ simple_funct(D_404946076_D_829976839, " I felt uneasy")
 
 ```
 
+\FloatBarrier
 # Depression in the last 7 days
+\vspace{-0.5em}
+
 ```{r depression, warning=FALSE, echo=FALSE, message=FALSE}
 
 qol3_tib$D_715048033_D_468039454 <- factor(qol3_tib$D_715048033_D_468039454, levels=c(648960871,235613392,132099255,211590917,907579123, "Skipped this Question"))
@@ -164,7 +178,10 @@ simple_funct(D_715048033_D_168582270, " I felt hopeless")
 
 ```
 
+\FloatBarrier
 # Fatigue in the last 7 days
+\vspace{-0.5em}
+
 ```{r fatigue, warning=FALSE, echo=FALSE, message=FALSE}
 
 qol3_tib$D_907490539_D_467404576 <- factor(qol3_tib$D_907490539_D_467404576, levels=c(111520945,548628123,567908725,760969884,464631026, "Skipped this Question"))
@@ -179,7 +196,10 @@ simple_funct(D_907490539_D_787436735, " Level of fatigue")
 
 ```
 
+\FloatBarrier
 # Sleep in the last 7 days
+\vspace{-0.5em}
+
 ```{r sleep, warning=FALSE, echo=FALSE, message=FALSE}
 
 qol3_tib$D_336566965_D_992194402 <- factor(qol3_tib$D_336566965_D_992194402, levels=c(878535894,138752522,131550264,719933364,565881164, "Skipped this Question"))
@@ -194,7 +214,10 @@ simple_funct(D_336566965_D_644233792, "Difficulty Falling Asleep")
 
 ```
 
+\FloatBarrier
 # Physcial Fitness
+\vspace{-0.5em}
+
 ```{r physical_fittness, warning=FALSE, echo=FALSE, message=FALSE}
 
 qol3_tib$D_420392309_D_271090432 <- factor(qol3_tib$D_420392309_D_271090432, levels=c(648960871,235613392,132099255,211590917,907579123, "Skipped this Question"))
@@ -209,7 +232,10 @@ simple_funct(D_420392309_D_226478149, "I have trouble doing all of the activitie
 
 ```
 
+\FloatBarrier
 # Pain in the last 7 days
+\vspace{-0.5em}
+
 ```{r pain , warning=FALSE, echo=FALSE, message=FALSE}
 
 qol3_tib$D_420560514_D_693503159 <- factor(qol3_tib$D_420560514_D_693503159, levels=c(111520945,548628123,567908725,760969884,464631026, "Skipped this Question"))
@@ -224,7 +250,10 @@ simple_funct(D_420560514_D_426764225, "Pain interfered with your household chore
 
 ```
 
+\FloatBarrier
 # Social Satisfaction 
+\vspace{-0.5em}
+
 ```{r satisfy, warning=FALSE, echo=FALSE, message=FALSE}
 
 qol3_tib$D_261177801_D_313287837 <- factor(qol3_tib$D_261177801_D_313287837, levels=c(111520945,548628123,567908725,760969884,464631026, "Skipped this Question"))
@@ -239,7 +268,10 @@ simple_funct(D_261177801_D_542492755, "I am satisfied with my ability to perform
 
 ```
 
+\FloatBarrier
 # Social Isolation
+\vspace{-0.5em}
+
 ```{r Social_Isolation, warning=FALSE, echo=FALSE, message=FALSE}
 
 qol3_tib$D_326712049_D_437905191 <- factor(qol3_tib$D_326712049_D_437905191, levels=c(648960871,235613392,132099255,211590917,907579123, "Skipped this Question"))
@@ -254,7 +286,9 @@ simple_funct(D_326712049_D_311938392, "I feel that people are around me but not 
 
 ```
 
+\FloatBarrier
 # Cognitive Function 
+\vspace{-0.5em}
 ```{r cognitive, warning=FALSE, echo=FALSE, message=FALSE}
  
 qol3_tib$D_230486322_D_960308206 <- factor(qol3_tib$D_230486322_D_960308206, levels=c(648960871,235613392,132099255,211590917,907579123, "Skipped this Question"))
