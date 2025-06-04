@@ -524,7 +524,7 @@ add_footnote(sex_by_site, "Note: 'Multi-racial' is defined as a participant that
 
 ```
 
-
+\newpage
 ```{r RacePieChart, include=FALSE}
 
 library(RColorBrewer)
@@ -1245,6 +1245,10 @@ cat("Number of White, Straight, Married, Female Participants", round(((dim(WMF)[
 ## Cancer 
 ```{r SkinCancer, warning=FALSE, echo=FALSE, message=FALSE}
 
+#Clearing up some memory -- removing all but the main dataframe and functions
+rm(list = setdiff(ls(), c("data_tib_m1", 'module1', 'module1', "dict", 'hist_funct', 'boxp_funct', 'simple_funct', 'one_logic_funct', 'sib_logic_funct', 'child_logic_funct')))
+gc()
+########################
 
 simple_funct(D_537153788, "SKINCANC: Diagnosed with Non-Melanoma Skin Cancer")
 
@@ -2650,6 +2654,11 @@ grid.arrange(trans_a_last, trans_y_last, nrow=2)
 ## Overall 
 ```{r Overall, warning=FALSE, echo=FALSE, message=FALSE}
 
+#Clearing up some memory -- removing all but the main dataframe and functions
+rm(list = setdiff(ls(), c("data_tib_m1", 'module1', "dict", 'hist_funct', 'boxp_funct', 'simple_funct', 'one_logic_funct', 'sib_logic_funct', 'child_logic_funct')))
+gc()
+########################
+
 data_tib_m1$D_875208305 <- factor(data_tib_m1$D_875208305, levels=c(670680466,565881164,719933364,131550264,138752522, "Skipped this Question"))
 simple_funct(D_875208305, "OVERHEALTH: General Health Rating")
 
@@ -3229,6 +3238,13 @@ grid.arrange(acne1, acne0, nrow=2)
 # Section 4: Family History
 ## Adopted, Fostered, Multiple Birth 
 ```{r Section4, warning=FALSE, echo=FALSE, message=FALSE}
+
+#Clearing up some memory -- removing all but the main dataframe and functions
+rm(list = setdiff(ls(), c("data_tib_m1", 'module1', "dict", 'hist_funct', 'boxp_funct', 'simple_funct', 'one_logic_funct', 'sib_logic_funct', 'child_logic_funct')))
+gc()
+########################
+
+
 #Foster/Adopted
 simple_funct(D_535621923, "ADOPTFOST: Adopted or Foster Child")
 
@@ -5556,6 +5572,13 @@ grid.arrange(ch4_c5, ch4_c6, ch4_c7, ch4_c8, nrow=4)
 # Section 5: Education and Occupation 
 \FloatBarrier
 ```{r edu, warning=FALSE, echo=FALSE, message=FALSE}
+
+#Clearing up some memory -- removing all but the main dataframe and functions
+rm(list = setdiff(ls(), c("data_tib_m1", 'module1', "dict", 'hist_funct', 'boxp_funct', 'simple_funct', 'one_logic_funct', 'sib_logic_funct', 'child_logic_funct')))
+gc()
+########################
+
+
 
 #Highest level of ed. achieved 
 data_tib_m1$D_367803647_D_367803647 <- factor(data_tib_m1$D_367803647_D_367803647, levels=c(978204320,935502060,404564707,432193665,890756124,766964355,875342283,598242454,807835037, "Skipped this Question"))

@@ -2,9 +2,18 @@
 title: "Module 4 Missingness Analysis"
 author: "Kelsey Dowling"
 date: "`r Sys.Date()`"
+header-includes: 
+  \usepackage[labelformat=empty]{caption} 
+  \usepackage{placeins} 
+  \usepackage{booktabs}
+  \usepackage{pdflscape}
+  \usepackage{longtable}
+  \usepackage{graphicx}
+  
 output:
   pdf_document:
-    latex_engine: xelatex
+    latex_engine: pdflatex
+    df_print: default
 ---
 
 This report gives the distribution of all Module 4 missing responses using the skip logic from Qx:https://nih.app.box.com/file/923661036132?s=o816d6804w154fqf5y161ii7ngvcezqg for those that completed this survey.
@@ -33,6 +42,8 @@ library(stringr) ###to work on patterns, charaters
 library(arsenal)
 library(gt)
 library(gtsummary)
+library(knitr)
+library(kableExtra)
 
 options(tinytex.verbose = TRUE)
 
@@ -2164,7 +2175,7 @@ dt_seaaddsum1_summary %>%  gt::gt(rowname_col = "row_lab") %>%
 ```
 
 ### Seasonal Home Move in and Move Out
-```{r SeaInOut, warning=FALSE, echo=FALSE, message=FALSE}
+```{r SeaInOut, warning=FALSE, echo=FALSE, message=FALSE, results='asis'}
   #SEASADDSUM2_1
 
 SEASADDYRS= seahome_add1_1 %>%  mutate(Address1= case_when(is.na(D_379754686)~"Skipped First Year"))
@@ -2181,22 +2192,41 @@ dt_SEASADDYRS_summary[3,2] <- sum(is.na(SEASADDYRS$D_860269869_D_451310566) & is
 dt_SEASADDYRS_summary[3,3] <- (sum(is.na(SEASADDYRS$D_860269869_D_451310566) & is.na(SEASADDYRS$D_860269869_D_860269869_D_232063618))/dim(SEASADDYRS)[[1]])*100
 
 
-dt_SEASADDYRS_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
-  fmt_number(columns = "percentage", decimals = 2) %>% 
-  tab_header(title = md("Years and Months at Vacation Home 1")) %>% 
-  cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>% 
-  #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
-  tab_options(
-      stub.font.weight = "bold"
-    ) %>%
+# dt_SEASADDYRS_summary %>%  gt::gt() %>%  #gt::gt(rowname_col = "row_lab") %>%
+#   fmt_number(columns = "percentage", decimals = 2) %>%
+#   tab_header(title = md("Years and Months at Vacation Home 1")) %>%
+#   cols_label(n= md("**Number of Participants**"),Address1 = md("**Question**"), percentage = md("**%**")) %>%
+#   #grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
+#   tab_options(
+#       stub.font.weight = "bold"
+#     ) %>%
+#   tab_style(
+#     style = list(
+#       cell_text(weight = "bold")
+#     ),
+#     locations = cells_body(
+#       columns = Address1,
+#     )
+#   )
+
+#gt::set_default_latex_engine("gt_latex_limited")
+
+gt_tbl <- dt_SEASADDYRS_summary %>%
+  gt() %>%
+  fmt_number(columns = "percentage", decimals = 2) %>%
+  tab_header(title = "Years and Months at Vacation Home 1") %>%
+  cols_label(
+    n = "Number of Participants",
+    Address1 = "Question",
+    percentage = "%"
+  ) %>%
+  tab_options(stub.font.weight = "bold") %>%
   tab_style(
-    style = list(
-      cell_text(weight = "bold")
-    ),
-    locations = cells_body(
-      columns = Address1,
-    )
-  ) 
+    style = list(cell_text(weight = "bold")),
+    locations = cells_body(columns = Address1)
+  )
+
+cat(as.character(gt::as_latex(gt_tbl)))
 
 
 ```
