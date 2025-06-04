@@ -72,7 +72,7 @@ WITH FilteredNotifications AS (
         attempt,
         DATE(notification_time) AS notification_date
     FROM 
-        `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP`
+        `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications`
     WHERE 
         DATE(notification_time) BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY) AND DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY)
 ),
@@ -83,7 +83,7 @@ AllPossibleNotifications AS (
         category,
         attempt
     FROM 
-        `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP`
+        `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications`
     WHERE 
         category NOT IN (
             'Baseline Biospecimen Scheduling Invitation',
@@ -200,8 +200,8 @@ QOL <- "SELECT distinct(p.Connect_ID), #distinct(n.token),
 category,
        DATE(notification_time) as repeat_date, 
        COUNT(*) as num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 on p.token=n.token
 WHERE category LIKE '%3mo QOL Survey Reminders%' and date(notification_time) >= (CURRENT_DATE()-7) 
 and notificationType='email'
@@ -241,8 +241,8 @@ QOL <- "SELECT distinct(p.Connect_ID), #distinct(n.token),
 category,
        DATE(notification_time) as repeat_date, 
        COUNT(*) as num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 on p.token=n.token
 WHERE category LIKE '%3mo QOL Survey Reminders%' and date(notification_time) >= (CURRENT_DATE()-7) 
 and notificationType='sms'
@@ -279,8 +279,8 @@ RsBio <- "SELECT DISTINCT p.Connect_ID,
                 MAX(category) AS category,
                 DATE(notification_time) AS repeat_date, 
                 COUNT(*) AS num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-LEFT JOIN `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+LEFT JOIN `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 ON p.token = n.token
 WHERE category='Biospecimen Survey Reminder' OR category LIKE '%Baseline Research Biospecimen Survey Reminders%'
 AND DATE(notification_time) >= (CURRENT_DATE() - 7)
@@ -316,8 +316,8 @@ RsBio <- "SELECT DISTINCT p.Connect_ID,
                 MAX(category) AS category,
                 DATE(notification_time) AS repeat_date, 
                 COUNT(*) AS num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-LEFT JOIN `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+LEFT JOIN `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 ON p.token = n.token
 WHERE category='Biospecimen Survey Reminder' OR category LIKE '%Baseline Research Biospecimen Survey Reminders%'
 AND DATE(notification_time) >= (CURRENT_DATE() - 7)
@@ -352,8 +352,8 @@ ClBio <- "SELECT DISTINCT p.Connect_ID,
                 MAX(category) AS category,
                 DATE(notification_time) AS repeat_date, 
                 COUNT(*) AS num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-LEFT JOIN `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+LEFT JOIN `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 ON p.token = n.token
 WHERE (category LIKE '%Baseline Clinical Biospecimen Survey%' OR 
        category LIKE '%Baseline Clinical Blood and Urine Sample Survey Reminders%' OR
@@ -390,8 +390,8 @@ ClBio <- "SELECT DISTINCT p.Connect_ID,
                 MAX(category) AS category,
                 DATE(notification_time) AS repeat_date, 
                 COUNT(*) AS num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-LEFT JOIN `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+LEFT JOIN `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 ON p.token = n.token
 WHERE (category LIKE '%Baseline Clinical Biospecimen Survey%' OR 
        category LIKE '%Baseline Clinical Blood and Urine Sample Survey Reminders%' OR
@@ -431,8 +431,8 @@ BRM_email <- "SELECT distinct(p.Connect_ID), #distinct(n.token),
 category,
        DATE(notification_time) as repeat_date, 
        COUNT(*) as num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 on p.token=n.token
 WHERE category='Baseline Research Menstrual Cycle Survey Reminders' and date(notification_time) >= (CURRENT_DATE()-7)
 AND notificationType = 'email'
@@ -466,8 +466,8 @@ BRM_SMS <- "SELECT distinct(p.Connect_ID), #distinct(n.token),
 category,
        DATE(notification_time) as repeat_date, 
        COUNT(*) as num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 on p.token=n.token
 WHERE category='Baseline Research Menstrual Cycle Survey Reminders' and date(notification_time) >= (CURRENT_DATE()-7)
 AND notificationType = 'sms'
@@ -500,8 +500,8 @@ BCM_email <- "SELECT distinct(p.Connect_ID), #distinct(n.token),
 category,
        DATE(notification_time) as repeat_date, 
        COUNT(*) as num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 on p.token=n.token
 WHERE category LIKE '%Baseline Clinical Menstrual Cycle Survey%' and date(notification_time) >= (CURRENT_DATE()-7)
 AND notificationType = 'email'
@@ -533,8 +533,8 @@ BCM_SMS <- "SELECT distinct(p.Connect_ID), #distinct(n.token),
 category,
        DATE(notification_time) as repeat_date, 
        COUNT(*) as num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 on p.token=n.token
 WHERE category LIKE '%Baseline Clinical Menstrual Cycle Survey%' and date(notification_time) >= (CURRENT_DATE()-7)
 AND notificationType = 'sms'
@@ -565,8 +565,8 @@ CBV <- "SELECT distinct(p.Connect_ID), #distinct(n.token),
 category,
        DATE(notification_time) as repeat_date, 
        COUNT(*) as num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 on p.token=n.token
 WHERE category LIKE '%Cannot Be Verified Notification%' and date(notification_time) >= (CURRENT_DATE()-7)
 #AND notificationType = 'email'
@@ -597,8 +597,8 @@ DDR <- "SELECT distinct(p.Connect_ID), #distinct(n.token),
 category,
        DATE(notification_time) as repeat_date, 
        COUNT(*) as num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 on p.token=n.token
 WHERE category LIKE '%Data Destruction Reminders%' and date(notification_time) >= (CURRENT_DATE()-7)
 #AND notificationType = 'email'
@@ -631,8 +631,8 @@ HIPAA <- "SELECT distinct(p.Connect_ID), #distinct(n.token),
 category,
        DATE(notification_time) as repeat_date, 
        COUNT(*) as num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 on p.token=n.token
 WHERE category LIKE '%HIPAA revocation reminders%' and date(notification_time) >= (CURRENT_DATE()-7)
 #AND notificationType = 'email'
@@ -665,8 +665,8 @@ HPBB_email <- "SELECT distinct(p.Connect_ID), #distinct(n.token),
 category,
        DATE(notification_time) as repeat_date, 
        COUNT(*) as num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 on p.token=n.token
 WHERE category='HP Verified, BL Survey Reminder and Biospecimen Scheduling Invite' and date(notification_time) >= (CURRENT_DATE()-7)
 AND notificationType = 'email'
@@ -699,8 +699,8 @@ HPBB_sms <- "SELECT distinct(p.Connect_ID), #distinct(n.token),
 category,
        DATE(notification_time) as repeat_date, 
        COUNT(*) as num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 on p.token=n.token
 WHERE category='HP Verified, BL Survey Reminder and Biospecimen Scheduling Invite' and date(notification_time) >= (CURRENT_DATE()-7)
 AND notificationType = 'sms'
@@ -732,8 +732,8 @@ BSWHBB_email <- "SELECT distinct(p.Connect_ID), #distinct(n.token),
 category,
        DATE(notification_time) as repeat_date, 
        COUNT(*) as num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 on p.token=n.token
 WHERE category='BSWH Verified, BL Survey Reminder and Biospecimen Scheduling Invite' and date(notification_time) >= (CURRENT_DATE()-7)
 AND notificationType = 'email'
@@ -766,8 +766,8 @@ BSWHBB_sms <- "SELECT distinct(p.Connect_ID), #distinct(n.token),
 category,
        DATE(notification_time) as repeat_date, 
        COUNT(*) as num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 on p.token=n.token
 WHERE category='BSWH Verified, BL Survey Reminder and Biospecimen Scheduling Invite' and date(notification_time) >= (CURRENT_DATE()-7)
 AND notificationType = 'sms'
@@ -800,8 +800,8 @@ UCBB_email <- "SELECT distinct(p.Connect_ID), #distinct(n.token),
 category,
        DATE(notification_time) as repeat_date, 
        COUNT(*) as num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 on p.token=n.token
 WHERE category ='UC Verified, BL Survey Reminder and Biospecimen Scheduling Invite' 
 AND date(notification_time) >= (CURRENT_DATE()-7)
@@ -835,8 +835,8 @@ UCBB_sms <- "SELECT distinct(p.Connect_ID), #distinct(n.token),
 category,
        DATE(notification_time) as repeat_date, 
        COUNT(*) as num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 on p.token=n.token
 WHERE category ='UC Verified, BL Survey Reminder and Biospecimen Scheduling Invite' 
 AND date(notification_time) >= (CURRENT_DATE()-7)
@@ -871,8 +871,8 @@ KPBio_Email <- "SELECT distinct(p.Connect_ID), #distinct(n.token),
 category,
        DATE(notification_time) as repeat_date, 
        COUNT(*) as num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 on p.token=n.token
 WHERE category LIKE '%baseline biospecimen invitations%' and date(notification_time) >= (CURRENT_DATE()-7)
 AND notificationType = 'email'
@@ -904,8 +904,8 @@ KPBio_SMS <- "SELECT distinct(p.Connect_ID), #distinct(n.token),
 category,
        DATE(notification_time) as repeat_date, 
        COUNT(*) as num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 on p.token=n.token
 WHERE category LIKE '%baseline biospecimen invitations%' and date(notification_time) >= (CURRENT_DATE()-7)
 AND notificationType = 'sms'
@@ -938,8 +938,8 @@ HF_Srvy_Bio_email <- "SELECT distinct(p.Connect_ID), #distinct(n.token),
 category,
        DATE(notification_time) as repeat_date, 
        COUNT(*) as num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 on p.token=n.token
 WHERE category = 'HFH Verified, BL Survey Reminder and Biospecimen Scheduling Invite' 
 and date(notification_time) >= (CURRENT_DATE()-7)
@@ -974,8 +974,8 @@ HF_Srvy_Bio_sms <- "SELECT distinct(p.Connect_ID), #distinct(n.token),
 category,
        DATE(notification_time) as repeat_date, 
        COUNT(*) as num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 on p.token=n.token
 WHERE category = 'HFH Verified, BL Survey Reminder and Biospecimen Scheduling Invite' 
 and date(notification_time) >= (CURRENT_DATE()-7)
@@ -1007,8 +1007,8 @@ enews_email <- "SELECT distinct(p.Connect_ID), #distinct(n.token),
 category,
        DATE(notification_time) as repeat_date, 
        COUNT(*) as num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 on p.token=n.token
 WHERE category='eNewsletter' and date(notification_time) >= (CURRENT_DATE()-7) and 
 notificationType='email'
@@ -1040,8 +1040,8 @@ enews_sms <- "SELECT distinct(p.Connect_ID), #distinct(n.token),
 category,
        DATE(notification_time) as repeat_date, 
        COUNT(*) as num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 on p.token=n.token
 WHERE category='eNewsletter' and date(notification_time) >= (CURRENT_DATE()-7) and 
 notificationType='sms'
@@ -1072,8 +1072,8 @@ anews_email <- "SELECT distinct(p.Connect_ID), #distinct(n.token),
 category,
        DATE(notification_time) as repeat_date, 
        COUNT(*) as num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 on p.token=n.token
 WHERE category='anniversaryNewsletter' and date(notification_time) >= (CURRENT_DATE()-7) and 
 notificationType='email'
@@ -1105,8 +1105,8 @@ anews_sms <- "SELECT distinct(p.Connect_ID), #distinct(n.token),
 category,
        DATE(notification_time) as repeat_date, 
        COUNT(*) as num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 on p.token=n.token
 WHERE category='anniversaryNewsletter' and date(notification_time) >= (CURRENT_DATE()-7) and 
 notificationType='sms'
@@ -1138,8 +1138,8 @@ PCUP <- "SELECT distinct(p.Connect_ID), #distinct(n.token),
 category,
        DATE(notification_time) as repeat_date, 
        COUNT(*) as num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 on p.token=n.token
 WHERE category LIKE '%post-consent user profile reminders%' and date(notification_time) >= (CURRENT_DATE()-7)
 #AND notificationType = 'email'
@@ -1172,8 +1172,8 @@ VBLSR_sms <- "SELECT distinct(p.Connect_ID), #distinct(n.token),
 category,
        DATE(notification_time) as repeat_date, 
        COUNT(*) as num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 on p.token=n.token
 WHERE category LIKE 'Verified, BL Survey Reminders%' and date(notification_time) >= (CURRENT_DATE()-7) and 
 notificationType='sms'
@@ -1206,8 +1206,8 @@ VBLSR_email <- "SELECT distinct(p.Connect_ID), #distinct(n.token),
 category,
        DATE(notification_time) as repeat_date, 
        COUNT(*) as num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 on p.token=n.token
 WHERE category LIKE 'Verified, BL Survey Reminders%' and date(notification_time) >= (CURRENT_DATE()-7) and 
 notificationType='email'
@@ -1238,8 +1238,8 @@ WD <- "SELECT distinct(p.Connect_ID), #distinct(n.token),
 category,
        DATE(notification_time) as repeat_date, 
        COUNT(*) as num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 on p.token=n.token
 WHERE category LIKE '%Withdrawal Reminders%' and date(notification_time) >= (CURRENT_DATE()-7)
 #AND notificationType = 'email'
@@ -1270,8 +1270,8 @@ PROMIS_TY <- "SELECT distinct(p.Connect_ID), #distinct(n.token),
 category,
        DATE(notification_time) as repeat_date, 
        COUNT(*) as num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 on p.token=n.token
 WHERE category LIKE '%PROMIS Thank You' and date(notification_time) >= (CURRENT_DATE()-7)
 AND notificationType = 'email'
@@ -1309,8 +1309,8 @@ MWHC <- "SELECT DISTINCT p.Connect_ID,
                 MIN(category) AS category,
                 DATE(notification_time) AS repeat_date, 
                 COUNT(*) AS num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-LEFT JOIN `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+LEFT JOIN `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 ON p.token = n.token
 WHERE (category='Baseline Mouthwash Home Collection Kit Reminders' OR 
        category='Biospecimen Home Collection Kit Reminders' OR
@@ -1352,8 +1352,8 @@ MWHC <- "SELECT DISTINCT p.Connect_ID,
                 MIN(category) AS category,
                 DATE(notification_time) AS repeat_date, 
                 COUNT(*) AS num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-LEFT JOIN `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+LEFT JOIN `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 ON p.token = n.token
 WHERE (category='Baseline Mouthwash Home Collection Kit Reminders' OR category='Biospecimen Home Collection Kit Reminders')
 AND DATE(notification_time) >= (CURRENT_DATE() - 7)
@@ -1391,8 +1391,8 @@ MWHC_KPHI <- "SELECT DISTINCT p.Connect_ID,
                 MAX(category) AS category,
                 DATE(notification_time) AS repeat_date, 
                 COUNT(*) AS num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-LEFT JOIN `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+LEFT JOIN `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 ON p.token = n.token
 WHERE (category='Baseline Mouthwash Home Collection Kit Reminders: KPHI' OR category='Biospecimen Home Collection Kit Reminders') 
 AND DATE(notification_time) >= (CURRENT_DATE() - 7)
@@ -1431,8 +1431,8 @@ MWHC_KPHI <- "SELECT DISTINCT p.Connect_ID,
                 MAX(category) AS category,
                 DATE(notification_time) AS repeat_date, 
                 COUNT(*) AS num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-LEFT JOIN `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+LEFT JOIN `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 ON p.token = n.token
 WHERE (category='Baseline Mouthwash Home Collection Kit Reminders: KPHI' OR category='Biospecimen Home Collection Kit Reminders') 
 AND DATE(notification_time) >= (CURRENT_DATE() - 7)
@@ -1469,8 +1469,8 @@ MW_Srvy <- "SELECT DISTINCT p.Connect_ID,
                 MIN(category) AS category,
                 DATE(notification_time) AS repeat_date, 
                 COUNT(*) AS num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-LEFT JOIN `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+LEFT JOIN `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 ON p.token = n.token
 WHERE (category = 'Baseline Mouthwash Sample Survey Reminders'
        OR category = 'Biospecimen Home Collection Survey Reminder')
@@ -1506,8 +1506,8 @@ MW_Collection <- "SELECT DISTINCT p.Connect_ID,
                 MIN(category) AS category,
                 DATE(notification_time) AS repeat_date, 
                 COUNT(*) AS num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-LEFT JOIN `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+LEFT JOIN `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 ON p.token = n.token
 WHERE (category = 'Mouthwash Home Collection Acknowledgement')
 AND DATE(notification_time) >= (CURRENT_DATE() - 7)
@@ -1544,8 +1544,8 @@ PA_Report_Email <- "SELECT DISTINCT p.Connect_ID,
                 MIN(category) AS category,
                 DATE(notification_time) AS repeat_date, 
                 COUNT(*) AS num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-LEFT JOIN `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+LEFT JOIN `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 ON p.token = n.token
 WHERE (category = 'Physical Activity Report')
 AND DATE(notification_time) >= (CURRENT_DATE() - 7)
@@ -1581,8 +1581,8 @@ PA_Report_sms <- "SELECT DISTINCT p.Connect_ID,
                 MIN(category) AS category,
                 DATE(notification_time) AS repeat_date, 
                 COUNT(*) AS num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-LEFT JOIN `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+LEFT JOIN `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 ON p.token = n.token
 WHERE (category = 'Physical Activity Report')
 AND DATE(notification_time) >= (CURRENT_DATE() - 7)
@@ -1619,8 +1619,8 @@ Dup_Report_Email <- "SELECT DISTINCT p.Connect_ID,
                 MIN(category) AS category,
                 DATE(notification_time) AS repeat_date, 
                 COUNT(*) AS num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-LEFT JOIN `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+LEFT JOIN `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 ON p.token = n.token
 WHERE (category = 'Duplicate Account Msg - Pt Already Enrolled')
 AND DATE(notification_time) >= (CURRENT_DATE() - 7)
@@ -1656,8 +1656,8 @@ Dup_Report_sms <- "SELECT DISTINCT p.Connect_ID,
                 MIN(category) AS category,
                 DATE(notification_time) AS repeat_date, 
                 COUNT(*) AS num_same_day_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
-LEFT JOIN `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+LEFT JOIN `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 ON p.token = n.token
 WHERE (category = 'Duplicate Account Msg - Pt Already Enrolled')
 AND DATE(notification_time) >= (CURRENT_DATE() - 7)
@@ -1705,9 +1705,9 @@ SELECT
   n.notification_time,
   p.Connect_ID
 FROM
-  `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` n
+  `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
 LEFT JOIN
-  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 ON
   n.token = p.token
 WHERE
@@ -1772,7 +1772,7 @@ overage <- "WITH daily_counts AS (
         DATE(notification_time) AS notification_date,
         COUNT(*) AS daily_count
     FROM
-        `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP`
+        `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications`
     WHERE
         DATE(notification_time) > '2024-02-29'
         AND notificationSpecificationsID IS NOT NULL

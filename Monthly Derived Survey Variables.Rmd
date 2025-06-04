@@ -2,7 +2,15 @@
 title: "Monthly Derived Survey Variables"
 author: "Kelsey Sanchez"
 date: "`r Sys.Date()`"
-output: pdf_document
+header-includes:  
+    \usepackage[labelformat=empty]{caption}
+    \usepackage{placeins}
+    \usepackage{booktabs}
+    \usepackage{pdflscape}
+output:
+  pdf_document:
+      latex_engine: xelatex
+      extra_dependencies: ["float"]
 ---
 
 
@@ -44,7 +52,6 @@ bq_auth()
 
 ```{r merge1, include=FALSE, warning=FALSE}
 
-
 #Data Dictionary for column names
 dictionary <- rio::import("https://episphere.github.io/conceptGithubActions/aggregate.json",format = "json")
 dd <- dplyr::bind_rows(dictionary,.id="CID")
@@ -63,7 +70,7 @@ devtools::install_github("tidyverse/reprex")
 project <- "nih-nci-dceg-connect-prod-6d04"
 billing <- "nih-nci-dceg-connect-prod-6d04" 
 recr_M1 <- bq_project_query(project, query="SELECT token,Connect_ID, d_821247024, d_914594314,  d_827220437,d_512820379,
-                            d_949302066 , d_517311251  FROM  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` WHERE  d_821247024='197316935' and d_949302066 ='231311385'")
+                            d_949302066 , d_517311251  FROM  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` WHERE  d_821247024='197316935' and d_949302066 ='231311385'")
 recr_m1 <- bq_table_download(recr_M1,bigint = "integer64")
 cnames <- names(recr_m1)
 # Check that it doesn't match any non-number
@@ -85,14 +92,14 @@ sql_M1_1 <- bq_project_query(project,
                              D_607773106_7_7,  D_607773106_8_8, D_607773106_9_9,  D_607773106_10_10, D_607773106_11_11, D_607773106_12_12, D_607773106_13_13, D_718867914_1_1, 
                              D_718867914_2_2, D_718867914_3_3, D_718867914_4_4, D_718867914_5_5,D_718867914_6_6, D_718867914_7_7, D_718867914_8_8, D_718867914_9_9, 
                              D_718867914_10_10, D_114314839_D_340854069, D_114314839_D_600462977, D_746012894, Connect_ID
-                             FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v1_JP` WHERE Connect_ID IS NOT NULL")
+                             FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v1` WHERE Connect_ID IS NOT NULL")
 
 sql_M1_2 <- bq_project_query(project, 
                              query = "SELECT D_276353712, D_659784914, D_607773106_1_1, D_607773106_2_2, D_607773106_3_3, D_607773106_4_4, D_607773106_5_5, D_607773106_6_6, 
                              D_607773106_7_7,  D_607773106_8_8, D_607773106_9_9,  D_607773106_10_10, D_607773106_11_11, D_607773106_12_12, D_607773106_13_13, D_718867914_1_1, 
                              D_718867914_2_2, D_718867914_3_3, D_718867914_4_4, D_718867914_5_5,D_718867914_6_6, D_718867914_7_7, D_718867914_8_8, D_718867914_9_9, 
                              D_718867914_10_10, D_114314839_D_340854069, D_114314839_D_600462977, D_746012894, Connect_ID
-                             FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v2_JP` WHERE Connect_ID IS NOT NULL")
+                             FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v2` WHERE Connect_ID IS NOT NULL")
 
 M1_V1 <- bq_table_download(sql_M1_1, bigint = "integer64")
 M1_V2 <- bq_table_download(sql_M1_2, bigint = "integer64")
@@ -136,7 +143,14 @@ m1_v2_only <- M1_V2[, c("Connect_ID", V2_only_vars)] %>%
   mutate(version = 2)
 
 # Combine the unique and common data
+
+M1_common$Connect_ID <- as.numeric(M1_common$Connect_ID)
+m1_v1_only$Connect_ID <- as.numeric(m1_v1_only$Connect_ID)
+m1_v2_only$Connect_ID <- as.numeric(m1_v2_only$Connect_ID)
+
 m1_common_v1 <- left_join(M1_common, m1_v1_only, by = c("Connect_ID", "version"))
+
+m1_common_v1$Connect_ID <- as.numeric(m1_common_v1$Connect_ID)
 m1_combined_v1v2 <- left_join(m1_common_v1, m1_v2_only, by = c("Connect_ID", "version"))
 
 # Filter for complete cases where specific completion criteria are met
@@ -150,18 +164,15 @@ m1_complete_nodup <- m1_complete[!duplicated(m1_complete$Connect_ID),]
 m1_complete_nodup$Connect_ID <- as.numeric(m1_complete_nodup$Connect_ID)
 
 
-## Define requirements of the data: active or passive,  user profile done, consented, mod1 done, verified
-parts <- "SELECT Connect_ID, token,  state_d_934298480, d_564964481, d_795827569, d_544150384,  d_126331570, 
-d_536735468, d_663265240, d_878865966, d_684635302, d_167958071, d_949302066 ,  d_976570371, d_914639140, d_311580100, d_100767870
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` 
-where Connect_ID IS NOT NULL and (d_512820379='486306141' OR d_512820379='854703046') and d_919254129='353358909' and d_699625233='353358909' and 
-d_949302066='231311385'  and d_821247024='197316935'" 
-
-
+### Define requirements of the data: active or passive,  user profile done, consented, mod1 done, verified
+parts <- "SELECT Connect_ID, token, d_564964481,d_795827569, d_544150384, d_827220437, d_976570371
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` 
+where Connect_ID IS NOT NULL and (d_512820379='486306141' OR d_512820379='854703046') and d_821247024='197316935' and
+(d_919254129='353358909') and (d_699625233='353358909') and (d_949302066='231311385')"
 parts_table <- bq_project_query(project, parts)
-parts_data <- bq_table_download(parts_table, bigint = "integer64",n_max = Inf, page_size = 10000)
+parts_data <- bq_table_download(parts_table, bigint = "integer64")
 
-parts_data$Connect_ID <- as.numeric(parts_data$Connect_ID)
+parts_data$Connect_ID <- as.numeric(parts_data$Connect_ID) ###need to convert type- m1... is double and parts is character
 
 
 merged= left_join(parts_data, m1_complete_nodup, by="Connect_ID")
@@ -176,12 +187,10 @@ knitr::opts_chunk$set(comment = NA)
 ```
 
 
-\newpage
 
-# BMI
 ```{r bmi, echo=FALSE, warning=FALSE, message=FALSE}
 
-knitr::opts_chunk$set(dev = "png", fig.path = "")
+#knitr::opts_chunk$set(dev = "png", fig.path = "")
 
 
 data_tib_base$D_114314839_D_340854069=as.numeric(data_tib_base$D_114314839_D_340854069)
@@ -203,7 +212,7 @@ bmi_box
 ```
 
 
-# Primary Relative Diagnosed with Cancer
+
 ```{r PrimRelCancer, echo=FALSE, warning=FALSE, message=FALSE}
 
 
@@ -259,7 +268,7 @@ dt_fam_canc_summary %>%  gt::gt(rowname_col = "row_lab") %>%
 
 
 querymod3 <- "SELECT Connect_ID, D_947205597_D_712653855, D_798549704, D_763164658, D_947205597_D_198133418, D_182431332, D_798549704, D_789271762, D_947205597_D_706254326, D_624111331, D_238422161
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module3_v1_JP` where Connect_ID IS NOT NULL"
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module3_v1` where Connect_ID IS NOT NULL"
 mod3_table <- bq_project_query(project, querymod3)
 mod3_data <- bq_table_download(mod3_table, bigint = "integer64")
 mod3_data$Connect_ID <- as.numeric(mod3_data$Connect_ID)
@@ -276,8 +285,6 @@ data_tib_all3 <- as_tibble(data_all3)
 
 
 
-
-# Frequency of Cigarette Smoking
 
 ```{r cigerette, echo=FALSE, warning=FALSE, message=FALSE}
 
@@ -313,7 +320,6 @@ dt_cig_frequency_summary %>%  gt::gt(rowname_col = "row_lab") %>%
 
 
 
-# Frequency of Cigar Smoking
 
 ```{r cigar, echo=FALSE, warning=FALSE, message=FALSE}
 
@@ -352,7 +358,6 @@ dt_cigar_frequency_summary %>%  gt::gt(rowname_col = "row_lab") %>%
 
 
 
-# Frequency of E-cig Smoking
 
 ```{r ecig, echo=FALSE, warning=FALSE, message=FALSE}
 

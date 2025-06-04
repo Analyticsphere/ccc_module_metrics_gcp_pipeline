@@ -64,11 +64,11 @@ knitr::opts_chunk$set(dev = "png", fig.path = "", comment = NA)
 
 project = "nih-nci-dceg-connect-prod-6d04"
 pt_pull <- "SELECT Connect_ID,  d_827220437, d_987563196, d_821247024, d_914594314
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` 
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` 
 where Connect_ID IS NOT NULL  and (d_512820379='486306141' OR d_512820379='854703046') and 
 d_821247024='197316935' and d_919254129='353358909' and d_558435199='353358909' #verified, consented, HIPAA auth
 and d_747006172='104430631' and d_773707518='104430631'"  #not WD, no HIPAA revoked
-RCA_pull <- "SELECT * FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.cancerOccurrence_JP` 
+RCA_pull <- "SELECT * FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.cancerOccurrence` 
 where Connect_ID is not null" 
 
 

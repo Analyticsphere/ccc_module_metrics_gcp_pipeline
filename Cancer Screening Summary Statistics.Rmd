@@ -64,12 +64,12 @@ project <- "nih-nci-dceg-connect-prod-6d04"
 
 
 pt_pull <- "SELECT Connect_ID,  d_827220437, d_987563196, d_821247024
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` 
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` 
 where Connect_ID IS NOT NULL and (d_512820379='486306141' OR d_512820379='854703046') and d_821247024='197316935' and 
 (d_919254129='353358909') and (d_699625233='353358909') and 
 (d_176068627='231311385')"  
 
-CSH_pull <- "SELECT * FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.cancerScreeningHistorySurvey_JP` 
+CSH_pull <- "SELECT * FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.cancerScreeningHistorySurvey` 
 where Connect_ID is not null" 
 
 
@@ -356,7 +356,10 @@ simple_funct(D_413039729, "Had Breasts or Breast Tissue Growth")
 
 
 \newpage
+\newpage
 # MH GROUP9
+\FloatBarrier
+\vspace{-0.5em}
 ```{r MhGroup9, warning=FALSE, echo=FALSE, message=FALSE}
 
 
@@ -673,10 +676,11 @@ grid.arrange(penis_a_sg, penis_y_sg, nrow=2)
 
 ```
 
-
+\FloatBarrier
 \newpage
 # Oral Cancer Screening
-
+\FloatBarrier
+\vspace{-0.5em}
 ```{r ORSCREEN, warning=FALSE, echo=FALSE, message=FALSE}
 
 
@@ -714,10 +718,11 @@ five_logic_funct(D_529358901, D_859197222, "506053626","119809731","282580702","
 
 ```
 
-
+\FloatBarrier
 \newpage
 # Colon and Rectal Cancer Screening
-
+\FloatBarrier
+\vspace{-0.5em}
 ```{r COLREC, warning=FALSE, echo=FALSE, message=FALSE}
 
 #COLSCREEN
@@ -842,10 +847,11 @@ five_logic_funct(D_806961194, D_960218176, "506053626","119809731"," 282580702",
 ```
 
 
-
+\FloatBarrier
 \newpage
 # Anal Cancer Screening
-
+\FloatBarrier
+\vspace{-0.5em}
 ```{r ANALSCREEN, warning=FALSE, echo=FALSE, message=FALSE}
 
 
@@ -868,10 +874,11 @@ five_logic_funct(D_581174597, D_236655642, "506053626","119809731","282580702","
 ```
 
 
-
+\FloatBarrier
 \newpage
 # Lung Cancer Screening
-
+\FloatBarrier
+\vspace{-0.5em}
 ```{r LUNGCT, warning=FALSE, echo=FALSE, message=FALSE}
 
 
@@ -894,10 +901,11 @@ three_logic_funct(D_737402324, D_221189280, "506053626","462661976","178420302",
 ```
 
 
-
+\FloatBarrier
 \newpage
 # Skin Cancer Screening
-
+\FloatBarrier
+\vspace{-0.5em}
 ```{r SkinSCREEN, warning=FALSE, echo=FALSE, message=FALSE}
 
 
@@ -957,10 +965,11 @@ five_logic_funct(D_506482920, D_925516907, "506053626","119809731","282580702","
 ```
 
 
-
+\FloatBarrier
 \newpage
 # Upper Endoscopy Screening
-
+\FloatBarrier
+\vspace{-0.5em}
 ```{r UPENDO, warning=FALSE, echo=FALSE, message=FALSE}
 
 
@@ -983,10 +992,11 @@ three_logic_funct(D_485867936, D_588828383, "506053626","462661976","178420302",
 ```
 
 
-
+\FloatBarrier
 \newpage
 # Prostate Cancer Screening
-
+\FloatBarrier
+\vspace{-0.5em}
 ```{r PROSCREEN, warning=FALSE, echo=FALSE, message=FALSE}
 
 ##PROSCREEN
@@ -1078,10 +1088,11 @@ three_logic_funct(D_423202492, D_770939852, "506053626","462661976","178420302",
 
 
 
-
+\FloatBarrier
 \newpage
 # Breast Cancer Screening
-
+\FloatBarrier
+\vspace{-0.5em}
 ```{r BRSTSCREEN, warning=FALSE, echo=FALSE, message=FALSE}
 
 ##BRSTSCREEN
@@ -1194,10 +1205,11 @@ five_logic_funct(D_811848389, D_891793989, "506053626","119809731","282580702","
 
 
 
-
+\FloatBarrier
 \newpage
 # Ovarian Cancer Screening
-
+\FloatBarrier
+\vspace{-0.5em}
 ```{r OVSCREEN, warning=FALSE, echo=FALSE, message=FALSE}
 
 ##OVSCREEN
@@ -1274,10 +1286,11 @@ five_logic_funct(D_274709835, D_227617345, "506053626","119809731","282580702","
 
 
 
-
+\FloatBarrier
 \newpage
 # Cervical Cancer Screening
-
+\FloatBarrier
+\vspace{-0.5em}
 ```{r CERVSCREEN, warning=FALSE, echo=FALSE, message=FALSE}
 
 ##CERVSCREEN
@@ -1371,10 +1384,11 @@ five_logic_funct(D_115504049, D_153215425, "506053626","119809731","282580702","
 
 
 
-
+\FloatBarrier
 \newpage
 # Endometrial Cancer Screening
-
+\FloatBarrier
+\vspace{-0.5em}
 ```{r ENDOSCREEN, warning=FALSE, echo=FALSE, message=FALSE}
 
 ##ENDOSCREEN
@@ -1489,10 +1503,11 @@ five_logic_funct(D_808990505, D_391300412, "506053626","119809731","282580702","
 
 
 
-
+\FloatBarrier
 \newpage
 # Multi-Cancer Screening
-
+\FloatBarrier
+\vspace{-0.5em}
 ```{r MULTISCREEN, warning=FALSE, echo=FALSE, message=FALSE}
 
 ##ENDOSCREEN

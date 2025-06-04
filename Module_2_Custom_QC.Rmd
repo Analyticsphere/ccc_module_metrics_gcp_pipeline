@@ -76,7 +76,7 @@ devtools::install_github("tidyverse/reprex")
 project <- "nih-nci-dceg-connect-prod-6d04"
 billing <- "nih-nci-dceg-connect-prod-6d04" 
 recr_M1 <- bq_project_query(project, query="SELECT token,Connect_ID, d_821247024, d_914594314,  d_827220437,d_512820379,
-                            d_949302066 , d_517311251  FROM  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` WHERE  d_821247024='197316935' and d_949302066 ='231311385'")
+                            d_949302066 , d_517311251  FROM  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` WHERE  d_821247024='197316935' and d_949302066 ='231311385'")
 recr_m1 <- bq_table_download(recr_M1,bigint = "integer64")
 cnames <- names(recr_m1)
 # Check that it doesn't match any non-number
@@ -93,8 +93,8 @@ for (i in 1: length(cnames)){
 
 #### Handling participants that somehow completed both Mod1 version 1 and Mod1 version 2
 
-sql_M1_1 <- bq_project_query(project, query = "SELECT Connect_ID, D_407056417, D_750420077_D_108025529, D_750420077_D_434651539, D_750420077_D_505282171, D_750420077_D_578416151, D_750420077_D_846483618, D_613744428 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v1_JP` WHERE Connect_ID IS NOT NULL")
-sql_M1_2 <- bq_project_query(project, query = "SELECT Connect_ID, D_407056417, D_750420077_D_108025529, D_750420077_D_434651539, D_750420077_D_505282171, D_750420077_D_578416151, D_750420077_D_582784267, D_750420077_D_700100953, D_750420077_D_751402477, D_750420077_D_846483618, D_613744428 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v2_JP` WHERE Connect_ID IS NOT NULL")
+sql_M1_1 <- bq_project_query(project, query = "SELECT Connect_ID, D_407056417, D_750420077_D_108025529, D_750420077_D_434651539, D_750420077_D_505282171, D_750420077_D_578416151, D_750420077_D_846483618, D_613744428 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v1` WHERE Connect_ID IS NOT NULL")
+sql_M1_2 <- bq_project_query(project, query = "SELECT Connect_ID, D_407056417, D_750420077_D_108025529, D_750420077_D_434651539, D_750420077_D_505282171, D_750420077_D_578416151, D_750420077_D_582784267, D_750420077_D_700100953, D_750420077_D_751402477, D_750420077_D_846483618, D_613744428 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v2` WHERE Connect_ID IS NOT NULL")
 
 M1_V1 <- bq_table_download(sql_M1_1, bigint = "integer64")
 M1_V2 <- bq_table_download(sql_M1_2, bigint = "integer64")
@@ -154,7 +154,7 @@ m1_complete_nodup$Connect_ID <- as.numeric(m1_complete_nodup$Connect_ID)
 
 ## Define requirements of the data: active or passive,  user profile done, consented, mod1 done, verified
 parts <- "SELECT Connect_ID, token, state_d_934298480, d_536735468, d_663265240,d_976570371, d_949302066, d_832139544
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` 
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` 
 where Connect_ID IS NOT NULL and (d_512820379='486306141' OR d_512820379='854703046') and d_919254129='353358909' and d_699625233='353358909' and 
 d_536735468 = '231311385'  and d_821247024='197316935'" 
 
@@ -181,7 +181,7 @@ knitr::opts_chunk$set(comment = NA)
 ```{r merge2, include=FALSE}
 
 recr_m2 <- bq_project_query(project, query="SELECT token,Connect_ID, d_821247024, d_914594314,  d_827220437,d_512820379, 
-                            d_536735468 , d_517311251  FROM  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` WHERE  d_821247024='197316935'")
+                            d_536735468 , d_517311251  FROM  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` WHERE  d_821247024='197316935'")
 recr_m2 <- bq_table_download(recr_m2,bigint = "integer64",n_max = Inf, page_size = 10000)
 cnames <- names(recr_m2)
 # Check that it doesn't match any non-number
@@ -196,8 +196,8 @@ for (i in 1: length(cnames)){
 
 
 ### Deal with Mod2 duplicates (took both version 1 and vesion 2, and only select version 2 data)
-sql_M2_1 <- bq_project_query(project, query = "SELECT * FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module2_v1_JP` WHERE Connect_ID IS NOT NULL")
-sql_M2_2 <- bq_project_query(project, query = "SELECT * FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module2_v2_JP` WHERE Connect_ID IS NOT NULL")
+sql_M2_1 <- bq_project_query(project, query = "SELECT * FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module2_v1` WHERE Connect_ID IS NOT NULL")
+sql_M2_2 <- bq_project_query(project, query = "SELECT * FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module2_v2` WHERE Connect_ID IS NOT NULL")
 
 M2_V1 <- bq_table_download(sql_M2_1, bigint = "integer64")
 M2_V2 <- bq_table_download(sql_M2_2, bigint = "integer64")

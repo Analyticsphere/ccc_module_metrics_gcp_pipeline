@@ -52,14 +52,14 @@ billing <- "nih-nci-dceg-connect-prod-6d04" ##project and billing should be cons
 
 #selecting relevant variables  
 test_promis <- "SELECT *
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.promis_v1_JP`
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.promis_v1`
 where Connect_ID IS NOT NULL"
 promis_table <- bq_project_query(project, test_promis)
 promis_data <- bq_table_download(promis_table, bigint = "integer64")
 
 #merging in data from participants table so that only those who are active or passive, completed PROMIS, and verified are included
 parts <- "SELECT Connect_ID, d_311580100, d_371067537, d_870643066, d_843688458
- FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` where Connect_ID IS NOT NULL and 
+ FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` where Connect_ID IS NOT NULL and 
 (d_512820379='486306141' OR d_512820379 = '854703046') and d_320303124 = '231311385' and d_821247024 = '197316935'"
 
 parts_table <- bq_project_query(project, parts)
