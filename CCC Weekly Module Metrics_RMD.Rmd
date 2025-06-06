@@ -81,7 +81,7 @@ d_831041022, d_255077064, d_320303124, d_684635302, d_843688458, d_870643066, d_
 state_d_934298480, state_d_706256705, state_d_435027713, d_199471989, d_956490759, d_263355177,
 state_d_684926335, state_d_849518448, state_d_119643471, state_d_253532712, d_764863765, d_195145666, 
 d_784810139, d_176068627, d_389890053, d_609630315, d_173836415_d_266600170_d_319972665_d_661940160, 
-d_220186468, d_268176409, d_784810139, d_253883960, d_265193023
+d_220186468, d_268176409, d_784810139, d_253883960, d_265193023, d_109610692, d_610227793, d_692560814, d_747006172, d_501613780, d_109610692
 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` where Connect_ID IS NOT NULL  and (d_512820379='486306141' OR d_512820379='854703046') " 
 
 #and d_831041022='104430631'-- not needed, according to 3/12/24 decisions we'll be keeping participant journeys in overall counts
@@ -213,6 +213,18 @@ all_data <- all_data %>%  mutate(Site = case_when(d_827220437==472940358 ~ "Bayl
                                                         d_176068627==615768760	~ "Started",
                                                         d_176068627==972455046 & (as.numeric(difftime(Sys.Date(), as.POSIXct(ymd_hms(d_914594314)),units="days")) >269)	~ "Not Started",
                                                         TRUE ~ "Not Eligible"), #not eligible until 270 days after verification
+                                 verif_time_diff = as.numeric(difftime(Sys.Date(), as.Date(d_914594314), units="days")),
+                                 dhq_status = case_when(d_692560814==789467219 |
+                                                          !(as.Date(d_914594314) > "2024-12-01" & verif_time_diff>=180 & d_821247024=="197316935" & d_747006172 == '104430631') ~ "Not Eligible",
+                                                        d_692560814==231311385 ~ "Submitted",
+                                                        d_692560814==615768760 ~ "Started",
+                                                        d_692560814==972455046 ~ "Not Started"),
+                                 external_status = case_when(is.na(d_501613780)	~ "Null",
+                                                             d_501613780==418049936	~ "Not yet begun",
+                                                             d_501613780==269380840	~ "In Progress",
+                                                             d_501613780==542659759	~ "Completed",
+                                                             d_501613780==418049936 | is.na(d_501613780)	~ "Not yet begun"),
+                                 external_status = factor(external_status, levels=c("Null","Not yet begun", "In Progress","Completed")),
                                  m1_comp_mins = as.numeric(difftime(as.POSIXct(ymd_hms(d_517311251)), as.POSIXct(ymd_hms(d_205553981)), units="hours"))*60,
                                  m2_comp_mins = as.numeric(difftime(as.POSIXct(ymd_hms(d_832139544)), as.POSIXct(ymd_hms(d_541836531)), units="hours"))*60,
                                  m3_comp_mins = as.numeric(difftime(as.POSIXct(ymd_hms(d_770257102)), as.POSIXct(ymd_hms(d_386488297)), units="hours"))*60,
@@ -2142,6 +2154,290 @@ knitr::kable(csh_ver_df,
 
 
 
+\newpage                   
+\FloatBarrier
+# Diet History Questionnaire (III)
+Note: The Diet History Questionnaire (DHQ) III survey was released on May 30, 2025 to prospective participants that are not withdrawn and verified on or after December 1, 2024 at the time they reach 6-months (180 days) verified.
+```{r DHQ_Sect1, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+dhq1 <- all_data %>% filter(dhq_status!="Not Eligible" & !is.na(dhq_status)) 
+
+dhq1_table <- create_tbl_cross1(dhq1,"Site", "dhq_status", "row", "Site", "Status")
+
+dhq1_df <- as.data.frame(dhq1_table)
+colnames(dhq1_df)[5] <- "Total Eligible for \n DHQ Survey"
+
+knitr::kable(dhq1_df, 
+             caption='Table 7.1 6-month Diet History Questionnaire Response Rate',
+             row.names=FALSE, align=c("l","c","c","c","c","c"), booktabs = TRUE) %>%
+    kable_styling(latex_options = "scale_down")  %>% 
+  footnote(general = "Note: There may be up to a 24 hour delay between a participant completing the survey and retrieving their submitted status and completion timestamp.", 
+           general_title = "",
+         footnote_as_chunk = TRUE, 
+         escape = FALSE, 
+         threeparttable = TRUE)
+
+
+
+
+#############
+
+DHQ_comp_BL <- create_tbl_cross2(dhq1, "completion", "dhq_status", "row", "Completion", "DHQ Completion", "Total DHQ Eligible Participants")
+colnames(DHQ_comp_BL)[5] <- "Total DHQ Eligible \n Participants"
+
+
+knitr::kable(DHQ_comp_BL, 
+             caption='Table 7.2. Completion of 6-month Diet History Questionnaire \n by Baseline Data Completeness',
+             row.names=FALSE, align=c("l","c","c","c","c"), booktabs = TRUE) %>%
+    kable_styling(latex_options = "scale_down") %>%  
+    add_indent(seq(1, nrow(DHQ_comp_BL) - 1)) %>%  landscape()
+
+
+
+
+##############
+
+dhq_time = dhq1 %>% 
+  filter(dhq_status=="Submitted") %>% 
+  mutate(dhq_start_stop = as.numeric(difftime(as.POSIXct(ymd_hms(d_610227793)), as.POSIXct(ymd_hms(d_109610692)), units="mins")), 
+         timeframe = case_when(dhq_start_stop<30 ~ "Under 30 Minutes",
+                       dhq_start_stop<45 ~ "30-45 Minutes",
+                       dhq_start_stop<60 ~ "45-60 Minutes",
+                       dhq_start_stop<90 ~ "60-90 Minutes",
+                       dhq_start_stop<120 ~ "90-120 Minutes",
+                       dhq_start_stop>=120 ~ "Greater than 120 Minutes",
+                       is.na(d_784810139) | is.na(d_268176409) ~ "Missing Time Stamp(s)"),
+timeframe = factor(timeframe, levels=c("Under 30 Minutes", "30-45 Minutes", 
+                                         "45-60 Minutes", "60-90 Minutes", "90-120 Minutes", 
+                                       "Greater than 120 Minutes", "Missing Time Stamp(s)")))  %>% 
+    group_by(timeframe) %>% tally() %>% 
+    mutate(Percentage = (n / sum(n)) * 100)
+
+
+
+summary_row <- data.frame(timeframe = "Total Submitted DHQ Surveys",
+                          n = sum(dhq_time$n),
+                          Percentage = 100)
+
+
+dhq_time <- rbind(dhq_time, summary_row) %>%
+    mutate(N_percent = paste0(formatC(n, big.mark = ",", format = "d"), 
+                              " (", round(Percentage, digits = 1), "%)"),
+           Cumulative_Percentage = round(cumsum(Percentage), digits=2))
+dhq_time$Cumulative_Percentage[nrow(dhq_time)] <- 100
+
+dhq_time <- dhq_time %>% 
+    select(timeframe, N_percent, Cumulative_Percentage) %>%
+    rename(`Completion Time` = timeframe, `N%` = N_percent,
+           'Cumulative Percentage' = Cumulative_Percentage)
+
+
+knitr::kable(dhq_time, 
+             caption='Table 7.3 6-month Diet History Questionnaire Completion Length (in minutes) \n among Submitted Surveys',
+             row.names=FALSE, align=c("l","c","c"), booktabs = TRUE) %>%
+  add_indent(c(1:(nrow(dhq_time)-1))) %>% 
+    kable_styling(latex_options = "scale_down") 
+
+
+
+
+```
+
+
+```{r DHQ_Sect2, echo=FALSE, warning=FALSE, message=FALSE}
+
+## Time from DHQ trigger to submission of DHQ survey
+# category= Baseline DHQ III Reminders, attempt=1st 
+
+trig_DHQ <- bq_project_query(project,
+query="SELECT distinct(token), notification_time as DHQ_notif
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications`
+where category='Baseline DHQ III Reminders' and attempt='1st contact'")
+trigger_DHQ <- bigrquery::bq_table_download(trig_DHQ,bigint = "integer64")
+
+
+#trigger_time_DHQ <- left_join(dhq1, trigger_DHQ, by="token")
+trigger_time_DHQ <- left_join(trigger_time, trigger_DHQ, by="token")
+
+
+trig_time_DHQ <- trigger_time_DHQ %>%  filter(dhq_status == "Submitted") %>%
+  mutate(trigTM_DHQ = as.numeric(difftime(as.POSIXct(ymd_hms(d_610227793)), as.POSIXct(ymd_hms(DHQ_notif)), units="days")))
+
+Trig_table_DHQ = trig_time_DHQ %>%
+  dplyr::summarize('N'=n(),
+                   Min = round(min(trigTM_DHQ, na.rm = TRUE), digits=2),
+                   Q1 = round(quantile(trigTM_DHQ, 0.25, na.rm = TRUE), digits=2),
+                   Median = round(median(trigTM_DHQ, na.rm = TRUE), digits=2),
+                   Mean = round(mean(trigTM_DHQ, na.rm = TRUE),  digits=2),
+                   SD= round(sd(trigTM_DHQ, na.rm = TRUE), digits=2),
+                   Q3 = round(quantile(trigTM_DHQ, 0.75, na.rm = TRUE), digits=2),
+                   'Perc.90' = round(quantile(trigTM_DHQ, 0.90, na.rm = TRUE), digits=2),
+                   Max = round(max(trigTM_DHQ, na.rm = TRUE), digits=2))
+
+knitr::kable(Trig_table_DHQ, 
+             caption = 'Table 7.4. 6-month Diet History Questionnaire Completion from Trigger to Submit for \n Verified Participants, in Days', 
+             row.names=FALSE, format.args = list(big.mark = ","), linesep = "", 
+             booktabs = T, align=c("l", "c", "c", "c", "c", "c", "c", "c", "c")) %>% 
+  kable_styling(latex_options = c("scale_down","hold_position")) 
+
+```
+
+
+
+```{r DHQ_Sect3, echo=FALSE, warning=FALSE, message=FALSE}
+
+## Determine when a person was DHQ eligible
+# time notification was sent
+
+################   Numerator  ##############
+
+#Completed DHQ before or on the same day as BL survey--now within 30 days
+BL_DHQ <- trigger_time_DHQ %>%
+  filter(dhq_status == "Submitted") %>%
+  mutate(BOH = as.Date(d_610227793) <= as.Date(d_517311251) & difftime(as.Date(d_517311251), as.Date(d_610227793), units="days") <31,
+         MRE = as.Date(d_610227793) <= as.Date(d_832139544) & difftime(as.Date(d_832139544), as.Date(d_610227793), units="days") <31,
+         SAS = as.Date(d_610227793) <= as.Date(d_770257102) & difftime(as.Date(d_770257102), as.Date(d_610227793), units="days") <31,
+         LAW = as.Date(d_610227793) <= as.Date(d_264644252) & difftime(as.Date(d_264644252), as.Date(d_610227793), units="days") <31,
+         BUM = (as.Date(BUM_time) < as.Date(DHQ_notif) ) & (as.Date(d_610227793) <= as.Date(d_222161762)) & difftime(as.Date(d_222161762), as.Date(d_610227793), units="days") <31,  
+         BU = (as.Date(BU_time) < as.Date(DHQ_notif) ) & (as.Date(d_610227793) <= as.Date(d_764863765)) & difftime(as.Date(d_764863765), as.Date(d_610227793), units="days") <31, 
+         MW = (as.Date(d_173836415_d_266600170_d_319972665_d_661940160) < as.Date(DHQ_notif)) & (as.Date(d_610227793) <= as.Date(d_195145666)) & 
+           difftime(as.Date(d_195145666), as.Date(d_610227793), units="days") <31,
+         COVID = (as.Date(d_556788178) < as.Date(DHQ_notif)) & (as.Date(d_556788178) >= as.Date("2023-07-05")) & (as.Date(d_610227793) <= as.Date(d_784810139)) & 
+           difftime(as.Date(d_784810139),as.Date(d_610227793),units="days") <31) %>%
+  pivot_longer(
+    cols = c(BOH, MRE, SAS, LAW, BUM, BU, MW, COVID),
+    names_to = "DHQ_timeframe",
+    values_to = "is_in_timeframe"
+  ) %>%
+  filter(is_in_timeframe) %>%  # Keep only TRUE rows
+  group_by(DHQ_timeframe) %>%
+  tally() %>% 
+  complete(DHQ_timeframe = c("BOH", "MRE", "SAS", "LAW", "BUM", "BU", "MW", "COVID"), fill = list(n = 0))
+
+
+#############    Denominator #################
+
+
+
+## Determine when a participant was BL survey eligible
+## Determine when a participant was BL survey eligible
+#MRE/SAS/LAW- once BOH completed ----   d_517311251
+#BUM/BU- when notified by email 
+#MW- when notified the MW kit was shipped
+#COVID- pushed to prod on 7/5/2023 and requires biospecimen donation 
+
+
+
+
+
+## of those that are eligible for DHQ, and eligible for whichever BL module, who hadn't completed that module upon eligibility activation
+DHQ_time_eligible2 <- trigger_time_DHQ %>%
+  filter(!is.na(dhq_status) & dhq_status!="Not Eligible") %>%
+  mutate( BOH = is.na(d_517311251) | (as.Date(DHQ_notif) <= as.Date(d_517311251)),
+          MRE = !is.na(d_517311251) & (is.na(d_832139544) | as.Date(DHQ_notif) <= as.Date(d_832139544)),
+          SAS = !is.na(d_517311251) & (is.na(d_770257102) | as.Date(DHQ_notif) <= as.Date(d_770257102)),
+          LAW = !is.na(d_517311251) & (is.na(d_264644252) | as.Date(DHQ_notif) <= as.Date(d_264644252)),
+          BUM = (as.Date(BUM_time) < as.Date(DHQ_notif))  & (is.na(d_222161762) | as.Date(DHQ_notif) <= as.Date(d_222161762)),
+          BU = (as.Date(BU_time) < as.Date(DHQ_notif))  & (is.na(d_764863765) | as.Date(DHQ_notif) <= as.Date(d_764863765)),
+          MW = (as.Date(d_173836415_d_266600170_d_319972665_d_661940160) < as.Date(DHQ_notif)) &
+            (is.na(d_195145666) | as.Date(DHQ_notif) <= as.Date(d_195145666)),
+          COVID = as.Date(d_556788178) < as.Date(DHQ_notif) &
+            as.Date(d_556788178) >= as.Date("2023-07-05") &
+            (is.na(d_784810139) | as.Date(DHQ_notif) <= as.Date(d_784810139))) %>%
+  pivot_longer(
+    cols = c(BOH, MRE, SAS, LAW, BUM, BU, MW, COVID),
+    names_to = "DHQ_notifframe",
+    values_to = "is_in_timeframe"
+  ) %>%
+  filter(is_in_timeframe) %>%  # Keep only rows where the condition is TRUE
+  group_by(DHQ_notifframe) %>%
+  tally() %>% 
+  complete(DHQ_notifframe = c("BOH", "MRE", "SAS", "LAW", "BUM", "BU", "MW", "COVID"), fill = list(n = 0))
+
+
+
+###############################################################################
+
+after_DHQ <- cbind(BL_DHQ, DHQ_time_eligible2)
+after_DHQ <- after_DHQ[c(1,6,8,5,3,2,7,4), c(1,2,4)] # row order BOH, MRE, SAS, LAW, BUM, BU, MW, COVID, and remove repeated column
+colnames(after_DHQ) <- c("Survey", "n", "eligible")
+
+after_DHQ_table <- after_DHQ %>%
+  mutate(Percentage = (n / eligible) * 100,
+         N_percent = paste0(formatC(n, big.mark = ",", format = "d"), 
+                            " (", round(Percentage, digits = 1), "%)")) %>% 
+  rename('Eligible for Survey' = eligible,
+         'N%' = N_percent) %>% 
+    select('Survey', 'N%', 'Eligible for Survey')
+
+
+knitr::kable(after_DHQ_table,
+             caption = 'Table 7.5. Baseline Survey Completion Within 30 days of 6-month Diet History Questionnaire Completion', 
+             booktabs=T, linesep = "", row.names=FALSE, align=c("l", "c", "c")) %>% 
+  kable_styling(latex_options = "scale_down") %>% 
+  footnote(general = "Note: Percentages calculated among those who were eligible but had not yet completed the survey at the time of DHQ invitation.", 
+           general_title = "",
+         footnote_as_chunk = TRUE, 
+         escape = FALSE, 
+         threeparttable = TRUE)
+
+
+
+```
+
+
+```{r DHQ_Sect4, echo=FALSE, warning=FALSE, message=FALSE}
+
+##pushed on May 2029, 2025
+
+dhq_ver<- dhq1 %>%  filter(dhq_status != "Not Eligible") %>% 
+  mutate(verif_months = verif_time_diff/30,
+         ver_surv = case_when(verif_months<6 ~ "Less than 6 Months",
+                              verif_months<12 ~ "6-12 Months",
+                              verif_months<18 ~ "12-18 Months",
+                              verif_months>=18 ~ "More than 18 Months"),
+         ver_surv = factor(ver_surv, levels=c("More than 18 Months","12-18 Months","6-12 Months", "Less than 6 Months")))
+
+
+dhq_ver_df <- create_tbl_cross2(dhq_ver, "ver_surv", "dhq_status", "row", "Time from Verification to DHQ Survey Release", "Survey Completion", 
+                                "Total DHQ Eligible Participants")
+
+colnames(dhq_ver_df)[5] <- "Total DHQ Eligible \n Participants"
+knitr::kable(dhq_ver_df, 
+             caption='Table 7.6. 6-month Diet History Questionnaire Completion By Time from Verification to Release',
+             row.names=FALSE, align=c("l","c","c","c","c"), booktabs = TRUE) %>%
+    kable_styling(latex_options = "scale_down") %>%  
+    add_indent(seq(1, nrow(dhq_ver_df) - 1)) %>%  landscape()
+  
+
+
+```
+
+
+```{r DHQ_Sect5, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+dhq1_table7 <- create_tbl_cross1(dhq1, 'dhq_status', 'external_status', 'row', 'Survey Status', 'Reserach Platform Status')
+
+dhq1_df7 <- as.data.frame(dhq1_table7)
+colnames(dhq1_df7)[6] <- "Total Eligible for \n DHQ Survey"
+
+knitr::kable(dhq1_df7, 
+             caption='Table 7.7. Cross Check between 6-mo DHQ3 Survey Status flag and the Status According to the DHQ System',
+             row.names=FALSE, align=c("l","c","c","c","c"), booktabs = TRUE) %>%
+    kable_styling(latex_options = "scale_down") %>% 
+  footnote(general = "Note: A 'Null' status according to the DHQ system means the participant has not logged into MyConnect since becoming eligible for the DHQ. 'Not yet begun' means they have logged into MyConnect but have not yet started the DHQ survey. There may also be up to a 24 hour delay between a participant starting and/or completing the survey and retrieving their 'Submitted', 'In Progress', and/or 'Completed' status.", 
+           general_title = "",
+         footnote_as_chunk = TRUE, 
+         escape = FALSE, 
+         threeparttable = TRUE) 
+
+
+```
+
+
+
 
 
 \newpage                   
@@ -2162,7 +2458,7 @@ pref_lang_site <- all_data %>%
     missing="ifany",
     margin_text="Total") %>% 
   modify_header(stat_0 = "Total") %>%
-  modify_caption("Table 7.1. Preferred Language by Site") %>%
+  modify_caption("Table 8.1. Preferred Language by Site") %>%
   as_kable_extra(escape = FALSE, addtl_fmt = TRUE) %>%  
   kable_styling(latex_options = "scale_down") 
 
@@ -2321,7 +2617,7 @@ scenario_counts <- final_scenarios %>%
   dplyr::rename(Scenario = scenario, 'Total Participants' = n)
 
 consist <- knitr::kable(scenario_counts,
-                        caption = "Table 7.2. Consistency of Language Choice in Survey Completion",
+                        caption = "Table 8.2. Consistency of Language Choice in Survey Completion",
                         row.names = FALSE, align = c("l", "c"), digits = 2, booktabs = TRUE) %>%
   kable_styling(latex_options = "scale_down") # c("scale_down","hold_position")) 
 
@@ -2413,19 +2709,19 @@ final_df_condition2 <- do.call(rbind, all_flags_list_condition2)
 
 
 knitr::kable(final_df_overall,
-               caption = paste0("Table 7.3. Survey Completion by Survey Language \n Among All Participants"),
+               caption = paste0("Table 8.3. Survey Completion by Survey Language \n Among All Participants"),
                row.names = FALSE, align = c("l","c","c","c"), digits = 2, booktabs = TRUE) %>% 
   add_indent(1:12) %>%  
   kable_styling(latex_options = "scale_down")
 
 knitr::kable(final_df_condition1,
-               caption = paste0("Table 7.3.a. Survey Completion by Survey Language \n Among Participants with Preferred language of Spanish"),
+               caption = paste0("Table 8.3.a. Survey Completion by Survey Language \n Among Participants with Preferred language of Spanish"),
                row.names = FALSE, align = c("l","c","c","c"), digits = 2, booktabs = TRUE) %>% 
   add_indent(1:12) %>%  
   kable_styling(latex_options = "scale_down")
 
 knitr::kable(final_df_condition2,
-               caption = paste0("Table 7.3.b. Survey Completion by Survey Language \n Among Participants with Preferred language of English"),
+               caption = paste0("Table 8.3.b. Survey Completion by Survey Language \n Among Participants with Preferred language of English"),
                row.names = FALSE, align = c("l","c","c","c"), digits = 2, booktabs = TRUE) %>% 
   add_indent(1:12) %>%  
   kable_styling(latex_options = "scale_down")
@@ -2480,12 +2776,12 @@ colnames(BL_lang_E)[1] <- "Section"
 colnames(BL_lang_SP)[1] <- "Section"
 
 knitr::kable(BL_lang_E, format.args = list(big.mark = ","), digits=2, 
-             caption='Table 7.4.a Time (in minutes) from Start to Submit of Initial Survey Modules for English',
+             caption='Table 8.4.a Time (in minutes) from Start to Submit of Initial Survey Modules for English',
              row.names=FALSE, align=c("l","c","c","c","c","c","c","c","c"), booktabs = TRUE)%>% 
     kable_styling(latex_options = c("scale_down","hold_position")) 
 
 knitr::kable(BL_lang_SP, format.args = list(big.mark = ","), digits=2, 
-             caption='Table 7.4.b Time (in minutes) from Start to Submit of Initial Survey Modules for Spanish',
+             caption='Table 8.4.b Time (in minutes) from Start to Submit of Initial Survey Modules for Spanish',
              row.names=FALSE, align=c("l","c","c","c","c","c","c","c","c"),booktabs = TRUE)%>% 
     kable_styling(latex_options = c("scale_down","hold_position")) 
 
