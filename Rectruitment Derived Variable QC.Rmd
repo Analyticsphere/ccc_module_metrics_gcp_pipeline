@@ -53,13 +53,14 @@ project <- "nih-nci-dceg-connect-prod-6d04"
 parts_bq <- "SELECT Connect_ID, token, d_512820379, d_471593703, state_d_934298480, d_230663853, state_d_697256759, state_d_158291096,
 d_335767902, d_982402227, d_919254129, d_699625233, d_827220437, d_371067537, d_544150384, d_564964481, d_795827569, d_685002411_d_994064239, d_912301837, 
 d_685002411_d_194410742,d_685002411_d_949501163,d_685002411_d_277479354,d_685002411_d_867203506,d_685002411_d_352996056,d_685002411_d_217367618,d_747006172,
-d_906417725,d_773707518,d_831041022,d_987563196,
+d_906417725,d_773707518,d_831041022,d_987563196, d_659990606, 
 d_371067537, d_430551721, d_821247024, d_914594314,  state_d_725929722, d_126331570, d_536735468, d_130371375_d_266600170_d_945795905, d_130371375_d_266600170_d_320023644,
 d_663265240, d_878865966, d_684635302, d_167958071,d_371067537, d_130371375_d_266600170_d_731498909, d_130371375_d_266600170_d_222373868, d_130371375_d_266600170_d_787567527,
 d_949302066 , d_517311251, d_205553981, d_117249500, d_976570371, d_914639140, d_311580100, d_454445267,d_255077064, d_832139544, 
 d_263355177, d_199471989, d_222161762, d_822499427, d_764863765, d_534669573, d_195145666, d_286191859, d_541836531, d_770257102, d_386488297, d_264644252, d_452942800, 
-d_217640691, d_844088537, d_784810139, d_268176409, d_843688458, d_870643066, d_315032037, d_943232079, 
-d_956490759,d_265193023,d_253883960,d_547363263,d_459098666,d_220186468,d_320303124, d_609630315, d_389890053, d_176068627, d_439351436, d_280021666
+d_217640691, d_844088537, d_784810139, d_268176409, d_843688458, d_870643066, d_315032037, d_943232079, d_692560814, 
+d_956490759,d_265193023,d_253883960,d_547363263,d_459098666,d_220186468,d_320303124, d_609630315, d_389890053, d_176068627, d_439351436, d_280021666,
+d_610227793, d_109610692, d_148184166, d_808755658, d_196723965, d_501613780, d_130371375_d_266600170_d_648936790
 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` 
 where Connect_ID IS NOT NULL and d_831041022='104430631'"
 partsbq_table <- bq_project_query(project, parts_bq)
@@ -1313,10 +1314,10 @@ if (nrow(reinvite_start) == 0) {
 ```
 
 
-## 48. If RcrtCS_Consented_v1r0=no, RcrtV_Verification_v1r0 cannot be 'verified'.
+## 48. If RcrtCS_Consented_v1r0=no, RcrtV_Verification_v1r0 cannot be 'verified'. If RcrtV_Verification_v1r0 is 'verified', then RcrtCS_Consented_v1r0 must be yes.
 ```{r Consent_Verif, echo=FALSE, warning=FALSE, message=FALSE}
 
-consent_verif <- partsbq %>%  filter(d_919254129=="104430631" & d_821247024=="197316935")
+consent_verif <- partsbq %>%  filter((d_919254129=="104430631" | is.na(d_919254129)) & d_821247024=="197316935")
 
 
 if (nrow(consent_verif) == 0) {
@@ -1331,4 +1332,266 @@ if (nrow(consent_verif) == 0) {
 }
 ```
 
+
+
+
+\FloatBarrier
+## 49. If the DHQ survey start timestamp is populated, then the DHQ History survey flag must be 'completed' or 'started'
+```{r starttime_dhq, echo=FALSE, warning=FALSE, message=FALSE}
+
+start_DHQ <- partsbq %>%  filter(!is.na(d_109610692) & (d_692560814==972455046 | d_692560814==789467219 | is.na(d_692560814))) 
+
+
+if (nrow(start_DHQ) == 0) {
+  cat("No errors\n")
+} else {
+  
+  start_DHQ <- start_DHQ %>% select(Site, Connect_ID, d_109610692, d_176068627) %>%  safe_arrange(Site)
+
+  colnames(start_DHQ) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
+
+  knitr::kable(start_DHQ) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+
+
+```
+
+
+\FloatBarrier
+## 50. If the DHQ survey completion timestamp is populated, then the DHQ History survey flag must be 'completed' 
+```{r comptime_dhq, echo=FALSE, warning=FALSE, message=FALSE}
+
+comp_DHQ <- partsbq %>%  filter(!is.na(d_610227793) & (d_692560814==972455046 | d_692560814==789467219 | is.na(d_692560814))) 
+
+
+if (nrow(comp_DHQ) == 0) {
+  cat("No errors\n")
+} else {
+  
+  comp_DHQ <- comp_DHQ %>% select(Site, Connect_ID, d_610227793, d_176068627) %>%  safe_arrange(Site)
+
+  colnames(comp_DHQ) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
+
+  knitr::kable(comp_DHQ) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+
+
+```
+
+
+
+
+\FloatBarrier
+## 51.If a participant survey status (SrvDHQ3_6moStatus_v1r0) is started or submitted, they must be verified, verified on or after 12/1/24, are not withdrawn, AND have reached 180 days post verification.
+```{r dhq_qualified, echo=FALSE, warning=FALSE, message=FALSE}
+
+dhq_qualified <- partsbq %>%  filter((d_692560814==615768760 | d_692560814==231311385) & 
+                                  !(d_821247024 == 197316935 & as.Date(d_914594314) >="2024-12-01" & d_747006172==104430631 & 
+                                      difftime(Sys.Date(), as.Date(d_914594314), units="days") >=180)) %>% 
+  mutate(verif_days = difftime(Sys.Date(), as.Date(d_914594314), units="days"))
+
+
+if (nrow(dhq_qualified) == 0) {
+  cat("No errors\n")
+} else {
+  
+  dhq_qualified <- dhq_qualified %>% select(Site, Connect_ID, d_176068627, verif_days, d_747006172) %>%  safe_arrange(Site)
+
+  colnames(dhq_qualified) <- c("Site", "Connect ID", "Survey Flag", "verif_days", "WD_Status")
+
+  knitr::kable(dhq_qualified) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+
+```
+
+
+\FloatBarrier
+## 52.If a participant has a survey status (SrvDHQ3_6moStatus_v1r0) of not eligible, they must be verified and have been verified before 12/1/24
+```{r dhq_eligible, echo=FALSE, warning=FALSE, message=FALSE}
+
+dhq_eligible <- partsbq %>%  filter(d_692560814==789467219  & !(as.Date(d_914594314) <"2024-12-01"))
+
+
+if (nrow(dhq_eligible) == 0) {
+  cat("No errors\n")
+} else {
+  
+  dhq_eligible <- dhq_eligible %>% select(Site, Connect_ID, d_176068627, d_914594314) %>%  safe_arrange(Site)
+
+  colnames(dhq_eligible) <- c("Site", "Connect ID", "Survey Flag", "Verif_Date")
+
+  knitr::kable(dhq_eligible) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+
+```
+
+\FloatBarrier
+## 53.If a participant has a null survey status (SrvDHQ3_6moStatus_v1r0), their verification status must not equal verified
+```{r dhq_null, echo=FALSE, warning=FALSE, message=FALSE}
+
+dhq_null <- partsbq %>%  filter(is.na(d_692560814)  & d_821247024 == 197316935 & 
+                                  !(as.Date(d_659990606) < "2025-05-30")) #excluding those that withdrew before survey was imported
+
+
+if (nrow(dhq_null) == 0) {
+  cat("No errors\n")
+} else {
+
+  dhq_null <- dhq_null %>% select(Site, Connect_ID, d_692560814, d_821247024) %>%  safe_arrange(Site)
+
+  colnames(dhq_null) <- c("Site", "Connect ID", "Survey Flag", "Verif_Status")
+
+  knitr::kable(dhq_null) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+```
+
+\FloatBarrier
+## 54.If a participant has an internal survey status (SrvDHQ3_6moStatus_v1r0) of ‘started’ or ‘submitted’ and the time the survey started was more then 24 hours ago then external status (SrvDHQ3_6moPltStatus_v1r0) must be populated.
+```{r dhq_external_status, echo=FALSE, warning=FALSE, message=FALSE}
+
+dhq_external_status <- partsbq %>%  filter((d_692560814==615768760 | d_692560814==231311385) & 
+                                             difftime(Sys.time(), as.Date(d_109610692), units="hours") >24 & 
+                                             is.na(d_501613780)) %>% 
+  mutate(survey_start = difftime(Sys.time(), as.Date(d_109610692), units="hours"))
+
+
+if (nrow(dhq_external_status) == 0) {
+  cat("No errors\n")
+} else {
+  
+  dhq_external_status <- dhq_external_status %>% select(Site, Connect_ID, d_176068627, survey_start, d_501613780) %>%  safe_arrange(Site)
+
+  colnames(dhq_external_status) <- c("Site", "Connect ID", "Survey Flag", "Start_Hours", "SrvDHQ3_6moPltStatus")
+
+  knitr::kable(dhq_external_status) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+```
+
+\FloatBarrier
+## 55.If 6-mo DHQ3 Username – (CID:148184166) is populated, then 6-mo DHQ3 UUID – (CID: 808755658) and 6-mo DHQ3 Study ID – (CID: 196723965) must be populated.
+```{r dhq_uname_populated, echo=FALSE, warning=FALSE, message=FALSE}
+
+dhq_uname_populated <- partsbq %>%  filter(!is.na(d_148184166) & (is.na(d_808755658) | is.na(d_196723965)))
+
+
+if (nrow(dhq_uname_populated) == 0) {
+  cat("No errors\n")
+} else {
+  
+  dhq_uname_populated <- dhq_uname_populated %>% select(Site, Connect_ID, d_148184166, d_808755658, d_196723965) %>%  safe_arrange(Site)
+
+  colnames(dhq_uname_populated) <- c("Site", "Connect ID", "DHQ3 Username", "DHQ3 UUID", "DHQ3 Study ID")
+
+  knitr::kable(dhq_uname_populated) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+```
+
+
+\FloatBarrier
+## 56.If 6-mo DHQ3 UUID – (CID: 808755658) is populated, then 6-mo DHQ3 Username – (CID:148184166) and 6-mo DHQ3 Study ID – (CID: 196723965) must be populated.
+```{r dhq_uuid_populated, echo=FALSE, warning=FALSE, message=FALSE}
+
+dhq_uuid_populated <- partsbq %>%  filter(!is.na(d_808755658) & (is.na(d_148184166) | is.na(d_196723965)))
+
+
+if (nrow(dhq_uuid_populated) == 0) {
+  cat("No errors\n")
+} else {
+  
+  dhq_uuid_populated <- dhq_uuid_populated %>% select(Site, Connect_ID, d_148184166, d_808755658, d_196723965) %>%  safe_arrange(Site)
+
+  colnames(dhq_uuid_populated) <- c("Site", "Connect ID", "DHQ3 Username", "DHQ3 UUID", "DHQ3 Study ID")
+
+  knitr::kable(dhq_uuid_populated) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+```
+
+
+\FloatBarrier
+## 57.If 6-mo DHQ3 Study ID – (CID: 196723965) is populated, then 6-mo DHQ3 Username – (CID:148184166) and 6-mo DHQ3 UUID – (CID: 808755658) must be populated.
+```{r dhq_studyID_populated, echo=FALSE, warning=FALSE, message=FALSE}
+
+dhq_studyID_populated <- partsbq %>%  filter(!is.na(d_196723965) & (is.na(d_148184166) | is.na(d_808755658)))
+
+
+if (nrow(dhq_studyID_populated) == 0) {
+  cat("No errors\n")
+} else {
+  
+  dhq_studyID_populated <- dhq_studyID_populated %>% select(Site, Connect_ID, d_148184166, d_808755658, d_196723965) %>%  safe_arrange(Site)
+
+  colnames(dhq_studyID_populated) <- c("Site", "Connect ID", "DHQ3 Username", "DHQ3 UUID", "DHQ3 Study ID")
+
+  knitr::kable(dhq_studyID_populated) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+
+```
+
+
+\FloatBarrier
+## 58.If survey status (SrvDHQ3_6moStatus_v1r0) is 'not yet eligible' or null, then 6-mo DHQ3 Username – (CID:148184166), 6-mo DHQ3 UUID – (CID: 808755658) and 6-mo DHQ3 Study ID – (CID: 196723965) must all be null
+```{r dhq_system_null, echo=FALSE, warning=FALSE, message=FALSE}
+
+dhq_studyID_populated <- partsbq %>%  filter((is.na(d_692560814) | d_692560814==789467219) & !(is.na(d_148184166) & is.na(d_808755658) & is.na(d_196723965)))
+
+
+if (nrow(dhq_studyID_populated) == 0) {
+  cat("No errors\n")
+} else {
+  
+  dhq_studyID_populated <- dhq_studyID_populated %>% select(Site, Connect_ID, d_692560814, d_148184166, d_808755658, d_196723965) %>%  safe_arrange(Site)
+
+  colnames(dhq_studyID_populated) <- c("Site", "Connect ID", "Survey Status", "DHQ3 Username", "DHQ3 UUID", "DHQ3 Study ID")
+
+  knitr::kable(dhq_studyID_populated) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+
+
+```
+
+
+```{r elg_NE_UC, echo=FALSE, warning=FALSE, message=FALSE}
+
+# \FloatBarrier
+# ## 59. If payment issued = yes and site NE UC, then NORC payment eligible = yes
+# 
+# elg_NE_UC <- partsbq %>%  filter(d_130371375_d_266600170_d_648936790=='353358909'	 & d_827220437=='809703864' & 
+#                                                d_130371375_d_266600170_d_222373868=='104430631')
+# 
+# 
+# if (nrow(elg_NE_UC) == 0) {
+#   cat("No errors\n")
+# } else {
+#   
+#   elg_NE_UC <- elg_NE_UC %>% select(Site, Connect_ID, d_130371375_d_266600170_d_648936790, d_130371375_d_266600170_d_222373868) %>%  safe_arrange(Site)
+# 
+#   colnames(elg_NE_UC) <- c("Site", "Connect ID", "HDPaym_PaymIssuedBL", "SMPaym_NORCPaymEligBL")
+# 
+#   knitr::kable(elg_NE_UC) %>%
+#     kable_styling(latex_options = "scale_down")
+# }
+
+
+
+```
 
