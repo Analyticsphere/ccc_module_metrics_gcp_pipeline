@@ -90,7 +90,8 @@ rec_table_cc <- bq_project_query(project, queryreccc)
 data_bw <- bq_table_download(rec_table_cc, bigint = "integer64")
 
 #select only the first collection to avoid duplicates
-bio_bqpull <-"SELECT Connect_ID, min(d_556788178) as d_556788178 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.biospecimen` 
+bio_bqpull <-"SELECT Connect_ID, min(d_556788178) as d_556788178 
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.biospecimen` 
 where Connect_ID is not null
 group by Connect_ID"
 
@@ -100,48 +101,13 @@ bio_bq <- bq_table_download(bio_bqpull_table, bigint = "integer64")
 data_c <- left_join(data_bw, bio_bq, by="Connect_ID")
 
 
-#need this separate filter to look at participants unable to be verified
+#need this separate filter to look at participants unable to be verified in a later table
 data_ccc <- data_c %>%  filter(d_821247024==197316935) 
 
 
-data_tib= as_tibble(data_ccc) 
+all_data= as_tibble(data_ccc) 
 
 
-modules <- data_tib[,c("Connect_ID","d_512820379","d_949302066","d_536735468","d_976570371","d_663265240", "d_914594314")] 
-mods <- c("d_949302066","d_536735468","d_976570371","d_663265240")
-modules$modules <- 0
-modules$none <-0
-for(i in 1:length(mods)){
-  module <- modules[,mods[i]]
-  count <- ifelse((!is.na(module) & module ==231311385), 1, 0)
-  modules$modules <- count+modules$modules
-  count1 <- ifelse((!is.na(module) & module==972455046), 1, 0)
-  modules$none <- count1+modules$none
-}
-
-
-
-length(modules[which(modules$modules==3 & modules$d_663265240==231311385 & modules$d_536735468==231311385),])
-
-modules1 <- modules %>% mutate(process = case_when(as.character(modules) =='0' ~ "None",
-                                                   d_949302066 == '231311385' & as.character(modules) == '1' ~ "BOH Section only",
-                                                   as.character(modules) == '2' & d_949302066 == '231311385' & d_536735468 == '231311385' ~ "BOH and MRE Sections" ,
-                                                   as.character(modules) =='2' & d_949302066 == '231311385' & d_976570371 == '231311385' ~ "BOH and SAS Sections" , 
-                                                   as.character(modules) =='2' & d_949302066 == '231311385' & d_663265240 == '231311385' ~ "BOH and LAW Sections" ,  
-                                                   as.character(modules) =='3' & d_949302066 == '231311385' & d_536735468 == '231311385' & 
-                                                     d_976570371 == '231311385' ~ "BOH, MRE, and SAS Sections" ,  
-                                                   as.character(modules) =='3' & d_949302066 == '231311385' & d_976570371 == '231311385' & 
-                                                     d_663265240 == '231311385'~ "BOH, SAS, and LAW Sections" , 
-                                                   as.character(modules) =='3' & d_949302066 == '231311385' & d_536735468 == '231311385' & 
-                                                     d_663265240 == '231311385' ~ "BOH, MRE, and LAW Sections",   
-                                                   as.character(modules) =='4' ~ "All")) 
-
-tab1(modules1$process, decimal=2,sort.group = "decreasing", cum.percent = TRUE)$output.table
-
-
-#completion <- modules1 %>% select(Connect_ID, process) #have no idea why this isn't working
-completion <- modules1[, c(1,10)]
-all_data <- left_join(data_tib, completion, by="Connect_ID")
 
 
 all_data <- all_data %>%  mutate(Site = case_when(d_827220437==472940358 ~ "Baylor Scott and White",
@@ -154,6 +120,15 @@ all_data <- all_data %>%  mutate(Site = case_when(d_827220437==472940358 ~ "Bayl
                                                   d_827220437==303349821 ~ "Marshfield",
                                                   d_827220437==657167265 ~ "Sanford",
                                                   d_827220437==809703864 ~ "UChicago"),
+                                 process = case_when(d_100767870 == 353358909 ~ "All",
+                                                     d_949302066 != 231311385 ~ "None",
+                                                     d_949302066 == 231311385 & d_536735468 == 231311385 & d_976570371 == 231311385 ~ "BOH, MRE, and SAS Sections",
+                                                     d_949302066 == 231311385 & d_976570371 == 231311385 & d_663265240 == 231311385  ~ "BOH, SAS, and LAW Sections",
+                                                     d_949302066 == 231311385 & d_536735468 == 231311385 & d_663265240 == 231311385  ~ "BOH, MRE, and LAW Sections",
+                                                     d_949302066 == 231311385 & d_536735468 == 231311385 ~ "BOH and MRE Sections",
+                                                     d_949302066 == 231311385 & d_976570371 == 231311385 ~ "BOH and SAS Sections",
+                                                     d_949302066 == 231311385 & d_663265240 == 231311385 ~ "BOH and LAW Sections",
+                                                     d_949302066 == 231311385 ~ "BOH Section only"),
                                  BL_comp = case_when(d_100767870==353358909 ~ "All",
                                                      process=="None" ~ "None",
                                                      process=="BOH Section only" ~ "BOH Only",
@@ -267,7 +242,7 @@ cross_table_df <- as.data.frame(cross__table)[-1, ]
 
 
 
-### a tbl cross where the tbl_cross should have all row percentages, but the Total column should be a column percentage
+### a tbl cross where the output should have all row percentages, but the Total column should be a column percentage
 
 create_tbl_cross2 <- function(data, row_var, colm_var, row_or_col_pct, row_name, column_name, margin_text) {
   cross__table <- data %>%
@@ -306,6 +281,8 @@ create_tbl_cross2 <- function(data, row_var, colm_var, row_or_col_pct, row_name,
     return(data.frame()) # Return an empty data frame if table_body is missing
   }
 }
+
+
 
 
 ```
@@ -363,6 +340,7 @@ add_footnote(overall_surveys, "Note: All sections were in MyConnect on July 5,20
 
 ```{r Table3, echo=FALSE, warning=FALSE, message=FALSE}
 
+## Baseline Survey Status Counts
 calculate_counts <- function(df, column_name, row_label) {
   total_rows <- dim(df)[[1]]
   value_counts <- sapply(c(972455046, 615768760, 231311385), function(value) {
@@ -408,7 +386,7 @@ knitr::kable(section_comp,
 
 ```{r Table4.1, echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, results='asis'}
 
-
+#Time the last Basleine Module was completed
 all_data <- all_data %>% group_by(Connect_ID) %>% mutate(last_mod_ts = max(d_832139544, d_770257102, d_264644252)) %>% ungroup()
 
 all_data <- all_data %>% mutate(ver_M1 = as.numeric(difftime(as.POSIXct(ymd_hms(d_517311251)), as.POSIXct(ymd_hms(d_914594314)), units="hours")),
@@ -473,9 +451,7 @@ knitr::kable(Table4a2,format.args = list(big.mark = ","),
 ```{r Table5, echo=FALSE, error=FALSE, message=FALSE, warning=FALSE}
 
 
-
-
-summarize_data <- function(data, filter_column, filter_value, target_column) {
+verif_to_submit <- function(data, filter_column, filter_value, target_column) {
   data %>% 
     filter(!!sym(filter_column) == filter_value) %>% 
     summarize('N' = n(),
@@ -492,10 +468,10 @@ summarize_data <- function(data, filter_column, filter_value, target_column) {
 }
 
 
-Table4b <- summarize_data(all_data, "d_536735468", 231311385, "ver_M2")
-Table4c <- summarize_data(all_data, "d_976570371", 231311385, "ver_M3")
-Table4d <- summarize_data(all_data, "d_663265240", 231311385, "ver_M4")
-Table4e <- summarize_data(all_data, "d_100767870", 353358909, "ver_last")
+Table4b <- verif_to_submit(all_data, "d_536735468", 231311385, "ver_M2")
+Table4c <- verif_to_submit(all_data, "d_976570371", 231311385, "ver_M3")
+Table4d <- verif_to_submit(all_data, "d_663265240", 231311385, "ver_M4")
+Table4e <- verif_to_submit(all_data, "d_100767870", 353358909, "ver_last")
 
 
 
@@ -534,7 +510,7 @@ knitr::kable(table4,format.args = list(big.mark = ","),
 
 
 
-process_module <- function(data, start_time, end_time, completion_flag, completion_status, module_name) {
+completing_module <- function(data, start_time, end_time, completion_flag, completion_status, module_name) {
   
   
   data <- data %>%
@@ -548,17 +524,15 @@ process_module <- function(data, start_time, end_time, completion_flag, completi
   
   data <- data %>%
     mutate(comp_mins = comp_tm * 60,
-           time_frame = case_when(
-             comp_mins < 5 ~ "Under 5 minutes",
-             comp_mins < 10 ~ "5 to 10 minutes",
-             comp_mins < 15 ~ "10 to 15 minutes",
-             comp_mins < 20 ~ "15 to 20 minutes",
-             comp_mins < 30 ~ "20 to 30 minutes",
-             comp_mins < 45 ~ "30 to 45 minutes",
-             comp_mins < 60 ~ "45 to 60 minutes",
-             comp_mins >= 60 ~ "60 minutes+",
-             is.na(data[[start_time]]) | is.na(data[[end_time]]) ~ "Missing Time Stamp(s)"
-           ))
+           time_frame = case_when(comp_mins < 5 ~ "Under 5 minutes",
+                                  comp_mins < 10 ~ "5 to 10 minutes",
+                                  comp_mins < 15 ~ "10 to 15 minutes",
+                                  comp_mins < 20 ~ "15 to 20 minutes",
+                                  comp_mins < 30 ~ "20 to 30 minutes",
+                                  comp_mins < 45 ~ "30 to 45 minutes",
+                                  comp_mins < 60 ~ "45 to 60 minutes",
+                                  comp_mins >= 60 ~ "60 minutes+",
+                                  is.na(data[[start_time]]) | is.na(data[[end_time]]) ~ "Missing Time Stamp(s)"))
   
   data$time_frame <- factor(data$time_frame, levels = c(
     "Under 5 minutes", "5 to 10 minutes", "10 to 15 minutes",
@@ -566,6 +540,7 @@ process_module <- function(data, start_time, end_time, completion_flag, completi
     "45 to 60 minutes", "60 minutes+", "Missing Time Stamp(s)"
   ))
   
+  #Add a Total Row
   summary_data <- data %>%
     group_by(time_frame) %>%
     summarize(n = n(), percentage = 100 * n / nrow(data)) %>%
@@ -590,14 +565,14 @@ process_module <- function(data, start_time, end_time, completion_flag, completi
                col.names = c("Submission Time", "Total Participants", "Cumulative Percentage"), 
                row.names = FALSE, align = c("l", "c"), digits = 1, booktabs = TRUE) %>%  
     add_indent(seq(1, nrow(table_summary) - 1)) %>% 
-    kable_styling(latex_options = "scale_down") #c("scale_down","hold_position"))
+    kable_styling(latex_options = "scale_down") 
 }
 
 
-table6.1_sum <- process_module(all_data, "d_517311251", "d_205553981", "d_949302066", 231311385, "1.6.a. BOH")
-table6.2_sum <- process_module(all_data, "d_832139544", "d_541836531", "d_536735468", 231311385, "1.6.b. MRE")
-table6.3_sum <- process_module(all_data, "d_770257102", "d_386488297", "d_976570371", 231311385, "1.6.c. SAS")
-table6.4_sum <- process_module(all_data, "d_264644252", "d_452942800", "d_663265240", 231311385, "1.6.d. LAW")
+table6.1_sum <- completing_module(all_data, "d_517311251", "d_205553981", "d_949302066", 231311385, "1.6.a. BOH")
+table6.2_sum <- completing_module(all_data, "d_832139544", "d_541836531", "d_536735468", 231311385, "1.6.b. MRE")
+table6.3_sum <- completing_module(all_data, "d_770257102", "d_386488297", "d_976570371", 231311385, "1.6.c. SAS")
+table6.4_sum <- completing_module(all_data, "d_264644252", "d_452942800", "d_663265240", 231311385, "1.6.d. LAW")
 
 
 ```
@@ -622,7 +597,7 @@ table6.4_sum
 
 
 
-summarize_data <- function(data, filter_column, filter_value, target_column) {
+start_to_submit <- function(data, filter_column, filter_value, target_column) {
   data %>% 
     filter(!!sym(filter_column) == filter_value) %>% 
     summarize('N' = n(),
@@ -638,10 +613,10 @@ summarize_data <- function(data, filter_column, filter_value, target_column) {
               Max = max(!!sym(target_column), na.rm = TRUE))
 }
 
-Table7a <- summarize_data(all_data, "d_949302066", 231311385, "m1_comp_mins")
-Table7b <- summarize_data(all_data, "d_536735468", 231311385, "m2_comp_mins")
-Table7c <- summarize_data(all_data, "d_976570371", 231311385, "m3_comp_mins")
-Table7d <- summarize_data(all_data, "d_663265240", 231311385, "m4_comp_mins")
+Table7a <- start_to_submit(all_data, "d_949302066", 231311385, "m1_comp_mins")
+Table7b <- start_to_submit(all_data, "d_536735468", 231311385, "m2_comp_mins")
+Table7c <- start_to_submit(all_data, "d_976570371", 231311385, "m3_comp_mins")
+Table7d <- start_to_submit(all_data, "d_663265240", 231311385, "m4_comp_mins")
 
 
 Table7 <- rbind(Table7a, Table7b, Table7c, Table7d)
@@ -673,7 +648,8 @@ knitr::kable(Table7,format.args = list(big.mark = ","),
 
 
 cannot_ver <- data_c %>%  filter(d_821247024==219863910 & d_512820379==486306141) %>%  
-  mutate(sect_comp= case_when((d_949302066==231311385 | d_536735468==231311385 | d_976570371==231311385 | d_663265240==231311385) ~ "At Least One",
+  mutate(sect_comp= case_when((d_949302066==231311385 | d_536735468==231311385 | 
+                                 d_976570371==231311385 | d_663265240==231311385) ~ "At Least One",
                               TRUE ~ "None"))
 
 Numb5 <- cannot_ver %>% group_by(sect_comp) %>%    dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(sect_comp, n, percentage)
@@ -766,7 +742,7 @@ knitr::kable(ssn_surv_table,
 ```{r COVID_Section, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
 
-# COVID questions were in the BU and BUM surveys prior to 7/5/2023; only include the stand alone COVID Survey results
+# COVID questions were in the BU and BUM surveys prior to 7/5/2023; Here we only include the stand alone COVID Survey results
   #Need a biospecimen collection to be eligible for survey, collection on or after 7/5/23 to be eligible for the COVID survey
 
 
@@ -861,8 +837,6 @@ QOL_comp_elg <- all_data %>% filter(qolcomplt!="Not Eligible") %>%
 QOL_comp_elg[["table_body"]]$stat_0 <- sapply(strsplit(QOL_comp_elg[["table_body"]]$stat_0," "),"[",1)
 
 QOL_comp_elg <- QOL_comp_elg %>%
-  #bold_labels() %>%
-  #italicize_levels() %>% 
   modify_header(stat_0 = "Total QOL Eligible \n Participants") %>%
   modify_caption("Table 4.1. Completion of 3-Month Quality of Life Survey Among Eligible Participants") %>%
   as_kable_extra(escape = FALSE, addtl_fmt = TRUE)
@@ -889,8 +863,6 @@ QOL_comp_elg_after <- all_data %>% filter(qolcomplt!="Not Eligible" & as.Date(d_
 QOL_comp_elg_after[["table_body"]]$stat_0 <- sapply(strsplit(QOL_comp_elg_after[["table_body"]]$stat_0," "),"[",1)
 
  QOL_comp_elg_after <- QOL_comp_elg_after %>%
-  #bold_labels() %>%
-  #italicize_levels() %>% 
   modify_header(stat_0 = "Total QOL Eligible \n Participants") %>%
   modify_caption("Table 4.1.a. Completion of 3-Month Quality of Life Survey among Eligible participants Verified on or after December 1, 2023") %>%
   as_kable_extra(escape = FALSE, addtl_fmt = TRUE)
@@ -916,8 +888,6 @@ QOL_comp_elg_before <- all_data %>% filter(qolcomplt!="Not Eligible" & as.Date(d
 QOL_comp_elg_before[["table_body"]]$stat_0 <- sapply(strsplit(QOL_comp_elg_before[["table_body"]]$stat_0," "),"[",1)
 
 QOL_comp_elg_before <- QOL_comp_elg_before %>%
-  #bold_labels() %>%
-  #italicize_levels() %>% 
   modify_header(stat_0 = "Total QOL Eligible \n Participants") %>%
   modify_caption("Table 4.1.b. Completion of 3-Month Quality of Life Survey among Eligible Participants Verified prior to December 1, 2023") %>%
   as_kable_extra(escape = FALSE, addtl_fmt = TRUE)
@@ -1002,8 +972,6 @@ Comp_by_Sex <- all_data %>% filter(qolcomplt!="Not Eligible") %>%
 
 
 Comp_by_Sex_table <- Comp_by_Sex %>%
-  #bold_labels() %>%
-  #italicize_levels() %>% 
   modify_header(stat_0 = "Total QOL Eligible \n Participants") %>%
   modify_caption("Table 4.3. 3-Month Quality of Life Survey Completion Rate by Site Defined Sex \n Among Eligible Participants") %>%
   as_kable_extra(escape = FALSE, addtl_fmt = TRUE) %>% kable_styling(latex_options = c("scale_down","hold_position"))  
@@ -1026,11 +994,8 @@ Comp_by_Age <- all_data %>% filter(qolcomplt!="Not Eligible") %>%
   digits=c(0,2),
   margin_text="Total QOL Eligible Participants") 
 
-#Comp_by_Age[["table_body"]]$stat_0 <- sapply(strsplit(Comp_by_Age[["table_body"]]$stat_0," "),"[",1)
 
 Comp_by_Age <- Comp_by_Age %>%
-  #bold_labels() %>%
-  #italicize_levels() %>% 
   modify_header(stat_0 = "Total QOL Eligible \n Participants") %>%
   modify_caption("Table 4.4. 3-Month Quality of Life Survey Completion Rate by Age \n Among Eligible Participants") %>%
   as_kable_extra(escape = FALSE, addtl_fmt = TRUE)  %>% kable_styling(latex_options = c("scale_down","hold_position")) 
@@ -1045,15 +1010,9 @@ add_footnote(Comp_by_Age, "Note: Age defined as the de-identified age data repor
 
 ```{r merge1, include=FALSE, warning=FALSE}
 
-# dictionary <- rio::import("https://episphere.github.io/conceptGithubActions/aggregate.json",format = "json")
-# dd <- dplyr::bind_rows(dictionary,.id="CID")
-# dd <-rbindlist(dictionary,fill=TRUE,use.names=TRUE,idcol="CID")
-# dd$`Variable Label`[is.na(dd$`Variable Label`)] <- replace_na(dd$'Variable Name')
-# 
-# dd <- as.data.frame.matrix(do.call("rbind",dictionary)) 
-# dd$CID <- rownames(dd)
-# #https://shaivyakodan.medium.com/7-useful-r-packages-for-analysis-7f60d28dca98
-# #devtools::install_github("tidyverse/reprex")
+
+### Pulling in Module 1 completion to get participant defined race for the next few tables
+
 
 
 recr_M1 <- bq_project_query(project, query="SELECT token,Connect_ID, d_821247024, d_914594314,  d_827220437,d_512820379,
@@ -1070,9 +1029,18 @@ for (i in 1: length(cnames)){
 }
 
 
-#### Handling participants that somehow completed both Mod1 version 1 and Mod1 version 2
-sql_M1_1 <- bq_project_query(project, query="SELECT Connect_ID, D_384191091_D_384191091_D_583826374, D_384191091_D_384191091_D_636411467, D_384191091_D_384191091_D_458435048, D_384191091_D_384191091_D_706998638, D_384191091_D_384191091_D_973565052, D_384191091_D_384191091_D_586825330, D_384191091_D_384191091_D_412790539, D_384191091_D_384191091_D_807835037,D_384191091_D_747350323,D_384191091_D_384191091_D_746038746 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v1` where Connect_ID is not null")
-sql_M1_2 <- bq_project_query(project, query="SELECT Connect_ID, D_384191091_D_384191091_D_583826374 ,D_384191091_D_384191091_D_636411467, D_384191091_D_384191091_D_458435048, D_384191091_D_384191091_D_706998638, D_384191091_D_384191091_D_973565052, D_384191091_D_384191091_D_586825330,D_384191091_D_384191091_D_412790539,D_384191091_D_384191091_D_807835037,D_384191091_D_747350323,D_384191091_D_384191091_D_746038746 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v2` where Connect_ID is not null")
+####### Handling participants that somehow completed both Mod1 version 1 and Mod1 version 2
+
+sql_M1_1 <- bq_project_query(project, query="SELECT Connect_ID, D_384191091_D_384191091_D_583826374, D_384191091_D_384191091_D_636411467, 
+                             D_384191091_D_384191091_D_458435048, D_384191091_D_384191091_D_706998638, D_384191091_D_384191091_D_973565052, 
+                             D_384191091_D_384191091_D_586825330, D_384191091_D_384191091_D_412790539, D_384191091_D_384191091_D_807835037,
+                             D_384191091_D_747350323,D_384191091_D_384191091_D_746038746 
+                             FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v1` where Connect_ID is not null")
+sql_M1_2 <- bq_project_query(project, query="SELECT Connect_ID, D_384191091_D_384191091_D_583826374 ,D_384191091_D_384191091_D_636411467, 
+                             D_384191091_D_384191091_D_458435048, D_384191091_D_384191091_D_706998638, D_384191091_D_384191091_D_973565052,
+                             D_384191091_D_384191091_D_586825330,D_384191091_D_384191091_D_412790539,D_384191091_D_384191091_D_807835037,
+                             D_384191091_D_747350323,D_384191091_D_384191091_D_746038746 
+                             FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v2` where Connect_ID is not null")
 
 
 M1_V1 <- bq_table_download(sql_M1_1, bigint = "integer64")
@@ -1135,11 +1103,11 @@ m1_complete_nodup$Connect_ID <- as.numeric(m1_complete_nodup$Connect_ID)
 all_data$Connect_ID <- as.numeric(all_data$Connect_ID)
 
 
-promis_df= left_join(m1_complete_nodup, all_data, by="Connect_ID")
-dim(promis_df)
+m1_comp_df= left_join(m1_complete_nodup, all_data, by="Connect_ID")
+dim(m1_comp_df)
 
 
-promis <- as_tibble(promis_df)
+m1_comp <- as_tibble(m1_comp_df)
 
 
 knitr::opts_chunk$set(comment = NA)
@@ -1149,70 +1117,6 @@ knitr::opts_chunk$set(comment = NA)
 
 
 ```{r Race, warning=FALSE, echo=FALSE, message=FALSE}
-
-
-# ## Multi-racial
-# 
-# multi_race=0    
-# for (i in 1:length(promis$Connect_ID)){
-#   AI=ifelse((promis$D_384191091_D_384191091_D_583826374[[i]]==1 & (promis$D_384191091_D_384191091_D_636411467[[i]]==1 | promis$D_384191091_D_384191091_D_458435048[[i]]==1|
-#                                                promis$D_384191091_D_384191091_D_706998638[[i]]==1 | promis$D_384191091_D_384191091_D_973565052[[i]]==1 |
-#                                                promis$D_384191091_D_384191091_D_586825330[[i]]==1 | promis$D_384191091_D_384191091_D_412790539[[i]]==1 |
-#                                                promis$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-#   As=ifelse((promis$D_384191091_D_384191091_D_636411467[[i]]==1 & (promis$D_384191091_D_384191091_D_583826374[[i]]==1 | promis$D_384191091_D_384191091_D_458435048[[i]]==1|
-#                                                         promis$D_384191091_D_384191091_D_706998638[[i]]==1 | promis$D_384191091_D_384191091_D_973565052[[i]]==1 |
-#                                                         promis$D_384191091_D_384191091_D_586825330[[i]]==1 | promis$D_384191091_D_384191091_D_412790539[[i]]==1 |
-#                                                         promis$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-#   Bl=ifelse((promis$D_384191091_D_384191091_D_458435048[[i]]==1 & (promis$D_384191091_D_384191091_D_583826374[[i]]==1 | promis$D_384191091_D_384191091_D_636411467[[i]]==1|
-#                                                         promis$D_384191091_D_384191091_D_706998638[[i]]==1 | promis$D_384191091_D_384191091_D_973565052[[i]]==1 |
-#                                                         promis$D_384191091_D_384191091_D_586825330[[i]]==1 | promis$D_384191091_D_384191091_D_412790539[[i]]==1 |
-#                                                         promis$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-#   Hs=ifelse((promis$D_384191091_D_384191091_D_706998638[[i]]==1 & (promis$D_384191091_D_384191091_D_583826374[[i]]==1 | promis$D_384191091_D_384191091_D_636411467[[i]]==1|
-#                                                         promis$D_384191091_D_384191091_D_458435048[[i]]==1 | promis$D_384191091_D_384191091_D_973565052[[i]]==1 |
-#                                                         promis$D_384191091_D_384191091_D_586825330[[i]]==1 | promis$D_384191091_D_384191091_D_412790539[[i]]==1 |
-#                                                         promis$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-#   Me=ifelse((promis$D_384191091_D_384191091_D_973565052[[i]]==1 & (promis$D_384191091_D_384191091_D_583826374[[i]]==1 | promis$D_384191091_D_384191091_D_636411467[[i]]==1|
-#                                                         promis$D_384191091_D_384191091_D_458435048[[i]]==1 | promis$D_384191091_D_384191091_D_706998638[[i]]==1 |
-#                                                         promis$D_384191091_D_384191091_D_586825330[[i]]==1 | promis$D_384191091_D_384191091_D_412790539[[i]]==1 |
-#                                                         promis$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-#   Hw=ifelse((promis$D_384191091_D_384191091_D_586825330[[i]]==1 & (promis$D_384191091_D_384191091_D_583826374[[i]]==1 | promis$D_384191091_D_384191091_D_636411467[[i]]==1|
-#                                                         promis$D_384191091_D_384191091_D_458435048[[i]]==1 | promis$D_384191091_D_384191091_D_706998638[[i]]==1 |
-#                                                         promis$D_384191091_D_384191091_D_973565052[[i]]==1 | promis$D_384191091_D_384191091_D_412790539[[i]]==1 |
-#                                                         promis$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-#   Wh=ifelse((promis$D_384191091_D_384191091_D_412790539[[i]]==1 & (promis$D_384191091_D_384191091_D_583826374[[i]]==1 | promis$D_384191091_D_384191091_D_636411467[[i]]==1|
-#                                                         promis$D_384191091_D_384191091_D_458435048[[i]]==1 | promis$D_384191091_D_384191091_D_706998638[[i]]==1 |
-#                                                         promis$D_384191091_D_384191091_D_586825330[[i]]==1 | promis$D_384191091_D_384191091_D_973565052[[i]]==1 |
-#                                                         promis$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-#   Ot=ifelse((promis$D_384191091_D_384191091_D_807835037[[i]]==1 & (promis$D_384191091_D_384191091_D_583826374[[i]]==1 | promis$D_384191091_D_384191091_D_636411467[[i]]==1|
-#                                                         promis$D_384191091_D_384191091_D_458435048[[i]]==1 | promis$D_384191091_D_384191091_D_706998638[[i]]==1 |
-#                                                         promis$D_384191091_D_384191091_D_586825330[[i]]==1 | promis$D_384191091_D_384191091_D_973565052[[i]]==1 |
-#                                                         promis$D_384191091_D_384191091_D_412790539[[i]]==1)), 1, 0)
-#   multi_race= multi_race + sum(AI+As+Bl+Hs+Me+Hw+Wh+Ot, na.rm=T)
-# 
-# }
-# 
-# #cat("Percentage of multirace participants:", (multi_race/(dim(promis)[1]))*100)
-#    
-#    
-# 
-# promis$multi_racial <- c(rep(1, times=multi_race), rep(0, times=(dim(promis)[1]- multi_race)))
-# 
-# 
-# 
-# ## RACE
-# 
-# promis = promis %>%  mutate(race= case_when(multi_racial==1 ~ "Multi-Racial",
-#                                                      D_384191091_D_384191091_D_583826374==1 ~ "American Indian or Native American",
-#                                                      D_384191091_D_384191091_D_636411467==1 ~ "Asian/Asian American",
-#                                                      D_384191091_D_384191091_D_458435048==1 ~ "Black, African American, or African",
-#                                                      D_384191091_D_384191091_D_706998638==1 ~ "Hispanic, Latino, or Spanish",
-#                                                      D_384191091_D_384191091_D_973565052==1 ~ "Middle Eastern or North African",
-#                                                      D_384191091_D_384191091_D_586825330==1 ~ "Hawaiian or Pacific Islander",
-#                                                      D_384191091_D_384191091_D_412790539==1 ~ "White",
-#                                                      (D_384191091_D_384191091_D_807835037==1 | !is.na(D_384191091_D_747350323)) ~ "Other",
-#                                                      D_384191091_D_384191091_D_746038746==1 ~ "Prefer Not to Answer",
-#                                                      TRUE  ~ "Skipped this question"))
-
 
 
 race_columns <- c("D_384191091_D_384191091_D_583826374", 
@@ -1225,11 +1129,11 @@ race_columns <- c("D_384191091_D_384191091_D_583826374",
                   "D_384191091_D_384191091_D_807835037")
 
 # All data is currently string values, need to convert "1" and "0" to 1 and 0 to be summarized
-promis[race_columns] <- lapply(promis[race_columns], as.numeric)
+m1_comp[race_columns] <- lapply(m1_comp[race_columns], as.numeric)
 
-promis$multi_racial <- ifelse(rowSums(promis[race_columns], na.rm = TRUE) > 1, 1, 0)
+m1_comp$multi_racial <- ifelse(rowSums(m1_comp[race_columns], na.rm = TRUE) > 1, 1, 0)
 
-promis <- promis %>%  
+m1_comp <- m1_comp %>%  
   mutate(race = case_when(
     multi_racial == 1 ~ "Multi-Racial",
     D_384191091_D_384191091_D_583826374 == 1 ~ "American Indian or Native American",
@@ -1253,7 +1157,7 @@ promis <- promis %>%
 ```{r By_Race, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
 
-Comp_by_race <- promis %>% filter(qolcomplt!="Not Eligible") %>% 
+Comp_by_race <- m1_comp %>% filter(qolcomplt!="Not Eligible") %>% 
   mutate(qolcomplt = factor(qolcomplt, levels=c("Not Started", "Started", "Submitted"))) %>% 
   select(race, qolcomplt) %>% dplyr::arrange(race,qolcomplt) %>% 
   tbl_cross(
@@ -1281,7 +1185,7 @@ add_footnote(Comp_by_race, paste0('Note: In order to determine race, Module 1 mu
 
 ```{r By_Race_And_Sex, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
-promis = promis %>%  mutate(sex_race= case_when(sex=="Female" & multi_racial==1 ~ "Female: Multi-Racial",
+m1_comp = m1_comp %>%  mutate(sex_race= case_when(sex=="Female" & multi_racial==1 ~ "Female: Multi-Racial",
                                             sex=="Female" & D_384191091_D_384191091_D_583826374==1 ~ "Female: American Indian or Native American",
                                             sex=="Female" & D_384191091_D_384191091_D_636411467==1 ~ "Female: Asian/Asian American",
                                             sex=="Female" & D_384191091_D_384191091_D_458435048==1 ~ "Female: Black, African American, or African",
@@ -1315,7 +1219,7 @@ promis = promis %>%  mutate(sex_race= case_when(sex=="Female" & multi_racial==1 
                                             sex=="Unknown" & D_384191091_D_384191091_D_746038746==1 ~ "Unknown: Prefer Not to Answer",
                                                      TRUE  ~ "Skipped this question"))
 
-Comp_by_sex_race <- promis %>% filter(qolcomplt!="Not Eligible") %>% 
+Comp_by_sex_race <- m1_comp %>% filter(qolcomplt!="Not Eligible") %>% 
   mutate(qolcomplt = factor(qolcomplt, levels=c("Not Started", "Started", "Submitted"))) %>% 
   select(sex_race, qolcomplt) %>% dplyr::arrange(sex_race,qolcomplt) %>% 
   tbl_cross(
@@ -1343,7 +1247,7 @@ Comp_by_sex_race %>% kable_styling(latex_options = c("scale_down","hold_position
 
 ```{r By_Demographic, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
-promis <- promis %>%
+m1_comp <- m1_comp %>%
   mutate(
     "White Women" = if_else(race == "White" & sex == "Female", 1, 0),
     "Black Men" = if_else(race == "Black, African American, or African" & sex == "Male", 1, 0),
@@ -1354,7 +1258,7 @@ promis <- promis %>%
   )
 
 # Can be in more then one category
-all_data_long <- promis %>%
+all_data_long <- m1_comp %>%
   pivot_longer(cols = c("White Women", "Black Men", "Women Under 45", "Women Over 45", "Men Under 45", "Men Over 45"),
                names_to = "Demographic_Group", values_to = "Flag") %>%
   filter(Flag == 1)  # Keep only rows where participants are in one or more of these demographics
@@ -1390,7 +1294,7 @@ Comp_by_Demographic %>% kable_styling(latex_options = c("scale_down", "hold_posi
 \FloatBarrier
 ```{r QOL_start_stop, echo=FALSE, warning=FALSE, message=FALSE}
 
-
+##### Back to wanting all participants, whether or not they finished Module 1. So switching back to all_data df
 
 
 QOL_time <- all_data %>% 
@@ -1539,14 +1443,6 @@ trigger_time <- left_join(trigger_time, trigger_BU, by="token") %>%  left_join(t
 #Completed QOL before or on the same day as BL survey-- now within 30 days
 BL_QOL <- trigger_time %>%
   filter(qolcomplt == "Submitted") %>%
-  # mutate(BOH = as.Date(d_843688458) <= as.Date(d_517311251),
-  #        MRE = as.Date(d_843688458) <= as.Date(d_832139544),
-  #        SAS = as.Date(d_843688458) <= as.Date(d_770257102),
-  #        LAW = as.Date(d_843688458) <= as.Date(d_264644252),
-  #        BUM = (as.Date(BUM_time) < as.Date(trig) ) & (as.Date(d_843688458) <= as.Date(d_222161762)),  
-  #        BU = (as.Date(BU_time) < as.Date(trig) ) & (as.Date(d_843688458) <= as.Date(d_764863765)), 
-  #        MW = (as.Date(d_173836415_d_266600170_d_319972665_d_661940160) < as.Date(trig)) & (as.Date(d_843688458) <= as.Date(d_195145666)),
-  #        COVID = (as.Date(d_556788178) < as.Date(trig)) & (as.Date(d_556788178) >= as.Date("2023-07-05")) & (as.Date(d_843688458) <= as.Date(d_784810139))) %>%
     mutate(BOH = as.Date(d_843688458) <= as.Date(d_517311251) & difftime(as.Date(d_517311251), as.Date(d_843688458), units="days") <31,
          MRE = as.Date(d_843688458) <= as.Date(d_832139544) & difftime( as.Date(d_832139544), as.Date(d_843688458), units="days") <31,
          SAS = as.Date(d_843688458) <= as.Date(d_770257102) & difftime( as.Date(d_770257102), as.Date(d_843688458), units="days") <31,
@@ -1584,7 +1480,7 @@ BL_QOL <- trigger_time %>%
 
 
 
-## of those that are eligible for QOL, and eligible for whichever BL module, who hadn't completed that module upon eligibility activation
+## Those that are eligible for QOL, and eligible for whichever BL module, but hadn't completed that BL module upon QOL eligibility activation
 BL_time_eligible <- trigger_time %>%
   filter(!is.na(qolcomplt) & qolcomplt != "Not Eligible") %>%
   mutate( BOH = is.na(d_517311251) | (as.Date(trig) <= as.Date(d_517311251)),
@@ -1660,8 +1556,6 @@ CES_comp <- all_data %>% filter(CES_status!="Not Eligible") %>%
 CES_comp[["table_body"]]$stat_0 <- sapply(strsplit(CES_comp[["table_body"]]$stat_0," "),"[",1)
 
 CES_comp <- CES_comp %>%
-  #bold_labels() %>%
-  #italicize_levels() %>% 
   modify_header(stat_0 = "Total CES Eligible \n Participants") %>%
   modify_caption("Table 5.1. Completion of Connect Experience Survey Among Eligible Participants") %>%
   as_kable_extra(escape = FALSE, addtl_fmt = TRUE)
@@ -1714,7 +1608,6 @@ CES_time <- all_data %>% filter(CES_status=="Submitted") %>%
     group_by(start_stop_time) %>% tally()
 
 CES_time$Percentage <- (CES_time$n / sum(CES_time$n)) * 100
-#CES_time <- CES_time[c(1:6),]
 
 summary_row <- data.frame(start_stop_time = "Total CES Eligible Participants",
                           n = sum(CES_time$n),
@@ -1779,6 +1672,8 @@ knitr::kable(ces_notif_table,
 
 
 ```{r BL_After_CES2, echo=FALSE, warning=FALSE, message=FALSE}
+
+
 ################   Numerator  ##############
 
 #Completed CES before or on the same day as BL survey-- now within 30 days
@@ -1807,7 +1702,7 @@ BL_CES <- trigger_time %>%
 #############    Denominator #################
 
 ## Determine when a person was CES eligible
-# all participants with a survey status not 'Not Eligible' or null, notificaton for CES was sent on 9/30/24
+# All participants with a survey status NOT 'Not Eligible' or null; notificaton for CES was sent on 9/30/24
 
 
 ## Determine when a participant was BL survey eligible
@@ -1898,8 +1793,6 @@ CSH_comp <- all_data %>% filter(CSH_status!="Not Eligible") %>%
 CSH_comp[["table_body"]]$stat_0 <- sapply(strsplit(CSH_comp[["table_body"]]$stat_0," "),"[",1)
 
 CSH_comp <- CSH_comp %>%
-  #bold_labels() %>%
-  #italicize_levels() %>% 
   modify_header(stat_0 = "Total CSH Eligible \n Participants") %>%
 
   modify_caption("Table 6.1. Completion of Cancer Screening History Survey Among Eligible Participants") %>%
@@ -1952,7 +1845,6 @@ CSH_time <- all_data %>% filter(CSH_status == "Submitted") %>%
   group_by(start_stop_time) %>% tally()
 
 CSH_time$Percentage <- (CSH_time$n / sum(CSH_time$n)) * 100
-#CSH_time <- CSH_time[c(1:6),]
 
 summary_row <- data.frame(start_stop_time = "Total CSH Eligible Participants",
                           n = sum(CSH_time$n),
@@ -1981,14 +1873,14 @@ knitr::kable(CSH_TM,
 
 ```{r CSH_trig_stop, echo=FALSE, warning=FALSE, message=FALSE}
 
-## Time from CSH trigger to submission of CSH survey- "Cancer Screening History Survey"
+## Time from CSH trigger to submission of CSH survey
 
 trig_csh <- bq_project_query(project,
                              query="SELECT distinct(Connect_ID), notification_time as CSH_notif FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` notif
                              left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
                              on notif.token=pts.token
                              where category LIKE '%Screen%' and attempt='1st contact'")
-                             #query="SELECT distinct(token), notification_time FROM `nih-nci-dceg-connect-dev.FlatConnect.notifications` where category LIKE '%Screen%' and attempt='1st contact'")
+#query="SELECT distinct(token), notification_time FROM `nih-nci-dceg-connect-dev.FlatConnect.notifications` where category LIKE '%Screen%' and attempt='1st contact'")
 
 
 trigger_csh <- bigrquery::bq_table_download(trig_csh,bigint = "integer64")
@@ -2063,7 +1955,6 @@ BL_CSH <- trigger_time %>%
 
 
 ## Determine when a participant was BL survey eligible
-## Determine when a participant was BL survey eligible
 #MRE/SAS/LAW- once BOH completed ----   d_517311251
 #BUM/BU- when notified by email 
 #MW- when notified the MW kit was shipped
@@ -2073,7 +1964,7 @@ BL_CSH <- trigger_time %>%
 
 
 
-## of those that are eligible for CSH, and eligible for whichever BL module, who hadn't completed that module upon eligibility activation
+## Those that are eligible for CSH, and eligible for whichever BL module, who hadn't completed that BL module upon CSH eligibility activation
 BL_time_eligible2 <- trigger_time %>%
   filter(!is.na(CSH_status) & CSH_status != "Not Eligible") %>%
   mutate( BOH = is.na(d_517311251) | (as.Date(CSH_notif) <= as.Date(d_517311251)),
@@ -2248,7 +2139,6 @@ knitr::kable(dhq_time,
 ```{r DHQ_Sect2, echo=FALSE, warning=FALSE, message=FALSE}
 
 ## Time from DHQ trigger to submission of DHQ survey
-# category= Baseline DHQ III Reminders, attempt=1st 
 
 trig_DHQ <- bq_project_query(project,
 query="SELECT distinct(token), notification_time as DHQ_notif
@@ -2257,7 +2147,6 @@ where category='Baseline DHQ III Reminders' and attempt='1st contact'")
 trigger_DHQ <- bigrquery::bq_table_download(trig_DHQ,bigint = "integer64")
 
 
-#trigger_time_DHQ <- left_join(dhq1, trigger_DHQ, by="token")
 trigger_time_DHQ <- left_join(trigger_time, trigger_DHQ, by="token")
 
 
@@ -2321,7 +2210,6 @@ BL_DHQ <- trigger_time_DHQ %>%
 
 
 ## Determine when a participant was BL survey eligible
-## Determine when a participant was BL survey eligible
 #MRE/SAS/LAW- once BOH completed ----   d_517311251
 #BUM/BU- when notified by email 
 #MW- when notified the MW kit was shipped
@@ -2331,7 +2219,7 @@ BL_DHQ <- trigger_time_DHQ %>%
 
 
 
-## of those that are eligible for DHQ, and eligible for whichever BL module, who hadn't completed that module upon eligibility activation
+## Those that are eligible for DHQ, and eligible for whichever BL module, but who hadn't completed that BL module upon DHQ eligibility activation
 DHQ_time_eligible2 <- trigger_time_DHQ %>%
   filter(!is.na(dhq_status) & dhq_status!="Not Eligible") %>%
   mutate( BOH = is.na(d_517311251) | (as.Date(DHQ_notif) <= as.Date(d_517311251)),
@@ -2477,6 +2365,9 @@ add_footnote(pref_lang_site, "Note: Preferred language is based on language of s
 
 ## SSN survey is not viewable in BQ so we will not have the language flag for that survey
 
+## d_784119588 is a variable for survey language preference and is in every single survey table
+## d_255077064 is the Consent and Notification Language set in the participants table
+
 
 
 queries <- list(
@@ -2546,6 +2437,8 @@ queries <- list(
 results_list <- list()
 
 
+## Download all the language prefrences, both in consent and per survey, to compare
+
 for (name in names(queries)) {
   query <- queries[[name]]
   query_result <- bq_project_query(project, query)
@@ -2576,7 +2469,6 @@ CSH_lang <- results_list$CSH_lang_c
 ```{r Svy_Lang_Diff, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
 
-# Define the list of survey data frames
 survey_dfs <- list(m1_lang, m2_lang, m3_lang, m4_lang, BUM_lang, BU_lang, CV_lang, Mens_lang, MW_lang, QOL_lang, CES_lang, CSH_lang)
 
 # Initialize an empty data frame to store results for all participants
@@ -2604,9 +2496,9 @@ final_scenarios <- all_scenarios %>%
     Flag_set = unique(na.omit(Flag)), # Remove NAs from Flags
     Pref_lang_set = unique(Pref_lang),
     scenario = case_when(
-      length(Flag_set) == 0 ~ "No survey language preference has been made", # No Flag values
-      all(Flag_set == Pref_lang_set) ~ "Survey Flags and Preferred Language Consistent", # All Flags match Pref_lang
-      any(Flag_set != Pref_lang_set) ~ "Any Survey Flag Inconsistent with Preferred Language" # Any inconsistency
+      length(Flag_set) == 0 ~ "No survey language preference has been made", 
+      all(Flag_set == Pref_lang_set) ~ "Survey Flags and Preferred Language Consistent",
+      any(Flag_set != Pref_lang_set) ~ "Any Survey Flag Inconsistent with Preferred Language"
     )
   ) %>%
   ungroup()
@@ -2735,7 +2627,7 @@ knitr::kable(final_df_condition2,
 \FloatBarrier
 ```{r BL_start_stop_Lang, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
-summarize_data <- function(data, filter_column, filter_value, language_value, target_column) {
+start_stop_lang <- function(data, filter_column, filter_value, language_value, target_column) {
     data %>% 
         filter(!!sym(filter_column) == filter_value & Pref_lang == language_value) %>% 
         summarize('N' = n(),
@@ -2749,15 +2641,15 @@ summarize_data <- function(data, filter_column, filter_value, language_value, ta
                   Max = max(!!sym(target_column), na.rm = TRUE))
 }
 
-BOH_LangE <- summarize_data(all_data, "d_949302066", 231311385, "English", "m1_comp_mins")
-MRE_LangE <- summarize_data(all_data, "d_536735468", 231311385, "English", "m2_comp_mins")
-SAS_LangE <- summarize_data(all_data, "d_976570371", 231311385, "English", "m3_comp_mins")
-LAW_LangE <- summarize_data(all_data, "d_663265240", 231311385, "English", "m4_comp_mins")
+BOH_LangE <- start_stop_lang(all_data, "d_949302066", 231311385, "English", "m1_comp_mins")
+MRE_LangE <- start_stop_lang(all_data, "d_536735468", 231311385, "English", "m2_comp_mins")
+SAS_LangE <- start_stop_lang(all_data, "d_976570371", 231311385, "English", "m3_comp_mins")
+LAW_LangE <- start_stop_lang(all_data, "d_663265240", 231311385, "English", "m4_comp_mins")
 
-BOH_LangSP <- summarize_data(all_data, "d_949302066", 231311385, "Spanish", "m1_comp_mins")
-MRE_LangSP <- summarize_data(all_data, "d_536735468", 231311385, "Spanish", "m2_comp_mins")
-SAS_LangSP <- summarize_data(all_data, "d_976570371", 231311385, "Spanish", "m3_comp_mins")
-LAW_LangSP <- summarize_data(all_data, "d_663265240", 231311385, "Spanish", "m4_comp_mins")
+BOH_LangSP <- start_stop_lang(all_data, "d_949302066", 231311385, "Spanish", "m1_comp_mins")
+MRE_LangSP <- start_stop_lang(all_data, "d_536735468", 231311385, "Spanish", "m2_comp_mins")
+SAS_LangSP <- start_stop_lang(all_data, "d_976570371", 231311385, "Spanish", "m3_comp_mins")
+LAW_LangSP <- start_stop_lang(all_data, "d_663265240", 231311385, "Spanish", "m4_comp_mins")
 
 
 
