@@ -172,27 +172,52 @@ all_locations <- rca %>%
 
 cancer_loc <- all_locations %>% filter(d_525972260==353358909) 
 
-location_counts <- cancer_loc %>% 
-  #filter(d_525972260==353358909) %>%  
+
+#### All Cancer Occurrences
+location_counts1 <- cancer_loc %>% 
   select(Anal:Skipped) %>%
   pivot_longer(cols = everything(), names_to = "Cancer_Site", values_to = "Selected") %>%
   filter(Selected == 1) %>%
   group_by(Cancer_Site) %>%
   summarise(Frequency = n()) 
 
-pivot_data <- location_counts %>%
+pivot_data1 <- location_counts1 %>%
   ungroup() %>%
   mutate(Percentage = 100 * round(Frequency / sum(Frequency), digits=2),
          Freq = formatC(Frequency, format = "f", big.mark = ",", digits = 0),
-         Occurrence = paste0(Freq, " (", Percentage, "%)")) %>% 
-  select(Cancer_Site, Occurrence)
+         'All Occurrences' = paste0(Freq, " (", Percentage, "%)")) %>% 
+  select(Cancer_Site, 'All Occurrences')
   
-pivot_data[nrow(pivot_data)+1,] <- list("Total", paste0(sum(location_counts$Frequency), " (100%)"))
+pivot_data1[nrow(pivot_data1)+1,] <- list("Total", paste0(sum(location_counts1$Frequency), " (100%)"))
+
+
+### Occurrences where Diagnosis occured AFTER verification
+location_counts2 <- cancer_loc %>% 
+  filter(as.Date(d_345545422) > as.Date(d_914594314)) %>% 
+  select(Anal:Skipped) %>%
+  pivot_longer(cols = everything(), names_to = "Cancer_Site", values_to = "Selected") %>%
+  filter(Selected == 1) %>%
+  group_by(Cancer_Site) %>%
+  summarise(Frequency = n()) 
+
+pivot_data2 <- location_counts2 %>%
+  ungroup() %>%
+  mutate(Percentage = 100 * round(Frequency / sum(Frequency), digits=2),
+         Freq = formatC(Frequency, format = "f", big.mark = ",", digits = 0),
+         'Post-Verif Occurrence' = paste0(Freq, " (", Percentage, "%)")) %>% 
+  select(Cancer_Site, 'Post-Verif Occurrence')
+  
+pivot_data2[nrow(pivot_data2)+1,] <- list("Total", paste0(sum(location_counts2$Frequency), " (100%)"))
+
+
+### Combine
+pivot_data <- left_join(pivot_data1, pivot_data2, by="Cancer_Site")
 
  pivot_data %>%
   gt::gt() %>% 
   tab_header(title = md("Table 2. Number of Cancer Occurrences by Cancer Site")) %>%
-  cols_label(Occurrence = md("**Occurrence**"), 
+  cols_label('All Occurrences' = md("**All Occurrences**"),
+             'Post-Verif Occurrence' = md("**Post-Verif Occurrence**"),
              Cancer_Site = md("**Cancer Site**")) %>%
   tab_options(stub.font.weight = "bold") %>%
   tab_style(
@@ -201,7 +226,7 @@ pivot_data[nrow(pivot_data)+1,] <- list("Total", paste0(sum(location_counts$Freq
   ) %>%
   tab_footnote(
     md("As this is a select all question, may have more than one cancer site."),
-    locations = cells_column_labels(columns = Occurrence),
+    #locations = cells_column_labels(columns = Occurrence),
     placement = c("left")
   )
 
