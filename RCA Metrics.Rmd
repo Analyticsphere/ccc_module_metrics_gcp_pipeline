@@ -25,9 +25,6 @@ This rapid case ascertainment (RCA) metrics report contains tables and plots fro
 
 ```{r libraries, include=FALSE, warning=FALSE}
 
- # \usepackage{caption}
- # \captionsetup[figure]{labelformat=empty}
-
 
 #old.packages()
 #update.packages("tinytex")
@@ -45,9 +42,6 @@ library(kableExtra)
 library(gtsummary)
 library(data.table)
 
-#library(arsenal)
-#library(rio)
-#library(scales)
 library(stringr) 
 library(tidyr)
 library(gt)
@@ -226,7 +220,6 @@ pivot_data <- left_join(pivot_data1, pivot_data2, by="Cancer_Site")
   ) %>%
   tab_footnote(
     md("As this is a select all question, may have more than one cancer site."),
-    #locations = cells_column_labels(columns = Occurrence),
     placement = c("left")
   )
 
@@ -238,11 +231,11 @@ pivot_data <- left_join(pivot_data1, pivot_data2, by="Cancer_Site")
 
 ```{r num_occ, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
-## update with cancer occurance : d_793981056
+## update with cancer occurrence : d_793981056
 
 cancer_loc_occ <- cancer_loc %>% 
   group_by(Connect_ID) %>%
-  filter(d_793981056 == max(d_793981056, na.rm = TRUE)) %>% #highest cancer occurance count
+  filter(d_793981056 == max(d_793981056, na.rm = TRUE)) %>% #highest cancer occurrence count
   ungroup() %>% 
   mutate(occs = case_when(d_793981056=="1" ~ "Participants with 1 Cancer Occurrence(s)",
                           d_793981056=="2" ~ "Participants with 2 Cancer Occurrence(s)",
@@ -289,7 +282,7 @@ currentDate <- as.Date(currentDate)
 
 rca_date_counts <- rca %>%  
   filter(!is.na(d_345545422) & d_525972260==353358909) %>% 
-  mutate(occ_date = paste0(str_sub(as.Date(rca$d_345545422)[!is.na(rca$d_345545422)], 0, 7), "-01")) %>% 
+  mutate(occ_date = paste0(str_sub(as.Date(rca$d_345545422)[!is.na(rca$d_345545422)], 0, 7), "-01")) %>% #create a full day, assume the 1st of the month 
     filter(occ_date!="NA-01") %>% 
   group_by(occ_date) %>% tally()
 
@@ -351,7 +344,6 @@ occ_by_site <- rca %>%
             digits= c(0,1),
             label= c(Site~ "Site", 'Cancer Flag' ~ " "),
             missing="ifany",
-            #missing_text="0 ( 0 %)",
             margin_text="Total Verified Participants") 
 
 occ_by_site %>%
@@ -374,7 +366,6 @@ occ_by_site <- cancer_loc %>%
             digits= c(0,1),
             label= c(Site~ "Site", d_793981056 ~ "Number of Cancer Occurences"),
             missing="ifany",
-            #missing_text="0 ( 0 %)",
             margin_text="Total Verified Participants") 
 
 occ_by_site %>%

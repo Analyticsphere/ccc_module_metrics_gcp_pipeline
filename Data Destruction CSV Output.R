@@ -25,13 +25,12 @@ currentDate <- Sys.Date()##### Making sure personal C drives aren't referenced i
 
 
 #Change to FALSE if referencing this code
-write_to_local_drive = F #F
-
-#local_drive="C:/Users/dowlingk2/Documents/Module-Missingness-and-Metrics/data/"    
+write_to_local_drive = F 
+  
 
 
 ### This function below is put before any write.csv functions, and "filename" is updated. It determines wheteher the file will be created locally or not.
-#filename=
+
 local_drive= ifelse(write_to_local_drive, "C:/Users/dowlingk2/Documents/GitHub/", "")
 
 currentDate <- Sys.Date()
@@ -45,7 +44,7 @@ datad_query <- "SELECT  Connect_ID, d_827220437, d_831041022, d_883668444, d_130
 d_130371375_d_496823485_d_731498909, d_130371375_d_496823485_d_648936790, d_130371375_d_650465111_d_731498909, d_130371375_d_650465111_d_648936790,
 d_130371375_d_303552867_d_731498909, d_130371375_d_303552867_d_648936790, d_269050420, d_359404406, d_949302066, d_536735468, d_976570371, d_663265240, 
 d_253883960, d_459098666,  d_265193023, d_126331570, d_878865966, d_167958071, d_684635302, d_100767870, d_119449326, d_912301837  
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` where Connect_ID IS NOT NULL"  #d_220186468,
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` where Connect_ID IS NOT NULL and d_831041022='353358909'"  #d_220186468,
 spec_query <- "SELECT Connect_ID, d_820476880 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.biospecimen_JP` where Connect_ID is not null"
 
 datad_table_cc <- bq_project_query(project_cc, datad_query)
@@ -66,7 +65,6 @@ variables <- left_join(datad, spec, by="Connect_ID")
 
 
 
-variables <- variables %>%  filter(d_831041022=="353358909")
 
 destruction <- variables %>% mutate('Data Destruction Requested Flag'= case_when(d_831041022=="353358909" ~ "Yes",
                                                                                  d_831041022=="104430631" ~ "No"),
