@@ -1593,3 +1593,26 @@ if (nrow(smmet) == 0) {
 
 ```
 
+
+\FloatBarrier
+## 60. If RcrtSI_RInvTimeStamp_v1r0  is populated, then RcrtSI_RecruitType_v1r0 must be 'active'.
+```{r reinv_active, echo=FALSE, warning=FALSE, message=FALSE}
+
+reinv_active <- partsbq %>%  filter(!is.na(d_439351436) & d_512820379!='486306141')
+
+
+if (nrow(reinv_active) == 0) {
+  cat("No errors\n")
+} else {
+  
+  reinv_active <- reinv_active %>% select(Site, Connect_ID, d_439351436, d_512820379) %>%  safe_arrange(Site)
+
+  colnames(reinv_active) <- c("Site", "Connect ID", "RcrtSI_RInvTimeStamp_v1r0", "RcrtSI_RecruitType_v1r0")
+
+  knitr::kable(reinv_active) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+
+```
+
