@@ -557,7 +557,7 @@ if (nrow(BL_Cl_MensSrvy_SMSinvite) > 50) {
 ```
 
 \FloatBarrier
-## The same participant received multiple Cannot Be Verified notifications on the same day. 
+## The same participant received multiple Cannot Be Verified email notifications on the same day. 
 ```{r CBV, echo=FALSE, message=FALSE, warning=FALSE}
 CBV <- "SELECT distinct(p.Connect_ID), #distinct(n.token), 
 category,
@@ -567,7 +567,7 @@ FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
 left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 on p.token=n.token
 WHERE category LIKE '%Cannot Be Verified Notification%' and date(notification_time) >= (CURRENT_DATE()-7)
-#AND notificationType = 'email'
+AND notificationType = 'email'
 GROUP BY Connect_ID,category, DATE(notification_time)
 HAVING COUNT(*) > 1"
 
@@ -589,7 +589,7 @@ if (nrow(CBV_rem) > 50) {
 ```
 
 \FloatBarrier
-## The same participant received multiple Data Destruction reminders on the same day. 
+## The same participant received multiple Data Destruction email reminders on the same day. 
 ```{r DDR, echo=FALSE, message=FALSE, warning=FALSE}
 DDR <- "SELECT distinct(p.Connect_ID), #distinct(n.token), 
 category,
@@ -599,7 +599,7 @@ FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
 left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 on p.token=n.token
 WHERE category LIKE '%Data Destruction Reminders%' and date(notification_time) >= (CURRENT_DATE()-7)
-#AND notificationType = 'email'
+AND notificationType = 'email'
 GROUP BY Connect_ID,category, DATE(notification_time)
 HAVING COUNT(*) > 1"
 
@@ -623,7 +623,7 @@ if (nrow(Destruction_rem) > 50) {
 
 \FloatBarrier
 
-## The same participant received multiple HIPAA revocation reminders on the same day. 
+## The same participant received multiple HIPAA revocation email reminders on the same day. 
 ```{r HIPAA, echo=FALSE, message=FALSE, warning=FALSE}
 HIPAA <- "SELECT distinct(p.Connect_ID), #distinct(n.token), 
 category,
@@ -633,7 +633,7 @@ FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
 left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 on p.token=n.token
 WHERE category LIKE '%HIPAA revocation reminders%' and date(notification_time) >= (CURRENT_DATE()-7)
-#AND notificationType = 'email'
+AND notificationType = 'email'
 GROUP BY Connect_ID,category, DATE(notification_time)
 HAVING COUNT(*) > 1"
 
@@ -1097,7 +1097,7 @@ if (nrow(anews_email_rem) > 50) {
 
 
 \FloatBarrier
-## The same participant received multiple aniversary Newsletter text notifications on the same day. 
+## The same participant received multiple aniversary Newsletter sms notifications on the same day. 
 ```{r anews_sms, echo=FALSE, message=FALSE, warning=FALSE}
 anews_sms <- "SELECT distinct(p.Connect_ID), #distinct(n.token), 
 category,
@@ -1130,7 +1130,7 @@ if (nrow(anews_sms_rem) > 50) {
 
 
 \FloatBarrier
-## The same participant received multiple post-consent user profile reminders on the same day. 
+## The same participant received multiple post-consent user profile email reminders on the same day. 
 ```{r PCUP, echo=FALSE, message=FALSE, warning=FALSE}
 PCUP <- "SELECT distinct(p.Connect_ID), #distinct(n.token), 
 category,
@@ -1140,7 +1140,7 @@ FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
 left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 on p.token=n.token
 WHERE category LIKE '%post-consent user profile reminders%' and date(notification_time) >= (CURRENT_DATE()-7)
-#AND notificationType = 'email'
+AND notificationType = 'email'
 GROUP BY Connect_ID,category, DATE(notification_time)
 HAVING COUNT(*) > 1"
 
@@ -1230,9 +1230,9 @@ if (nrow(Ver_BLSurv_rem_email) > 50) {
 ```
 
 \FloatBarrier
-## The same participant received multiple Withdrawal reminders on the same day. 
-```{r WD, echo=FALSE, message=FALSE, warning=FALSE}
-WD <- "SELECT distinct(p.Connect_ID), #distinct(n.token), 
+## The same participant received multiple Withdrawal email reminders on the same day. 
+```{r WD_email, echo=FALSE, message=FALSE, warning=FALSE}
+WD_email <- "SELECT distinct(p.Connect_ID), #distinct(n.token), 
 category,
        DATE(notification_time) as repeat_date, 
        COUNT(*) as num_same_day_attempts
@@ -1240,22 +1240,54 @@ FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
 left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 on p.token=n.token
 WHERE category LIKE '%Withdrawal Reminders%' and date(notification_time) >= (CURRENT_DATE()-7)
-#AND notificationType = 'email'
+AND notificationType = 'email'
 GROUP BY Connect_ID,category, DATE(notification_time)
 HAVING COUNT(*) > 1"
 
-WD_table <- bq_project_query(project, WD)
-WD_rem <- bq_table_download(WD_table, bigint = "integer64") #currently 4 - all 2
+WD_email_table <- bq_project_query(project, WD_email)
+WD_email_rem <- bq_table_download(WD_email_table, bigint = "integer64") #currently 4 - all 2
 
 
-if (nrow(WD_rem) > 50) {
-  cat("There are", nrow(WD_rem), "errors. This table has been made a csv and posted to Box, link in the report intro.")
-  write.csv(WD_rem,glue("{local_drive}Multiple_WD_rem_reminders_{currentDate}_boxfolder_{boxfolder}.csv"),row.names = F,na="")
+if (nrow(WD_email_rem) > 50) {
+  cat("There are", nrow(WD_email_rem), "errors. This table has been made a csv and posted to Box, link in the report intro.")
+  write.csv(WD_email_rem,glue("{local_drive}Multiple_WD_email_rem_reminders_{currentDate}_boxfolder_{boxfolder}.csv"),row.names = F,na="")
 } else {
-  if(nrow(WD_rem) == 0) {
+  if(nrow(WD_email_rem) == 0) {
   cat("No errors\n")
 } else {
-  knitr::kable(WD_rem) %>% kable_styling(latex_options = "scale_down")
+  knitr::kable(WD_email_rem) %>% kable_styling(latex_options = "scale_down")
+}
+}
+
+```
+
+\FloatBarrier
+## The same participant received multiple Withdrawal sms reminders on the same day.
+```{r WD_sms, echo=FALSE, message=FALSE, warning=FALSE}
+WD_sms <- "SELECT distinct(p.Connect_ID), #distinct(n.token), 
+category,
+       DATE(notification_time) as repeat_date, 
+       COUNT(*) as num_same_day_attempts
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
+on p.token=n.token
+WHERE category LIKE '%Withdrawal Reminders%' and date(notification_time) >= (CURRENT_DATE()-7)
+AND notificationType = 'sms'
+GROUP BY Connect_ID,category, DATE(notification_time)
+HAVING COUNT(*) > 1"
+
+WD_sms_table <- bq_project_query(project, WD_sms)
+WD_sms_rem <- bq_table_download(WD_sms_table, bigint = "integer64") #currently 4 - all 2
+
+
+if (nrow(WD_sms_rem) > 50) {
+  cat("There are", nrow(WD_sms_rem), "errors. This table has been made a csv and posted to Box, link in the report intro.")
+  write.csv(WD_sms_rem,glue("{local_drive}Multiple_WD_sms_rem_reminders_{currentDate}_boxfolder_{boxfolder}.csv"),row.names = F,na="")
+} else {
+  if(nrow(WD_sms_rem) == 0) {
+  cat("No errors\n")
+} else {
+  knitr::kable(WD_sms_rem) %>% kable_styling(latex_options = "scale_down")
 }
 }
 
@@ -1298,7 +1330,7 @@ if (nrow(PROMIS_TY_rem) > 50) {
 ## The same participant received multiple (non-KPHI) Baseline Mouthwash Home Collection Kit SMS Reminders on the same day. 
 
 
-```{r MWHC_text, echo=FALSE, message=FALSE, warning=FALSE}
+```{r MWHC_sms, echo=FALSE, message=FALSE, warning=FALSE}
 
 ##It looks like there's a category "Biospecimen Home Collection Kit Reminder" which is an email reminder and then a category "Baseline Mouthwash Home Collection Kit Reminders" that is a sms reminder. Not sure why those has different names as opposed to being the same name and why both wouldn't be considered a first attempt
 
@@ -1324,7 +1356,7 @@ MWHC_rem <- bq_table_download(MWHC_table, bigint = "integer64") #currently 4 - a
 
 if (nrow(MWHC_rem) > 50) {
   cat("There are", nrow(MWHC_rem), "errors. This table has been made a csv and posted to Box, link in the report intro.")
-  write.csv(MWHC_rem,glue("{local_drive}Multiple_MWHC_text_rem_reminders_{currentDate}_boxfolder_{boxfolder}.csv"),row.names = F,na="")
+  write.csv(MWHC_rem,glue("{local_drive}Multiple_MWHC_sms_rem_reminders_{currentDate}_boxfolder_{boxfolder}.csv"),row.names = F,na="")
 } else {
   if(nrow(MWHC_rem) == 0) {
   cat("No errors\n")
@@ -1382,7 +1414,7 @@ if (nrow(MWHC_rem) > 50) {
 # The same participant received multiple Baseline Mouthwash Home Collection Kit SMS Reminders: KPHI  on the same day. 
 
 
-```{r MWHC_KPHI_text, echo=FALSE, message=FALSE, warning=FALSE}
+```{r MWHC_KPHI_sms, echo=FALSE, message=FALSE, warning=FALSE}
 
 
 MWHC_KPHI <- "SELECT DISTINCT p.Connect_ID, 
@@ -1405,7 +1437,7 @@ MWHC_KPHI_rem <- bq_table_download(MWHC_KPHI_table, bigint = "integer64") #curre
 
 if (nrow(MWHC_KPHI_rem) > 50) {
   cat("There are", nrow(MWHC_KPHI_rem), "errors. This table has been made a csv and posted to Box, link in the report intro.")
-  write.csv(MWHC_KPHI_rem,glue("{local_drive}Multiple_MWHC_KPHI_text_rem_reminders_{currentDate}_boxfolder_{boxfolder}.csv"),row.names = F,na="")
+  write.csv(MWHC_KPHI_rem,glue("{local_drive}Multiple_MWHC_KPHI_sms_rem_reminders_{currentDate}_boxfolder_{boxfolder}.csv"),row.names = F,na="")
 } else {
   if(nrow(MWHC_KPHI_rem) == 0) {
   cat("No errors\n")
@@ -1519,7 +1551,7 @@ MW_Collection_rem <- bq_table_download(MW_Collection_table, bigint = "integer64"
 
 if (nrow(MW_Collection_rem) > 50) {
   cat("There are", nrow(MW_Collection_rem), "errors. This table has been made a csv and posted to Box, link in the report intro.")
-  write.csv(MW_Collection_rem,glue("{local_drive}Multiple_MW_Collection_text_rem_reminders_{currentDate}_boxfolder_{boxfolder}.csv"),row.names = F,na="")
+  write.csv(MW_Collection_rem,glue("{local_drive}Multiple_MW_Collection_sms_rem_reminders_{currentDate}_boxfolder_{boxfolder}.csv"),row.names = F,na="")
 } else {
   if(nrow(MW_Collection_rem) == 0) {
   cat("No errors\n")
@@ -1594,7 +1626,7 @@ PA_Report_sms_rem <- bq_table_download(PA_Report_sms_table, bigint = "integer64"
 
 if (nrow(PA_Report_sms_rem) > 50) {
   cat("There are", nrow(PA_Report_sms_rem), "errors. This table has been made a csv and posted to Box, link in the report intro.")
-  write.csv(PA_Report_sms_rem,glue("{local_drive}Multiple_PA_Report_sms_text_rem_reminders_{currentDate}_boxfolder_{boxfolder}.csv"),row.names = F,na="")
+  write.csv(PA_Report_sms_rem,glue("{local_drive}Multiple_PA_Report_sms_rem_reminders_{currentDate}_boxfolder_{boxfolder}.csv"),row.names = F,na="")
 } else {
   if(nrow(PA_Report_sms_rem) == 0) {
   cat("No errors\n")
@@ -1669,7 +1701,7 @@ Dup_Report_sms_rem <- bq_table_download(Dup_Report_sms_table, bigint = "integer6
 
 if (nrow(Dup_Report_sms_rem) > 50) {
   cat("There are", nrow(Dup_Report_sms_rem), "errors. This table has been made a csv and posted to Box, link in the report intro.")
-  write.csv(Dup_Report_sms_rem,glue("{local_drive}Multiple_Dup_Report_sms_text_rem_reminders_{currentDate}_boxfolder_{boxfolder}.csv"),row.names = F,na="")
+  write.csv(Dup_Report_sms_rem,glue("{local_drive}Multiple_Dup_Report_sms_rem_reminders_{currentDate}_boxfolder_{boxfolder}.csv"),row.names = F,na="")
 } else {
   if(nrow(Dup_Report_sms_rem) == 0) {
   cat("No errors\n")
@@ -1744,7 +1776,7 @@ DHQ_sms_rem <- bq_table_download(DHQ_sms_table, bigint = "integer64") #currently
 
 if (nrow(DHQ_sms_rem) > 50) {
   cat("There are", nrow(DHQ_sms_rem), "errors. This table has been made a csv and posted to Box, link in the report intro.")
-  write.csv(DHQ_sms_rem,glue("{local_drive}Multiple_DHQ_sms_text_rem_reminders_{currentDate}_boxfolder_{boxfolder}.csv"),row.names = F,na="")
+  write.csv(DHQ_sms_rem,glue("{local_drive}Multiple_DHQ_sms_rem_reminders_{currentDate}_boxfolder_{boxfolder}.csv"),row.names = F,na="")
 } else {
   if(nrow(DHQ_sms_rem) == 0) {
   cat("No errors\n")
@@ -1821,7 +1853,7 @@ DHQ_Report_sms_rem <- bq_table_download(DHQ_Report_sms_table, bigint = "integer6
 
 if (nrow(DHQ_Report_sms_rem) > 50) {
   cat("There are", nrow(DHQ_Report_sms_rem), "errors. This table has been made a csv and posted to Box, link in the report intro.")
-  write.csv(DHQ_Report_sms_rem,glue("{local_drive}Multiple_DHQ_Report_sms_text_rem_reminders_{currentDate}_boxfolder_{boxfolder}.csv"),row.names = F,na="")
+  write.csv(DHQ_Report_sms_rem,glue("{local_drive}Multiple_DHQ_Report_sms_rem_reminders_{currentDate}_boxfolder_{boxfolder}.csv"),row.names = F,na="")
 } else {
   if(nrow(DHQ_Report_sms_rem) == 0) {
   cat("No errors\n")
