@@ -59,11 +59,11 @@ bq_auth()
 
 project <- "nih-nci-dceg-connect-prod-6d04"
 notif <- "SELECT notif.category, notif.attempt, notif.email, notif.notificationType, notif.notification_time, Connect_ID, d_512820379, d_821247024, d_914594314,  d_320303124 , d_843688458, notif.token,
-d_822499427, d_827220437, d_878865966, d_684635302, d_167958071, d_747006172, d_906417725, d_100767870, d_878865966, d_684635302, d_167958071
+d_822499427, d_827220437, d_878865966, d_684635302, d_167958071, d_747006172, d_906417725, d_100767870
 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` notif
-inner join `nih-nci-dceg-connect-prod-6d04.Connect.participants`  parts
+inner join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants`  parts
 on notif.token = parts.token
-where parts.d_821247024=197316935 and category LIKE '%3mo QOL Survey Reminders%'  and d_914594314 >= '2023-12-01T00:00:00Z'"
+where parts.d_821247024='197316935' and category LIKE '%3mo QOL Survey Reminders%'  and d_914594314 >= '2023-12-01T00:00:00Z'"
 
 #57 people excluded if we're only doing active participants  #and d_512820379=486306141 removed for now 
 #37 participants excluded for early verification 
@@ -349,11 +349,11 @@ all_reminders
 
 
 notif_before <- "SELECT notif.category, notif.attempt, notif.email, notif.notificationType, notif.notification_time, Connect_ID, d_512820379, d_821247024, d_914594314,  d_320303124 , d_843688458, notif.token,
-d_822499427, d_827220437, d_878865966, d_684635302, d_167958071, d_747006172, d_906417725, d_100767870, d_878865966, d_684635302, d_167958071
+d_822499427, d_827220437, d_878865966, d_684635302, d_167958071, d_747006172, d_906417725, d_100767870
 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` notif
-inner join `nih-nci-dceg-connect-prod-6d04.Connect.participants`  parts
+inner join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants`  parts
 on notif.token = parts.token
-where parts.d_821247024=197316935 and category LIKE '%3mo QOL Survey Reminders%'  and d_914594314 < '2023-12-01T00:00:00Z'"
+where parts.d_821247024='197316935' and category LIKE '%3mo QOL Survey Reminders%'  and d_914594314 < '2023-12-01T00:00:00Z'"
 
 notif_cc_before <- bq_project_query(project, notif_before)
 QOL_B <- bq_table_download(notif_cc_before, bigint = 'integer64')
