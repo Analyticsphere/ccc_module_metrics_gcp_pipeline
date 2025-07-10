@@ -65,7 +65,7 @@ bq_auth()
 
 project <- "nih-nci-dceg-connect-prod-6d04"
 PQOL3 <- "SELECT * FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.promis_v1` where Connect_ID is not null"
-parts <- "SELECT Connect_ID, token,  D_471593703, state_d_934298480, D_230663853,D_335767902, D_982402227, D_564964481, D_795827569, D_544150384,D_371067537, D_430551721, D_821247024, D_914594314,  state_d_725929722, d_126331570, d_536735468, d_663265240, d_878865966, d_684635302, d_167958071, d_914639140, d_311580100, d_371067537 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` where Connect_ID IS NOT NULL and (d_512820379='486306141' OR d_512820379='854703046') and (D_919254129='353358909') and (D_699625233='353358909') and d_320303124='231311385'" 
+parts <- "SELECT Connect_ID, token,  d_471593703, state_d_934298480, d_230663853,d_335767902, d_982402227, d_564964481, d_795827569, d_544150384,d_371067537, d_430551721, d_821247024, d_914594314,  state_d_725929722, d_126331570, d_536735468, d_663265240, d_878865966, d_684635302, d_167958071, d_914639140, d_311580100 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` where Connect_ID IS NOT NULL and (d_512820379='486306141' OR d_512820379='854703046') and (d_919254129='353358909') and (d_699625233='353358909') and d_320303124='231311385'" 
 
 parts_table <- bq_project_query(project, parts)
 parts_data <- bq_table_download(parts_table, bigint = "integer64",n_max = Inf, page_size = 10000)
@@ -98,28 +98,37 @@ dict <- list("104430631"="No", "353358909"="Yes", "367964536"	 = "Without any di
              "464631026" = "Very much", "878535894"	 = "Very poor","138752522"	= "Poor", "131550264"	= "Fair", "719933364" = "Good", "565881164" = "Very good")
 
 
-simple_funct <- function(CID, Title){  
+simple_funct <- function(CID, Title) {
   CID_SYM <- rlang::ensym(CID)
-  dt_select <- qol3_tib %>%  select(Connect_ID, !!CID_SYM)
-  gt_yn <- dt_select  %>% dplyr::group_by(!!CID_SYM) %>% dplyr::summarize(n=n(), percentage=100*n/nrow(.)) %>% dplyr::ungroup() %>% dplyr::mutate(answer=recode(!!CID_SYM, !!!dict)) %>% replace_na(list(answer="Skipped this Question")) %>%  dplyr::select(answer, n, percentage)
   
-  gt_yn %>%  gt::gt()  %>%  
-    fmt_number(columns = "percentage", decimals = 2) %>% 
-    tab_header(title = md(Title)) %>% 
-    cols_label(n= md("**Number of Participants**"), answer = md("**Answer**"), percentage = md("**Percentage of Participants**")) %>%  
-    grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
-    tab_options(
-      stub.font.weight = "bold"
-    ) %>%
-    tab_style(
-      style = list(
-        cell_text(weight = "bold")
-      ),
-      locations = cells_body(
-        columns = answer,
+  dt_select <- qol3_tib %>%  select(Connect_ID, !!CID_SYM)
+
+  gt_yn <- dt_select %>%
+    group_by(!!CID_SYM) %>%
+    summarize(n = n(), percentage = 100 * n / nrow(.), .groups = "drop") %>%
+    mutate(answer = recode(!!CID_SYM, !!!dict)) %>%
+    replace_na(list(answer = "Skipped this Question")) %>%
+    select(answer, n, percentage)
+
+  gt_yn <- gt_yn %>%
+    bind_rows(
+      tibble(
+        answer = "Total",
+        n = sum(gt_yn$n, na.rm = TRUE),
+        percentage = sum(gt_yn$percentage, na.rm = TRUE)
       )
     ) 
+
+  
+  knitr::kable(gt_yn,format.args = list(big.mark = ","),
+             caption=Title,
+             col.names = c("Answer", "Number of Participants", "Percentage of Participants"),
+             row.names=FALSE, align=c("l","c","c"),digits=2, booktabs = TRUE)%>% 
+    add_indent(seq(1, nrow(gt_yn) - 1)) %>% 
+  kable_styling(latex_options = c("scale_down","hold_position")) 
 }
+
+
 
 ```
 
