@@ -804,7 +804,7 @@ Covid_time$Cumulative_Percentage[nrow(Covid_time)] <- 100
 
 Covid_time <- Covid_time %>% 
     select(timeframe, N_percent, Cumulative_Percentage) %>%
-    rename(`Completion Time` = timeframe, `N%` = N_percent,
+    dplyr::rename(`Completion Time` = timeframe, `N%` = N_percent,
            'Cumulative Percentage' = Cumulative_Percentage)
 
 
@@ -1331,7 +1331,7 @@ QOL_TM$Cumulative_Percentage[nrow(QOL_TM)] <- 100
 
 QOL_TM <- QOL_TM %>% 
   select(permission, N_percent, Cumulative_Percentage) %>%
-  rename(`Completion Time` = permission, `N%` = N_percent,
+  dplyr::rename(`Completion Time` = permission, `N%` = N_percent,
          'Cumulative Percentage' = Cumulative_Percentage)
 
 
@@ -1520,7 +1520,7 @@ after_QOL_table <- after_QOL %>%
   mutate(Percentage = (n / eligible) * 100,
          N_percent = paste0(formatC(n, big.mark = ",", format = "d"), 
                             " (", round(Percentage, digits = 1), "%)")) %>% 
-  rename('Eligible for Survey' = eligible,
+  dplyr::rename('Eligible for Survey' = eligible,
          'N%' = N_percent) %>% 
     select('Survey', 'N%', 'Eligible for Survey')
 
@@ -1591,12 +1591,12 @@ dhq_time = dhq1 %>%
   filter(dhq_status=="Submitted") %>% 
   mutate(dhq_start_stop = as.numeric(difftime(as.POSIXct(ymd_hms(d_610227793)), as.POSIXct(ymd_hms(d_109610692)), units="mins")), 
          timeframe = case_when(dhq_start_stop<30 ~ "Under 30 Minutes",
-                       dhq_start_stop<45 ~ "30-45 Minutes",
-                       dhq_start_stop<60 ~ "45-60 Minutes",
-                       dhq_start_stop<90 ~ "60-90 Minutes",
-                       dhq_start_stop<120 ~ "90-120 Minutes",
-                       dhq_start_stop>=120 ~ "Greater than 120 Minutes",
-                       is.na(d_784810139) | is.na(d_268176409) ~ "Missing Time Stamp(s)"),
+                               dhq_start_stop<45 ~ "30-45 Minutes",
+                               dhq_start_stop<60 ~ "45-60 Minutes",
+                               dhq_start_stop<90 ~ "60-90 Minutes",
+                               dhq_start_stop<120 ~ "90-120 Minutes",
+                               dhq_start_stop>=120 ~ "Greater than 120 Minutes",
+                               is.na(d_784810139) | is.na(d_268176409) ~ "Missing Time Stamp(s)"),
 timeframe = factor(timeframe, levels=c("Under 30 Minutes", "30-45 Minutes", 
                                          "45-60 Minutes", "60-90 Minutes", "90-120 Minutes", 
                                        "Greater than 120 Minutes", "Missing Time Stamp(s)")))  %>% 
@@ -1618,7 +1618,7 @@ dhq_time$Cumulative_Percentage[nrow(dhq_time)] <- 100
 
 dhq_time <- dhq_time %>% 
     select(timeframe, N_percent, Cumulative_Percentage) %>%
-    rename(`Completion Time` = timeframe, `N%` = N_percent,
+    dplyr::rename(`Completion Time` = timeframe, `N%` = N_percent,
            'Cumulative Percentage' = Cumulative_Percentage)
 
 
@@ -1674,8 +1674,7 @@ knitr::kable(Trig_table_DHQ,
 
 ```{r DHQ_Sect3, echo=FALSE, warning=FALSE, message=FALSE}
 
-## Determine when a person was DHQ eligible
-# time notification was sent
+## Determine when a person was DHQ eligible = time notification was sent
 
 ################   Numerator  ##############
 
@@ -1753,7 +1752,7 @@ after_DHQ_table <- after_DHQ %>%
   mutate(Percentage = (n / eligible) * 100,
          N_percent = paste0(formatC(n, big.mark = ",", format = "d"), 
                             " (", round(Percentage, digits = 1), "%)")) %>% 
-  rename('Eligible for Survey' = eligible,
+  dplyr::rename('Eligible for Survey' = eligible,
          'N%' = N_percent) %>% 
     select('Survey', 'N%', 'Eligible for Survey')
 
@@ -1920,7 +1919,7 @@ CSH_TM <- rbind(CSH_time, summary_row) %>%
 
 CSH_TM <- CSH_TM %>% 
   select(start_stop_time, N_percent) %>%
-  rename(`Completion Time` = start_stop_time, 
+  dplyr::rename(`Completion Time` = start_stop_time, 
          `N%` = N_percent)
 
 
@@ -2061,7 +2060,7 @@ after_CSH_table <- after_CSH %>%
   mutate(Percentage = (n / eligible) * 100,
          N_percent = paste0(formatC(n, big.mark = ",", format = "d"), 
                             " (", round(Percentage, digits = 1), "%)")) %>% 
-  rename('Eligible for Survey' = eligible,
+  dplyr::rename('Eligible for Survey' = eligible,
          'N%' = N_percent) %>% 
     select('Survey', 'N%', 'Eligible for Survey')
 
@@ -2324,7 +2323,7 @@ after_CES_table <- after_CES %>%
   mutate(Percentage = (n / eligible) * 100,
          N_percent = paste0(formatC(n, big.mark = ",", format = "d"), 
                             " (", round(Percentage, digits = 1), "%)")) %>% 
-  rename('Eligible for Survey' = eligible,
+  dplyr::rename('Eligible for Survey' = eligible,
          'N%' = N_percent) %>% 
     select('Survey', 'N%', 'Eligible for Survey')
 
