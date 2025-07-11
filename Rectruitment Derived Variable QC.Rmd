@@ -1285,12 +1285,16 @@ if (nrow(bday6) == 0) {
 ```{r reinvite1, echo=FALSE, warning=FALSE, message=FALSE}
 
 reinvite_date_type <- partsbq %>%  filter(!is.na(d_439351436) & is.na(d_280021666)) %>%  
-  mutate(verif_status = case_when(d_821247024==875007964 ~ 'Not yet verified',
+  mutate(Verif_Status = case_when(d_821247024==875007964 ~ 'Not yet verified',
                                   d_821247024==197316935 ~ 'Verified',
                                   d_821247024==219863910 ~ 'Cannot be verified',
                                   d_821247024==922622075 ~ 'Duplicate',
                                   d_821247024==160161595 ~ 'Outreach timed out')) %>% 
-  select(Connect_ID, token, d_454445267, d_430551721, verif_status, d_914594314, campaign_type, d_439351436)
+  select(Connect_ID, token, d_454445267, d_430551721, Verif_Status, d_914594314, d_280021666, d_439351436) %>% 
+  dplyr::rename('Date/Time Consented' = d_454445267,
+                'Date/Time Verified' = d_914594314,
+                'Re-Invitation Campaign Type' = d_280021666, 
+                'Date/Time Re-Invited' = d_439351436)
 
 boxfolder = "194196493018"
 if (nrow(reinvite_date_type) < 50) {
