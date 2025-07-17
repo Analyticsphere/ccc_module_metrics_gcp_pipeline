@@ -63,8 +63,8 @@ KP_reminders <- " SELECT Connect_ID, d_827220437, notif.category, attempt, parts
 LEAST(COALESCE(d_173836415_d_266600170_d_769615780, d_173836415_d_266600170_d_939818935), COALESCE(d_173836415_d_266600170_d_939818935, d_173836415_d_266600170_d_769615780))   as first_draw_order, 
  d_173836415_d_266600170_d_156605577,
  LEAST(COALESCE(d_173836415_d_266600170_d_982213346, d_173836415_d_266600170_d_139245758), COALESCE(d_173836415_d_266600170_d_139245758, d_173836415_d_266600170_d_982213346))  as first_collection,
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` parts
-left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` notif
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` parts
+left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` notif
 on notif.token=parts.token and
 category LIKE 'KP%' and category LIKE '%baseline biospecimen invitations%' 
 where Connect_ID NOT IN ('1766922128', '3613468175', '3698144899', '8417684909' ) and
@@ -81,8 +81,8 @@ d_173836415_d_266600170_d_982213346, d_173836415_d_266600170_d_139245758"
 #### Just on order placed, from kp, and time gap first attempt is also 7563. 
 # SELECT d_827220437, notif.category, attempt, parts.token,
 #  least( d_173836415_d_266600170_d_769615780, d_173836415_d_266600170_d_939818935) as first_draw_order,
-# FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` parts
-# inner join `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` notif
+# FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` parts
+# inner join `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` notif
 # on notif.token=parts.token and
 # category LIKE 'KP%' and category LIKE '%baseline biospecimen invitations%' and
 #  (d_827220437='125001209' or d_827220437='327912200' or d_827220437='300267574' or d_827220437='452412599') and
@@ -97,14 +97,14 @@ d_173836415_d_266600170_d_982213346, d_173836415_d_266600170_d_139245758"
 
 ### Without narrowing down the date, right now overall reminders have been sent for the KP Biospecimen reminder, will keep increasing
 # SELECT category, attempt, 
-# count(*) reminders_sent FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` 
+# count(*) reminders_sent FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` 
 # where category LIKE 'KP%' and category LIKE '%baseline biospecimen invitations%'
 # group by category, attempt
 # order by category asc, attempt asc
 
 # OR 
 
-# SELECT count(distinct(token)) FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP` 
+# SELECT count(distinct(token)) FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` 
 # where category LIKE 'KP%' and category LIKE '%baseline biospecimen invitations%'
 
 
@@ -163,12 +163,12 @@ from
 (SELECT token, 
        DATE(notification_time) as notification_date, 
        COUNT(*) as num_attempts
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications_JP`
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications`
 WHERE category LIKE 'KP%' 
 AND category LIKE '%baseline biospecimen invitations%'
 GROUP BY token, DATE(notification_time)
 HAVING COUNT(*) > 1)  mult_contacts
-left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` p
+left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
 on mult_contacts.token= p.token"
 
 multiple_notifs_cc <- bq_project_query(project, multiple_notifs)

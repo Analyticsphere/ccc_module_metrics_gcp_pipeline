@@ -37,7 +37,7 @@ geocode1$address_nickname <- factor(geocode1$address_nickname,
 
 
 parts <- "SELECT Connect_ID, d_544150384
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` 
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` 
 where Connect_ID IS NOT NULL and (d_512820379='486306141' OR d_512820379='854703046') and 
 d_919254129='353358909' and d_699625233='353358909' and d_663265240='231311385' and d_821247024='197316935'"
 
@@ -121,7 +121,7 @@ case when D_191221569_D_191221569_D_858353109='1' THEN 'DOB' ELSE ' ' end as Chi
 D_752015272_D_943813942 as ChildhoodEnd_m4,
 case when D_752015272_D_752015272_D_139208251='1' THEN '2025' ELSE '' end as Living_Childhood_m4
 
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module4_v1_JP`
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module4_v1`
 where Connect_ID is not null
 "
 
