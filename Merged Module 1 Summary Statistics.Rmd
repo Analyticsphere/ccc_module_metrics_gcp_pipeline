@@ -99,7 +99,7 @@ devtools::install_github("tidyverse/reprex")
 project <- "nih-nci-dceg-connect-prod-6d04"
 billing <- "nih-nci-dceg-connect-prod-6d04" 
 recr_M1 <- bq_project_query(project, query="SELECT token,Connect_ID, d_821247024, d_914594314,  d_827220437,d_512820379,
-                            d_949302066 , d_517311251  FROM  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` WHERE  d_821247024='197316935' and d_949302066 ='231311385'")
+                            d_949302066 , d_517311251  FROM  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` WHERE  d_821247024='197316935' and d_949302066 ='231311385'")
 recr_m1 <- bq_table_download(recr_M1,bigint = "integer64")
 cnames <- names(recr_m1)
 # Check that it doesn't match any non-number
@@ -116,8 +116,8 @@ for (i in 1: length(cnames)){
 
 #### Handling participants that somehow completed both Mod1 version 1 and Mod1 version 2
 
-sql_M1_1 <- bq_project_query(project, query = "SELECT * FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v1_JP` WHERE Connect_ID IS NOT NULL")
-sql_M1_2 <- bq_project_query(project, query = "SELECT * FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v2_JP` WHERE Connect_ID IS NOT NULL")
+sql_M1_1 <- bq_project_query(project, query = "SELECT * FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v1` WHERE Connect_ID IS NOT NULL")
+sql_M1_2 <- bq_project_query(project, query = "SELECT * FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v2` WHERE Connect_ID IS NOT NULL")
 
 M1_V1 <- bq_table_download(sql_M1_1, bigint = "integer64")
 M1_V2 <- bq_table_download(sql_M1_2, bigint = "integer64")
@@ -184,7 +184,7 @@ m1_complete_nodup$Connect_ID <- as.numeric(m1_complete_nodup$Connect_ID)
 
 ### Define requirements of the data: active or passive,  user profile done, consented, mod1 done, verified
 parts <- "SELECT Connect_ID, token, d_564964481,d_795827569, d_544150384, d_827220437
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` 
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` 
 where Connect_ID IS NOT NULL and (d_512820379='486306141' OR d_512820379='854703046') and d_821247024='197316935' and
 (d_919254129='353358909') and (d_699625233='353358909') and (d_949302066='231311385')"
 parts_table <- bq_project_query(project, parts)
@@ -3262,13 +3262,13 @@ simple_funct(D_992987417, "MULTBIRTH: A Twin or Multiple")
 simple_funct(D_170440011, "MOM1: Mother Living")
 
 #age now
-one_logic_funct(D_354326265_D_354326265, D_170440011, 353358909, "Answer for Mother's Current Age")
+#one_logic_funct(D_354326265_D_378988419, D_170440011, 353358909, "Answer for Mother's Current Age")
 boxp_funct(D_354326265_D_378988419,"Mother's Current Age","Age")
 
 
 #age at deaths
   #once I have concatenated age come back and do a barplot sectioned off by age
-one_logic_funct(D_422714611_D_422714611, D_170440011, 104430631, "Answer for Mother's Age at Death")
+#one_logic_funct(D_422714611_D_807765962, D_170440011, 104430631, "Answer for Mother's Age at Death")
 boxp_funct(D_422714611_D_807765962,"Mother's Age at Death","Age")
 
 
@@ -3502,12 +3502,12 @@ simple_funct(D_367374606, "DAD: Father Living")
 #age now
 #one_logic_funct(D_178774803_D_334956961, D_367374606, 353358909, "Answer for Father's Current Age")
 boxp_funct(D_178774803_D_334956961,"Father's Current Age","Age")
-#simple_funct(D_178774803_D_178774803, D_178774803_D_334956961, NA, "Fathers Age Unknown")
+#simple_funct(D_178774803_D_178774803_D_178420302, D_178774803_D_334956961, NA, "Fathers Age Unknown")
 
 dt_dad_age= data_tib_m1 %>% filter(D_367374606==353358909)  
 
 dadage= dt_dad_age  %>%  mutate(answer= case_when(!is.na(D_178774803_D_334956961) ~ "Answered with Age",
-                                                  D_178774803_D_178774803 =="[178420302]" ~ "Don't Know",
+                                                  D_178774803_D_178774803_D_178420302=="1" ~ "Don't Know",
                                                   TRUE ~ "Skipped this Question"))
 
 dt_dad_age_summary <- dadage %>% dplyr::group_by(answer) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(answer, n, percentage) 
@@ -3544,7 +3544,7 @@ boxp_funct(D_628078826_D_517670352,"Father's Age at Death","Age")
 dt_dad_dthage= data_tib_m1 %>% filter(D_367374606==104430631) 
 
 dadage= dt_dad_dthage  %>%  mutate(answer= case_when(!is.na(D_628078826_D_517670352) ~ "Answered with Age",
-                                                  D_628078826_D_628078826=="[178420302]" ~ "Don't Know",
+                                                  D_628078826_D_628078826_D_178420302=="1" ~ "Don't Know",
                                                   TRUE ~ "Skipped this Question"))
 
 dt_dad_dthage_summary <- dadage %>% dplyr::group_by(answer) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(answer, n, percentage) 
@@ -4956,8 +4956,8 @@ grid.arrange(ch5_age,ch6_age, ch7_age, ch8_age, nrow=2)
 dt_ch1_d_age= data_tib_m1  %>%  filter(D_446999144>0) #is.na(D_640010727_1_1_D_299300933_1) & 
 
 child1= dt_ch1_d_age  %>%  mutate(oth_age= case_when(!is.na(D_640010727_1_1_D_299300933_1) ~ "Answered with Age",
-                                                     D_640010727_1_1_D_640010727_1_1 =="[958239616]" ~ "Less than 1 Year",
-                                                     D_640010727_1_1_D_640010727_1_1=="[178420302]" ~ "Uknown",
+                                                     D_640010727_1_1_D_640010727_1_1_D_958239616=="1" ~ "Less than 1 Year",
+                                                     D_640010727_1_1_D_640010727_1_1_D_178420302=="1" ~ "Uknown",
                                                      TRUE ~ "Skipped this Question"))
 
 dt_ch1_d_age_summary <- child1 %>%  dplyr::group_by(oth_age) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(oth_age, n, percentage)
@@ -4975,8 +4975,8 @@ dt_ch1_d_age_summary %>%  gt::gt(rowname_col = "row_lab") %>%
 dt_ch2_d_age= data_tib_m1  %>%   filter(D_446999144>1)
 
 child2= dt_ch2_d_age  %>%  mutate(oth_age= case_when(!is.na(D_640010727_2_2_D_299300933_2) ~ "Answered with Age",
-                                                     D_640010727_2_2_D_640010727_2_2 =="[958239616]" ~ "Less than 1 Year",
-                                                     D_640010727_2_2_D_640010727_2_2=="[178420302]" ~ "Uknown",
+                                                     D_640010727_2_2_D_640010727_2_2_D_958239616=="1" ~ "Less than 1 Year",
+                                                     D_640010727_2_2_D_640010727_2_2_D_178420302=="1" ~ "Uknown",
                                                      TRUE ~ "Skipped this Question"))
 
 dt_ch2_d_age_summary <- child2 %>% dplyr::group_by(oth_age) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(oth_age, n, percentage)
@@ -4995,8 +4995,8 @@ dt_ch2_d_age_summary %>%  gt::gt(rowname_col = "row_lab") %>%
 dt_ch3_d_age= data_tib_m1 %>% filter(D_446999144>2)
 
 child3= dt_ch3_d_age  %>%  mutate(oth_age= case_when(!is.na(D_640010727_3_3_D_299300933_3) ~ "Answered with Age",
-                                                     D_640010727_3_3_D_640010727_3_3 =="[958239616]" ~ "Less than 1 Year",
-                                                     D_640010727_3_3_D_640010727_3_3=="[178420302]" ~ "Uknown",
+                                                     D_640010727_3_3_D_640010727_3_3_D_958239616=="1" ~ "Less than 1 Year",
+                                                     D_640010727_3_3_D_640010727_3_3_D_178420302=="1" ~ "Uknown",
                                                      TRUE ~ "Skipped this Question"))
 
 dt_ch3_d_age_summary <- child3 %>% dplyr::group_by(oth_age) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(oth_age, n, percentage)
@@ -5015,8 +5015,8 @@ dt_ch3_d_age_summary %>%  gt::gt(rowname_col = "row_lab") %>%
 dt_ch4_d_age= data_tib_m1    %>% filter(D_446999144>3)
 
 child4= dt_ch4_d_age  %>%  mutate(oth_age= case_when(!is.na(D_640010727_4_4_D_299300933_4) ~ "Answered with Age",
-                                                     D_640010727_4_4_D_640010727_4_4 =="[958239616]" ~ "Less than 1 Year",
-                                                     D_640010727_4_4_D_640010727_4_4=="[178420302]" ~ "Uknown",
+                                                     D_640010727_4_4_D_640010727_4_4_D_958239616=="1" ~ "Less than 1 Year",
+                                                     D_640010727_4_4_D_640010727_4_4_D_178420302=="1" ~ "Uknown",
                                                      TRUE ~ "Skipped this Question"))
 
 dt_ch4_d_age_summary <- child4 %>% dplyr::group_by(oth_age) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(oth_age, n, percentage)
@@ -5034,8 +5034,8 @@ dt_ch4_d_age_summary %>%  gt::gt(rowname_col = "row_lab") %>%
 dt_ch5_d_age= data_tib_m1  %>% filter(D_446999144>4)
 
 child5= dt_ch5_d_age  %>%  mutate(oth_age= case_when(!is.na(D_640010727_5_5_D_299300933_5) ~ "Answered with Age",
-                                                     D_640010727_5_5_D_640010727_5_5 =="[958239616]" ~ "Less than 1 Year",
-                                                     D_640010727_5_5_D_640010727_5_5=="[178420302]" ~ "Uknown",
+                                                     D_640010727_5_5_D_640010727_5_5_D_958239616=="1" ~ "Less than 1 Year",
+                                                     D_640010727_5_5_D_640010727_5_5_D_178420302=="1" ~ "Uknown",
                                                      TRUE ~ "Skipped this Question"))
 
 dt_ch5_d_age_summary <- child5 %>% dplyr::group_by(oth_age) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(oth_age, n, percentage) 
@@ -5053,8 +5053,8 @@ dt_ch5_d_age_summary %>%  gt::gt(rowname_col = "row_lab") %>%
 dt_ch6_d_age= data_tib_m1  %>% filter(D_446999144>5)
 
 child6= dt_ch6_d_age  %>%  mutate(oth_age= case_when(!is.na(D_640010727_6_6_D_299300933_6) ~ "Answered with Age",
-                                                     D_640010727_6_6_D_640010727_6_6 =="[958239616]" ~ "Less than 1 Year",
-                                                     D_640010727_6_6_D_640010727_6_6=="[178420302]" ~ "Uknown",
+                                                     D_640010727_6_6_D_640010727_6_6_D_958239616=="1" ~ "Less than 1 Year",
+                                                     D_640010727_6_6_D_640010727_6_6_D_178420302=="1" ~ "Uknown",
                                                      TRUE ~ "Skipped this Question"))
 
 dt_ch6_d_age_summary <- child6 %>% dplyr::group_by(oth_age) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(oth_age, n, percentage) 
@@ -5087,8 +5087,8 @@ grid.arrange(ch1_age_d,ch2_age_d,ch3_age_d, ch4_age_d,ch5_age_d, ch6_age_d, nrow
 dt_chd1_d_age= data_tib_m1  %>%   filter(D_418392907_1_1==104430631)
 
 child1= dt_chd1_d_age  %>%  mutate(oth_age= case_when(!is.na(D_236590500_1_1_D_182786508_1) ~ "Answered with age",
-                                                      D_236590500_1_1_D_236590500_1_1 =="[958239616]" ~ "Less than 1 Year",
-                                                      D_236590500_1_1_D_236590500_1_1=="[178420302]" ~ "Uknown",
+                                                      D_236590500_1_1_D_236590500_1_1_D_958239616=="1" ~ "Less than 1 Year",
+                                                      D_236590500_1_1_D_236590500_1_1_D_178420302=="1" ~ "Uknown",
                                                       TRUE ~ "Skipped this Question"))
 
 dt_chd1_d_age_summary <- child1 %>% dplyr::group_by(oth_age) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(oth_age, n, percentage) 
@@ -5106,8 +5106,8 @@ dt_chd1_d_age_summary %>%  gt::gt(rowname_col = "row_lab") %>%
 dt_chd2_d_age= data_tib_m1  %>%  filter(D_418392907_2_2==104430631)
 
 child2= dt_chd2_d_age  %>%  mutate(oth_age= case_when(!is.na(D_236590500_2_2_D_182786508_2) ~ "Answered with age",
-                                                      D_236590500_2_2_D_236590500_2_2 =="[958239616]" ~ "Less than 1 Year",
-                                                      D_236590500_2_2_D_236590500_2_2=="[178420302]" ~ "Uknown",
+                                                      D_236590500_2_2_D_236590500_2_2_D_958239616=="1" ~ "Less than 1 Year",
+                                                      D_236590500_2_2_D_236590500_2_2_D_178420302=="1" ~ "Uknown",
                                                       TRUE ~ "Skipped this Question"))
 
 dt_chd2_d_age_summary <- child2 %>% dplyr::group_by(oth_age) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(oth_age, n, percentage) 
@@ -5126,8 +5126,8 @@ dt_chd2_d_age_summary %>%  gt::gt(rowname_col = "row_lab") %>%
 dt_chd3_d_age= data_tib_m1   %>% filter(D_418392907_3_3==104430631)
 
 child3= dt_chd3_d_age  %>%  mutate(oth_age= case_when(!is.na(D_236590500_3_3_D_182786508_3) ~ "Answered with age",
-                                                      D_236590500_3_3_D_236590500_3_3 =="[958239616]" ~ "Less than 1 Year",
-                                                      D_236590500_3_3_D_236590500_3_3=="[178420302]" ~ "Uknown",
+                                                      D_236590500_3_3_D_236590500_3_3_D_958239616=="1" ~ "Less than 1 Year",
+                                                      D_236590500_3_3_D_236590500_3_3_D_178420302=="1" ~ "Uknown",
                                                       TRUE ~ "Skipped this Question"))
 
 dt_chd3_d_age_summary <- child3 %>% dplyr::group_by(oth_age) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(oth_age, n, percentage)
@@ -5146,8 +5146,8 @@ dt_chd3_d_age_summary %>%  gt::gt(rowname_col = "row_lab") %>%
 dt_chd4_d_age= data_tib_m1 %>% filter(D_418392907_4_4==104430631)
 
 child4= dt_chd4_d_age  %>%  mutate(oth_age= case_when(!is.na(D_236590500_4_4_D_182786508_4) ~ "Answered with age",
-                                                      D_236590500_4_4_D_236590500_4_4 =="[958239616]" ~ "Less than 1 Year",
-                                                      D_236590500_4_4_D_236590500_4_4=="[178420302]" ~ "Uknown",
+                                                      D_236590500_4_4_D_236590500_4_4_D_958239616=="1" ~ "Less than 1 Year",
+                                                      D_236590500_4_4_D_236590500_4_4_D_178420302=="1" ~ "Uknown",
                                                       TRUE ~ "Skipped this Question"))
 
 dt_chd4_d_age_summary <- child4 %>%  dplyr::group_by(oth_age) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(oth_age, n, percentage)
@@ -5165,8 +5165,8 @@ dt_chd4_d_age_summary %>%  gt::gt(rowname_col = "row_lab") %>%
 dt_chd5_d_age= data_tib_m1 %>% filter(D_418392907_5_5==104430631)
 
 child5= dt_chd5_d_age  %>%  mutate(oth_age= case_when(!is.na(D_236590500_5_5_D_182786508_5) ~ "Answered with age",
-                                                      D_236590500_5_5_D_236590500_5_5 =="[958239616]" ~ "Less than 1 Year",
-                                                      D_236590500_5_5_D_236590500_5_5=="[178420302]" ~ "Uknown",
+                                                      D_236590500_5_5_D_236590500_5_5_D_958239616=="1" ~ "Less than 1 Year",
+                                                      D_236590500_5_5_D_236590500_5_5_D_178420302=="1" ~ "Uknown",
                                                       TRUE ~ "Skipped this Question"))
 
 dt_chd5_d_age_summary <- child5 %>%  dplyr::group_by(oth_age) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(oth_age, n, percentage)
@@ -5184,8 +5184,8 @@ dt_chd5_d_age_summary %>%  gt::gt(rowname_col = "row_lab") %>%
 dt_chd6_d_age= data_tib_m1  %>% filter(D_418392907_6_6==104430631)
 
 child6= dt_chd6_d_age  %>%  mutate(oth_age= case_when(!is.na(D_236590500_6_6_D_182786508_6) ~ "Answered with age",
-                                                      D_236590500_6_6_D_236590500_6_6 =="[958239616]" ~ "Less than 1 Year",
-                                                      D_236590500_6_6_D_236590500_6_6=="[178420302]" ~ "Uknown",
+                                                      D_236590500_6_6_D_236590500_6_6_D_958239616=="1" ~ "Less than 1 Year",
+                                                      D_236590500_6_6_D_236590500_6_6_D_178420302=="1" ~ "Uknown",
                                                       TRUE ~ "Skipped this Question"))
 
 dt_chd6_d_age_summary <- child6 %>%  dplyr::group_by(oth_age) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(oth_age, n, percentage)
