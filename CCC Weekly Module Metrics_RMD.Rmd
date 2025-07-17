@@ -673,16 +673,16 @@ knitr::kable(Numb5_table,
 
 
 
-```{r, echo=FALSE, warning=FALSE, message=FALSE, results='eval'}
+```{r BL_demographics, echo=FALSE, warning=FALSE, message=FALSE, results='eval'}
 
 
-CES_by_Sex_df <- create_tbl_cross2(all_data, "sex", "BL_comp", "row", "Sex", "Baseline Survey \n Completion", "Total Verified Participants")
+BL_by_Sex_df <- create_tbl_cross2(all_data, "sex", "BL_comp", "row", "Sex", "Baseline Survey \n Completion", "Total Verified Participants")
 
-knitr::kable(CES_by_Sex_df, 
+knitr::kable(BL_by_Sex_df, 
              caption='Table 1.9. Initial Survey Completion Rate by Site Defined Sex \n Among Verified Participants',
              row.names=FALSE, align=c("l","c","c","c","c","c"), booktabs = TRUE) %>%
     kable_styling(latex_options = "scale_down") %>%  
-    add_indent(seq(1, nrow(CES_by_Sex_df) - 1)) %>%  landscape() %>% 
+    add_indent(seq(1, nrow(BL_by_Sex_df) - 1)) %>%  landscape() %>% 
   footnote(general="Note: Sex defined as the de-identified sex data reported by sites at time of invitation.",
            general_title = "")
 
@@ -690,13 +690,13 @@ knitr::kable(CES_by_Sex_df,
 
 
 
-CES_by_Age_df <- create_tbl_cross2(all_data, "age", "BL_comp", "row", "Age", "Baseline Survey \n Completion", "Total Verified Participants")
+BL_by_Age_df <- create_tbl_cross2(all_data, "age", "BL_comp", "row", "Age", "Baseline Survey \n Completion", "Total Verified Participants")
 
-knitr::kable(CES_by_Age_df, 
+knitr::kable(BL_by_Age_df, 
              caption="Table 1.10. Initial Survey Completion Rate by Site Defined Age \n Among Verified Participants",
              row.names=FALSE, align=c("l","c","c","c","c","c"), booktabs = TRUE) %>%
     kable_styling(latex_options = "scale_down") %>%  
-    add_indent(seq(1, nrow(CES_by_Age_df) - 1)) %>%  landscape() %>% 
+    add_indent(seq(1, nrow(BL_by_Age_df) - 1)) %>%  landscape() %>% 
   footnote(general="Note: Age defined as the de-identified age data reported by sites at time of invitation, not current age at time of survey completion.",
            general_title = "")
 
@@ -704,13 +704,13 @@ knitr::kable(CES_by_Age_df,
 
 
 
-CES_by_Race_df <- create_tbl_cross2(all_data, "race", "BL_comp", "row", "Race", "Baseline Survey \n Completion", "Total Verified Participants")
+BL_by_Race_df <- create_tbl_cross2(all_data, "race", "BL_comp", "row", "Race", "Baseline Survey \n Completion", "Total Verified Participants")
 
-knitr::kable(CES_by_Race_df, 
+knitr::kable(BL_by_Race_df, 
              caption="Table 1.11. Initial Survey Completion Rate by Site Defined Race \n Among Verified Participants",
              row.names=FALSE, align=c("l","c","c","c","c","c"), booktabs = TRUE) %>%
     kable_styling(latex_options = "scale_down") %>%  
-    add_indent(seq(1, nrow(CES_by_Race_df) - 1)) %>%  landscape() %>%
+    add_indent(seq(1, nrow(BL_by_Race_df) - 1)) %>%  landscape() %>%
     footnote(general = "Note: Race defined as the de-identified race data reported by sites at time of invitation.",
              general_title = "")
 
@@ -961,7 +961,7 @@ knitr::kable(QOL_comp_BL_before,
 
 
 
-```{r Overall_BySex_ByAge, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+```{r QOL_BySex_ByAge, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
 
 Comp_by_Sex <- all_data %>% filter(qolcomplt!="Not Eligible") %>% 
@@ -1159,7 +1159,7 @@ m1_comp <- m1_comp %>%
 
 
 
-```{r By_Race, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+```{r QOL_By_Race, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
 
 Comp_by_race <- m1_comp %>% filter(qolcomplt!="Not Eligible") %>% 
@@ -1188,7 +1188,7 @@ add_footnote(Comp_by_race, paste0('Note: In order to determine race, Module 1 mu
 ```
 
 
-```{r By_Race_And_Sex, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+```{r QOL_By_Race_And_Sex, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
 m1_comp = m1_comp %>%  mutate(sex_race= case_when(sex=="Female" & multi_racial==1 ~ "Female: Multi-Racial",
                                             sex=="Female" & D_384191091_D_384191091_D_583826374==1 ~ "Female: American Indian or Native American",
@@ -1250,7 +1250,7 @@ Comp_by_sex_race %>% kable_styling(latex_options = c("scale_down","hold_position
 ```
 
 
-```{r By_Demographic, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+```{r QOL_By_Demographic, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
 m1_comp <- m1_comp %>%
   mutate(
@@ -1941,7 +1941,6 @@ trig_csh <- bq_project_query(project,
                              left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
                              on notif.token=pts.token
                              where category LIKE '%Screen%' and attempt='1st contact'")
-#query="SELECT distinct(token), notification_time FROM `nih-nci-dceg-connect-dev.FlatConnect.notifications` where category LIKE '%Screen%' and attempt='1st contact'")
 
 
 trigger_csh <- bigrquery::bq_table_download(trig_csh,bigint = "integer64")
