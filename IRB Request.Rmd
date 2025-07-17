@@ -8,6 +8,18 @@ output:
     df_print: paged
 ---
 
+
+
+```{r, include=FALSE}
+### NOTE!!!!! JAKES VERSION OF THE MODULE 1 FLATTENING STOPPED WORKING IN APRIL OF 2025. THE LAST SUCCESSFUL UPDATE WAS MAY 22ND AT 2025. This report ran in 2025 with that outdatd JP flattened data. The code has since been corrected with Eddie's version of the flattening to be used in 2026 and moving forward
+
+
+```
+
+
+
+
+
 ```{r libraries, include=FALSE}
 
 
@@ -70,7 +82,7 @@ devtools::install_github("tidyverse/reprex")
 project <- "nih-nci-dceg-connect-prod-6d04"
 billing <- "nih-nci-dceg-connect-prod-6d04" 
 recr_M1 <- bq_project_query(project, query="SELECT token,Connect_ID, d_821247024, d_914594314,  d_827220437,d_512820379,
-                            d_949302066 , d_517311251  FROM  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` WHERE  d_821247024='197316935' and d_949302066 ='231311385'")
+                            d_949302066 , d_517311251  FROM  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` WHERE  d_821247024='197316935' and d_949302066 ='231311385'")
 recr_m1 <- bq_table_download(recr_M1,bigint = "integer64")
 cnames <- names(recr_m1)
 # Check that it doesn't match any non-number
@@ -87,8 +99,8 @@ for (i in 1: length(cnames)){
 
 #### Handling participants that somehow completed both Mod1 version 1 and Mod1 version 2
 
-sql_M1_1 <- bq_project_query(project, query = "SELECT * FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v1_JP` WHERE Connect_ID IS NOT NULL")
-sql_M1_2 <- bq_project_query(project, query = "SELECT * FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v2_JP` WHERE Connect_ID IS NOT NULL")
+sql_M1_1 <- bq_project_query(project, query = "SELECT * FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v1` WHERE Connect_ID IS NOT NULL")
+sql_M1_2 <- bq_project_query(project, query = "SELECT * FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v2` WHERE Connect_ID IS NOT NULL")
 
 M1_V1 <- bq_table_download(sql_M1_1, bigint = "integer64")
 M1_V2 <- bq_table_download(sql_M1_2, bigint = "integer64")
@@ -164,7 +176,7 @@ knitr::opts_chunk$set(comment = NA)
 
 
 
-parts <- "SELECT Connect_ID, d_564964481, d_795827569, d_544150384, d_117249500, d_454445267,d_949302066 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` where Connect_ID IS NOT NULL and 
+parts <- "SELECT Connect_ID, d_564964481, d_795827569, d_544150384, d_117249500, d_454445267,d_949302066 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` where Connect_ID IS NOT NULL and 
 d_821247024='197316935' and d_747006172!='353358909' and d_831041022!='353358909' and
 DATE(d_914594314) < '2024-10-01'" 
 parts_table <- bq_project_query(project, parts)
@@ -251,7 +263,7 @@ irb = irb %>%  mutate(race= case_when(d_949302066==231311385 & multi_racial==1 ~
  
 ```{r Documenting, echo=FALSE, message=FALSE, warning=FALSE, collapse=TRUE}
 
-wd_ver <- "SELECT Connect_ID,d_821247024,d_747006172  FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` where Connect_ID IS NOT NULL
+wd_ver <- "SELECT Connect_ID,d_821247024,d_747006172  FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` where Connect_ID IS NOT NULL
 and DATE(d_914594314) < '2024-10-01'" 
 wd_ver_table <- bq_project_query(project, wd_ver)
 wd_ver_data <- bq_table_download(wd_ver_table, bigint = "integer64",n_max = Inf, page_size = 10000)
