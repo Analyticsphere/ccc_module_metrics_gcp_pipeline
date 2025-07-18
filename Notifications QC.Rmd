@@ -590,8 +590,8 @@ if (nrow(CBV_rem) > 50) {
 
 \FloatBarrier
 ## The same participant received multiple Data Destruction email reminders on the same day. 
-```{r DDR, echo=FALSE, message=FALSE, warning=FALSE}
-DDR <- "SELECT distinct(p.Connect_ID), #distinct(n.token), 
+```{r DDR_email, echo=FALSE, message=FALSE, warning=FALSE}
+DDR_email <- "SELECT distinct(p.Connect_ID), #distinct(n.token), 
 category,
        DATE(notification_time) as repeat_date, 
        COUNT(*) as num_same_day_attempts
@@ -603,13 +603,13 @@ AND notificationType = 'email'
 GROUP BY Connect_ID,category, DATE(notification_time)
 HAVING COUNT(*) > 1"
 
-DDR_table <- bq_project_query(project, DDR)
-Destruction_rem <- bq_table_download(DDR_table, bigint = "integer64")
+DDR_email_table <- bq_project_query(project, DDR_email)
+Destruction_rem <- bq_table_download(DDR_email_table, bigint = "integer64")
 
 
 if (nrow(Destruction_rem) > 50) {
   cat("There are", nrow(Destruction_rem), "errors. This table has been made a csv and posted to Box, link in the report intro.")
-  write.csv(Destruction_rem,glue("{local_drive}Multiple_Destruction_rem_reminders_{currentDate}_boxfolder_{boxfolder}.csv"),row.names = F,na="")
+  write.csv(Destruction_rem,glue("{local_drive}Multiple_Destruction_email_rem_reminders_{currentDate}_boxfolder_{boxfolder}.csv"),row.names = F,na="")
 } else {
   if(nrow(Destruction_rem) == 0) {
   cat("No errors\n")
@@ -621,11 +621,46 @@ if (nrow(Destruction_rem) > 50) {
 
 ```
 
+
+\FloatBarrier
+## The same participant received multiple Data Destruction sms reminders on the same day. 
+```{r DDR_SMS, echo=FALSE, message=FALSE, warning=FALSE}
+DDR_SMS <- "SELECT distinct(p.Connect_ID), #distinct(n.token), 
+category,
+       DATE(notification_time) as repeat_date, 
+       COUNT(*) as num_same_day_attempts
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
+on p.token=n.token
+WHERE category LIKE '%Data Destruction Reminders%' and date(notification_time) >= (CURRENT_DATE()-7)
+AND notificationType = 'sms'
+GROUP BY Connect_ID,category, DATE(notification_time)
+HAVING COUNT(*) > 1"
+
+DDR_SMS_table <- bq_project_query(project, DDR_SMS)
+Destruction_rem <- bq_table_download(DDR_SMS_table, bigint = "integer64")
+
+
+if (nrow(Destruction_rem) > 50) {
+  cat("There are", nrow(Destruction_rem), "errors. This table has been made a csv and posted to Box, link in the report intro.")
+  write.csv(Destruction_rem,glue("{local_drive}Multiple_Destruction_sms_rem_reminders_{currentDate}_boxfolder_{boxfolder}.csv"),row.names = F,na="")
+} else {
+  if(nrow(Destruction_rem) == 0) {
+  cat("No errors\n")
+} else {
+  knitr::kable(Destruction_rem) %>% kable_styling(latex_options = "scale_down")
+}
+}
+
+
+```
+
+
 \FloatBarrier
 
 ## The same participant received multiple HIPAA revocation email reminders on the same day. 
-```{r HIPAA, echo=FALSE, message=FALSE, warning=FALSE}
-HIPAA <- "SELECT distinct(p.Connect_ID), #distinct(n.token), 
+```{r HIPAA_email, echo=FALSE, message=FALSE, warning=FALSE}
+HIPAA_email <- "SELECT distinct(p.Connect_ID), #distinct(n.token), 
 category,
        DATE(notification_time) as repeat_date, 
        COUNT(*) as num_same_day_attempts
@@ -637,18 +672,54 @@ AND notificationType = 'email'
 GROUP BY Connect_ID,category, DATE(notification_time)
 HAVING COUNT(*) > 1"
 
-HIPAA_table <- bq_project_query(project, HIPAA)
-HIPAA_rem <- bq_table_download(HIPAA_table, bigint = "integer64")
+HIPAA_email_table <- bq_project_query(project, HIPAA_email)
+HIPAA_email_rem <- bq_table_download(HIPAA_email_table, bigint = "integer64")
 
 
-if (nrow(HIPAA_rem) > 50) {
-  cat("There are", nrow(HIPAA_rem), "errors. This table has been made a csv and posted to Box, link in the report intro.")
-  write.csv(HIPAA_rem,glue("{local_drive}Multiple_HIPAA_rem_reminders_{currentDate}_boxfolder_{boxfolder}.csv"),row.names = F,na="")
+if (nrow(HIPAA_email_rem) > 50) {
+  cat("There are", nrow(HIPAA_email_rem), "errors. This table has been made a csv and posted to Box, link in the report intro.")
+  write.csv(HIPAA_email_rem,glue("{local_drive}Multiple_HIPAA_email_rem_reminders_{currentDate}_boxfolder_{boxfolder}.csv"),row.names = F,na="")
 } else {
-  if(nrow(HIPAA_rem) == 0) {
+  if(nrow(HIPAA_email_rem) == 0) {
   cat("No errors\n")
 } else {
-  knitr::kable(HIPAA_rem) %>% kable_styling(latex_options = "scale_down")
+  knitr::kable(HIPAA_email_rem) %>% kable_styling(latex_options = "scale_down")
+}
+}
+
+
+```
+
+
+
+\FloatBarrier
+
+## The same participant received multiple HIPAA revocation sms reminders on the same day. 
+```{r HIPAA_sms, echo=FALSE, message=FALSE, warning=FALSE}
+HIPAA_sms <- "SELECT distinct(p.Connect_ID), #distinct(n.token), 
+category,
+       DATE(notification_time) as repeat_date, 
+       COUNT(*) as num_same_day_attempts
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+left join  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
+on p.token=n.token
+WHERE category LIKE '%HIPAA revocation reminders%' and date(notification_time) >= (CURRENT_DATE()-7)
+AND notificationType = 'sms'
+GROUP BY Connect_ID,category, DATE(notification_time)
+HAVING COUNT(*) > 1"
+
+HIPAA_sms_table <- bq_project_query(project, HIPAA_sms)
+HIPAA_sms_rem <- bq_table_download(HIPAA_sms_table, bigint = "integer64")
+
+
+if (nrow(HIPAA_sms_rem) > 50) {
+  cat("There are", nrow(HIPAA_sms_rem), "errors. This table has been made a csv and posted to Box, link in the report intro.")
+  write.csv(HIPAA_sms_rem,glue("{local_drive}Multiple_HIPAA_sms_rem_reminders_{currentDate}_boxfolder_{boxfolder}.csv"),row.names = F,na="")
+} else {
+  if(nrow(HIPAA_sms_rem) == 0) {
+  cat("No errors\n")
+} else {
+  knitr::kable(HIPAA_sms_rem) %>% kable_styling(latex_options = "scale_down")
 }
 }
 
