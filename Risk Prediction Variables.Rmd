@@ -64,7 +64,7 @@ billing <- "nih-nci-dceg-connect-prod-6d04" ##project and billing should be cons
 ##517311251 Date/time Status of Completion of Background and Overall Health                         SrvBOH_TmComplete_v1r0
 ##949302066 Flag for Baseline Module Background and Overall Health                        SrvBOH_BaseStatus_v1r0
 recr_M1 <- bq_project_query(project, query="SELECT token,Connect_ID, d_821247024, d_914594314,  d_827220437,d_512820379,
-                            d_949302066 , d_517311251  FROM  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` WHERE  d_821247024='197316935'")
+                            d_949302066 , d_517311251  FROM  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` WHERE  d_821247024='197316935'")
 recr_m1 <- bq_table_download(recr_M1,bigint = "integer64",n_max = Inf, page_size = 10000)
 cnames <- names(recr_m1)
 # Check that it doesn't match any non-number
@@ -76,8 +76,8 @@ for (i in 1: length(cnames)){
   recr_m1[,cnames[i]] <- ifelse(numbers_only(var), as.numeric(as.character(var)), var)
 }
 
-sql_M1_1 <- bq_project_query(project, query="SELECT * FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v1_JP` where Connect_ID is not null")
-sql_M1_2 <- bq_project_query(project, query="SELECT * FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v2_JP` where Connect_ID is not null")
+sql_M1_1 <- bq_project_query(project, query="SELECT * FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v1` where Connect_ID is not null")
+sql_M1_2 <- bq_project_query(project, query="SELECT * FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v2` where Connect_ID is not null")
 
 
 M1_V1 <- bq_table_download(sql_M1_1,bigint = "integer64") #1436 #1436 vars: 1507 01112023 
@@ -140,13 +140,13 @@ length(recr_m1$Connect_ID[which(recr_m1$Connect_ID %in% m1_v2_only$Connect_ID & 
 m1_common <- rbind(M1_V1_common,M1_V2_common)
 m1_common_v1 <- base::merge(m1_common, m1_v1_only, by=c("Connect_ID","version"),all.x=TRUE)
 m1_combined_v1v2 <- base::merge(m1_common_v1,m1_v2_only,by=c("Connect_ID","version"),all.x=TRUE)
-m1_complete <- m1_combined_v1v2[which(m1_combined_v1v2$Connect_ID %in% recr_m1$Connect_ID[which(recr_m1$d_949302066 ==231311385 )]),] #7289 including duplicates 05022023
+data_tib_m1lete <- m1_combined_v1v2[which(m1_combined_v1v2$Connect_ID %in% recr_m1$Connect_ID[which(recr_m1$d_949302066 ==231311385 )]),] #7289 including duplicates 05022023
 
-m1_complete <- m1_complete %>% arrange(desc(version)) 
+data_tib_m1lete <- data_tib_m1lete %>% arrange(desc(version)) 
 
 
-m1_complete_nodup <- m1_complete[!duplicated(m1_complete$Connect_ID),] 
-table(m1_complete_nodup$version)
+data_tib_m1lete_nodup <- data_tib_m1lete[!duplicated(data_tib_m1lete$Connect_ID),] 
+table(data_tib_m1lete_nodup$version)
 
 
 
@@ -155,16 +155,16 @@ table(m1_complete_nodup$version)
 # D_335767902, D_982402227, D_919254129, D_699625233, D_564964481, D_795827569, D_544150384,
 # D_371067537, D_430551721, D_821247024, D_914594314,  state_d_725929722, d_126331570, d_536735468, 
 # d_663265240, d_878865966, d_684635302, d_167958071,
-# d_949302066 , D_517311251, D_205553981, D_117249500, d_976570371, d_914639140, d_311580100, d_371067537 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP`  
+# d_949302066 , D_517311251, D_205553981, D_117249500, d_976570371, d_914639140, d_311580100, d_371067537 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants`  
 # where Connect_ID IS NOT NULL"
-parts <- "SELECT Connect_ID, token, d_512820379, D_471593703, state_d_934298480, D_230663853,D_335767902, D_982402227, D_919254129, D_699625233, D_564964481, D_795827569, D_544150384,D_371067537, D_430551721, D_821247024, D_914594314,  state_d_725929722, d_126331570, d_536735468, d_663265240, d_878865966, d_684635302, d_167958071, d_949302066 , D_517311251, D_205553981, D_117249500, d_976570371, d_914639140, d_311580100, d_371067537 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` where Connect_ID IS NOT NULL and (d_512820379='486306141' OR d_512820379='854703046') and (D_919254129='353358909') and (D_699625233='353358909') and (d_949302066='231311385')" 
+parts <- "SELECT Connect_ID, token, d_512820379, D_471593703, state_d_934298480, D_230663853,D_335767902, D_982402227, D_919254129, D_699625233, D_564964481, D_795827569, D_544150384,D_371067537, D_430551721, D_821247024, D_914594314,  state_d_725929722, d_126331570, d_536735468, d_663265240, d_878865966, d_684635302, d_167958071, d_949302066 , D_517311251, D_205553981, D_117249500, d_976570371, d_914639140, d_311580100, d_371067537 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` where Connect_ID IS NOT NULL and (d_512820379='486306141' OR d_512820379='854703046') and (D_919254129='353358909') and (D_699625233='353358909') and (d_949302066='231311385')" 
 parts_table <- bq_project_query(project, parts)
 parts_data <- bq_table_download(parts_table, bigint = "integer64",n_max = Inf, page_size = 10000)
 
 parts_data$Connect_ID <- as.numeric(parts_data$Connect_ID)
 
 
-merged= left_join(m1_complete_nodup, parts_data, by="Connect_ID") #%>%  left_join(m3_data, by="Connect_ID")
+merged= left_join(data_tib_m1lete_nodup, parts_data, by="Connect_ID") #%>%  left_join(m3_data, by="Connect_ID")
 dim(merged)
 
 
@@ -340,7 +340,7 @@ child_logic_funct <- function(CID, Child_Num, Title){
 ```{r query3, include=FALSE}
 
 
-querymod3 <- "SELECT * FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module3_v1_JP` where Connect_ID IS NOT NULL"
+querymod3 <- "SELECT * FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module3_v1` where Connect_ID IS NOT NULL"
 mod3_table <- bq_project_query(project, querymod3)
 mod3_data <- bq_table_download(mod3_table, bigint = "integer64")
 mod3_data$Connect_ID <- as.numeric(mod3_data$Connect_ID)
@@ -873,67 +873,36 @@ dt_fam_canc_summary %>%  gt::gt(rowname_col = "row_lab") %>%
 
 ## Multi-racial
 
-multi_race=0    
-for (i in 1:length(data_tib_m1$Connect_ID)){
-  AI=ifelse((data_tib_m1$D_384191091_D_384191091_D_583826374[[i]]==1 & (data_tib_m1$D_384191091_D_384191091_D_636411467[[i]]==1 | data_tib_m1$D_384191091_D_384191091_D_458435048[[i]]==1|
-                                               data_tib_m1$D_384191091_D_384191091_D_706998638[[i]]==1 | data_tib_m1$D_384191091_D_384191091_D_973565052[[i]]==1 |
-                                               data_tib_m1$D_384191091_D_384191091_D_586825330[[i]]==1 | data_tib_m1$D_384191091_D_384191091_D_412790539[[i]]==1 |
-                                               data_tib_m1$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  As=ifelse((data_tib_m1$D_384191091_D_384191091_D_636411467[[i]]==1 & (data_tib_m1$D_384191091_D_384191091_D_583826374[[i]]==1 | data_tib_m1$D_384191091_D_384191091_D_458435048[[i]]==1|
-                                                        data_tib_m1$D_384191091_D_384191091_D_706998638[[i]]==1 | data_tib_m1$D_384191091_D_384191091_D_973565052[[i]]==1 |
-                                                        data_tib_m1$D_384191091_D_384191091_D_586825330[[i]]==1 | data_tib_m1$D_384191091_D_384191091_D_412790539[[i]]==1 |
-                                                        data_tib_m1$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  Bl=ifelse((data_tib_m1$D_384191091_D_384191091_D_458435048[[i]]==1 & (data_tib_m1$D_384191091_D_384191091_D_583826374[[i]]==1 | data_tib_m1$D_384191091_D_384191091_D_636411467[[i]]==1|
-                                                        data_tib_m1$D_384191091_D_384191091_D_706998638[[i]]==1 | data_tib_m1$D_384191091_D_384191091_D_973565052[[i]]==1 |
-                                                        data_tib_m1$D_384191091_D_384191091_D_586825330[[i]]==1 | data_tib_m1$D_384191091_D_384191091_D_412790539[[i]]==1 |
-                                                        data_tib_m1$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  Hs=ifelse((data_tib_m1$D_384191091_D_384191091_D_706998638[[i]]==1 & (data_tib_m1$D_384191091_D_384191091_D_583826374[[i]]==1 | data_tib_m1$D_384191091_D_384191091_D_636411467[[i]]==1|
-                                                        data_tib_m1$D_384191091_D_384191091_D_458435048[[i]]==1 | data_tib_m1$D_384191091_D_384191091_D_973565052[[i]]==1 |
-                                                        data_tib_m1$D_384191091_D_384191091_D_586825330[[i]]==1 | data_tib_m1$D_384191091_D_384191091_D_412790539[[i]]==1 |
-                                                        data_tib_m1$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  Me=ifelse((data_tib_m1$D_384191091_D_384191091_D_973565052[[i]]==1 & (data_tib_m1$D_384191091_D_384191091_D_583826374[[i]]==1 | data_tib_m1$D_384191091_D_384191091_D_636411467[[i]]==1|
-                                                        data_tib_m1$D_384191091_D_384191091_D_458435048[[i]]==1 | data_tib_m1$D_384191091_D_384191091_D_706998638[[i]]==1 |
-                                                        data_tib_m1$D_384191091_D_384191091_D_586825330[[i]]==1 | data_tib_m1$D_384191091_D_384191091_D_412790539[[i]]==1 |
-                                                        data_tib_m1$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  Hw=ifelse((data_tib_m1$D_384191091_D_384191091_D_586825330[[i]]==1 & (data_tib_m1$D_384191091_D_384191091_D_583826374[[i]]==1 | data_tib_m1$D_384191091_D_384191091_D_636411467[[i]]==1|
-                                                        data_tib_m1$D_384191091_D_384191091_D_458435048[[i]]==1 | data_tib_m1$D_384191091_D_384191091_D_706998638[[i]]==1 |
-                                                        data_tib_m1$D_384191091_D_384191091_D_973565052[[i]]==1 | data_tib_m1$D_384191091_D_384191091_D_412790539[[i]]==1 |
-                                                        data_tib_m1$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  Wh=ifelse((data_tib_m1$D_384191091_D_384191091_D_412790539[[i]]==1 & (data_tib_m1$D_384191091_D_384191091_D_583826374[[i]]==1 | data_tib_m1$D_384191091_D_384191091_D_636411467[[i]]==1|
-                                                        data_tib_m1$D_384191091_D_384191091_D_458435048[[i]]==1 | data_tib_m1$D_384191091_D_384191091_D_706998638[[i]]==1 |
-                                                        data_tib_m1$D_384191091_D_384191091_D_586825330[[i]]==1 | data_tib_m1$D_384191091_D_384191091_D_973565052[[i]]==1 |
-                                                        data_tib_m1$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  Ot=ifelse((data_tib_m1$D_384191091_D_384191091_D_807835037[[i]]==1 & (data_tib_m1$D_384191091_D_384191091_D_583826374[[i]]==1 | data_tib_m1$D_384191091_D_384191091_D_636411467[[i]]==1|
-                                                        data_tib_m1$D_384191091_D_384191091_D_458435048[[i]]==1 | data_tib_m1$D_384191091_D_384191091_D_706998638[[i]]==1 |
-                                                        data_tib_m1$D_384191091_D_384191091_D_586825330[[i]]==1 | data_tib_m1$D_384191091_D_384191091_D_973565052[[i]]==1 |
-                                                        data_tib_m1$D_384191091_D_384191091_D_412790539[[i]]==1)), 1, 0)
-  multi_race= multi_race + sum(AI+As+Bl+Hs+Me+Hw+Wh+Ot, na.rm=T)
+race_columns <- c("D_384191091_D_384191091_D_583826374", 
+                  "D_384191091_D_384191091_D_636411467",
+                  "D_384191091_D_384191091_D_458435048",
+                  "D_384191091_D_384191091_D_706998638",
+                  "D_384191091_D_384191091_D_973565052",
+                  "D_384191091_D_384191091_D_586825330",
+                  "D_384191091_D_384191091_D_412790539",
+                  "D_384191091_D_384191091_D_807835037")
 
-}
+# All data is currently string values, need to convert "1" and "0" to 1 and 0 to be summarized
+data_tib_m1[race_columns] <- lapply(data_tib_m1[race_columns], as.numeric)
 
-#cat("Percentage of multirace participants:", (multi_race/(dim(data_tib_m1)[1]))*100)
-   
-   
+data_tib_m1$multi_racial <- ifelse(rowSums(data_tib_m1[race_columns], na.rm = TRUE) > 1, 1, 0)
 
-data_tib_m1$multi_racial <- c(rep(1, times=multi_race), rep(0, times=(dim(data_tib_m1)[1]- multi_race)))
+data_tib_m1 <- data_tib_m1 %>%  
+  mutate(race = case_when(
+    multi_racial == 1 ~ "Multi-Racial",
+    D_384191091_D_384191091_D_583826374 == 1 ~ "American Indian or Native American",
+    D_384191091_D_384191091_D_636411467 == 1 ~ "Asian/Asian American",
+    D_384191091_D_384191091_D_458435048 == 1 ~ "Black, African American, or African",
+    D_384191091_D_384191091_D_706998638 == 1 ~ "Hispanic, Latino, or Spanish",
+    D_384191091_D_384191091_D_973565052 == 1 ~ "Middle Eastern or North African",
+    D_384191091_D_384191091_D_586825330 == 1 ~ "Hawaiian or Pacific Islander",
+    D_384191091_D_384191091_D_412790539 == 1 ~ "White",
+    (D_384191091_D_384191091_D_807835037 == 1 | !is.na(D_384191091_D_747350323)) ~ "Other",
+    D_384191091_D_384191091_D_746038746==1 ~ "Prefer Not to Answer",
+    TRUE ~ "Skipped this question"
+  ))
 
-
-
-## RACE
-
-which_race= data_tib_m1 %>%  mutate(race= case_when(multi_racial==1 ~ "Multi-Racial",
-                                                     D_384191091_D_384191091_D_583826374==1 ~ "American Indian or Native American",
-                                                     D_384191091_D_384191091_D_636411467==1 ~ "Asian/Asian American",
-                                                     D_384191091_D_384191091_D_458435048==1 ~ "Black, African American, or African",
-                                                     D_384191091_D_384191091_D_706998638==1 ~ "Hispanic, Latino, or Spanish",
-                                                     D_384191091_D_384191091_D_973565052==1 ~ "Middle Eastern or North African",
-                                                     D_384191091_D_384191091_D_586825330==1 ~ "Hawaiian or Pacific Islander",
-                                                     D_384191091_D_384191091_D_412790539==1 ~ "White",
-                                                     (D_384191091_D_384191091_D_807835037==1 | !is.na(D_384191091_D_747350323)) ~ "Other",
-                                                     D_384191091_D_384191091_D_746038746==1 ~ "Prefer Not to Answer",
-                                                     TRUE  ~ "Skipped this question"))
-
-dt_all_races_summary <- which_race  %>% dplyr::group_by(race) %>% dplyr::summarize(n=n(), percentage=100*n/nrow(.)) %>% dplyr::ungroup()  %>%  dplyr::select(race, n, percentage)
+dt_all_races_summary <- data_tib_m1  %>% dplyr::group_by(race) %>% dplyr::summarize(n=n(), percentage=100*n/nrow(.)) %>% dplyr::ungroup()  %>%  dplyr::select(race, n, percentage)
 
 dt_all_races_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
   fmt_number(columns = "percentage", decimals = 2) %>% 

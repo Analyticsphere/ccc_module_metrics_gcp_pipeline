@@ -81,7 +81,7 @@ d_536735468 , d_976570371, d_663265240, d_265193023, d_222161762,d_770257102, d_
 d_386488297, d_452942800, d_517311251 , d_822499427, d_126331570, d_914639140, d_311580100, d_827220437, d_100767870, 
 d_831041022, d_255077064, d_320303124, d_684635302, d_843688458, d_870643066, d_878865966, d_167958071, token,
 state_d_934298480, state_d_684926335, state_d_849518448, state_d_119643471, state_d_253532712, state_d_706256705, state_d_435027713
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` where Connect_ID IS NOT NULL  and (d_512820379='486306141' OR d_512820379='854703046') " 
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` where Connect_ID IS NOT NULL  and (d_512820379='486306141' OR d_512820379='854703046') " 
 
 #and d_831041022='104430631'-- not needed, according to 3/12/24 decisions we'll be keeping participant journeys in overall counts
 
@@ -219,7 +219,7 @@ dd$CID <- rownames(dd)
 
 
 recr_M1 <- bq_project_query(project, query="SELECT token,Connect_ID, d_821247024, d_914594314,  d_827220437,d_512820379,
-                            d_949302066 , d_517311251  FROM  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants_JP` WHERE  d_821247024='197316935'")
+                            d_949302066 , d_517311251  FROM  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` WHERE  d_821247024='197316935'")
 recr_m1 <- bq_table_download(recr_M1,bigint = "integer64",n_max = Inf, page_size = 10000)
 cnames <- names(recr_m1)
 # Check that it doesn't match any non-number
@@ -231,8 +231,8 @@ for (i in 1: length(cnames)){
   recr_m1[,cnames[i]] <- ifelse(numbers_only(var), as.numeric(as.character(var)), var)
 }
 
-sql_M1_1 <- bq_project_query(project, query="SELECT Connect_ID, D_384191091_D_384191091_D_583826374, D_384191091_D_384191091_D_636411467, D_384191091_D_384191091_D_458435048, D_384191091_D_384191091_D_706998638, D_384191091_D_384191091_D_973565052, D_384191091_D_384191091_D_586825330, D_384191091_D_384191091_D_412790539, D_384191091_D_384191091_D_807835037,D_384191091_D_747350323,D_384191091_D_384191091_D_746038746 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v1_JP` where Connect_ID is not null")
-sql_M1_2 <- bq_project_query(project, query="SELECT Connect_ID, D_384191091_D_384191091_D_583826374 ,D_384191091_D_384191091_D_636411467, D_384191091_D_384191091_D_458435048, D_384191091_D_384191091_D_706998638, D_384191091_D_384191091_D_973565052, D_384191091_D_384191091_D_586825330,D_384191091_D_384191091_D_412790539,D_384191091_D_384191091_D_807835037,D_384191091_D_747350323,D_384191091_D_384191091_D_746038746 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v2_JP` where Connect_ID is not null")
+sql_M1_1 <- bq_project_query(project, query="SELECT Connect_ID, D_384191091_D_384191091_D_583826374, D_384191091_D_384191091_D_636411467, D_384191091_D_384191091_D_458435048, D_384191091_D_384191091_D_706998638, D_384191091_D_384191091_D_973565052, D_384191091_D_384191091_D_586825330, D_384191091_D_384191091_D_412790539, D_384191091_D_384191091_D_807835037,D_384191091_D_747350323,D_384191091_D_384191091_D_746038746 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v1` where Connect_ID is not null")
+sql_M1_2 <- bq_project_query(project, query="SELECT Connect_ID, D_384191091_D_384191091_D_583826374 ,D_384191091_D_384191091_D_636411467, D_384191091_D_384191091_D_458435048, D_384191091_D_384191091_D_706998638, D_384191091_D_384191091_D_973565052, D_384191091_D_384191091_D_586825330,D_384191091_D_384191091_D_412790539,D_384191091_D_384191091_D_807835037,D_384191091_D_747350323,D_384191091_D_384191091_D_746038746 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v2` where Connect_ID is not null")
 
 
 M1_V1 <- bq_table_download(sql_M1_1,bigint = "integer64",n_max = Inf) #1436 #1436 vars: 1507 01112023 
@@ -296,13 +296,13 @@ length(recr_m1$Connect_ID[which(recr_m1$Connect_ID %in% m1_v2_only$Connect_ID & 
 m1_common <- rbind(M1_V1_common,M1_V2_common)
 m1_common_v1 <- base::merge(m1_common, m1_v1_only, by=c("Connect_ID","version"),all.x=TRUE)
 m1_combined_v1v2 <- base::merge(m1_common_v1,m1_v2_only,by=c("Connect_ID","version"),all.x=TRUE)
-m1_complete <- m1_combined_v1v2[which(m1_combined_v1v2$Connect_ID %in% recr_m1$Connect_ID[which(recr_m1$d_949302066 ==231311385 )]),] #7289 including duplicates 05022023
+reten1lete <- m1_combined_v1v2[which(m1_combined_v1v2$Connect_ID %in% recr_m1$Connect_ID[which(recr_m1$d_949302066 ==231311385 )]),] #7289 including duplicates 05022023
 
-m1_complete <- m1_complete %>% arrange(desc(version)) 
+reten1lete <- reten1lete %>% arrange(desc(version)) 
 
 
-m1_complete_nodup <- m1_complete[!duplicated(m1_complete$Connect_ID),] 
-table(m1_complete_nodup$version)
+reten1lete_nodup <- reten1lete[!duplicated(reten1lete$Connect_ID),] 
+table(reten1lete_nodup$version)
 
 
 
@@ -310,7 +310,7 @@ table(m1_complete_nodup$version)
 reten$Connect_ID <- as.numeric(reten$Connect_ID)
 
 
-reten1_df= left_join(m1_complete_nodup, reten, by="Connect_ID")
+reten1_df= left_join(reten1lete_nodup, reten, by="Connect_ID")
 dim(reten1_df)
 
 
@@ -327,66 +327,35 @@ knitr::opts_chunk$set(comment = NA)
 
 
 ## Multi-racial
+race_columns <- c("D_384191091_D_384191091_D_583826374", 
+                  "D_384191091_D_384191091_D_636411467",
+                  "D_384191091_D_384191091_D_458435048",
+                  "D_384191091_D_384191091_D_706998638",
+                  "D_384191091_D_384191091_D_973565052",
+                  "D_384191091_D_384191091_D_586825330",
+                  "D_384191091_D_384191091_D_412790539",
+                  "D_384191091_D_384191091_D_807835037")
 
-multi_race=0    
-for (i in 1:length(reten1$Connect_ID)){
-  AI=ifelse((reten1$D_384191091_D_384191091_D_583826374[[i]]==1 & (reten1$D_384191091_D_384191091_D_636411467[[i]]==1 | reten1$D_384191091_D_384191091_D_458435048[[i]]==1|
-                                               reten1$D_384191091_D_384191091_D_706998638[[i]]==1 | reten1$D_384191091_D_384191091_D_973565052[[i]]==1 |
-                                               reten1$D_384191091_D_384191091_D_586825330[[i]]==1 | reten1$D_384191091_D_384191091_D_412790539[[i]]==1 |
-                                               reten1$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  As=ifelse((reten1$D_384191091_D_384191091_D_636411467[[i]]==1 & (reten1$D_384191091_D_384191091_D_583826374[[i]]==1 | reten1$D_384191091_D_384191091_D_458435048[[i]]==1|
-                                                        reten1$D_384191091_D_384191091_D_706998638[[i]]==1 | reten1$D_384191091_D_384191091_D_973565052[[i]]==1 |
-                                                        reten1$D_384191091_D_384191091_D_586825330[[i]]==1 | reten1$D_384191091_D_384191091_D_412790539[[i]]==1 |
-                                                        reten1$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  Bl=ifelse((reten1$D_384191091_D_384191091_D_458435048[[i]]==1 & (reten1$D_384191091_D_384191091_D_583826374[[i]]==1 | reten1$D_384191091_D_384191091_D_636411467[[i]]==1|
-                                                        reten1$D_384191091_D_384191091_D_706998638[[i]]==1 | reten1$D_384191091_D_384191091_D_973565052[[i]]==1 |
-                                                        reten1$D_384191091_D_384191091_D_586825330[[i]]==1 | reten1$D_384191091_D_384191091_D_412790539[[i]]==1 |
-                                                        reten1$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  Hs=ifelse((reten1$D_384191091_D_384191091_D_706998638[[i]]==1 & (reten1$D_384191091_D_384191091_D_583826374[[i]]==1 | reten1$D_384191091_D_384191091_D_636411467[[i]]==1|
-                                                        reten1$D_384191091_D_384191091_D_458435048[[i]]==1 | reten1$D_384191091_D_384191091_D_973565052[[i]]==1 |
-                                                        reten1$D_384191091_D_384191091_D_586825330[[i]]==1 | reten1$D_384191091_D_384191091_D_412790539[[i]]==1 |
-                                                        reten1$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  Me=ifelse((reten1$D_384191091_D_384191091_D_973565052[[i]]==1 & (reten1$D_384191091_D_384191091_D_583826374[[i]]==1 | reten1$D_384191091_D_384191091_D_636411467[[i]]==1|
-                                                        reten1$D_384191091_D_384191091_D_458435048[[i]]==1 | reten1$D_384191091_D_384191091_D_706998638[[i]]==1 |
-                                                        reten1$D_384191091_D_384191091_D_586825330[[i]]==1 | reten1$D_384191091_D_384191091_D_412790539[[i]]==1 |
-                                                        reten1$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  Hw=ifelse((reten1$D_384191091_D_384191091_D_586825330[[i]]==1 & (reten1$D_384191091_D_384191091_D_583826374[[i]]==1 | reten1$D_384191091_D_384191091_D_636411467[[i]]==1|
-                                                        reten1$D_384191091_D_384191091_D_458435048[[i]]==1 | reten1$D_384191091_D_384191091_D_706998638[[i]]==1 |
-                                                        reten1$D_384191091_D_384191091_D_973565052[[i]]==1 | reten1$D_384191091_D_384191091_D_412790539[[i]]==1 |
-                                                        reten1$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  Wh=ifelse((reten1$D_384191091_D_384191091_D_412790539[[i]]==1 & (reten1$D_384191091_D_384191091_D_583826374[[i]]==1 | reten1$D_384191091_D_384191091_D_636411467[[i]]==1|
-                                                        reten1$D_384191091_D_384191091_D_458435048[[i]]==1 | reten1$D_384191091_D_384191091_D_706998638[[i]]==1 |
-                                                        reten1$D_384191091_D_384191091_D_586825330[[i]]==1 | reten1$D_384191091_D_384191091_D_973565052[[i]]==1 |
-                                                        reten1$D_384191091_D_384191091_D_807835037[[i]]==1)), 1, 0)
-  Ot=ifelse((reten1$D_384191091_D_384191091_D_807835037[[i]]==1 & (reten1$D_384191091_D_384191091_D_583826374[[i]]==1 | reten1$D_384191091_D_384191091_D_636411467[[i]]==1|
-                                                        reten1$D_384191091_D_384191091_D_458435048[[i]]==1 | reten1$D_384191091_D_384191091_D_706998638[[i]]==1 |
-                                                        reten1$D_384191091_D_384191091_D_586825330[[i]]==1 | reten1$D_384191091_D_384191091_D_973565052[[i]]==1 |
-                                                        reten1$D_384191091_D_384191091_D_412790539[[i]]==1)), 1, 0)
-  multi_race= multi_race + sum(AI+As+Bl+Hs+Me+Hw+Wh+Ot, na.rm=T)
+# All data is currently string values, need to convert "1" and "0" to 1 and 0 to be summarized
+reten1[race_columns] <- lapply(reten1[race_columns], as.numeric)
 
-}
+reten1$multi_racial <- ifelse(rowSums(reten1[race_columns], na.rm = TRUE) > 1, 1, 0)
 
-#cat("Percentage of multirace participants:", (multi_race/(dim(reten1)[1]))*100)
-   
-   
+reten1 <- reten1 %>%  
+  mutate(race = case_when(
+    multi_racial == 1 ~ "Multi-Racial",
+    D_384191091_D_384191091_D_583826374 == 1 ~ "American Indian or Native American",
+    D_384191091_D_384191091_D_636411467 == 1 ~ "Asian/Asian American",
+    D_384191091_D_384191091_D_458435048 == 1 ~ "Black, African American, or African",
+    D_384191091_D_384191091_D_706998638 == 1 ~ "Hispanic, Latino, or Spanish",
+    D_384191091_D_384191091_D_973565052 == 1 ~ "Middle Eastern or North African",
+    D_384191091_D_384191091_D_586825330 == 1 ~ "Hawaiian or Pacific Islander",
+    D_384191091_D_384191091_D_412790539 == 1 ~ "White",
+    (D_384191091_D_384191091_D_807835037 == 1 | !is.na(D_384191091_D_747350323)) ~ "Other",
+    D_384191091_D_384191091_D_746038746==1 ~ "Prefer Not to Answer",
+    TRUE ~ "Skipped this question"
+  ))
 
-reten1$multi_racial <- c(rep(1, times=multi_race), rep(0, times=(dim(reten1)[1]- multi_race)))
-
-
-
-## RACE
-
-reten1 = reten1 %>%  mutate(race= case_when(multi_racial==1 ~ "Multi-Racial",
-                                                     D_384191091_D_384191091_D_583826374==1 ~ "American Indian or Native American",
-                                                     D_384191091_D_384191091_D_636411467==1 ~ "Asian/Asian American",
-                                                     D_384191091_D_384191091_D_458435048==1 ~ "Black, African American, or African",
-                                                     D_384191091_D_384191091_D_706998638==1 ~ "Hispanic, Latino, or Spanish",
-                                                     D_384191091_D_384191091_D_973565052==1 ~ "Middle Eastern or North African",
-                                                     D_384191091_D_384191091_D_586825330==1 ~ "Hawaiian or Pacific Islander",
-                                                     D_384191091_D_384191091_D_412790539==1 ~ "White",
-                                                     (D_384191091_D_384191091_D_807835037==1 | !is.na(D_384191091_D_747350323)) ~ "Other",
-                                                     D_384191091_D_384191091_D_746038746==1 ~ "Prefer Not to Answer",
-                                                     TRUE  ~ "Skipped this question"))
 
 ```
 
