@@ -1306,12 +1306,7 @@ if (nrow(reinvite_date_type) < 50) {
     "'Biospecimen_QC_Rule46_Errors", currentDate, "_boxfolder_", boxfolder, ".xlsx'\n"
   ))
   
-  openxlsx::write.xlsx(
-    reinvite_date_type,
-    glue("Recruitment_Derived_QC_Rule46_Errors{currentDate}_boxfolder_{boxfolder}.xlsx"),
-    row.names = FALSE,
-    na = ""
-  )
+  openxlsx::write.xlsx(reinvite_date_type,glue("Recruitment_Derived_QC_Rule46_Errors{currentDate}_boxfolder_{boxfolder}.xlsx"),row.names = F,na="")
 }
 
 ```
