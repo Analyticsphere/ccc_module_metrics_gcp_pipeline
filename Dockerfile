@@ -44,7 +44,7 @@ RUN install2.r --error plumber bigrquery dplyr googleCloudStorageR gargle \
                tools epiDisplay lubridate tidyverse knitr gtsummary tidyr \
                googleCloudStorageR reshape gmodels lubridate config magick \
                foreach arsenal rio gridExtra scales data.table listr sqldf \
-               expss gmodels magrittr naniar UpSetR RColorBrewer ggrepel
+               expss gmodels magrittr naniar UpSetR RColorBrewer ggrepel DBI
                
 # These libraries might not be available from install2.R so use CRAN
 RUN R -e "install.packages(c('gt', 'vtable', 'pdftools'), dependencies=TRUE, repos='http://cran.rstudio.com/')"
