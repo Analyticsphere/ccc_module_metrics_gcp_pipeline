@@ -420,7 +420,7 @@ dt_mgr9
 
 ```
 
-
+\FloatBarrier
 ```{r MHGroup9Diagn, warning=FALSE, echo=FALSE, message=FALSE}
 #	Tonsils removed (tonsillectomy)
 tonsil_a_sg=boxp_funct(D_675055475_D_623218391,"Age at Tonisllectomy Surgery","Age") 
@@ -473,7 +473,7 @@ grid.arrange(bar_sg_a_sg, bar_sg_y_sg, nrow=2)
 ```
 
 \newpage
-
+\FloatBarrier
 ```{r BreastSurgery, warning=FALSE, echo=FALSE, message=FALSE}
 
   #type of breast surgery
@@ -526,7 +526,7 @@ dt_breast
 
 ```
 
-
+\FloatBarrier
 ```{r BreastSurgYear, warning=FALSE, echo=FALSE, message=FALSE}
 #cat("Breast Implants")
 implant_a_sg=boxp_funct(D_439760665_D_623218391,"Age at Breats Implants Surgery","Age")
@@ -591,7 +591,7 @@ grid.arrange(othb_a_sg, othb_y_sg, nrow=2)
 
 ```
 
-
+\FloatBarrier
 ```{r MHGroup9Diagn_Cont, warning=FALSE, echo=FALSE, message=FALSE}
 
 #cat("Hysterectomy") 
@@ -615,8 +615,8 @@ grid.arrange(tublig_a_sg, tublig_y_sg, nrow=2)
 one_logic_funct(D_590067228, D_729984625_D_630100221, 1, "Type of Oophorectomy")
 
   #age/year of surgery
-ooph_a_sg=boxp_funct(D_787505819_D_623218391,"Age at Tubal Oophorectomy","Age") 
-ooph_y_sg=boxp_funct(D_787505819_D_802622485,"Year of Tubal Oophorectomy","Year")
+ooph_a_sg=boxp_funct(D_787505819_D_623218391,"Age at Oophorectomy","Age") 
+ooph_y_sg=boxp_funct(D_787505819_D_802622485,"Year of Oophorectomy","Year")
 grid.arrange(ooph_a_sg, ooph_y_sg, nrow=2)
 ```
 \FloatBarrier
@@ -629,14 +629,14 @@ screen$D_860839849 <- factor(screen$D_860839849, levels = c(448068764, 537173119
 one_logic_funct(D_860839849, D_729984625_D_692881833, 1, "Type of Salpingectomy")
 
   #age/year
-salp_a_sg=boxp_funct(D_949587133_D_623218391,"Age at Tubal Salpingectomy","Age") 
-salp_y_sg=boxp_funct(D_949587133_D_802622485,"Year of Tubal Salpingectomy","Year")
+salp_a_sg=boxp_funct(D_949587133_D_623218391,"Age at Salpingectomy","Age") 
+salp_y_sg=boxp_funct(D_949587133_D_802622485,"Year of Salpingectomy","Year")
 grid.arrange(salp_a_sg, salp_y_sg, nrow=2)
 
 
 #	Vasectomy 
-vasec_a_sg=boxp_funct(D_671670265_D_623218391,"Age at Tubal Vasectomy","Age") 
-vasec_y_sg=boxp_funct(D_671670265_D_802622485,"Year of Tubal Vasectomy","Year")
+vasec_a_sg=boxp_funct(D_671670265_D_623218391,"Age at Vasectomy","Age") 
+vasec_y_sg=boxp_funct(D_671670265_D_802622485,"Year of Vasectomy","Year")
 grid.arrange(vasec_a_sg, vasec_y_sg, nrow=2)
 
 ```
@@ -664,13 +664,13 @@ one_logic_funct(D_292314539, D_729984625_D_733236542, 1, "Type of Prostatectomy"
 
   #age/year
 prost_a_sg=boxp_funct(D_343990595_D_623218391,"Age at Prostatectomy Surgery","Age") 
-prost_y_sg=boxp_funct(D_343990595_D_802622485,"Year of Tubal Prostatectomy Surgery","Year") 
+prost_y_sg=boxp_funct(D_343990595_D_802622485,"Year of Prostatectomy Surgery","Year") 
 grid.arrange(prost_a_sg, prost_y_sg, nrow=2)
 
 
 #	Penis removed (penectomy) 
-penis_a_sg=boxp_funct(D_203366781_D_623218391,"Age at Tubal Penectomy Surgery","Age") 
-penis_y_sg=boxp_funct(D_203366781_D_802622485,"Year of Tubal Penectomy Surgery","Year")
+penis_a_sg=boxp_funct(D_203366781_D_623218391,"Age at Penectomy Surgery","Age") 
+penis_y_sg=boxp_funct(D_203366781_D_802622485,"Year of Penectomy Surgery","Year")
 grid.arrange(penis_a_sg, penis_y_sg, nrow=2)
 
 
