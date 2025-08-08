@@ -1188,6 +1188,23 @@ add_footnote(Comp_by_race, paste0('Note: In order to determine race, Module 1 mu
 ```
 
 
+```{r QOL_By_SiteRace, include=FALSE}
+
+QOL_by_race <- all_data %>% filter(qolcomplt!="Not Eligible") 
+
+QOL_by_race_df <- create_tbl_cross2(QOL_by_race, "race", "qolcomplt", "row", "Race", "3-Month Quality of Life \n Survey Completion", "Total Verified Participants")
+
+knitr::kable(QOL_by_race_df, 
+             caption="Table 4.5.a 3-Month Quality of Life Survey Completion Rate by Site Defined Race \n Among Verified Participants",
+             row.names=FALSE, align=c("l","c","c","c","c","c"), booktabs = TRUE) %>%
+    kable_styling(latex_options = "scale_down") %>%  
+    add_indent(seq(1, nrow(BL_by_Race_df) - 1)) %>%  landscape() %>%
+    footnote(general = "Note: Race defined as the de-identified race data reported by sites at time of invitation.",
+             general_title = "")
+
+```
+
+
 ```{r QOL_By_Race_And_Sex, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
 m1_comp = m1_comp %>%  mutate(sex_race= case_when(sex=="Female" & multi_racial==1 ~ "Female: Multi-Racial",
@@ -1404,7 +1421,7 @@ qol_ver_df <- create_tbl_cross2(qol_ver, "ver_surv", "qolcomplt", "row", "Time f
 
 colnames(qol_ver_df)[5] <- "Total QOL Eligible \n Participants"
 knitr::kable(qol_ver_df, 
-             caption='Table 4.10. QOL Survey Completion By Time from Verification to QOL Survey Release',
+             caption='Table 4.10. 3-Month Quality of Life Survey Completion By Time from Verification to QOL Survey Release',
              row.names=FALSE, align=c("l","c","c","c","c"), booktabs = TRUE) %>%
     kable_styling(latex_options = "scale_down") %>%  
     add_indent(seq(1, nrow(qol_ver_df) - 1)) %>%  landscape()
@@ -1526,7 +1543,7 @@ after_QOL_table <- after_QOL %>%
 
 
 knitr::kable(after_QOL_table,
-             caption = 'Table 4.11. Baseline Survey Completion Within 30 days of QOL Survey Completion', 
+             caption = 'Table 4.11. Baseline Survey Completion Within 30 days of 3-Month Quality of Life Survey Survey Completion', 
              booktabs=T, linesep = "", row.names=FALSE, align=c("l", "c", "c")) %>% 
   kable_styling(latex_options = "scale_down") %>% 
   footnote(general = "Note: Percentages calculated among those who were eligible but had not yet completed the survey at the time of QOL invitation.", 
@@ -1776,7 +1793,7 @@ knitr::kable(after_DHQ_table,
 
 ##pushed on May 2029, 2025
 
-dhq_ver<- dhq1 %>%  filter(dhq_status != "Not Eligible") %>% 
+dhq_ver<- dhq1 %>%   
   mutate(verif_months = verif_time_diff/30,
          ver_surv = case_when(verif_months<6 ~ "Less than 6 Months",
                               verif_months<12 ~ "6-12 Months",
@@ -1809,7 +1826,7 @@ dhq1_df7 <- as.data.frame(dhq1_table7)
 colnames(dhq1_df7)[6] <- "Total Eligible for \n DHQ Survey"
 
 knitr::kable(dhq1_df7, 
-             caption='Table 5.7. Cross Check between 6-mo DHQ3 Survey Status flag and the Status According to the DHQ System',
+             caption='Table 5.7. Cross Check between 6-month Diet History Questionnaire Survey Status flag \n and the Status According to the DHQ System',
              row.names=FALSE, align=c("l","c","c","c","c"), booktabs = TRUE) %>%
     kable_styling(latex_options = "scale_down") %>% 
   footnote(general = "Note: A 'Null' status according to the DHQ system means the participant has not logged into MyConnect since becoming eligible for the DHQ. 'Not yet begun' means they have logged into MyConnect but have not yet started the DHQ survey. There may also be up to a 24 hour delay between a participant starting and/or completing the survey and retrieving their 'Submitted', 'In Progress', and/or 'Completed' status.", 
@@ -1822,7 +1839,158 @@ knitr::kable(dhq1_df7,
 ```
 
 
+```{r DHQ_BySex_ByAge, include=FALSE}
 
+
+DHQ_Comp_by_Sex <- dhq1 %>% 
+  mutate(dhq_status = factor(dhq_status, levels=c("Not Started", "Started", "Submitted"))) %>% 
+  select(sex, dhq_status) %>% dplyr::arrange(sex,dhq_status) %>% 
+  tbl_cross(
+  row = sex,
+  col = dhq_status,
+  label = list(dhq_status ~ "Survey Completion",sex~"Sex"),
+  percent = "row",
+  digits=c(0,2),
+  margin_text="Total DHQ Eligible Participants") 
+
+
+DHQ_Comp_by_Sex_table <- DHQ_Comp_by_Sex %>%
+  modify_header(stat_0 = "Total DHQ Eligible \n Participants") %>%
+  modify_caption("Table 5.8. 6-month Diet History Questionnaire Completion Rate by Site Defined Sex \n Among Eligible Participants") %>%
+  as_kable_extra(escape = FALSE, addtl_fmt = TRUE) %>% kable_styling(latex_options = c("scale_down","hold_position"))  
+
+add_footnote(DHQ_Comp_by_Sex_table, "Note: Sex defined as the de-identified sex data reported by sites at time of invitation.", 
+             notation = "none")
+
+
+
+
+
+DHQ_Comp_by_Age <- dhq1 %>% 
+  mutate(dhq_status = factor(dhq_status, levels=c("Not Started", "Started", "Submitted"))) %>% 
+  select(age, dhq_status) %>% dplyr::arrange(age,dhq_status) %>% 
+  tbl_cross(
+  row = age,
+  col = dhq_status,
+  label = list(dhq_status ~ "Survey Completion",age~"Age"),
+  percent = "row",
+  digits=c(0,2),
+  margin_text="Total DHQ Eligible Participants") 
+
+
+DHQ_Comp_by_Age <- DHQ_Comp_by_Age %>%
+  modify_header(stat_0 = "Total DHQ Eligible \n Participants") %>%
+  modify_caption("Table 5.9. 6-month Diet History Questionnaire Completion Rate by Age \n Among Eligible Participants") %>%
+  as_kable_extra(escape = FALSE, addtl_fmt = TRUE)  %>% kable_styling(latex_options = c("scale_down","hold_position")) 
+
+add_footnote(DHQ_Comp_by_Age, "Note: Age defined as the de-identified age data reported by sites at time of invitation, not current age at time of survey completion.", 
+             notation="none")
+
+
+```
+
+
+```{r DHQ_By_Race, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+
+
+DHQ_Comp_by_race <- m1_comp %>% filter(dhq_status!="Not Eligible") %>% 
+  mutate(dhq_status = factor(dhq_status, levels=c("Not Started", "Started", "Submitted"))) %>% 
+  select(race, dhq_status) %>% dplyr::arrange(race,dhq_status) %>% 
+  tbl_cross(
+  row = race,
+  col = dhq_status,
+  label = list(dhq_status ~ "Survey Completion",race~"Race"),
+  percent = "row",
+  digits=c(0,2),
+  margin_text="Total DHQ Eligible Participants") 
+
+
+DHQ_Comp_by_race <- DHQ_Comp_by_race %>%
+  modify_header(stat_0 = "Total DHQ Eligible \n Participants") %>%
+  modify_caption("Table 5.10. 6-month Diet History Questionnaire Completion Rate by Race \n Among Eligible Participants") %>%
+  as_kable_extra(escape = FALSE, addtl_fmt = TRUE) %>% kable_styling(latex_options = c("scale_down","hold_position"))
+
+reduced <- all_data %>% filter(d_949302066 != 231311385 & dhq_status!="Not Eligible") # Those who are eligible for PROMIS but didn't complete mod1 yet
+
+add_footnote(DHQ_Comp_by_race, paste0('Note: In order to determine race, Module 1 must first be completed. There are ', dim(reduced)[[1]] , ' DHQ eligible participants that have either not started or not finished Module 1.'),
+             notation="none")
+
+
+```
+
+
+```{r DHQ_By_SiteRace, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+
+
+DHQ_by_race_df <- create_tbl_cross2(dhq1, "race", "dhq_status", "row", "Race", "6-month Diet History Questionnaire", "Total Verified Participants")
+
+knitr::kable(DHQ_by_race_df, 
+             caption="Table 5.10.a 6-month Diet History Questionnaire Completion Rate by Site Defined Race \n Among Verified Participants",
+             row.names=FALSE, align=c("l","c","c","c","c","c"), booktabs = TRUE) %>%
+    kable_styling(latex_options = "scale_down") %>%  
+    add_indent(seq(1, nrow(BL_by_Race_df) - 1)) %>%  landscape() %>%
+    footnote(general = "Note: Race defined as the de-identified race data reported by sites at time of invitation.",
+             general_title = "")
+
+```
+
+
+```{r DHQ_By_Race_And_Sex, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+
+DHQ_Comp_by_sex_race <- m1_comp %>% filter(dhq_status!="Not Eligible") %>% 
+  mutate(dhq_status = factor(dhq_status, levels=c("Not Started", "Started", "Submitted"))) %>% 
+  select(sex_race, dhq_status) %>% dplyr::arrange(sex_race,dhq_status) %>% 
+  tbl_cross(
+  row = sex_race,
+  col = dhq_status,
+  label = list(dhq_status ~ "Survey Completion",sex_race~"Sex and Race"),
+  percent = "row",
+  digits=c(0,2),
+  margin_text="Total DHQ Eligible Participants") 
+
+
+DHQ_Comp_by_sex_race <- DHQ_Comp_by_sex_race %>%
+  modify_header(stat_0 = "Total DHQ Eligible \n Participants") %>%
+  modify_caption("Table 5.11. 6-month Diet History Questionnaire Completion Rate by Sex and Race \n Among Eligible Participants") %>%
+  as_kable_extra(escape = FALSE, addtl_fmt = TRUE)
+
+reduced <- all_data %>% filter(d_949302066 != 231311385 & dhq_status!="Not Eligible") # Those who are eligible for PROMIS but didn't complete mod1 yet
+
+DHQ_Comp_by_sex_race %>% kable_styling(latex_options = c("scale_down","hold_position")) %>% 
+  footnote(general = paste0('In order to determine race, Module 1 must first be completed. There are ', dim(reduced)[[1]] , ' DHQ eligible participants that have either not started or not finished Module 1.'),general_title = "Note: ", footnote_as_chunk = T)
+
+
+```
+
+
+```{r DHQ_By_Demographic, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+
+DHQ_Comp_by_Demographic <- all_data_long %>% 
+  filter(dhq_status != "Not Eligible") %>%
+  mutate(dhq_status = factor(dhq_status, levels = c("Not Started", "Started", "Submitted")),
+         Demographic_Group = factor(Demographic_Group, levels=c("White Women","Black Men","Women Under 45","Women Over 45","Men Under 45","Men Over 45"))) %>%
+  select(Demographic_Group, dhq_status) %>%
+  tbl_cross(
+    row = Demographic_Group,
+    col = dhq_status,
+    label = list(dhq_status ~ "Survey Completion", Demographic_Group ~ "Demographic"),
+    percent = "row",
+    digits = c(0, 2),
+    margin_text = "Total"
+  )
+
+
+DHQ_Comp_by_Demographic <- DHQ_Comp_by_Demographic %>%
+  modify_header(stat_0 = "Total") %>%
+  modify_caption("Table 5.12. 6-month Diet History Questionnaire Completion Rate \n by Demographic Among Eligible Participants") %>%
+  as_kable_extra(escape = FALSE, addtl_fmt = TRUE)
+
+# Style the table output
+DHQ_Comp_by_Demographic %>% kable_styling(latex_options = c("scale_down", "hold_position"))  %>% 
+  footnote(general = "Participants may be counted more then once in these categories.",general_title = "Note: ", footnote_as_chunk = T)
+
+
+```
 
 
 
@@ -1834,7 +2002,7 @@ knitr::kable(dhq1_df7,
 \FloatBarrier
 
 # 9-Month Cancer Screening History Survey
-The 9-Month Cancer Screening History Follow Up Survey is available to verified participants that are not withdrawn at 9-months post-verification. The survey was released to both prospective and backlog participants at the same time on 01/06/2025.
+The 9-Month Cancer Screening History Follow Up Survey (CSH) is available to verified participants that are not withdrawn at 9-months post-verification. The survey was released to both prospective and backlog participants at the same time on 01/06/2025.
 
 ```{r CSH, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
@@ -1968,7 +2136,7 @@ CSH_notif_table = trigger_time %>%
 
 
 knitr::kable(CSH_notif_table, 
-             caption = 'Table 6.4. 9-Month Cancer Screening History Survey Completion from Trigger to Submit for \n Verified Participants, in Days', 
+             caption = 'Table 6.4. 9-Month Cancer Screening History Survey Completion from Trigger \n to Submit for Verified Participants, in Days', 
              row.names=FALSE, format.args = list(big.mark = ","), linesep = "", 
              booktabs = T, align=c("l", "c", "c", "c", "c", "c", "c", "c", "c")) %>% 
   kable_styling(latex_options = c("scale_down","hold_position")) 
@@ -2065,7 +2233,7 @@ after_CSH_table <- after_CSH %>%
 
 
 knitr::kable(after_CSH_table,
-             caption = 'Table 6.5. Baseline Survey Completion Within 30 days of CSH Survey Completion', 
+             caption = 'Table 6.5. Baseline Survey Completion Within 30 days of \n Month Cancer Screening History Survey Survey Completion', 
              booktabs=T, linesep = "", row.names=FALSE, align=c("l", "c", "c")) %>% 
   kable_styling(latex_options = "scale_down") %>% 
   footnote(general = "Note: Percentages calculated among those who were eligible but had not yet completed the survey at the time of CSH invitation.", 
@@ -2094,7 +2262,7 @@ csh_ver_df <- create_tbl_cross2(csh_ver, "ver_surv", "CSH_status", "row", "Time 
 
 colnames(csh_ver_df)[5] <- "Total CSH Eligible \n Participants"
 knitr::kable(csh_ver_df, 
-             caption='Table 6.6. CSH Survey Completion By Time from Verification to CSH Survey Release',
+             caption='Table 6.6. 9-Month Cancer Screening History Survey Completion \n By Time from Verification to CSH Survey Release',
              row.names=FALSE, align=c("l","c","c","c","c"), booktabs = TRUE) %>%
     kable_styling(latex_options = "scale_down") %>%  
     add_indent(seq(1, nrow(csh_ver_df) - 1)) %>%  landscape()
@@ -2104,12 +2272,169 @@ knitr::kable(csh_ver_df,
 ```
 
 
+```{r CSH_BySex_ByAge, include=FALSE}
+
+
+CSH_Comp_by_Sex <- all_data %>%  filter(CSH_status != "Not Eligible") %>% 
+  mutate(CSH_status = factor(CSH_status, levels=c("Not Started", "Started", "Submitted"))) %>% 
+  select(sex, CSH_status) %>% dplyr::arrange(sex,CSH_status) %>% 
+  tbl_cross(
+  row = sex,
+  col = CSH_status,
+  label = list(CSH_status ~ "Survey Completion",sex~"Sex"),
+  percent = "row",
+  digits=c(0,2),
+  margin_text="Total CSH Eligible Participants") 
+
+
+CSH_Comp_by_Sex_table <- CSH_Comp_by_Sex %>%
+  modify_header(stat_0 = "Total CSH Eligible \n Participants") %>%
+  modify_caption("Table 6.7. 9-Month Cancer Screening History Survey Completion Rate by Site Defined Sex \n Among Eligible Participants") %>%
+  as_kable_extra(escape = FALSE, addtl_fmt = TRUE) %>% kable_styling(latex_options = c("scale_down","hold_position"))  
+
+add_footnote(CSH_Comp_by_Sex_table, "Note: Sex defined as the de-identified sex data reported by sites at time of invitation.", 
+             notation = "none")
+
+
+
+
+
+CSH_Comp_by_Age <- all_data %>%  filter(CSH_status != "Not Eligible") %>% 
+  mutate(CSH_status = factor(CSH_status, levels=c("Not Started", "Started", "Submitted"))) %>% 
+  select(age, CSH_status) %>% dplyr::arrange(age,CSH_status) %>% 
+  tbl_cross(
+  row = age,
+  col = CSH_status,
+  label = list(CSH_status ~ "Survey Completion",age~"Age"),
+  percent = "row",
+  digits=c(0,2),
+  margin_text="Total CSH Eligible Participants") 
+
+
+CSH_Comp_by_Age <- CSH_Comp_by_Age %>%
+  modify_header(stat_0 = "Total CSH Eligible \n Participants") %>%
+  modify_caption("Table 6.8. 9-Month Cancer Screening History Survey Completion Rate by Age \n Among Eligible Participants") %>%
+  as_kable_extra(escape = FALSE, addtl_fmt = TRUE)  %>% kable_styling(latex_options = c("scale_down","hold_position")) 
+
+add_footnote(CSH_Comp_by_Age, "Note: Age defined as the de-identified age data reported by sites at time of invitation, not current age at time of survey completion.", 
+             notation="none")
+
+
+```
+
+
+```{r CSH_By_Race, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+
+
+CSH_Comp_by_race <- m1_comp %>% filter(CSH_status!="Not Eligible") %>% 
+  mutate(CSH_status = factor(CSH_status, levels=c("Not Started", "Started", "Submitted"))) %>% 
+  select(race, CSH_status) %>% dplyr::arrange(race,CSH_status) %>% 
+  tbl_cross(
+  row = race,
+  col = CSH_status,
+  label = list(CSH_status ~ "Survey Completion",race~"Race"),
+  percent = "row",
+  digits=c(0,2),
+  margin_text="Total CSH Eligible Participants") 
+
+
+CSH_Comp_by_race <- CSH_Comp_by_race %>%
+  modify_header(stat_0 = "Total CSH Eligible \n Participants") %>%
+  modify_caption("Table 6.9. 9-Month Cancer Screening History Survey Completion Rate by Race \n Among Eligible Participants") %>%
+  as_kable_extra(escape = FALSE, addtl_fmt = TRUE) %>% kable_styling(latex_options = c("scale_down","hold_position"))
+
+reduced <- all_data %>% filter(d_949302066 != 231311385 & CSH_status!="Not Eligible") # Those who are eligible for PROMIS but didn't complete mod1 yet
+
+add_footnote(CSH_Comp_by_race, paste0('Note: In order to determine race, Module 1 must first be completed. There are ', dim(reduced)[[1]] , ' CSH eligible participants that have either not started or not finished Module 1.'),
+             notation="none")
+
+
+```
+
+
+```{r CSH_By_SiteRace, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+
+csh1 <- all_data %>%  filter(CSH_status != "Not Eligible")
+
+CSH_by_race_df <- create_tbl_cross2(csh1, "race", "CSH_status", "row", "Race", "9-Month Cancer Screening History Survey", "Total Verified Participants")
+
+knitr::kable(CSH_by_race_df, 
+             caption="Table 6.9.a 9-Month Cancer Screening History Survey Completion Rate by Site Defined Race \n Among Verified Participants",
+             row.names=FALSE, align=c("l","c","c","c","c","c"), booktabs = TRUE) %>%
+    kable_styling(latex_options = "scale_down") %>%  
+    add_indent(seq(1, nrow(BL_by_Race_df) - 1)) %>%  landscape() %>%
+    footnote(general = "Note: Race defined as the de-identified race data reported by sites at time of invitation.",
+             general_title = "")
+
+```
+
+
+```{r CSH_By_Race_And_Sex, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+
+CSH_Comp_by_sex_race <- m1_comp %>% filter(CSH_status!="Not Eligible") %>% 
+  mutate(CSH_status = factor(CSH_status, levels=c("Not Started", "Started", "Submitted"))) %>% 
+  select(sex_race, CSH_status) %>% dplyr::arrange(sex_race,CSH_status) %>% 
+  tbl_cross(
+  row = sex_race,
+  col = CSH_status,
+  label = list(CSH_status ~ "Survey Completion",sex_race~"Sex and Race"),
+  percent = "row",
+  digits=c(0,2),
+  margin_text="Total CSH Eligible Participants") 
+
+
+CSH_Comp_by_sex_race <- CSH_Comp_by_sex_race %>%
+  modify_header(stat_0 = "Total CSH Eligible \n Participants") %>%
+  modify_caption("Table 6.10. 9-Month Cancer Screening History Survey Completion Rate by Sex and Race \n Among Eligible Participants") %>%
+  as_kable_extra(escape = FALSE, addtl_fmt = TRUE)
+
+reduced <- all_data %>% filter(d_949302066 != 231311385 & CSH_status!="Not Eligible") # Those who are eligible for PROMIS but didn't complete mod1 yet
+
+CSH_Comp_by_sex_race %>% kable_styling(latex_options = c("scale_down","hold_position")) %>% 
+  footnote(general = paste0('In order to determine race, Module 1 must first be completed. There are ', dim(reduced)[[1]] , ' CSH eligible participants that have either not started or not finished Module 1.'),general_title = "Note: ", footnote_as_chunk = T)
+
+
+```
+
+
+```{r CSH_By_Demographic, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+
+CSH_Comp_by_Demographic <- all_data_long %>% 
+  filter(CSH_status != "Not Eligible") %>%
+  mutate(CSH_status = factor(CSH_status, levels = c("Not Started", "Started", "Submitted")),
+         Demographic_Group = factor(Demographic_Group, levels=c("White Women","Black Men","Women Under 45","Women Over 45","Men Under 45","Men Over 45"))) %>%
+  select(Demographic_Group, CSH_status) %>%
+  tbl_cross(
+    row = Demographic_Group,
+    col = CSH_status,
+    label = list(CSH_status ~ "Survey Completion", Demographic_Group ~ "Demographic"),
+    percent = "row",
+    digits = c(0, 2),
+    margin_text = "Total"
+  )
+
+
+CSH_Comp_by_Demographic <- CSH_Comp_by_Demographic %>%
+  modify_header(stat_0 = "Total") %>%
+  modify_caption("Table 6.11. 9-Month Cancer Screening History Survey Completion Rate \n by Demographic Among Eligible Participants") %>%
+  as_kable_extra(escape = FALSE, addtl_fmt = TRUE)
+
+# Style the table output
+CSH_Comp_by_Demographic %>% kable_styling(latex_options = c("scale_down", "hold_position"))  %>% 
+  footnote(general = "Participants may be counted more then once in these categories.",general_title = "Note: ", footnote_as_chunk = T)
+
+
+```
+
+
+
+
 
 
 \newpage
 \FloatBarrier
 # Connect Experience Survey
-The Connect Experience Cross-Sectional Survey was released to eligible participants (verified between 03/01/2024 and 07/31/2024 and not withdrawn) on 10/03/2024. This survey was a one-time cross-sectional survey that is no longer being newly released to participants.
+The Connect Experience Cross-Sectional Survey (CES) was released to eligible participants (verified between 03/01/2024 and 07/31/2024 and not withdrawn) on 10/03/2024. This survey was a one-time cross-sectional survey that is no longer being newly released to participants.
 ```{r CES, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
 
@@ -2328,7 +2653,7 @@ after_CES_table <- after_CES %>%
 
 
 knitr::kable(after_CES_table,
-             caption = 'Table 7.5. Baseline Survey Completion Within 30 days of CES Survey Completion', 
+             caption = 'Table 7.5. Baseline Survey Completion Within 30 days of Connect Experience Survey Survey Completion', 
              booktabs=T, linesep = "", row.names=FALSE, align=c("l", "c", "c")) %>% 
   kable_styling(latex_options = "scale_down") %>% 
   footnote(general = "Note: Percentages calculated among those who were eligible but had not yet completed the survey at the time of CES invitation.", 
