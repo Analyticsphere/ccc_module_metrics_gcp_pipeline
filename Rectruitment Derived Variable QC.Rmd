@@ -15,6 +15,11 @@ output:
 ---
 
 
+```{r note, include=FALSE}
+
+############# Note: Participants with errors whose data we will not correct will be excluded from the rule. Github contains records of these exclusions as well.
+
+```
 
 
 ```{r library, include=FALSE}
@@ -51,22 +56,6 @@ project <- "nih-nci-dceg-connect-prod-6d04"
 
 currentDate <- Sys.Date()
 
-# parts_bq <- "SELECT Connect_ID, token, d_512820379, d_471593703, state_d_934298480, d_230663853, state_d_697256759, state_d_158291096,
-# d_335767902, d_982402227, d_919254129, d_699625233, d_827220437, d_371067537, d_544150384, d_564964481, d_795827569, d_685002411_d_994064239, d_912301837, 
-# d_685002411_d_194410742,d_685002411_d_949501163,d_685002411_d_277479354,d_685002411_d_867203506,d_685002411_d_352996056,d_685002411_d_217367618,d_747006172,
-# d_906417725,d_773707518,d_831041022,d_987563196, d_659990606, d_100767870,
-# d_371067537, d_430551721, d_821247024, d_914594314,  state_d_725929722, d_126331570, d_536735468, d_130371375_d_266600170_d_945795905, d_130371375_d_266600170_d_320023644,
-# d_663265240, d_878865966, d_684635302, d_167958071,d_371067537, d_130371375_d_266600170_d_731498909, d_130371375_d_266600170_d_222373868, d_130371375_d_266600170_d_787567527,
-# d_949302066 , d_517311251, d_205553981, d_117249500, d_976570371, d_914639140, d_311580100, d_454445267,d_255077064, d_832139544, 
-# d_263355177, d_199471989, d_222161762, d_822499427, d_764863765, d_534669573, d_195145666, d_286191859, d_541836531, d_770257102, d_386488297, d_264644252, d_452942800, 
-# d_217640691, d_844088537, d_784810139, d_268176409, d_843688458, d_870643066, d_315032037, d_943232079, d_692560814, 
-# d_956490759,d_265193023,d_253883960,d_547363263,d_459098666,d_220186468,d_320303124, d_609630315, d_389890053, d_176068627, d_439351436, d_280021666,
-# d_610227793, d_109610692, d_148184166, d_808755658, d_196723965, d_501613780, d_130371375_d_266600170_d_648936790,
-# state_d_444699761, state_d_188797763, state_d_953614051, state_d_793822265, state_d_147176963, state_d_557461333, state_d_725929722, state_d_711794630, 
-# state_d_679832994, state_d_559534463, state_d_570452130, state_d_629484663, state_d_547895941,
-# d_685002411_d_936015433, d_685002411_d_688142378, d_685002411_d_101763809, d_685002411_d_525277409, d_685002411_d_671903816
-# FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` 
-# where  d_831041022='104430631'"  #Connect_ID IS NOT NULL -- we will have null Connect IDs for early recruits
 
 #### Set up DBI connection for large participants table BQ pull
 dataset <- "FlatConnect"
@@ -82,6 +71,8 @@ con <- dbConnect(
 # Verify the connection by listing available tables
 dbListTables(con)
 
+## Because we're not restricitng by Connect_ID is not null, we have millions of rows.
+## Easier and quicker to import them by chunks of columns
 
 chunk1 <- tbl(con, "participants", page_size = 1000) %>%
   filter(d_831041022=='104430631') %>%
@@ -95,10 +86,10 @@ d_906417725,d_773707518,d_831041022,d_987563196, d_659990606, d_100767870, state
 
 chunk2 <- tbl(con, "participants", page_size = 1000) %>%
   filter(d_831041022=='104430631') %>%
-  dplyr::select(Connect_ID, token,  d_430551721, d_821247024, d_914594314,  state_d_725929722, d_126331570, d_536735468, d_130371375_d_266600170_d_945795905, d_130371375_d_266600170_d_320023644,
+  dplyr::select(Connect_ID, token,  d_430551721, d_821247024, d_914594314,  state_d_725929722, d_126331570, d_536735468, d_130371375_d_266600170_d_945795905, d_130371375_d_266600170_d_320023644, state_d_538553381, state_d_527823810, state_d_849518448, state_d_119643471, state_d_253532712, state_d_684926335, 
 d_663265240, d_878865966, d_684635302, d_167958071, d_130371375_d_266600170_d_731498909, d_130371375_d_266600170_d_222373868, d_130371375_d_266600170_d_787567527,
 d_949302066 , d_517311251, d_205553981, d_117249500, d_976570371, d_914639140, d_311580100, d_454445267,d_255077064, d_832139544, 
-d_263355177, d_199471989, d_222161762, d_822499427, d_764863765, d_534669573, d_195145666, d_286191859, d_541836531, d_770257102, d_386488297, d_264644252, d_452942800) %>%
+d_263355177, d_199471989, d_222161762, d_822499427, d_764863765, d_534669573, d_195145666, d_286191859, d_541836531, d_770257102, d_386488297, d_264644252, d_452942800, state_d_706256705, state_d_435027713, state_d_477091792, state_d_667474224, state_d_749475364) %>%
   as_tibble() %>% 
   distinct(token, .keep_all = TRUE) #somehow pulling duplicsate rows
 
@@ -116,10 +107,6 @@ d_685002411_d_936015433, d_685002411_d_688142378, d_685002411_d_101763809, d_685
 
 parts_bq_partial <- full_join(chunk1, chunk2, by=c("token", "Connect_ID"))
 partsbq <- full_join(parts_bq_partial, chunk3, by=c("token", "Connect_ID"))
-
-
-#partsbq_table <- bq_project_query(project, parts_bq)
-#partsbq <- bq_table_download(partsbq_table, bigint = "integer64")
 
 
 biobq <- "SELECT Connect_ID, token, d_299553921_d_593843561, d_299553921_d_883732523, d_703954371_d_593843561, d_703954371_d_883732523, d_838567176_d_593843561, d_838567176_d_883732523, d_454453939_d_593843561, d_454453939_d_883732523, d_652357376_d_593843561, d_652357376_d_883732523, d_505347689_d_593843561, d_505347689_d_883732523 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.biospecimen` 
@@ -2037,7 +2024,7 @@ if (nrow(cancer_match) == 0) {
 ## 74. If RcrtSI_RecruitType_v1r0='Active' then RcrtSI_Age_v1r0 must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'.
 ```{r act_di_age, echo=FALSE, warning=FALSE, message=FALSE}
 
-act_di_age <- partsbq	%>% filter(d_512820379='486306141' & is.na(state_d_934298480) & 
+act_di_age <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_934298480) & 
                                      !(d_821247024=="922622075" & state_d_793822265=="854903954"))
 
 
@@ -2056,11 +2043,11 @@ if (nrow(act_di_age) == 0) {
 ```
 	   																																																					
 
-## 75. If RcrtSI_RecruitType_v1r0='Active' and Site is not Sanford Health or Henry Ford Health, then RcrtSI_Race_v1r0 must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'.
+## 75. If RcrtSI_RecruitType_v1r0='Active' and Site is not Sanford Health or Henry Ford Health or Baylor Scott and White Health, then RcrtSI_Race_v1r0 must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'.
 ```{r act_di_race, echo=FALSE, warning=FALSE, message=FALSE}
 
-act_di_race <- partsbq	%>% filter(d_512820379='486306141' & is.na(state_d_849518448) & 
-                                    d_827220437!='657167265' & d_827220437!='548392715' &
+act_di_race <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_849518448) & 
+                                    d_827220437!='657167265' & d_827220437!='548392715' &  d_827220437!='472940358' & 
                                      !(d_821247024=="922622075" & state_d_793822265=="854903954"))
 
 
@@ -2083,7 +2070,7 @@ if (nrow(act_di_race) == 0) {
 ## 76. If RcrtSI_RecruitType_v1r0='Active' and Site= Sanford Health then RcrtSI_SHRace_v1r0 must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'.
 ```{r act_di_SF_race, echo=FALSE, warning=FALSE, message=FALSE}
 
-act_di_SF_race <- partsbq	%>% filter(d_512820379='486306141' & is.na(state_d_119643471) & 
+act_di_SF_race <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_119643471) & 
                                        d_827220437=='657167265' & 
                                      !(d_821247024=="922622075" & state_d_793822265=="854903954"))
 
@@ -2107,7 +2094,7 @@ if (nrow(act_di_SF_race) == 0) {
 ## 77. If RcrtSI_RecruitType_v1r0='Active' and Site= Henry Ford Health, then RcrtSI_HFHSRace_v1r0 must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'.
 ```{r act_di_HFH_race, echo=FALSE, warning=FALSE, message=FALSE}
 
-act_di_HFH_race <- partsbq	%>% filter(d_512820379='486306141' & is.na(state_d_684926335) & 
+act_di_HFH_race <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_684926335) & 
                                         d_827220437=='548392715' &
                                      !(d_821247024=="922622075" & state_d_793822265=="854903954"))
 
@@ -2125,13 +2112,83 @@ if (nrow(act_di_HFH_race) == 0) {
 }
 
 ```
+
+## 78. If RcrtSI_RecruitType_v1r0='Active' and Site= Baylor Scott and White Health, then RcrtSI_BSWHRaceEth_v1r0 must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'.
+```{r act_di_BSWH_race, echo=FALSE, warning=FALSE, message=FALSE}
+
+act_di_BSWH_race <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_253532712) & 
+                                        d_827220437=='472940358' &
+                                     !(d_821247024=="922622075" & state_d_793822265=="854903954"))
+
+
+if (nrow(act_di_BSWH_race) == 0) {
+  cat("No errors\n")
+} else {
+  
+  act_di_BSWH_race <- act_di_BSWH_race %>% select(Site, Connect_ID, d_821247024, state_d_793822265) %>%  safe_arrange(Site)
+
+  colnames(act_di_BSWH_race) <- c("Site", "Connect ID", 'RcrtV_Verification', "RcrtV_UpdateRecType")
+
+  knitr::kable(act_di_BSWH_race) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+```
+
+
+
+## 79. If RcrtSI_RecruitType_v1r0='Active' and Site= Sanford Health then RcrtSI_SHEthnicity must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'.
+```{r act_di_SF_eth, echo=FALSE, warning=FALSE, message=FALSE}
+
+act_di_SF_eth <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_538553381) & 
+                                       d_827220437=='657167265' & 
+                                     !(d_821247024=="922622075" & state_d_793822265=="854903954"))
+
+
+if (nrow(act_di_SF_eth) == 0) {
+  cat("No errors\n")
+} else {
+  
+  act_di_SF_eth <- act_di_SF_eth %>% select(Site, Connect_ID, d_821247024, state_d_793822265) %>%  safe_arrange(Site)
+
+  colnames(act_di_SF_eth) <- c("Site", "Connect ID", 'RcrtV_Verification', "RcrtV_UpdateRecType")
+
+  knitr::kable(act_di_SF_eth) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+```
 	   																																																					
 
 
-## 78. If RcrtSI_RecruitType_v1r0='Active' then RcrtSI_MemberStat_v1r0 must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'.
+## 80. If RcrtSI_RecruitType_v1r0='Active' and Site= Henry Ford Health, then RcrtSI_HFHSEthnicity_v1r0 must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'.
+```{r act_di_HFH_eth, echo=FALSE, warning=FALSE, message=FALSE}
+
+act_di_HFH_eth <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_527823810) & 
+                                        d_827220437=='548392715' &
+                                     !(d_821247024=="922622075" & state_d_793822265=="854903954"))
+
+
+if (nrow(act_di_HFH_eth) == 0) {
+  cat("No errors\n")
+} else {
+  
+  act_di_HFH_eth <- act_di_HFH_eth %>% select(Site, Connect_ID, d_821247024, state_d_793822265) %>%  safe_arrange(Site)
+
+  colnames(act_di_HFH_eth) <- c("Site", "Connect ID", 'RcrtV_Verification', "RcrtV_UpdateRecType")
+
+  knitr::kable(act_di_HFH_eth) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+```
+	   																																																					
+
+
+## 81. If RcrtSI_RecruitType_v1r0='Active' then RcrtSI_MemberStat_v1r0 must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'.
 ```{r act_di_member, echo=FALSE, warning=FALSE, message=FALSE}
 
-act_di_member <- partsbq	%>% filter(d_512820379='486306141' & is.na(state_d_477091792) & 
+act_di_member <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_477091792) & 
                                      !(d_821247024=="922622075" & state_d_793822265=="854903954"))
 
 
@@ -2151,10 +2208,10 @@ if (nrow(act_di_member) == 0) {
 	   																																																					
 
 
-## 79. If RcrtSI_RecruitType_v1r0='Active' then RcrtSI_CampaignType_v1r0 must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'.
+## 82. If RcrtSI_RecruitType_v1r0='Active' then RcrtSI_CampaignType_v1r0 must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'.
 ```{r act_di_cmpn, echo=FALSE, warning=FALSE, message=FALSE}
 
-act_di_cmpn <- partsbq	%>% filter(d_512820379='486306141' & is.na(state_d_667474224) & 
+act_di_cmpn <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_667474224) & 
                                      !(d_821247024=="922622075" & state_d_793822265=="854903954"))
 
 
@@ -2174,10 +2231,10 @@ if (nrow(act_di_cmpn) == 0) {
 	   																																																					
 
 
-## 80. If RcrtSI_RecruitType_v1r0='Active' then RcrtSI_EligibilityVer_v1r0 must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'.
+## 83. If RcrtSI_RecruitType_v1r0='Active' then RcrtSI_EligibilityVer_v1r0 must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'.
 ```{r act_di_elg, echo=FALSE, warning=FALSE, message=FALSE}
 
-act_di_elg <- partsbq	%>% filter(d_512820379='486306141' & is.na(state_d_749475364) & 
+act_di_elg <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_749475364) & 
                                      !(d_821247024=="922622075" & state_d_793822265=="854903954"))
 
 
@@ -2196,4 +2253,51 @@ if (nrow(act_di_elg) == 0) {
 ```
 	   																																																					
 
+
+
+## 84. If RcrtSI_RecruitType_v1r0='Active' and Site is not Henry Ford Health, then RcrtSI_Sex_v1r0 must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'.
+```{r act_di_sex, echo=FALSE, warning=FALSE, message=FALSE}
+
+act_di_sex <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_706256705) & 
+                                        d_827220437!='548392715' &
+                                     !(d_821247024=="922622075" & state_d_793822265=="854903954"))
+
+
+if (nrow(act_di_sex) == 0) {
+  cat("No errors\n")
+} else {
+  
+  act_di_sex <- act_di_sex %>% select(Site, Connect_ID, d_821247024, state_d_793822265) %>%  safe_arrange(Site)
+
+  colnames(act_di_sex) <- c("Site", "Connect ID", 'RcrtV_Verification', "RcrtV_UpdateRecType")
+
+  knitr::kable(act_di_sex) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+```
+
+
+
+## 85. If RcrtSI_RecruitType_v1r0='Active' and Site= Henry Ford Health, then RcrtSI_HFHS_Sex_v1r0 must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'.
+```{r act_di_HF_sex, echo=FALSE, warning=FALSE, message=FALSE}
+
+act_di_HF_sex <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_435027713) & 
+                                        d_827220437=='548392715' &
+                                     !(d_821247024=="922622075" & state_d_793822265=="854903954"))
+
+
+if (nrow(act_di_HF_sex) == 0) {
+  cat("No errors\n")
+} else {
+  
+  act_di_HF_sex <- act_di_HF_sex %>% select(Site, Connect_ID, d_821247024, state_d_793822265) %>%  safe_arrange(Site)
+
+  colnames(act_di_HF_sex) <- c("Site", "Connect ID", 'RcrtV_Verification', "RcrtV_UpdateRecType")
+
+  knitr::kable(act_di_HF_sex) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+```
 

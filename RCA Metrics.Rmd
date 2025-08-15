@@ -134,6 +134,8 @@ knitr::kable(all_counts_pts ,
 
 ```{r Cancer_Location, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
+# Need cancer type to become one column 
+
 all_locations <- rca %>% 
   mutate(
     `Anal` = if_else(d_740819233_d_149205077 == 939782495, 1, 0),
@@ -231,7 +233,7 @@ pivot_data <- left_join(pivot_data1, pivot_data2, by="Cancer_Site")
 
 ```{r num_occ, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
-## update with cancer occurrence : d_793981056
+## Number of cancer occurrences per participant 
 
 cancer_loc_occ <- cancer_loc %>% 
   group_by(Connect_ID) %>%
@@ -275,7 +277,7 @@ cancer_loc_occs <- cancer_loc_occ %>%
 \FloatBarrier
 
 ```{r RCA_time, message=FALSE, echo=FALSE, warning=FALSE}
-#, results='asis', fig.keep = "none"
+
 
 currentDate <- Sys.Date()
 currentDate <- as.Date(currentDate)
@@ -383,7 +385,7 @@ occ_by_site %>%
 ```{r Diagnosis_vs_Verif_Date, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
 Diag_Verif <- cancer_loc %>%
-  mutate(months_diff =difftime(as.Date(d_345545422), as.Date(d_914594314), units = "weeks")*.25,
+  mutate(months_diff =difftime(as.Date(d_345545422), as.Date(d_914594314), units = "weeks")*.25, #assuming 4 weeks per month
          time_diff = case_when( months_diff < 0 ~ "Prior to verification",
                                 months_diff < 7 ~ "Within 6 months post-verification",
                                 months_diff < 13 ~ "6-12 months post-verification",
@@ -483,7 +485,7 @@ for (i in 1:length(unique_sites)) {
   
 aware_by_dead <- cancer_loc  %>% 
   mutate(dead = factor(dead, levels = c("Alive", "Deceased", "Unknown")), 
-         awareness = factor(awareness, levels = c("Aware", "Unaware", "Unknown"))) %>%  #make sure all values are included
+         awareness = factor(awareness, levels = c("Aware", "Unaware", "Unknown"))) %>%  #make sure all values are included, even if 0
   select(dead, awareness) %>% 
   tbl_cross(col =awareness,
             row = dead, 
