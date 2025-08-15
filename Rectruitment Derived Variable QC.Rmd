@@ -71,7 +71,7 @@ con <- dbConnect(
 # Verify the connection by listing available tables
 dbListTables(con)
 
-## Because we're not restricitng by Connect_ID is not null, we have millions of rows.
+## Because we're not restricting by Connect_ID is not null, we have millions of rows.
 ## Easier and quicker to import them by chunks of columns
 
 chunk1 <- tbl(con, "participants", page_size = 1000) %>%
