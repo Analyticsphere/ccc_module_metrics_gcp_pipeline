@@ -30,6 +30,9 @@ output:
 This Weekly Survey Module report contains metrics related to Connect survey completion including baseline surveys and follow up surveys. Additional metrics will be added as new surveys are released. Metrics related to the baseline biospecimen surveys, menstrual cycle survey, and COVID survey can be found in the Weekly Biospecimen Metrics reports. Metrics related to overall baseline study activity completion, including baseline survey completion, can be found in the Weekly Operations Report. The Survey Module report is run on a weekly basis and encompasses data through today at 9:30 am. This data is extracted from the flattened participants table. This report is restricted to verified participants with a recruitment status of either active or passive.
 
 
+\textbf{\textcolor{blue}{Do not share any data from this report that indicate the number of individuals at any of the Connect recruitment sites with individuals outside of the Connect Study.  This includes in manuscripts, abstracts, presentations, etc. You may present data aggregated across all of the Connect sites.}}.
+
+
 ```{r libraries, include=FALSE, warning=FALSE}
 
  # \usepackage{caption}
@@ -508,7 +511,7 @@ knitr::kable(table4,format.args = list(big.mark = ","),
 
 
 
-```{r Submission_Minutes,include=FALSE}
+```{r Submission_Minutes,echo=FALSE, error=FALSE, message=FALSE, warning=FALSE}
 
 
 
@@ -1188,7 +1191,7 @@ add_footnote(Comp_by_race, paste0('Note: In order to determine race, Module 1 mu
 ```
 
 
-```{r QOL_By_SiteRace, include=FALSE}
+```{r QOL_By_SiteRace, echo=FALSE, error=FALSE, message=FALSE, warning=FALSE}
 
 QOL_by_race <- all_data %>% filter(qolcomplt!="Not Eligible") 
 
@@ -1839,7 +1842,7 @@ knitr::kable(dhq1_df7,
 ```
 
 
-```{r DHQ_BySex_ByAge, include=FALSE}
+```{r DHQ_BySex_ByAge, echo=FALSE, error=FALSE, message=FALSE, warning=FALSE}
 
 
 DHQ_Comp_by_Sex <- dhq1 %>% 
@@ -2272,7 +2275,7 @@ knitr::kable(csh_ver_df,
 ```
 
 
-```{r CSH_BySex_ByAge, include=FALSE}
+```{r CSH_BySex_ByAge, echo=FALSE, error=FALSE, message=FALSE, warning=FALSE}
 
 
 CSH_Comp_by_Sex <- all_data %>%  filter(CSH_status != "Not Eligible") %>% 
@@ -2702,7 +2705,7 @@ add_footnote(pref_lang_site, "Note: Preferred language is based on language of s
 
 
 
-```{r Survey_Flag_Setup, echo=FALSE, warning = FALSE, include=FALSE}
+```{r Survey_Flag_Setup, echo=FALSE, error=FALSE, message=FALSE, warning=FALSE}
 
 
 ## SSN survey is not viewable in BQ so we will not have the language flag for that survey
