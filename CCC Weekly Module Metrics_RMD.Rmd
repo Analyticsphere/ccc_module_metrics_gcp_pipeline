@@ -85,7 +85,10 @@ state_d_934298480, state_d_706256705, state_d_435027713, d_199471989, d_95649075
 state_d_684926335, state_d_849518448, state_d_119643471, state_d_253532712, d_764863765, d_195145666, 
 d_784810139, d_176068627, d_389890053, d_609630315, d_173836415_d_266600170_d_319972665_d_661940160, 
 d_220186468, d_268176409, d_784810139, d_253883960, d_265193023, d_109610692, d_610227793, d_692560814, d_747006172, d_501613780, d_109610692
-FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` where Connect_ID IS NOT NULL  and (d_512820379='486306141' OR d_512820379='854703046') " 
+-- d_692560814, d_109610692, d_610227793, d_748726394
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` where Connect_ID IS NOT NULL  and (d_512820379='486306141' OR d_512820379='854703046')" 
+
+#Verification status condition below, we have one table counting non-verifieds so it had to be separated out of the BQ conditionality
 
 #and d_831041022='104430631'-- not needed, according to 3/12/24 decisions we'll be keeping participant journeys in overall counts
 
@@ -206,7 +209,9 @@ all_data <- all_data %>%  mutate(Site = case_when(d_827220437==472940358 ~ "Bayl
                                  m1_comp_mins = as.numeric(difftime(as.POSIXct(ymd_hms(d_517311251)), as.POSIXct(ymd_hms(d_205553981)), units="hours"))*60,
                                  m2_comp_mins = as.numeric(difftime(as.POSIXct(ymd_hms(d_832139544)), as.POSIXct(ymd_hms(d_541836531)), units="hours"))*60,
                                  m3_comp_mins = as.numeric(difftime(as.POSIXct(ymd_hms(d_770257102)), as.POSIXct(ymd_hms(d_386488297)), units="hours"))*60,
-                                 m4_comp_mins = as.numeric(difftime(as.POSIXct(ymd_hms(d_264644252)), as.POSIXct(ymd_hms(d_452942800)), units="hours"))*60)
+                                 m4_comp_mins = as.numeric(difftime(as.POSIXct(ymd_hms(d_264644252)), as.POSIXct(ymd_hms(d_452942800)), units="hours"))*60,
+                                 #dhq_comp_mins = as.numeric(difftime(as.POSIXct(ymd_hms(d_264644252)), as.POSIXct(ymd_hms(d_109610692)), units="hours"))*60,
+                                 csh_comp_mins = as.numeric(difftime(as.POSIXct(ymd_hms(d_389890053)), as.POSIXct(ymd_hms(d_609630315)), units="hours"))*60)
 
 all_data$Site <- factor(all_data$Site, levels=c("Baylor Scott and White","HealthPartners", "Henry Ford","Marshfield","Sanford","UChicago","KP Colorado","KP Georgia", "KP Hawaii","KP Northwest"))
 all_data$BL_comp <- factor(all_data$BL_comp, levels=c("All", "2 or 3 Sections", "BOH Only", "None"))
@@ -1023,8 +1028,8 @@ add_footnote(Comp_by_Age, "Note: Age defined as the de-identified age data repor
 
 
 
-recr_M1 <- bq_project_query(project, query="SELECT token,Connect_ID, d_821247024, d_914594314,  d_827220437,d_512820379,
-                            d_949302066 , d_517311251  FROM  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` WHERE  d_821247024='197316935'")
+recr_M1 <- bq_project_query(project, query="SELECT token,Connect_ID, d_821247024, d_914594314,  d_827220437,d_512820379, d_255077064,
+                            d_949302066 , d_517311251  FROM  `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` WHERE  d_821247024='197316935' and (d_512820379='486306141' OR d_512820379='854703046')")
 recr_m1 <- bq_table_download(recr_M1,bigint = "integer64",n_max = Inf, page_size = 10000)
 cnames <- names(recr_m1)
 # Check that it doesn't match any non-number
@@ -1042,12 +1047,12 @@ for (i in 1: length(cnames)){
 sql_M1_1 <- bq_project_query(project, query="SELECT Connect_ID, D_384191091_D_384191091_D_583826374, D_384191091_D_384191091_D_636411467, 
                              D_384191091_D_384191091_D_458435048, D_384191091_D_384191091_D_706998638, D_384191091_D_384191091_D_973565052, 
                              D_384191091_D_384191091_D_586825330, D_384191091_D_384191091_D_412790539, D_384191091_D_384191091_D_807835037,
-                             D_384191091_D_747350323,D_384191091_D_384191091_D_746038746 
+                             D_384191091_D_747350323,D_384191091_D_384191091_D_746038746, d_784119588
                              FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v1` where Connect_ID is not null")
 sql_M1_2 <- bq_project_query(project, query="SELECT Connect_ID, D_384191091_D_384191091_D_583826374 ,D_384191091_D_384191091_D_636411467, 
                              D_384191091_D_384191091_D_458435048, D_384191091_D_384191091_D_706998638, D_384191091_D_384191091_D_973565052,
                              D_384191091_D_384191091_D_586825330,D_384191091_D_384191091_D_412790539,D_384191091_D_384191091_D_807835037,
-                             D_384191091_D_747350323,D_384191091_D_384191091_D_746038746 
+                             D_384191091_D_747350323,D_384191091_D_384191091_D_746038746, d_784119588
                              FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v2` where Connect_ID is not null")
 
 
@@ -2537,7 +2542,7 @@ knitr::kable(CES_TM_table,
 
 ```
 
-
+\FloatBarrier
 ```{r CES_trig_stop, echo=FALSE, warning=FALSE, message=FALSE}
 
 
@@ -2569,7 +2574,7 @@ knitr::kable(ces_notif_table,
 
 
 
-
+\FloatBarrier
 
 ```{r BL_After_CES2, echo=FALSE, warning=FALSE, message=FALSE}
 
@@ -2671,7 +2676,7 @@ knitr::kable(after_CES_table,
 
 
 
-
+\FloatBarrier
 \newpage                   
 
 # Survey Metrics by Language Completed
@@ -2717,65 +2722,83 @@ add_footnote(pref_lang_site, "Note: Preferred language is based on language of s
 
 queries <- list(
   m1_lang_c = "SELECT pts.Connect_ID, m1.d_784119588, d_255077064
-                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v2` m1
-                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
+                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
+                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v2` m1
                 on m1.Connect_ID=pts.Connect_ID
-                WHERE pts.Connect_ID IS NOT NULL and d_949302066='231311385'",
+                WHERE pts.Connect_ID IS NOT NULL and d_949302066='231311385' and
+                (pts.d_512820379='486306141' OR pts.d_512820379='854703046') and pts.d_821247024 = '197316935'",
+  #module1 v1 doesn't need to be merged in- language wasn't an option then so everyone is English by default. The case when below allows null survey language vaiables to be set to English already
   m2_lang_c = "SELECT pts.Connect_ID, m2.d_784119588, d_255077064 
-                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module2_v2` m2
-                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
+                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
+                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.module2_v2` m2
                 on m2.Connect_ID=pts.Connect_ID
-                WHERE pts.Connect_ID IS NOT NULL and d_536735468='231311385'",
+                WHERE pts.Connect_ID IS NOT NULL and d_536735468='231311385' and 
+                (pts.d_512820379='486306141' OR pts.d_512820379='854703046') and pts.d_821247024 = '197316935'",
+  #module2 v1 doesn't need to be merged in- language wasn't an option then so everyone is English by default. The case when below allows null survey language vaiables to be set to English already
   m3_lang_c = "SELECT pts.Connect_ID, m3.d_784119588, d_255077064 
-                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module3_v1` m3
-                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
+                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
+                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.module3_v1` m3
                 on m3.Connect_ID=pts.Connect_ID
-                WHERE pts.Connect_ID IS NOT NULL and d_976570371='231311385'",
+                WHERE pts.Connect_ID IS NOT NULL and d_976570371='231311385' and 
+                (pts.d_512820379='486306141' OR pts.d_512820379='854703046') and pts.d_821247024 = '197316935'",
   m4_lang_c = "SELECT pts.Connect_ID, m4.d_784119588, d_255077064 
-                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module4_v1` m4
-                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
+                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
+                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.module4_v1` m4
                 on m4.Connect_ID=pts.Connect_ID
-                WHERE pts.Connect_ID IS NOT NULL and pts.d_663265240='231311385'",
+                WHERE pts.Connect_ID IS NOT NULL and pts.d_663265240='231311385' and 
+                (pts.d_512820379='486306141' OR pts.d_512820379='854703046') and pts.d_821247024 = '197316935'",
   BUM_lang_c = "SELECT pts.Connect_ID, bum.d_784119588, d_255077064 
-                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.bioSurvey_v1` bum
-                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
+                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
+                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.bioSurvey_v1` bum
                 on bum.Connect_ID=pts.Connect_ID
-                WHERE pts.Connect_ID IS NOT NULL and d_265193023='231311385'",
+                WHERE pts.Connect_ID IS NOT NULL and d_265193023='231311385' and 
+                (pts.d_512820379='486306141' OR pts.d_512820379='854703046') and pts.d_821247024 = '197316935'",
   BU_lang_c = "SELECT pts.Connect_ID, bu.d_784119588, d_255077064
-                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.clinicalBioSurvey_v1` bu 
-                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
+                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
+                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.clinicalBioSurvey_v1` bu 
                 on bu.Connect_ID=pts.Connect_ID
-                WHERE pts.Connect_ID IS NOT NULL and d_253883960='231311385'",
+                WHERE pts.Connect_ID IS NOT NULL and d_253883960='231311385' and 
+                (pts.d_512820379='486306141' OR pts.d_512820379='854703046') and pts.d_821247024 = '197316935'",
   CV_lang_c = "SELECT pts.Connect_ID, cv.d_784119588, d_255077064 
-                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.covid19Survey_v1` cv
-                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
+                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
+                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.covid19Survey_v1` cv
                 on cv.Connect_ID=pts.Connect_ID
-                WHERE pts.Connect_ID IS NOT NULL and d_220186468='231311385'",
+                WHERE pts.Connect_ID IS NOT NULL and d_220186468='231311385' and 
+                DATE(d_268176409) >= '2023-07-05' and --stand alone covid survey only
+                (pts.d_512820379='486306141' OR pts.d_512820379='854703046') and pts.d_821247024 = '197316935'",  
   Mens_lang_c = "SELECT pts.Connect_ID, mns.d_784119588, d_255077064 
-                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.menstrualSurvey_v1` mns
-                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
+                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
+                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.menstrualSurvey_v1` mns
                 on mns.Connect_ID=pts.Connect_ID
-                WHERE pts.Connect_ID IS NOT NULL and d_459098666='231311385'",
+                WHERE pts.Connect_ID IS NOT NULL and d_459098666='231311385' and 
+                (pts.d_512820379='486306141' OR pts.d_512820379='854703046') and pts.d_821247024 = '197316935'",
   MW_lang_c = "SELECT pts.Connect_ID, mw.d_784119588, d_255077064 
-                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.mouthwash_v1` mw
-                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
+                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
+                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.mouthwash_v1` mw
                 on mw.Connect_ID=pts.Connect_ID
-                WHERE pts.Connect_ID IS NOT NULL and d_547363263='231311385'",
+                WHERE pts.Connect_ID IS NOT NULL and d_547363263='231311385' and 
+                (pts.d_512820379='486306141' OR pts.d_512820379='854703046') and pts.d_821247024 = '197316935'",
   QOL_lang_c = "SELECT pts.Connect_ID, qol.d_784119588, d_255077064
-                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.promis_v1` qol
-                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
+                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
+                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.promis_v1` qol
                 on qol.Connect_ID=pts.Connect_ID
-                WHERE pts.Connect_ID IS NOT NULL and d_320303124='231311385'",
+                WHERE pts.Connect_ID IS NOT NULL and d_320303124='231311385' and 
+                (pts.d_512820379='486306141' OR pts.d_512820379='854703046') and pts.d_821247024 = '197316935'",
   CES_lang_c = "SELECT pts.Connect_ID, ces.d_784119588, d_255077064
-                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.experience2024` ces
-                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
+                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
+                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.experience2024` ces
                 on ces.Connect_ID=pts.Connect_ID
-                WHERE pts.Connect_ID IS NOT NULL and d_956490759='231311385'",
+                WHERE pts.Connect_ID IS NOT NULL and d_956490759='231311385' and 
+                (pts.d_512820379='486306141' OR pts.d_512820379='854703046') and pts.d_821247024 = '197316935'",
   CSH_lang_c = "SELECT pts.Connect_ID, csh.d_784119588, d_255077064
-                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.cancerScreeningHistorySurvey` csh
-                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
+                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
+                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.cancerScreeningHistorySurvey` csh
                 on csh.Connect_ID=pts.Connect_ID
-                WHERE pts.Connect_ID IS NOT NULL and d_176068627='231311385'"
+                WHERE pts.Connect_ID IS NOT NULL and d_176068627='231311385' and 
+                (pts.d_512820379='486306141' OR pts.d_512820379='854703046') and pts.d_821247024 = '197316935'"
+  # DHQ_lang_c = "SELECT Connect_ID, d_748726394, d_255077064 -- here dhq language is in the participants table NOT the DHQ table
+  #               WHERE Connect_ID IS NOT NULL and d_692560814='231311385'  and 
+  #              (pts.d_512820379='486306141' OR pts.d_512820379='854703046') and pts.d_821247024 = '197316935'"
 )
 
 
@@ -2804,6 +2827,7 @@ MW_lang <- results_list$MW_lang_c
 QOL_lang <- results_list$QOL_lang_c
 CES_lang <- results_list$CES_lang_c
 CSH_lang <- results_list$CSH_lang_c
+#DHQ_lang <- results_list$DHQ_lang_c
 
 
 
@@ -2814,7 +2838,7 @@ CSH_lang <- results_list$CSH_lang_c
 ```{r Svy_Lang_Diff, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
 
-survey_dfs <- list(m1_lang, m2_lang, m3_lang, m4_lang, BUM_lang, BU_lang, CV_lang, Mens_lang, MW_lang, QOL_lang, CES_lang, CSH_lang)
+survey_dfs <- list(m1_lang, m2_lang, m3_lang, m4_lang, BUM_lang, BU_lang, CV_lang, Mens_lang, MW_lang, QOL_lang, CES_lang, CSH_lang) #DHQ_lang
 
 # Initialize an empty data frame to store results for all participants
 all_scenarios <- data.frame(Connect_ID = character(), Flag = character(), Pref_lang = character(), stringsAsFactors = FALSE)
@@ -2823,7 +2847,7 @@ all_scenarios <- data.frame(Connect_ID = character(), Flag = character(), Pref_l
 for (current_df in survey_dfs) {
   current_df <- current_df %>%
     mutate(
-      Flag = ifelse(is.na(d_784119588), NA, ifelse(d_784119588 == 773342525, "Spanish", "English")),
+      Flag = ifelse(is.na(d_784119588), NA, ifelse(d_784119588 == 773342525, "Spanish", "English")), #ifelse(d_748726394 == 773342525, "Spanish", "English")
       Pref_lang = case_when(d_255077064 == 773342525 ~ "Spanish", TRUE ~ "English")
     )
   
@@ -2869,7 +2893,7 @@ add_footnote(consist, "Note: Those who do not start any surveys will not have su
 ```{r Svy_Lang_Compare, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
 
-survey_acronyms <- c("BOH", "MRE", "SAS", "LAW", "BUM", "BU", "COVID", "MENS", "MW", "QOL", "CES", "CSH")
+survey_acronyms <- c("BOH", "MRE", "SAS", "LAW", "BUM", "BU", "COVID", "MENS", "MW", "QOL", "CES", "CSH") #DHQ
 
 
 create_table <- function(current_df, current_acronym) {
@@ -2880,7 +2904,7 @@ create_table <- function(current_df, current_acronym) {
   all_svry_flags <- current_df %>%
     mutate(Survey = case_when(!is.na(Connect_ID) ~ current_acronym,
                               TRUE ~ "NA"),
-           Flag = case_when(d_784119588 == 773342525 ~ "Spanish",
+           Flag = case_when(d_784119588 == 773342525 ~ "Spanish", # | d_748726394 == 773342525 
                             TRUE ~ "English")) %>%
     tbl_cross(
       col =Flag,
@@ -2949,19 +2973,34 @@ knitr::kable(final_df_overall,
                caption = paste0("Table 8.3. Survey Completion by Survey Language \n Among All Participants"),
                row.names = FALSE, align = c("l","c","c","c"), digits = 2, booktabs = TRUE) %>% 
   add_indent(1:12) %>%  
-  kable_styling(latex_options = "scale_down")
+  kable_styling(latex_options = "scale_down") 
+  # footnote(general="Note: The DHQ survey is completed in the DHQ Research Platform. Participants are able to toggle between English and Spanish throughout the DHQ survey and the language captured is the language the survey was toggled to at time of submission. All other surveys are completed within MyConnect and participants do not have the option to change their language selection once they start the survey.",
+  #          general_title = "",
+  #          footnote_as_chunk = TRUE, 
+  #          escape = FALSE, 
+  #          threeparttable = TRUE)
 
 knitr::kable(final_df_condition1,
                caption = paste0("Table 8.3.a. Survey Completion by Survey Language \n Among Participants with Preferred language of Spanish"),
                row.names = FALSE, align = c("l","c","c","c"), digits = 2, booktabs = TRUE) %>% 
   add_indent(1:12) %>%  
-  kable_styling(latex_options = "scale_down")
+  kable_styling(latex_options = "scale_down")  
+    # footnote(general="Note: The DHQ survey is completed in the DHQ Research Platform. Participants are able to toggle between English and Spanish throughout the DHQ survey and the language captured is the language the survey was toggled to at time of submission. All other surveys are completed within MyConnect and participants do not have the option to change their language selection once they start the survey.",
+    #        general_title = "",
+    #        footnote_as_chunk = TRUE, 
+    #        escape = FALSE, 
+    #        threeparttable = TRUE)
 
 knitr::kable(final_df_condition2,
                caption = paste0("Table 8.3.b. Survey Completion by Survey Language \n Among Participants with Preferred language of English"),
                row.names = FALSE, align = c("l","c","c","c"), digits = 2, booktabs = TRUE) %>% 
   add_indent(1:12) %>%  
-  kable_styling(latex_options = "scale_down")
+  kable_styling(latex_options = "scale_down")  
+    # footnote(general="Note: The DHQ survey is completed in the DHQ Research Platform. Participants are able to toggle between English and Spanish throughout the DHQ survey and the language captured is the language the survey was toggled to at time of submission. All other surveys are completed within MyConnect and participants do not have the option to change their language selection once they start the survey.",
+    #        general_title = "",
+    #        footnote_as_chunk = TRUE, 
+    #        escape = FALSE, 
+    #        threeparttable = TRUE)
 
 
 ```
@@ -2990,11 +3029,15 @@ BOH_LangE <- start_stop_lang(all_data, "d_949302066", 231311385, "English", "m1_
 MRE_LangE <- start_stop_lang(all_data, "d_536735468", 231311385, "English", "m2_comp_mins")
 SAS_LangE <- start_stop_lang(all_data, "d_976570371", 231311385, "English", "m3_comp_mins")
 LAW_LangE <- start_stop_lang(all_data, "d_663265240", 231311385, "English", "m4_comp_mins")
+#DHQ_LangE <- start_stop_lang(all_data, "d_692560814", 231311385, "English", "dhq_comp_mins")
+CSH_LangE <- start_stop_lang(all_data, "d_176068627", 231311385, "English", "csh_comp_mins")
 
 BOH_LangSP <- start_stop_lang(all_data, "d_949302066", 231311385, "Spanish", "m1_comp_mins")
 MRE_LangSP <- start_stop_lang(all_data, "d_536735468", 231311385, "Spanish", "m2_comp_mins")
 SAS_LangSP <- start_stop_lang(all_data, "d_976570371", 231311385, "Spanish", "m3_comp_mins")
 LAW_LangSP <- start_stop_lang(all_data, "d_663265240", 231311385, "Spanish", "m4_comp_mins")
+#DHQ_LangSP <- start_stop_lang(all_data, "d_692560814", 231311385, "Spanish", "dhq_comp_mins")
+CSH_LangSP <- start_stop_lang(all_data, "d_176068627", 231311385, "Spanish", "csh_comp_mins")
 
 
 
@@ -3021,5 +3064,27 @@ knitr::kable(BL_lang_SP, format.args = list(big.mark = ","), digits=2,
              caption='Table 8.4.b Time (in minutes) from Start to Submit of Initial Survey Modules for Spanish',
              row.names=FALSE, align=c("l","c","c","c","c","c","c","c","c"),booktabs = TRUE)%>% 
     kable_styling(latex_options = c("scale_down","hold_position")) 
+
+
+# knitr::kable(DHQ_LangE, format.args = list(big.mark = ","), digits=2,
+#              caption='Table 8.5.a Time (in minutes) from Start to Submit of 6-month Diet History Questionaire for English',
+#              row.names=FALSE, align=c("l","c","c","c","c","c","c","c","c"), booktabs = TRUE)%>%
+#     kable_styling(latex_options = c("scale_down","hold_position"))
+# 
+# knitr::kable(DHQ_LangSP, format.args = list(big.mark = ","), digits=2,
+#              caption='Table 8.5.b Time (in minutes) from Start to Submit of 6-month Diet History Questionaire for Spanish',
+#              row.names=FALSE, align=c("l","c","c","c","c","c","c","c","c"),booktabs = TRUE)%>%
+#     kable_styling(latex_options = c("scale_down","hold_position"))
+
+
+# knitr::kable(CSH_LangE, format.args = list(big.mark = ","), digits=2,
+#              caption='Table 8.6.a Time (in minutes) from Start to Submit of Cancer Screening History Survey for English',
+#              row.names=FALSE, align=c("l","c","c","c","c","c","c","c","c"), booktabs = TRUE)%>%
+#     kable_styling(latex_options = c("scale_down","hold_position"))
+# 
+# knitr::kable(CSH_LangSP, format.args = list(big.mark = ","), digits=2,
+#              caption='Table 8.6.b Time (in minutes) from Start to Submit of Cancer Screening History Survey for Spanish',
+#              row.names=FALSE, align=c("l","c","c","c","c","c","c","c","c"),booktabs = TRUE)%>%
+#     kable_styling(latex_options = c("scale_down","hold_position"))
 
 ```
