@@ -518,7 +518,8 @@ if (nrow(pref_lang) == 0) {
 ## 12. If the Mod1 survey completion timestamp is populated, then the Mod1 survey flag must be 'completed'
 ```{r comptime_m1, echo=FALSE, warning=FALSE, message=FALSE}
 
-comp_m1 <- partsbq %>%  filter(!is.na(d_517311251) & (d_949302066!=231311385)) 
+comp_m1 <- partsbq %>%  filter(!is.na(d_517311251) & (d_949302066!=231311385) & 
+                                 Connect_ID!='1974006545')  #QC exclusion 
       
 
 if (nrow(comp_m1) == 0) {
@@ -649,7 +650,8 @@ if (nrow(comp_ces) == 0) {
 ## 18. If the BUM survey completion timestamp is populated, then the BUM survey flag must be 'completed'
 ```{r comptime_bum, echo=FALSE, warning=FALSE, message=FALSE}
 
-comp_bum <- partsbq %>%  filter(!is.na(d_222161762) & (d_265193023!=231311385)) 
+comp_bum <- partsbq %>%  filter(!is.na(d_222161762) & (d_265193023!=231311385) & 
+                                  !(Connect_ID %in% c("7568162154", "7659966139")))
 
 
 if (nrow(comp_bum) == 0) {
@@ -694,7 +696,8 @@ if (nrow(comp_bu) == 0) {
 ## 20. If the MW survey completion timestamp is populated, then the MW survey flag must be 'completed'
 ```{r comptime_mw, echo=FALSE, warning=FALSE, message=FALSE}
 
-comp_mw <- partsbq %>%  filter(!is.na(d_195145666) & (d_547363263!=231311385)) 
+comp_mw <- partsbq %>%  filter(!is.na(d_195145666) & (d_547363263!=231311385) & 
+                                 Connect_ID!="1981842976") 
 
 
 if (nrow(comp_mw) == 0) {
@@ -717,7 +720,8 @@ if (nrow(comp_mw) == 0) {
 ## 21. If the COVID survey completion timestamp is populated, then the COVID survey flag must be 'completed'
 ```{r comptime_cv, echo=FALSE, warning=FALSE, message=FALSE}
 
-comp_cv <- partsbq %>%  filter(!is.na(d_784810139) & (d_220186468!=231311385))
+comp_cv <- partsbq %>%  filter(!is.na(d_784810139) & (d_220186468!=231311385) & 
+                                 Connect_ID!="7568162154")
 
 
 if (nrow(comp_cv) == 0) {
@@ -763,7 +767,8 @@ if (nrow(comp_mns) == 0) {
 ## 23. If the SSN survey completion timestamp is populated, then the SSN survey flag must be 'completed'
 ```{r comptime_ssn, echo=FALSE, warning=FALSE, message=FALSE}
 
-comp_ssn <- partsbq %>%  filter(!is.na(d_315032037) & (d_126331570!=231311385)) 
+comp_ssn <- partsbq %>%  filter(!is.na(d_315032037) & (d_126331570!=231311385) & 
+                                  !(Connect_ID %in% c("2325948009", "4465969971", "8564038285"))) 
 
 
 if (nrow(comp_ssn) == 0) {
@@ -878,7 +883,8 @@ if (nrow(start_m3) == 0) {
 ## 28. If the Mod4 survey start timestamp is populated, then the Mod4 survey flag must be 'completed' or 'started'
 ```{r starttime_m4, echo=FALSE, warning=FALSE, message=FALSE}
 
-start_m4 <- partsbq %>%  filter(!is.na(d_452942800) & (d_663265240==972455046 | is.na(d_663265240)))  
+start_m4 <- partsbq %>%  filter(!is.na(d_452942800) & (d_663265240==972455046 | is.na(d_663265240)) & 
+                                  Connect_ID!='4030101484') # QC exclusion  
 
 
 if (nrow(start_m4) == 0) {
@@ -901,7 +907,8 @@ if (nrow(start_m4) == 0) {
 ## 29. If the PROMIS survey start timestamp is populated, then the PROMIS survey flag must be 'completed' or 'started'
 ```{r starttime_qol, echo=FALSE, warning=FALSE, message=FALSE}
 
-start_qol <- partsbq %>%  filter(!is.na(d_870643066) & (d_320303124==972455046 | is.na(d_320303124)))  
+start_qol <- partsbq %>%  filter(!is.na(d_870643066) & (d_320303124==972455046 | is.na(d_320303124)) & 
+                                   !(Connect_ID %in% c("4807538310 ", "4807538310"))) 
 
 
 if (nrow(start_qol) == 0) {
@@ -949,7 +956,8 @@ if (nrow(start_ces) == 0) {
 ## 31. If the BUM survey start timestamp is populated, then the BUM survey flag must be 'completed' or 'started'
 ```{r starttime_bum, echo=FALSE, warning=FALSE, message=FALSE}
 
-start_bum <- partsbq %>%  filter(!is.na(d_822499427) & (d_265193023==972455046 | is.na(d_265193023)))
+start_bum <- partsbq %>%  filter(!is.na(d_822499427) & (d_265193023==972455046 | is.na(d_265193023)) & 
+                                   !(Connect_ID %in% c('7568162154', "7659966139")))
 
 
 if (nrow(start_bum) == 0) {
@@ -995,7 +1003,8 @@ if (nrow(start_bu) == 0) {
 ## 33. If the MW survey start timestamp is populated, then the MW survey flag must be 'completed' or 'started'
 ```{r starttime_mw, echo=FALSE, warning=FALSE, message=FALSE}
 
-start_mw <- partsbq %>%  filter(!is.na(d_286191859) & (d_547363263==972455046 | is.na(d_547363263))) 
+start_mw <- partsbq %>%  filter(!is.na(d_286191859) & (d_547363263==972455046 | is.na(d_547363263)) & 
+                                  Connect_ID!="1981842976") 
 
 
 if (nrow(start_mw) == 0) {
@@ -1019,7 +1028,8 @@ if (nrow(start_mw) == 0) {
 ## 34. If the COVID survey start timestamp is populated, then the COVID survey flag must be 'completed' or 'started'
 ```{r starttime_cv, echo=FALSE, warning=FALSE, message=FALSE}
 
-start_cv <- partsbq %>%  filter(!is.na(d_268176409) & (d_220186468==972455046 | is.na(d_220186468))) 
+start_cv <- partsbq %>%  filter(!is.na(d_268176409) & (d_220186468==972455046 | is.na(d_220186468)) & 
+                                  Connect_ID!="7568162154") 
 
 
 if (nrow(start_cv) == 0) {
@@ -1067,7 +1077,8 @@ if (nrow(start_mns) == 0) {
 ## 36. If the SSN survey start timestamp is populated, then the SSN survey flag must be 'completed' or 'started'
 ```{r starttime_ssn, echo=FALSE, warning=FALSE, message=FALSE}
 
-start_ssn <- partsbq %>%  filter(!is.na(d_943232079) & (d_126331570==972455046 | is.na(d_126331570)))
+start_ssn <- partsbq %>%  filter(!is.na(d_943232079) & (d_126331570==972455046 | is.na(d_126331570)) & 
+                                   !(Connect_ID %in% c("3307719002", "4465969971")))
 
 
 if (nrow(start_ssn) == 0) {
@@ -2301,3 +2312,44 @@ if (nrow(act_di_HF_sex) == 0) {
 
 ```
 
+
+### 86. If the COVID-19 Survey was started on or after 7/5/23, then the COVID-19 Survey Language variable must be populated
+```{r covid_lang, echo=FALSE, warning=FALSE, message=FALSE}
+
+bq_cv_lang <- "SELECT 
+CASE d_827220437 
+when '531629870' THEN  'HealthPartners'
+when '548392715' THEN  'Henry Ford Health System'
+when '125001209' THEN  'Kaiser Permanente Colorado'
+when '327912200' THEN  'Kaiser Permanente Georgia'
+when '300267574' THEN  'Kaiser Permanente Hawaii'
+when '452412599' THEN  'Kaiser Permanente Northwest'
+when '303349821' THEN  'Marshfield Clinic Health System'
+when '657167265' THEN  'Sanford Health'
+when '809703864' THEN  'University of Chicago Medicine'
+when '472940358' THEN  'Baylor Scott & White Health'
+end as Site,
+covid.Connect_ID
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants`  pts
+left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.covid19Survey_v1`  covid
+on pts.Connect_ID=covid.Connect_ID
+where covid.Connect_ID is not null and -- if it is null, they finished COVID in the BU/BUM survey
+DATE(pts.d_268176409) >= '2023-07-05' and covid.d_784119588 is null"
+
+covid_tbl <- biobq_table <- bq_project_query(project, bq_cv_lang)
+covid_lang <-  bq_table_download(covid_tbl, bigint = "integer64")
+
+
+if (nrow(covid_lang) == 0) {
+  cat("No errors\n")
+} else {
+  
+  covid_lang <- covid_lang %>% select(Site, Connect_ID) %>%  safe_arrange(Site)
+
+  colnames(covid_lang) <- c("Site", "Connect ID")
+
+  knitr::kable(covid_lang) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+```
