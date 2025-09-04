@@ -1606,6 +1606,14 @@ grid.arrange(panc_a_dg, panc_y_dg, nrow=2)
 ## Thyroid, Dibetes, and Grave's Disease 
 ```{r MHGroup4, warning=FALSE, echo=FALSE, message=FALSE}
 
+#Clearing up some memory -- removing all but the main dataframe and functions
+rm(list = setdiff(ls(), c("data_tib_m1", 'module1', 'module1', "dict", 'hist_funct', 'boxp_funct', 'simple_funct', 'one_logic_funct', 
+                          'sib_logic_funct', 'child_logic_funct',
+                          'create_kable_table','create_kable_table_w_footnote', 'create_kable_table_w_ethnicity_footnote')))
+gc()
+
+########################
+
 mhgroup4_flags <- data_tib_m1 %>%
   mutate(
     Thyroid_Disorder = as.numeric(D_900541533_D_726539692 == 1),
@@ -2004,6 +2012,14 @@ cat("Proportion of DCIS Cases Confirmed with Biopsy:", ductal, "%")
 
 ## Depression 
 ```{r Depress, warning=FALSE, echo=FALSE, message=FALSE}
+#Clearing up some memory -- removing all but the main dataframe and functions
+rm(list = setdiff(ls(), c("data_tib_m1", 'module1', 'module1', "dict", 'hist_funct', 'boxp_funct', 'simple_funct', 'one_logic_funct', 
+                          'sib_logic_funct', 'child_logic_funct',
+                          'create_kable_table','create_kable_table_w_footnote', 'create_kable_table_w_ethnicity_footnote')))
+gc()
+
+########################
+
 ###Depression
 simple_funct(D_347860896, "DEPRESS: Diagnosed with Clinical Depression")
   
@@ -3088,6 +3104,14 @@ grid.arrange(ukn_a_mdg, ukn_y_mdg, nrow=2)
 \FloatBarrier
 ## Dad
 ```{r Dad, warning=FALSE, echo=FALSE, message=FALSE}
+#Clearing up some memory -- removing all but the main dataframe and functions
+rm(list = setdiff(ls(), c("data_tib_m1", 'module1', 'module1', "dict", 'hist_funct', 'boxp_funct', 'simple_funct', 'one_logic_funct', 
+                          'sib_logic_funct', 'child_logic_funct',
+                          'create_kable_table','create_kable_table_w_footnote', 'create_kable_table_w_ethnicity_footnote')))
+gc()
+
+########################
+
 ##Dad
 #living?
 simple_funct(D_367374606, "DAD: Father Living")
@@ -4073,6 +4097,14 @@ grid.arrange(sib6_c33, sib6_c34, nrow=2)
 \FloatBarrier
 ## Children
 ```{r Children_part1, warning=FALSE, echo=FALSE, message=FALSE}
+#Clearing up some memory -- removing all but the main dataframe and functions
+rm(list = setdiff(ls(), c("data_tib_m1", 'module1', 'module1', "dict", 'hist_funct', 'boxp_funct', 'simple_funct', 'one_logic_funct', 
+                          'sib_logic_funct', 'child_logic_funct',
+                          'create_kable_table','create_kable_table_w_footnote', 'create_kable_table_w_ethnicity_footnote')))
+gc()
+
+########################
+
 ##Children 
 #how many children do you have?
 hist_funct(D_446999144, "Number of Children", "Children", "Frequency")
