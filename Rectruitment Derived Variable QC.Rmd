@@ -1352,8 +1352,8 @@ if (nrow(reinvite_date_type) < 50) {
     kable_styling(latex_options = "HOLD_position")
 } else {
   cat(paste0(
-    "There are ", nrow(reinvite_date_type), " rows. This has been made into a separate XLXS file called\n",
-    "'Biospecimen_QC_Rule46_Errors", currentDate, "_boxfolder_", boxfolder, ".xlsx'\n"
+    "There are ", nrow(reinvite_date_type), " rows. This has been made into a separate XLXS file called \n",
+    "'Biospecimen_QC_Rule46_Errors", currentDate, "_boxfolder_", boxfolder, ".xlsx' \n"
   ))
   
   openxlsx::write.xlsx(reinvite_date_type,glue("Recruitment_Derived_QC_Rule46_Errors{currentDate}_boxfolder_{boxfolder}.xlsx"),row.names = F,na="")
@@ -2351,5 +2351,57 @@ if (nrow(covid_lang) == 0) {
   knitr::kable(covid_lang) %>%
     kable_styling(latex_options = "scale_down")
 }
+
+```
+
+
+
+
+```{r AB_1, echo=FALSE, warning=FALSE, message=FALSE}
+## 87. UTM_Campaign parameter for each recruit should match the data we receive for A/B Testing Message Response.
+
+# AB1 <- partsbq	%>% mutate(AB_response = case_when(state_d_956485028== '562663942'	~ 'Altruism Personal',
+#                                                             state_d_956485028== '686986259'	~ 'Altruism General',
+#                                                             state_d_956485028== '477331464'	~ 'Cancer Connection Personal',
+#                                                             state_d_956485028== '935486262'	~ 'Cancer Connection General',
+#                                                             state_d_956485028== '518814501'	~ 'Research Personal',
+#                                                             state_d_956485028== '307763550'	~ 'Research General'),
+#                                     UTM_camp = gsub("-", " ", d_163847117)) %>%  
+#   filter(lower(AB_response) != lower(UTM_camp))
+# 
+# 
+# if (nrow(AB1) == 0) {
+#   cat("No errors\n")
+# } else {
+#   
+#   AB1 <- AB1 %>% select(Site, Connect_ID, AB_response, UTM_camp) %>%  safe_arrange(Site)
+# 
+#   knitr::kable(AB1) %>%
+#     kable_styling(latex_options = "scale_down")
+# }
+
+```
+
+
+
+
+```{r AB_2, echo=FALSE, warning=FALSE, message=FALSE}
+## 88. If any one or two of the three UTM parameters are populated, all three should be available. 
+
+# AB2 <- partsbq	%>% filter((is.na(d_761057722) | is.na(d_207613315) | is.na(d_163847117)) & #at least one is missing
+#                             !(is.na(d_761057722) & is.na(d_207613315) & is.na(d_163847117))) #but not all are missing
+# 
+# 
+# if (nrow(AB2) == 0) {
+#   cat("No errors\n")
+# } else {
+#   
+#   AB2 <- AB2 %>% select(Site, Connect_ID, d_821247024, state_d_793822265) %>%  safe_arrange(Site)
+# 
+#   colnames(AB2) <- c("Site", "Connect ID", 'RcrtV_Verification', "RcrtV_UpdateRecType")
+# 
+#   knitr::kable(AB2) %>%
+#     kable_styling(latex_options = "scale_down")
+# }
 
 ```
