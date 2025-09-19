@@ -101,7 +101,8 @@ d_956490759,d_265193023,d_253883960,d_547363263,d_459098666,d_220186468,d_320303
 d_610227793, d_109610692, d_148184166, d_808755658, d_196723965, d_501613780, d_130371375_d_266600170_d_648936790,
 state_d_444699761, state_d_188797763, state_d_953614051, state_d_793822265, state_d_147176963, state_d_557461333,  state_d_711794630, 
 state_d_679832994, state_d_559534463, state_d_570452130, state_d_629484663, state_d_547895941,
-d_685002411_d_936015433, d_685002411_d_688142378, d_685002411_d_101763809, d_685002411_d_525277409, d_685002411_d_671903816) %>%
+d_685002411_d_936015433, d_685002411_d_688142378, d_685002411_d_101763809, d_685002411_d_525277409, d_685002411_d_671903816,
+d_761057722, d_207613315, d_163847117, state_d_956485028) %>%
   as_tibble() %>% 
   distinct(token, .keep_all = TRUE) #somehow pulling duplicate rows
 
@@ -2085,6 +2086,21 @@ act_di_SF_race <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_11
                                        d_827220437=='657167265' & 
                                      !(d_821247024=="922622075" & state_d_793822265=="854903954"))
 
+# act_di_SF_race <- act_di_SF_race %>% select(Site, Connect_ID, token, d_747006172, d_821247024, state_d_793822265, state_d_119643471, state_d_934298480, state_d_706256705)
+# colnames(act_di_SF_race) <- c("Site", "Connect ID", 'token', 'HdWd_WdConsent_v1r0', "RcrtV_Verification_v1r0", "RcrtV_UpdateRecType_v1r0", "RcrtSI_SHRace_v1r0", "RcrtSI_Age_v1r0", "RcrtSI_Sex_v1r0")
+# 
+# act_di_SF_race <- act_di_SF_race %>% mutate(RcrtV_Verification_v1r0 = case_when(RcrtV_Verification_v1r0=='875007964'	~ "Not yet verified",
+#                                                                                 RcrtV_Verification_v1r0=='197316935'	~ "Verified",
+#                                                                                 RcrtV_Verification_v1r0=='219863910'	~ "Cannot be verified",
+#                                                                                 RcrtV_Verification_v1r0=='922622075'	~ "Duplicate",
+#                                                                                 RcrtV_Verification_v1r0=='160161595'	~ "Outreach timed out"),
+#                                             RcrtV_UpdateRecType_v1r0 = case_when(RcrtV_UpdateRecType_v1r0=='132080040'	~ "No change needed",
+#                                                                                  RcrtV_UpdateRecType_v1r0=='604663208'	~ "Not Active to Passive",
+#                                                                                  RcrtV_UpdateRecType_v1r0=='854903954'	~ "Passive to Active",
+#                                                                                  RcrtV_UpdateRecType_v1r0=='965707001'	~ "Active to Passive"))
+# act_di_SF_race$RcrtSI_Age_v1r0 <- ifelse(is.na(act_di_SF_race$RcrtSI_Age_v1r0), "Missing", "Populated")
+# act_di_SF_race$RcrtSI_Sex_v1r0 <- ifelse(is.na(act_di_SF_race$RcrtSI_Sex_v1r0), "Missing", "Populated")
+# act_di_SF_race$HdWd_WdConsent_v1r0 <- ifelse(act_di_SF_race$HdWd_WdConsent_v1r0=="104430631", "No", "Yes")
 
 if (nrow(act_di_SF_race) == 0) {
   cat("No errors\n")
@@ -2366,19 +2382,19 @@ if (nrow(covid_lang) == 0) {
 #                                                             state_d_956485028== '935486262'	~ 'Cancer Connection General',
 #                                                             state_d_956485028== '518814501'	~ 'Research Personal',
 #                                                             state_d_956485028== '307763550'	~ 'Research General'),
-#                                     UTM_camp = gsub("-", " ", d_163847117)) %>%  
-#   filter(lower(AB_response) != lower(UTM_camp))
+#                                     UTM_camp = gsub("-", " ", d_163847117)) %>%
+#   filter(tolower(AB_response) != tolower(UTM_camp))
 # 
 # 
 # if (nrow(AB1) == 0) {
 #   cat("No errors\n")
 # } else {
-#   
-#   AB1 <- AB1 %>% select(Site, Connect_ID, AB_response, UTM_camp) %>%  safe_arrange(Site)
+# 
+#   AB1 <- AB1 %>% select(Site, Connect_ID, token, AB_response, UTM_camp) %>%  safe_arrange(Site)
 # 
 #   knitr::kable(AB1) %>%
 #     kable_styling(latex_options = "scale_down")
-# }
+#}
 
 ```
 
@@ -2395,10 +2411,10 @@ if (nrow(covid_lang) == 0) {
 # if (nrow(AB2) == 0) {
 #   cat("No errors\n")
 # } else {
-#   
-#   AB2 <- AB2 %>% select(Site, Connect_ID, d_821247024, state_d_793822265) %>%  safe_arrange(Site)
 # 
-#   colnames(AB2) <- c("Site", "Connect ID", 'RcrtV_Verification', "RcrtV_UpdateRecType")
+#   AB2 <- AB2 %>% select(Site, Connect_ID, token, d_761057722, d_207613315, d_163847117) %>%  safe_arrange(Site)
+# 
+#   colnames(AB2) <- c("Site", "Connect ID", 'token', 'UTM_Source', "UTM_Medium", "UTM_Campaign")
 # 
 #   knitr::kable(AB2) %>%
 #     kable_styling(latex_options = "scale_down")

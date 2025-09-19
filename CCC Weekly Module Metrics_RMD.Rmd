@@ -2843,8 +2843,7 @@ DHQ_lang <- results_list$DHQ_lang_c
 ```{r Svy_Lang_Diff, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
 #must match the order for survey_acronyms n he chunk below
-survey_dfs <- list(m1_lang, m2_lang, m3_lang, m4_lang, BUM_lang, BU_lang, CV_lang, Mens_lang, MW_lang, QOL_lang, CSH_lang, CES_lang)
-#survey_dfs <- list(m1_lang, m2_lang, m3_lang, m4_lang, BUM_lang, BU_lang, CV_lang, Mens_lang, MW_lang, QOL_lang, DHQ_lang, CSH_lang, CES_lang) #DHQ approval pending
+survey_dfs <- list(m1_lang, m2_lang, m3_lang, m4_lang, BUM_lang, BU_lang, CV_lang, Mens_lang, MW_lang, QOL_lang, DHQ_lang, CSH_lang, CES_lang) 
 
 # Initialize an empty data frame to store results for all participants
 all_scenarios <- data.frame(Connect_ID = character(), Flag = character(), Pref_lang = character(), stringsAsFactors = FALSE)
@@ -2900,8 +2899,7 @@ add_footnote(consist, "Note: Those who do not start any surveys will not have su
 ```{r Svy_Lang_Compare, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
 # must match the order for survey_dfs in the chunk above
-survey_acronyms <- c("BOH", "MRE", "SAS", "LAW", "BUM", "BU", "COVID", "MENS", "MW", "QOL", "CSH",  "CES")
-#survey_acronyms <- c("BOH", "MRE", "SAS", "LAW", "BUM", "BU", "COVID", "MENS", "MW", "QOL", "DHQ", "CSH",  "CES") #DQ table approval pending
+survey_acronyms <- c("BOH", "MRE", "SAS", "LAW", "BUM", "BU", "COVID", "MENS", "MW", "QOL", "DHQ", "CSH",  "CES") 
 
 
 create_table <- function(current_df, current_acronym) {
@@ -2981,34 +2979,34 @@ knitr::kable(final_df_overall,
                caption = paste0("Table 8.3. Survey Completion by Survey Language \n Among All Participants"),
                row.names = FALSE, align = c("l","c","c","c"), digits = 2, booktabs = TRUE) %>% 
   add_indent(1:nrow(final_df_overall)) %>%  
-  kable_styling(latex_options = "scale_down") 
-  # footnote(general="Note: The DHQ survey is completed in the DHQ Research Platform. Participants are able to toggle between English and Spanish throughout the DHQ survey and the language captured is the language the survey was toggled to at time of submission. All other surveys are completed within MyConnect and participants do not have the option to change their language selection once they start the survey.",
-  #          general_title = "",
-  #          footnote_as_chunk = TRUE,
-  #          escape = FALSE,
-  #          threeparttable = TRUE)
+  kable_styling(latex_options = "scale_down") %>% 
+  footnote(general="Note: The DHQ survey is completed in the DHQ Research Platform. Participants are able to toggle between English and Spanish throughout the DHQ survey and the language captured is the language the survey was toggled to at time of submission. All other surveys are completed within MyConnect and participants do not have the option to change their language selection once they start the survey.",
+           general_title = "",
+           footnote_as_chunk = TRUE,
+           escape = FALSE,
+           threeparttable = TRUE)
 
 knitr::kable(final_df_condition1,
                caption = paste0("Table 8.3.a. Survey Completion by Survey Language \n Among Participants with Preferred language of Spanish"),
                row.names = FALSE, align = c("l","c","c","c"), digits = 2, booktabs = TRUE) %>% 
   add_indent(1:nrow(final_df_condition1)) %>%  
-  kable_styling(latex_options = "scale_down")  
-    # footnote(general="Note: The DHQ survey is completed in the DHQ Research Platform. Participants are able to toggle between English and Spanish throughout the DHQ survey and the language captured is the language the survey was toggled to at time of submission. All other surveys are completed within MyConnect and participants do not have the option to change their language selection once they start the survey.",
-    #        general_title = "",
-    #        footnote_as_chunk = TRUE,
-    #        escape = FALSE,
-    #        threeparttable = TRUE)
+  kable_styling(latex_options = "scale_down") %>%  
+  footnote(general="Note: The DHQ survey is completed in the DHQ Research Platform. Participants are able to toggle between English and Spanish throughout the DHQ survey and the language captured is the language the survey was toggled to at time of submission. All other surveys are completed within MyConnect and participants do not have the option to change their language selection once they start the survey.",
+           general_title = "",
+           footnote_as_chunk = TRUE,
+           escape = FALSE,
+           threeparttable = TRUE)
 
 knitr::kable(final_df_condition2,
                caption = paste0("Table 8.3.b. Survey Completion by Survey Language \n Among Participants with Preferred language of English"),
                row.names = FALSE, align = c("l","c","c","c"), digits = 2, booktabs = TRUE) %>% 
   add_indent(1:nrow(final_df_condition2)) %>%  
-  kable_styling(latex_options = "scale_down")  
-    # footnote(general="Note: The DHQ survey is completed in the DHQ Research Platform. Participants are able to toggle between English and Spanish throughout the DHQ survey and the language captured is the language the survey was toggled to at time of submission. All other surveys are completed within MyConnect and participants do not have the option to change their language selection once they start the survey.",
-    #        general_title = "",
-    #        footnote_as_chunk = TRUE,
-    #        escape = FALSE,
-    #        threeparttable = TRUE)
+  kable_styling(latex_options = "scale_down")  %>% 
+  footnote(general="Note: The DHQ survey is completed in the DHQ Research Platform. Participants are able to toggle between English and Spanish throughout the DHQ survey and the language captured is the language the survey was toggled to at time of submission. All other surveys are completed within MyConnect and participants do not have the option to change their language selection once they start the survey.",
+           general_title = "",
+           footnote_as_chunk = TRUE,
+           escape = FALSE,
+           threeparttable = TRUE)
 
 
 ```
@@ -3074,25 +3072,25 @@ knitr::kable(BL_lang_SP, format.args = list(big.mark = ","), digits=2,
     kable_styling(latex_options = c("scale_down","hold_position")) 
 
 
- # knitr::kable(DHQ_LangE, format.args = list(big.mark = ","), digits=2,
- #              caption='Table 8.5.a Time (in minutes) from Start to Submit of 6-month Diet History Questionaire for English',
- #              row.names=FALSE, align=c("l","c","c","c","c","c","c","c","c"), booktabs = TRUE)%>%
- #     kable_styling(latex_options = c("scale_down","hold_position"))
- # 
- # knitr::kable(DHQ_LangSP, format.args = list(big.mark = ","), digits=2,
- #              caption='Table 8.5.b Time (in minutes) from Start to Submit of 6-month Diet History Questionaire for Spanish',
- #              row.names=FALSE, align=c("l","c","c","c","c","c","c","c","c"),booktabs = TRUE)%>%
- #     kable_styling(latex_options = c("scale_down","hold_position"))
- # 
- # 
- # knitr::kable(CSH_LangE, format.args = list(big.mark = ","), digits=2,
- #              caption='Table 8.6.a Time (in minutes) from Start to Submit of Cancer Screening History Survey for English',
- #              row.names=FALSE, align=c("l","c","c","c","c","c","c","c","c"), booktabs = TRUE)%>%
- #     kable_styling(latex_options = c("scale_down","hold_position"))
- # 
- # knitr::kable(CSH_LangSP, format.args = list(big.mark = ","), digits=2,
- #              caption='Table 8.6.b Time (in minutes) from Start to Submit of Cancer Screening History Survey for Spanish',
- #              row.names=FALSE, align=c("l","c","c","c","c","c","c","c","c"),booktabs = TRUE)%>%
- #     kable_styling(latex_options = c("scale_down","hold_position"))
+ knitr::kable(DHQ_LangE, format.args = list(big.mark = ","), digits=2,
+              caption='Table 8.5.a Time (in minutes) from Start to Submit of 6-month Diet History Questionaire for English',
+              row.names=FALSE, align=c("l","c","c","c","c","c","c","c","c"), booktabs = TRUE)%>%
+     kable_styling(latex_options = c("scale_down","hold_position"))
+
+ knitr::kable(DHQ_LangSP, format.args = list(big.mark = ","), digits=2,
+              caption='Table 8.5.b Time (in minutes) from Start to Submit of 6-month Diet History Questionaire for Spanish',
+              row.names=FALSE, align=c("l","c","c","c","c","c","c","c","c"),booktabs = TRUE)%>%
+     kable_styling(latex_options = c("scale_down","hold_position"))
+
+
+ knitr::kable(CSH_LangE, format.args = list(big.mark = ","), digits=2,
+              caption='Table 8.6.a Time (in minutes) from Start to Submit of Cancer Screening History Survey for English',
+              row.names=FALSE, align=c("l","c","c","c","c","c","c","c","c"), booktabs = TRUE)%>%
+     kable_styling(latex_options = c("scale_down","hold_position"))
+
+ knitr::kable(CSH_LangSP, format.args = list(big.mark = ","), digits=2,
+              caption='Table 8.6.b Time (in minutes) from Start to Submit of Cancer Screening History Survey for Spanish',
+              row.names=FALSE, align=c("l","c","c","c","c","c","c","c","c"),booktabs = TRUE)%>%
+     kable_styling(latex_options = c("scale_down","hold_position"))
 
 ```

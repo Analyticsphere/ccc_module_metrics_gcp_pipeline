@@ -101,6 +101,29 @@ rca <- rca %>% mutate(Site = case_when(d_827220437==472940358 ~ "Baylor Scott an
 
 ```
 
+```{r Functions, include=FALSE}
+
+# Function to create a crosstable
+create_tbl_cross <- function(data, row_var, colm_var, row_or_col_pct, row_name, column_name, missing, missing_text, margin_text){
+cross__table <- data %>%  
+  tbl_cross(
+    row = !!sym(row_var),
+    col = !!sym(colm_var),
+    digits=c(0,1),
+    percent = row_or_col_pct,
+    label=list(!!sym(row_var) ~ row_name,
+               !!sym(colm_var) ~ column_name),
+    missing=missing,
+    missing_text = missing_text,
+    margin_text=margin_text) 
+
+#Ops doesn't like the grouped by variables on a different line the column labels
+cross_table_df <- as.data.frame(cross__table)[-1, ]
+  
+}
+
+
+```
 
 
  \newpage
@@ -338,19 +361,16 @@ ggplot(rca_date_counts, aes(x = as.Date(occ_date), y=cumsum(n))) +
 
   
 
-occ_by_site <- rca %>% 
-    filter(!is.na(Site)) %>% select(Site, 'Cancer Flag') %>% 
-  tbl_cross(col ='Cancer Flag',
-            row = Site, 
-            percent = "row",
-            digits= c(0,1),
-            label= c(Site~ "Site", 'Cancer Flag' ~ " "),
-            missing="ifany",
-            margin_text="Total Verified Participants") 
+occ_by_Verif <- rca %>% 
+    filter(!is.na(Site)) %>% select(Site, 'Cancer Flag') 
 
-occ_by_site %>%
-  modify_caption("Table 4. Number of Verified Participants Diagnosed with Cancer as Identified by RCA") %>%
-  as_kable_extra(escape = FALSE, addtl_fmt = TRUE)
+occ_by_Verif_cross <- create_tbl_cross(occ_by_Verif, "Site", 'Cancer Flag', "row", "Site", " ", "ifany", "Missing", "Total Verified Participants")
+
+knitr::kable(occ_by_Verif_cross, 
+             caption='Table 4. Number of Verified Participants Diagnosed with Cancer as Identified by RCA', 
+             row.names=FALSE,align=c("l", rep("c", 3)), booktabs = TRUE) %>%  
+    add_indent(seq(1, nrow(occ_by_Verif_cross) - 1)) %>% 
+    kable_styling(latex_options = "scale_down")
 
 ```
 
@@ -360,19 +380,14 @@ occ_by_site %>%
 ```{r Flags_by_Site, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
 
-occ_by_site <- cancer_loc %>% 
-    filter(!is.na(Site)) %>% select(Site, d_793981056) %>% 
-  tbl_cross(col =d_793981056,
-            row = Site, 
-            percent = "row",
-            digits= c(0,1),
-            label= c(Site~ "Site", d_793981056 ~ "Number of Cancer Occurences"),
-            missing="ifany",
-            margin_text="Total Verified Participants") 
+occ_by_site <- create_tbl_cross(cancer_loc, "Site", 'd_793981056', "row", "Site", "Number of Cancer Occurences", "ifany", "Missing", "Total Verified Participants")
 
-occ_by_site %>%
-  modify_caption("Table 5. Number of Cancer Occurrences Among Verified Participants \n as Identified by RCA") %>%
-  as_kable_extra(escape = FALSE, addtl_fmt = TRUE)
+knitr::kable(occ_by_site, 
+             caption='Table 5. Number of Cancer Occurrences Among Verified Participants \n as Identified by RCA', 
+             row.names=FALSE,align=c("l", rep("c", 3)), booktabs = TRUE) %>%  
+  add_indent(seq(1, nrow(occ_by_site) - 1)) %>% 
+  add_header_above(c(" " = 1, "Number of Cancer Occurrences" = 2,  " "=1)) %>% 
+  kable_styling(latex_options = "scale_down")
 
 ```
 
@@ -485,19 +500,74 @@ for (i in 1:length(unique_sites)) {
   
 aware_by_dead <- cancer_loc  %>% 
   mutate(dead = factor(dead, levels = c("Alive", "Deceased", "Unknown")), 
-         awareness = factor(awareness, levels = c("Aware", "Unaware", "Unknown"))) %>%  #make sure all values are included, even if 0
-  select(dead, awareness) %>% 
-  tbl_cross(col =awareness,
-            row = dead, 
-            percent = "row",
-            digits= c(0,1),
-            label= c(dead~ "Vital Status", awareness ~ "Awareness"),
-            missing="ifany",
-            missing_text="Missing",
-            margin_text="Total Verified Participants") 
+         awareness = factor(awareness, levels = c("Aware", "Unaware", "Unknown")))  #make sure all values are included, even if 0
 
-aware_by_dead %>%
-  modify_caption("Table 17. Vital Status and Awareness of Diagnosis among Cancer Occurrences Identified by RCA") %>%
-  as_kable_extra(escape = FALSE, addtl_fmt = TRUE)
+aware_by_dead_cross <- create_tbl_cross(aware_by_dead, "dead", 'awareness', "row", "Vital Status", "Awareness", "ifany", "Missing", "Total Verified Participants")
+
+knitr::kable(aware_by_dead_cross, 
+             caption='Table 17. Vital Status and Awareness of Diagnosis among Cancer Occurrences Identified by RCA', 
+             row.names=FALSE,align=c("l", rep("c", 4)), booktabs = TRUE) %>%  
+  add_indent(seq(1, nrow(aware_by_dead_cross) - 1)) %>% 
+  add_header_above(c(" " = 1, "Awareness" = 3,  " "=1)) %>% 
+  kable_styling(latex_options = "scale_down")
 
 ```
+
+```{r Submission_by_Month, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+
+sub_month <- rca %>% 
+    mutate(sub_date = str_sub(as.Date(rca$d_212274403),1,7), #year-month only, as.POSIXct(ym(d_212274403)), doesn't work
+           site_acronymn = case_when(Site=="Baylor Scott and White Health" ~ "BSWH",
+                                     Site=="KP Colorado" ~ "KPCO",
+                                     Site=="KP Georgia" ~ "KPGA",
+                                     Site=="KP Hawaii" ~ "KPHI",
+                                     Site=="KP Northwest" ~ "KPNW",
+                                     Site=="Henry Ford" ~ "HF",
+                                     Site=="HealthPartners" ~ "HP",
+                                     Site=="Marshfield Health Clinic" ~ "MF",
+                                     Site=="Sanford Health" ~ "MF",
+                                     Site=="University of Chicago Medicine" ~ "UC"))  
+
+
+sub_month <- rca %>%
+  filter(!is.na(d_212274403) & d_525972260 == 353358909) %>%
+  mutate(sub_date = floor_date(as.Date(d_212274403), "month")) %>% #convert to first of the month
+  count(Site, sub_date) %>%
+  complete(
+    Site,
+    sub_date = seq(as.Date("2025-07-01"), as.Date(currentDate - 7), by = "1 month"),
+    fill = list(n = 0) #make sure weeks with 0 are marked as 0
+  )
+
+
+
+#By Count
+ggplot(sub_month, aes(x = as.Date(sub_date), y=n, color=Site)) +
+  geom_line() + 
+  scale_y_continuous(name = "Number of Occurrences",
+                     limits = c(0, NA),  expand = c(0, 0),            #start at (0,0)
+                     breaks = scales::pretty_breaks(),                # nice spacing
+                     labels = scales::number_format(accuracy = 1)) +  # force integers
+  scale_x_date(name = "Month and Year", date_labels = "%b-%y", date_breaks = "1 month",
+               limits = c(as.Date("2025-07-01"), as.Date(currentDate-7)), expand = c(0,0)) +
+  scale_color_manual(values=c("Baylor Scott and White Health"="#B1C7D9", "KP Colorado"="#164C71", "KP Northwest"="#FDBE19", 
+                              "KP Hawaii"="#565C65", "KP Georgia"= "#3C989E", "Henry Ford"="#2973A5", 
+                              "HealthPartners"="#CC7D15","Marshfield Health Clinic"="#309EBD",
+                              "Sanford Health"="#74B0C7", "University of Chicago Medicine" = "#FBE5B5"),
+                     guide = guide_legend(nrow = 3, byrow = TRUE)) + 
+  labs(color = "Site") +
+  ggtitle(label = "Figure 3: Number of Cases Submitted Each Month \n by Site") +
+  theme(panel.background = element_blank(),
+        legend.title = element_text(size = 8),
+        legend.position = "bottom",
+        axis.line = element_line(size = 0.2),
+        axis.text.x = element_text(angle = 60, hjust = 1),
+        axis.title.x = element_text(size = 14, face = "bold"),
+        axis.title.y = element_text(size = 14, face = "bold", color = "black"),
+        plot.title = element_text(hjust = 0.5, size = 12, face = "bold")) +
+  guides(fill = guide_legend(nrow = 2, byrow = TRUE)) + 
+  labs(caption = "Note: This variable was implemented in August 2025, after the start of the RCA data transfers. \n The total number of cases in this graph will not match the total number of cases in the other tables of this report.") +
+  theme(plot.caption = element_text(hjust = 0))
+
+```
+
