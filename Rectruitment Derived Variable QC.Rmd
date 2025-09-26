@@ -2106,12 +2106,12 @@ if (nrow(act_di_SF_race) == 0) {
   cat("No errors\n")
 } else {
   
-  act_di_SF_race <- act_di_SF_race %>% select(Site, Connect_ID, d_821247024, state_d_793822265) %>%  safe_arrange(Site)
+  act_di_SF_race <- act_di_SF_race %>% select(Site, token, d_821247024, state_d_793822265) %>%  safe_arrange(Site)
 
-  colnames(act_di_SF_race) <- c("Site", "Connect ID", 'RcrtV_Verification', "RcrtV_UpdateRecType")
+  colnames(act_di_SF_race) <- c("Site", "token", 'RcrtV_Verification', "RcrtV_UpdateRecType")
 
   knitr::kable(act_di_SF_race) %>%
-    kable_styling(latex_options = "scale_down")
+    kable_styling(latex_options = "scale_down") #%>% landscape()
 }
 
 ```
@@ -2223,12 +2223,12 @@ if (nrow(act_di_member) == 0) {
   cat("No errors\n")
 } else {
   
-  act_di_member <- act_di_member %>% select(Site, Connect_ID, d_821247024, state_d_793822265) %>%  safe_arrange(Site)
+  act_di_member <- act_di_member %>% select(Site, token, d_821247024, state_d_793822265) %>%  safe_arrange(Site)
 
-  colnames(act_di_member) <- c("Site", "Connect ID", 'RcrtV_Verification', "RcrtV_UpdateRecType")
+  colnames(act_di_member) <- c("Site", "token", 'RcrtV_Verification', "RcrtV_UpdateRecType")
 
   knitr::kable(act_di_member) %>%
-    kable_styling(latex_options = "scale_down")
+    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
 }
 
 ```
@@ -2269,12 +2269,12 @@ if (nrow(act_di_elg) == 0) {
   cat("No errors\n")
 } else {
   
-  act_di_elg <- act_di_elg %>% select(Site, Connect_ID, d_821247024, state_d_793822265) %>%  safe_arrange(Site)
+  act_di_elg <- act_di_elg %>% select(Site, token, d_821247024, state_d_793822265) %>%  safe_arrange(Site)
 
-  colnames(act_di_elg) <- c("Site", "Connect ID", 'RcrtV_Verification', "RcrtV_UpdateRecType")
+  colnames(act_di_elg) <- c("Site", "token", 'RcrtV_Verification', "RcrtV_UpdateRecType")
 
   knitr::kable(act_di_elg) %>%
-    kable_styling(latex_options = "scale_down")
+    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
 }
 
 ```
@@ -2371,53 +2371,56 @@ if (nrow(covid_lang) == 0) {
 ```
 
 
-
-
+## 87. If A/B Testing Message Response is populated, UTM_Campaign parameter for each recruit should match the data we receive for A/B Testing Message Response.
 ```{r AB_1, echo=FALSE, warning=FALSE, message=FALSE}
-## 87. UTM_Campaign parameter for each recruit should match the data we receive for A/B Testing Message Response.
 
-# AB1 <- partsbq	%>% mutate(AB_response = case_when(state_d_956485028== '562663942'	~ 'Altruism Personal',
-#                                                             state_d_956485028== '686986259'	~ 'Altruism General',
-#                                                             state_d_956485028== '477331464'	~ 'Cancer Connection Personal',
-#                                                             state_d_956485028== '935486262'	~ 'Cancer Connection General',
-#                                                             state_d_956485028== '518814501'	~ 'Research Personal',
-#                                                             state_d_956485028== '307763550'	~ 'Research General'),
-#                                     UTM_camp = gsub("-", " ", d_163847117)) %>%
-#   filter(tolower(AB_response) != tolower(UTM_camp))
-# 
-# 
-# if (nrow(AB1) == 0) {
-#   cat("No errors\n")
-# } else {
-# 
-#   AB1 <- AB1 %>% select(Site, Connect_ID, token, AB_response, UTM_camp) %>%  safe_arrange(Site)
-# 
-#   knitr::kable(AB1) %>%
-#     kable_styling(latex_options = "scale_down")
-#}
+
+AB1 <- partsbq	%>% mutate(AB_response = case_when(state_d_956485028== '562663942'	~ 'Altruism Personal',
+                                                            state_d_956485028== '686986259'	~ 'Altruism General',
+                                                  ##removing 'Connection' in these two so they match 
+                                                            state_d_956485028== '477331464'	~ 'Cancer Personal',
+                                                            state_d_956485028== '935486262'	~ 'Cancer General',
+                                                  ##
+                                                            state_d_956485028== '518814501'	~ 'Research Personal',
+                                                            state_d_956485028== '307763550'	~ 'Research General'),
+                                    UTM_camp = gsub("-", " ", d_163847117)) %>%
+  filter(!is.na(AB_response) & 
+           tolower(AB_response) != tolower(UTM_camp))
+
+
+if (nrow(AB1) == 0) {
+  cat("No errors\n")
+} else {
+
+  AB1 <- AB1 %>% select(Site, Connect_ID, token, AB_response, UTM_camp) %>%  safe_arrange(Site)
+
+  knitr::kable(AB1) %>%
+    kable_styling(latex_options = "scale_down")
+}
 
 ```
 
 
 
-
+## 88. If A/B Testing Message Response is populated and any one or two of the three UTM parameters are populated, all three should be available. (This issue is being looked at by DevOps in October.)
 ```{r AB_2, echo=FALSE, warning=FALSE, message=FALSE}
-## 88. If any one or two of the three UTM parameters are populated, all three should be available. 
 
-# AB2 <- partsbq	%>% filter((is.na(d_761057722) | is.na(d_207613315) | is.na(d_163847117)) & #at least one is missing
-#                             !(is.na(d_761057722) & is.na(d_207613315) & is.na(d_163847117))) #but not all are missing
-# 
-# 
-# if (nrow(AB2) == 0) {
-#   cat("No errors\n")
-# } else {
-# 
-#   AB2 <- AB2 %>% select(Site, Connect_ID, token, d_761057722, d_207613315, d_163847117) %>%  safe_arrange(Site)
-# 
-#   colnames(AB2) <- c("Site", "Connect ID", 'token', 'UTM_Source', "UTM_Medium", "UTM_Campaign")
-# 
-#   knitr::kable(AB2) %>%
-#     kable_styling(latex_options = "scale_down")
-# }
+
+AB2 <- partsbq	%>% filter( !is.na(state_d_956485028) &
+                             (is.na(d_761057722) | is.na(d_207613315) | is.na(d_163847117)) & #at least one is missing
+                            !(is.na(d_761057722) & is.na(d_207613315) & is.na(d_163847117))) #but not all are missing
+
+
+if (nrow(AB2) == 0) {
+  cat("No errors\n")
+} else {
+
+  AB2 <- AB2 %>% select(Site, Connect_ID, token, d_761057722, d_207613315, d_163847117) %>%  safe_arrange(Site)
+
+  colnames(AB2) <- c("Site", "Connect ID", 'token', 'UTM_Source', "UTM_Medium", "UTM_Campaign")
+
+  knitr::kable(AB2) %>%
+    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
+}
 
 ```
