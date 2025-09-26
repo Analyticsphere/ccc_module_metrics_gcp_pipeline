@@ -475,7 +475,7 @@ if (nrow(smmet4) == 0) {
 ## 10. If RcrtSI_OptOutTm_v1r0 is a valid date, then RcrtSI_OptOut_v1r0 must be "yes"
 ```{r OptOut, echo=FALSE, warning=FALSE, message=FALSE}
 
-opt_out <- partsbq %>%  filter(!is.na(state_d_697256759) & state_d_158291096==104430631)
+opt_out <- partsbq %>%  filter(!is.na(state_d_697256759) & (state_d_158291096==104430631 | is.na(state_d_158291096)))
       
 
 if (nrow(opt_out) == 0) {
