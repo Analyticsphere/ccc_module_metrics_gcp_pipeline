@@ -63,7 +63,7 @@ bq_auth()
 project <- "nih-nci-dceg-connect-prod-6d04"
 
 
-pt_pull <- "SELECT Connect_ID,  d_827220437, d_987563196, d_821247024
+pt_pull <- "SELECT Connect_ID,  d_827220437, d_987563196, d_821247024, d_609630315
 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` 
 where Connect_ID IS NOT NULL and (d_512820379='486306141' OR d_512820379='854703046') and d_821247024='197316935' and 
 (d_919254129='353358909') and (d_699625233='353358909') and 
@@ -362,7 +362,8 @@ simple_funct(D_413039729, "Had Breasts or Breast Tissue Growth")
 \vspace{-0.5em}
 ```{r MhGroup9, warning=FALSE, echo=FALSE, message=FALSE}
 
-
+##9/11/25- displqy logic changed, removing requirement of sex organs to see certain responses. Desn'r affwct the ski plogic below
+### Either participants answered selected a surgery, none, or skipped
 
 mhgroup9 <- screen %>%
   mutate(
@@ -1000,7 +1001,8 @@ three_logic_funct(D_485867936, D_588828383, "506053626","462661976","178420302",
 ```{r PROSCREEN, warning=FALSE, echo=FALSE, message=FALSE}
 
 ##PROSCREEN
-prost_grid= screen  %>% filter(D_890391968_D_700100953 == 1) %>% 
+prost_grid= screen  %>% filter(D_890391968_D_700100953 == 1 | 
+                                 (as.Date(d_609630315) > "2025-09-11" & D_729984625_D_733236542==1)) %>% 
 mutate(
     `Rectal Exam` = if_else(D_465056475_D_312250694 == 1, 1, 0),
     `PSA Blood Test` = if_else(D_465056475_D_255054078 == 1, 1, 0),
@@ -1213,7 +1215,10 @@ five_logic_funct(D_811848389, D_891793989, "506053626","119809731","282580702","
 ```{r OVSCREEN, warning=FALSE, echo=FALSE, message=FALSE}
 
 ##OVSCREEN
-OV_grid= screen  %>% filter(D_890391968_D_434651539==1) %>% 
+OV_grid= screen  %>% 
+  filter(D_890391968_D_434651539==1 |
+           (as.Date(d_609630315) > "2025-09-11" & 
+              (D_729984625_D_220755749==1 | D_729984625_D_630100221==1))) %>%   #9/11/25 prod update to skip logic
 mutate(
     `Blood Test` = if_else(D_957875649_D_903156464 == 1, 1, 0),
     `Transvaginal Ultrasound` = if_else(D_957875649_D_474921307 == 1, 1, 0),
@@ -1294,7 +1299,8 @@ five_logic_funct(D_274709835, D_227617345, "506053626","119809731","282580702","
 ```{r CERVSCREEN, warning=FALSE, echo=FALSE, message=FALSE}
 
 ##CERVSCREEN
-CERV_grid= screen  %>% filter(D_890391968_D_505282171==1) %>%
+CERV_grid= screen  %>% filter(D_890391968_D_505282171==1 |
+           (as.Date(d_609630315) > "2025-09-11" & D_729984625_D_220755749==1)) %>%   #9/11/25 prod update to skip logic
 mutate(
     `HrHPV Test` = if_else(D_229764995_D_405616098 == 1, 1, 0),
     `Pap Test` = if_else(D_229764995_D_646114392 == 1, 1, 0),
@@ -1318,7 +1324,7 @@ pivot_CERV %>%
     gt() %>%
     fmt_number(columns = "Percentage", decimals = 2) %>% 
     fmt_number(column = "Frequency", decimals=0, use_seps = TRUE) %>%
-    tab_header(title = md("Tests or Procedures for Ovarian Cancer")) %>%
+    tab_header(title = md("Tests or Procedures for Cervical Cancer")) %>%
     cols_label(Frequency = md("**N**"), 
                Percentage = md("**%**"), 
                Procedures = md("**Answer**")) %>%
@@ -1392,7 +1398,8 @@ five_logic_funct(D_115504049, D_153215425, "506053626","119809731","282580702","
 ```{r ENDOSCREEN, warning=FALSE, echo=FALSE, message=FALSE}
 
 ##ENDOSCREEN
-ENDO_grid= screen  %>% filter(D_890391968_D_578416151==1) %>%
+ENDO_grid= screen  %>% filter(D_890391968_D_578416151==1|
+           (as.Date(d_609630315) > "2025-09-11" & D_729984625_D_220755749==1)) %>%   #9/11/25 prod update to skip logic
 mutate(
     `Transvaginal Ultrasound` = if_else(D_356470898_D_687879041 == 1, 1, 0),
     `Hysteroscopy` = if_else(D_356470898_D_531274737 == 1, 1, 0),
