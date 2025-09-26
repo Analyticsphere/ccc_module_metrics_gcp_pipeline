@@ -400,7 +400,9 @@ knitr::kable(occ_by_site,
 ```{r Diagnosis_vs_Verif_Date, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
 Diag_Verif <- cancer_loc %>%
-  mutate(months_diff =difftime(as.Date(d_345545422), as.Date(d_914594314), units = "weeks")*.25, #assuming 4 weeks per month
+  mutate(months_diff =difftime(as.Date(d_345545422), as.Date(d_914594314), units = "weeks")*.25,
+         # assuming 4 weeks per month for consistency
+         # Need difftime to know whether the difference is positive or negative
          time_diff = case_when( months_diff < 0 ~ "Prior to verification",
                                 months_diff < 7 ~ "Within 6 months post-verification",
                                 months_diff < 13 ~ "6-12 months post-verification",
