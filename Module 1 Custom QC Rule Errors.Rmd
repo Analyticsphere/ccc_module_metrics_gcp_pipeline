@@ -322,7 +322,7 @@ if (nrow(urin_none) == 0) {
 
 
 \FloatBarrier
-### 6. If 'none of the above' is selected for surgerical prodedures, no other surgeries can be chosen. Note this table is very wide, so if there are no errors found all that will be diplayed is "No errors".
+### 6. If 'none of the above' is selected for surgical procedures, no other surgeries can be chosen. Note this table is very wide, so if there are no errors found all that will be displayed is "No errors".
 
 ```{r surgery_none, echo=FALSE, warning=FALSE, message=FALSE}
 
