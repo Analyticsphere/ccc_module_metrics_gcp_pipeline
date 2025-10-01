@@ -1739,11 +1739,12 @@ if (nrow(reinv_active) < 50) {
 ```
 
 
-## 61. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Automated verification, should be 'Method not used' or 'Method used'
+## 61. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Automated verification, should be 'Method not used' or 'Method used'. Participants must be verified for at least 5 days.
 ```{r auto_ver, echo=FALSE, warning=FALSE, message=FALSE}
 
 auto_ver <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                 as.Date(d_914594314) > (currentDate - days(5)) & 
+                                 #as.Date(d_914594314) > (currentDate - days(5)) &
+                                   as.Date(d_914594314) < (currentDate - days(5)) & 
                                  !(state_d_444699761 %in%	c('734437214', '426360242')))
 
 
@@ -1751,21 +1752,22 @@ if (nrow(auto_ver) == 0) {
   cat("No errors\n")
 } else {
   
-  auto_ver <- auto_ver %>% select(Site, Connect_ID, d_512820379, state_d_444699761) %>%  safe_arrange(Site)
+  auto_ver <- auto_ver %>% select(Site, Connect_ID, d_512820379, d_914594314, state_d_444699761) %>%  safe_arrange(Site)
 
-  colnames(auto_ver) <- c("Site", "Connect ID", 'RcrtSI_RecruitType_v1r0', "Automated verification")
+  colnames(auto_ver) <- c("Site", "Connect ID", 'RcrtSI_RecruitType_v1r0', "RcrtV_VerificationTm_V1R0", "Automated verification")
 
   knitr::kable(auto_ver) %>%
-    kable_styling(latex_options = "scale_down")
+    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
 }
 
 ```
 
-## 62. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Outreach required for Verification, should be 'Yes', 'No', or NULL.
+## 62. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Outreach required for Verification, should be 'Yes', 'No', or NULL. Participants must be verified for at least 5 days.
 ```{r outreach_ver, echo=FALSE, warning=FALSE, message=FALSE}
 
 outreach_ver <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                 as.Date(d_914594314) < (currentDate - days(5)) & 
+                                 #as.Date(d_914594314) > (currentDate - days(5)) &
+                                   as.Date(d_914594314) < (currentDate - days(5)) & 
                                  !(state_d_188797763 %in%	c('353358909', '104430631', NA)))
 
 
@@ -1773,21 +1775,22 @@ if (nrow(outreach_ver) == 0) {
   cat("No errors\n")
 } else {
   
-  outreach_ver <- outreach_ver %>% select(Site, Connect_ID, d_512820379,  state_d_188797763) %>%  safe_arrange(Site)
+  outreach_ver <- outreach_ver %>% select(Site, Connect_ID, d_512820379,  d_914594314, state_d_188797763) %>%  safe_arrange(Site)
 
-  colnames(outreach_ver) <- c("Site", "Connect ID", 'RcrtSI_RecruitType',  "Outreach required for Verification")
+  colnames(outreach_ver) <- c("Site", "Connect ID", 'RcrtSI_RecruitType', "RcrtV_VerificationTm_V1R0",  "Outreach required for Verification")
 
   knitr::kable(outreach_ver) %>%
-    kable_styling(latex_options = "scale_down")
+    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
 }
 
 ```
 	   																	
-## 63. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Manual verification, should be 'Method not used' or 'Method used'	
+## 63. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Manual verification, should be 'Method not used' or 'Method used'. Participants must be verified for at least 5 days.
 ```{r manual_ver, echo=FALSE, warning=FALSE, message=FALSE}
 
 manual_ver <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                 as.Date(d_914594314) > (currentDate - days(5)) & 
+                                 #as.Date(d_914594314) > (currentDate - days(5)) &
+                                   as.Date(d_914594314) < (currentDate - days(5)) &
                                  !(state_d_953614051 %in%	c('734437214', '426360242')))
 
 
@@ -1795,44 +1798,28 @@ if (nrow(manual_ver) == 0) {
   cat("No errors\n")
 } else {
   
-  manual_ver <- manual_ver %>% select(Site, Connect_ID, d_512820379, state_d_953614051) %>%  safe_arrange(Site)
+  manual_ver <- manual_ver %>% select(Site, Connect_ID, d_512820379, d_914594314, state_d_953614051) %>%  safe_arrange(Site)
 
-  colnames(manual_ver) <- c("Site", "Connect ID", 'RcrtSI_RecruitType_v1r0', "Manual verification")
+  colnames(manual_ver) <- c("Site", "Connect ID", 'RcrtSI_RecruitType_v1r0', "RcrtV_VerificationTm_V1R0", "Manual verification")
 
   knitr::kable(manual_ver) %>%
-    kable_styling(latex_options = "scale_down")
+    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
 }
 
 ```
 	   																			
-## 64. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Update Recruit Type, should be 'No change needed', 'Passive to Active', 'Active to Passive', or 'Not Active to Passive'
-```{r up_recr_type, echo=FALSE, warning=FALSE, message=FALSE}
-
-up_recr_type <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                 as.Date(d_914594314) > (currentDate - days(5)) & 
-                                 !(state_d_793822265 %in%	c('132080040', '854903954', '965707001', '604663208')))
 
 
-if (nrow(up_recr_type) == 0) {
-  cat("No errors\n")
-} else {
-  
-  up_recr_type <- up_recr_type %>% select(Site, Connect_ID, d_512820379, state_d_793822265) %>%  safe_arrange(Site)
 
-  colnames(up_recr_type) <- c("Site", "Connect ID", 'RcrtSI_RecruitType_v1r0', "Update Recruit Type")
-
-  knitr::kable(up_recr_type) %>%
-    kable_styling(latex_options = "scale_down")
-}
-
-```
-
-
-## 65. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then First Name Match, should be 'Not Matched' or 'Matched'
+## 65. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then First Name Match, should be 'Not Matched' or 'Matched'. Participants must be verified for at least 5 days.
 ```{r fname_match, echo=FALSE, warning=FALSE, message=FALSE}
 
+### Rule 64 was deleted as it matched a rule already in the automated QC. NOT renumbering all the other rules.
+
+
 fname_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                 as.Date(d_914594314) > (currentDate - days(5)) & 
+                                 #as.Date(d_914594314) > (currentDate - days(5)) &
+                                   as.Date(d_914594314) < (currentDate - days(5)) & 
                                  !(state_d_147176963 %in%	c('356674370', '219803804')))
 
 
@@ -1840,21 +1827,22 @@ if (nrow(fname_match) == 0) {
   cat("No errors\n")
 } else {
   
-  fname_match <- fname_match %>% select(Site, Connect_ID, d_512820379, state_d_147176963) %>%  safe_arrange(Site)
+  fname_match <- fname_match %>% select(Site, Connect_ID, d_512820379, d_914594314, state_d_147176963) %>%  safe_arrange(Site)
 
-  colnames(fname_match) <- c("Site", "Connect ID", 'RcrtSI_RecruitType_v1r0', "First Name Match")
+  colnames(fname_match) <- c("Site", "Connect ID", 'RcrtSI_RecruitType_v1r0', "RcrtV_VerificationTm_V1R0", "First Name Match")
 
   knitr::kable(fname_match) %>%
-    kable_styling(latex_options = "scale_down")
+    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
 }
 
 ```
 		   																			
-## 66. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Last Name Match, should be 'Not Matched' or 'Matched'
+## 66. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Last Name Match, should be 'Not Matched' or 'Matched'. Participants must be verified for at least 5 days.
 ```{r lname_match, echo=FALSE, warning=FALSE, message=FALSE}
 
 lname_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                 as.Date(d_914594314) > (currentDate - days(5)) & 
+                                 #as.Date(d_914594314) > (currentDate - days(5)) &
+                                   as.Date(d_914594314) < (currentDate - days(5)) & 
                                  !(state_d_557461333 %in%	c('356674370', '219803804')))
 
 
@@ -1862,21 +1850,22 @@ if (nrow(lname_match) == 0) {
   cat("No errors\n")
 } else {
   
-  lname_match <- lname_match %>% select(Site, Connect_ID, d_512820379, state_d_557461333) %>%  safe_arrange(Site)
+  lname_match <- lname_match %>% select(Site, Connect_ID, d_512820379, d_914594314, state_d_557461333) %>%  safe_arrange(Site)
 
-  colnames(lname_match) <- c("Site", "Connect ID", 'RcrtSI_RecruitType_v1r0', "Last Name Match")
+  colnames(lname_match) <- c("Site", "Connect ID", 'RcrtSI_RecruitType_v1r0', "RcrtV_VerificationTm_V1R0", "Last Name Match")
 
   knitr::kable(lname_match) %>%
-    kable_styling(latex_options = "scale_down")
+    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
 }
 
 ```
 
-## 67. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then DOB Match, should be 'Not Matched' or 'Matched'
+## 67. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then DOB Match, should be 'Not Matched' or 'Matched'. Participants must be verified for at least 5 days.
 ```{r dob_match, echo=FALSE, warning=FALSE, message=FALSE}
 
 dob_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                 as.Date(d_914594314) > (currentDate - days(5)) & 
+                                 #as.Date(d_914594314) > (currentDate - days(5)) &
+                                   as.Date(d_914594314) < (currentDate - days(5)) & 
                                  !(state_d_725929722 %in%	c('356674370', '219803804')))
 
 
@@ -1884,22 +1873,23 @@ if (nrow(dob_match) == 0) {
   cat("No errors\n")
 } else {
   
-  dob_match <- dob_match %>% select(Site, Connect_ID, d_512820379, state_d_725929722) %>%  safe_arrange(Site)
+  dob_match <- dob_match %>% select(Site, Connect_ID, d_512820379, d_914594314, state_d_725929722) %>%  safe_arrange(Site)
 
-  colnames(dob_match) <- c("Site", "Connect ID", 'RcrtSI_RecruitType_v1r0', "DOB Match")
+  colnames(dob_match) <- c("Site", "Connect ID", 'RcrtSI_RecruitType_v1r0', "RcrtV_VerificationTm_V1R0", "DOB Match")
 
   knitr::kable(dob_match) %>%
-    kable_styling(latex_options = "scale_down")
+    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
 }
 
 ```
 
 	
-## 68. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then PIN Match, should be 'Not Matched', 'Matched', or NULL.
+## 68. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then PIN Match, should be 'Not Matched', 'Matched', or NULL. Participants must be verified for at least 5 days.
 ```{r pin_match, echo=FALSE, warning=FALSE, message=FALSE}
 
 pin_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                 as.Date(d_914594314) > (currentDate - days(5)) & 
+                                 #as.Date(d_914594314) > (currentDate - days(5)) &
+                                   as.Date(d_914594314) < (currentDate - days(5)) & 
                                  !(state_d_557461333 %in%	c('356674370', '219803804', NA)))
 
 
@@ -1907,22 +1897,23 @@ if (nrow(pin_match) == 0) {
   cat("No errors\n")
 } else {
   
-  pin_match <- pin_match %>% select(Site, Connect_ID, d_512820379, state_d_557461333) %>%  safe_arrange(Site)
+  pin_match <- pin_match %>% select(Site, Connect_ID, d_512820379, d_914594314, state_d_557461333) %>%  safe_arrange(Site)
 
-  colnames(pin_match) <- c("Site", "Connect ID", 'RcrtSI_RecruitType_v1r0', "PIN Match")
+  colnames(pin_match) <- c("Site", "Connect ID", 'RcrtSI_RecruitType_v1r0', "RcrtV_VerificationTm_V1R0", "PIN Match")
 
   knitr::kable(pin_match) %>%
-    kable_styling(latex_options = "scale_down")
+    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
 }
 
 ```
 	
 	
-## 69. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Token Match, should be 'Not Matched', 'Matched', or NULL.
+## 69. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Token Match, should be 'Not Matched', 'Matched', or NULL. Participants must be verified for at least 5 days.
 ```{r token_match, echo=FALSE, warning=FALSE, message=FALSE}
 
 token_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                 as.Date(d_914594314) > (currentDate - days(5)) & 
+                                 #as.Date(d_914594314) > (currentDate - days(5)) &
+                                   as.Date(d_914594314) < (currentDate - days(5)) & 
                                  !(state_d_679832994 %in%	c('356674370', '219803804', NA)))
 
 
@@ -1930,22 +1921,23 @@ if (nrow(token_match) == 0) {
   cat("No errors\n")
 } else {
   
-  token_match <- token_match %>% select(Site, Connect_ID, d_512820379, state_d_679832994) %>%  safe_arrange(Site)
+  token_match <- token_match %>% select(Site, Connect_ID, d_512820379, d_914594314, state_d_679832994) %>%  safe_arrange(Site)
 
-  colnames(token_match) <- c("Site", "Connect ID", 'RcrtSI_RecruitType_v1r0', "Token Match")
+  colnames(token_match) <- c("Site", "Connect ID", 'RcrtSI_RecruitType_v1r0', "RcrtV_VerificationTm_V1R0", "Token Match")
 
   knitr::kable(token_match) %>%
-    kable_styling(latex_options = "scale_down")
+    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
 }
 
 ```
 	
 	
-## 70. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then ZIP Code Match, should be 'Not Matched', 'Matched', or NULL.
+## 70. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then ZIP Code Match, should be 'Not Matched', 'Matched', or NULL. Participants must be verified for at least 5 days.
 ```{r zip_match, echo=FALSE, warning=FALSE, message=FALSE}
 
 zip_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                 as.Date(d_914594314) > (currentDate - days(5)) & 
+                                 #as.Date(d_914594314) > (currentDate - days(5)) &
+                                   as.Date(d_914594314) < (currentDate - days(5)) & 
                                  !(state_d_559534463 %in%	c('356674370', '219803804', NA)))
 
 
@@ -1953,21 +1945,22 @@ if (nrow(zip_match) == 0) {
   cat("No errors\n")
 } else {
   
-  zip_match <- zip_match %>% select(Site, Connect_ID, d_512820379, state_d_559534463) %>%  safe_arrange(Site)
+  zip_match <- zip_match %>% select(Site, Connect_ID, d_512820379, d_914594314, state_d_559534463) %>%  safe_arrange(Site)
 
-  colnames(zip_match) <- c("Site", "Connect ID", 'RcrtSI_RecruitType_v1r0', "ZIP Code Match")
+  colnames(zip_match) <- c("Site", "Connect ID", 'RcrtSI_RecruitType_v1r0', "RcrtV_VerificationTm_V1R0", "ZIP Code Match")
 
   knitr::kable(zip_match) %>%
-    kable_styling(latex_options = "scale_down")
+    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
 }
 
 ```
    																	
-## 71. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Site Match should be 'Criterium not met' or 'Criterium met'
+## 71. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Site Match should be 'Criterium not met' or 'Criterium met'. Participants must be verified for at least 5 days.
 ```{r site_match, echo=FALSE, warning=FALSE, message=FALSE}
 
 site_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                 as.Date(d_914594314) > (currentDate - days(5)) & 
+                                #as.Date(d_914594314) > (currentDate - days(5)) &
+                                   as.Date(d_914594314) < (currentDate - days(5)) & 
                                  !(state_d_570452130 %in%	c('539025306', '427405444', NA)))
 
 
@@ -1975,22 +1968,23 @@ if (nrow(site_match) == 0) {
   cat("No errors\n")
 } else {
   
-  site_match <- site_match %>% select(Site, Connect_ID, d_512820379, state_d_570452130) %>%  safe_arrange(Site)
+  site_match <- site_match %>% select(Site, Connect_ID, d_512820379, d_914594314, state_d_570452130) %>%  safe_arrange(Site)
 
-  colnames(site_match) <- c("Site", "Connect ID", 'RcrtSI_RecruitType_v1r0', "Site Match")
+  colnames(site_match) <- c("Site", "Connect ID", 'RcrtSI_RecruitType_v1r0', "RcrtV_VerificationTm_V1R0", "Site Match")
 
   knitr::kable(site_match) %>%
-    kable_styling(latex_options = "scale_down")
+    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
 }
 
 ```
 
 
-## 72. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Age Match should be 'Criterium not met' or 'Criterium met'
+## 72. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Age Match should be 'Criterium not met' or 'Criterium met'. Participants must be verified for at least 5 days.
 ```{r age_match, echo=FALSE, warning=FALSE, message=FALSE}
 
 age_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                 as.Date(d_914594314) > (currentDate - days(5)) & 
+                                #as.Date(d_914594314) > (currentDate - days(5)) &
+                                   as.Date(d_914594314) < (currentDate - days(5)) & 
                                  !(state_d_629484663 %in%	c('539025306', '427405444', NA)))
 
 
@@ -1998,22 +1992,23 @@ if (nrow(age_match) == 0) {
   cat("No errors\n")
 } else {
   
-  age_match <- age_match %>% select(Site, Connect_ID, d_512820379, state_d_629484663) %>%  safe_arrange(Site)
+  age_match <- age_match %>% select(Site, Connect_ID, d_512820379, d_914594314, state_d_629484663) %>%  safe_arrange(Site)
 
-  colnames(age_match) <- c("Site", "Connect ID", 'RcrtSI_RecruitType_v1r0', "Age Match")
+  colnames(age_match) <- c("Site", "Connect ID", 'RcrtSI_RecruitType_v1r0', "RcrtV_VerificationTm_V1R0", "Age Match")
 
   knitr::kable(age_match) %>%
-    kable_styling(latex_options = "scale_down")
+    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
 }
 
 ```
 	   															
 
-## 73. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Cancer Status Match should be 'Criterium not met' or 'Criterium met'
+## 73. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Cancer Status Match should be 'Criterium not met' or 'Criterium met'. Participants must be verified for at least 5 days.
 ```{r cancer_match, echo=FALSE, warning=FALSE, message=FALSE}
 
 cancer_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                 as.Date(d_914594314) > (currentDate - days(5)) & 
+                                 #as.Date(d_914594314) > (currentDate - days(5)) &
+                                   as.Date(d_914594314) < (currentDate - days(5)) & 
                                  !(state_d_547895941 %in%	c('539025306', '427405444', NA)))
 
 
@@ -2023,10 +2018,10 @@ if (nrow(cancer_match) == 0) {
   
   cancer_match <- cancer_match %>% select(Site, Connect_ID, d_512820379, state_d_547895941) %>%  safe_arrange(Site)
 
-  colnames(cancer_match) <- c("Site", "Connect ID", 'RcrtSI_RecruitType_v1r0', "Cancer Status Match")
+  colnames(cancer_match) <- c("Site", "Connect ID", 'RcrtSI_RecruitType_v1r0', "RcrtV_VerificationTm_V1R0", "Cancer Status Match")
 
   knitr::kable(cancer_match) %>%
-    kable_styling(latex_options = "scale_down")
+    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
 }
 
 ```
@@ -2082,25 +2077,39 @@ if (nrow(act_di_race) == 0) {
 ## 76. If RcrtSI_RecruitType_v1r0='Active' and Site= Sanford Health then RcrtSI_SHRace_v1r0 must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'.
 ```{r act_di_SF_race, echo=FALSE, warning=FALSE, message=FALSE}
 
-act_di_SF_race <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_119643471) & 
-                                       d_827220437=='657167265' & 
+act_di_SF_race <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_119643471) &
+                                       d_827220437=='657167265' &
                                      !(d_821247024=="922622075" & state_d_793822265=="854903954"))
-
-# act_di_SF_race <- act_di_SF_race %>% select(Site, Connect_ID, token, d_747006172, d_821247024, state_d_793822265, state_d_119643471, state_d_934298480, state_d_706256705)
-# colnames(act_di_SF_race) <- c("Site", "Connect ID", 'token', 'HdWd_WdConsent_v1r0', "RcrtV_Verification_v1r0", "RcrtV_UpdateRecType_v1r0", "RcrtSI_SHRace_v1r0", "RcrtSI_Age_v1r0", "RcrtSI_Sex_v1r0")
+ 
+# ###  Ad-hoc Request ###
+# act_di_SF_race <- act_di_SF_race %>% select(Site, Connect_ID, token, d_747006172, d_821247024, d_512820379, d_471593703,  state_d_793822265, state_d_119643471, state_d_538553381, state_d_934298480, state_d_706256705)
+# colnames(act_di_SF_race) <- c("Site", "Connect ID", 'token', 'HdWd_WdConsent_v1r0', "RcrtV_Verification_v1r0", "RcrtSI_RecruitType_v1r0", "RcrtSI_TypeTime_v1r0", "RcrtV_UpdateRecType_v1r0", "RcrtSI_SHRace_v1r0", "RcrtSI_SHEthnicity_v1r0", "RcrtSI_Age_v1r0", "RcrtSI_Sex_v1r0")
 # 
-# act_di_SF_race <- act_di_SF_race %>% mutate(RcrtV_Verification_v1r0 = case_when(RcrtV_Verification_v1r0=='875007964'	~ "Not yet verified",
-#                                                                                 RcrtV_Verification_v1r0=='197316935'	~ "Verified",
-#                                                                                 RcrtV_Verification_v1r0=='219863910'	~ "Cannot be verified",
-#                                                                                 RcrtV_Verification_v1r0=='922622075'	~ "Duplicate",
-#                                                                                 RcrtV_Verification_v1r0=='160161595'	~ "Outreach timed out"),
-#                                             RcrtV_UpdateRecType_v1r0 = case_when(RcrtV_UpdateRecType_v1r0=='132080040'	~ "No change needed",
-#                                                                                  RcrtV_UpdateRecType_v1r0=='604663208'	~ "Not Active to Passive",
-#                                                                                  RcrtV_UpdateRecType_v1r0=='854903954'	~ "Passive to Active",
-#                                                                                  RcrtV_UpdateRecType_v1r0=='965707001'	~ "Active to Passive"))
+# act_di_SF_race <- act_di_SF_race %>%
+#   mutate(RcrtV_Verification_v1r0 = case_when(RcrtV_Verification_v1r0=='875007964'	~ "Not yet verified",
+#                                              RcrtV_Verification_v1r0=='197316935'	~ "Verified",
+#                                              RcrtV_Verification_v1r0=='219863910'	~ "Cannot be verified",
+#                                              RcrtV_Verification_v1r0=='922622075'	~ "Duplicate",
+#                                              RcrtV_Verification_v1r0=='160161595'	~ "Outreach timed out"),
+#          RcrtV_UpdateRecType_v1r0 = case_when(RcrtV_UpdateRecType_v1r0=='132080040'	~ "No change needed",
+#                                               RcrtV_UpdateRecType_v1r0=='604663208'	~ "Not Active to Passive",
+#                                               RcrtV_UpdateRecType_v1r0=='854903954'	~ "Passive to Active",
+#                                               RcrtV_UpdateRecType_v1r0=='965707001'	~ "Active to Passive"),
+#          RcrtSI_SHEthnicity_v1r0 = case_when(RcrtSI_SHEthnicity_v1r0=='628733063' ~ "Hispanic or Latino",
+#                                              RcrtSI_SHEthnicity_v1r0=='319570637' ~ "Not Hispanic or Latino",
+#                                              RcrtSI_SHEthnicity_v1r0=='986445321' ~ "Blank",
+#                                              RcrtSI_SHEthnicity_v1r0=='746038746' ~ "Declined",
+#                                              RcrtSI_SHEthnicity_v1r0=='178420302' ~ "Unavailable/Unknown"),
+#          RcrtSI_RecruitType_v1r0 = case_when(RcrtSI_RecruitType_v1r0=='180583933'	~ "Not active",
+#                                              RcrtSI_RecruitType_v1r0=='486306141'	~ "Active",
+#                                              RcrtSI_RecruitType_v1r0=='854703046'	~ "Passive"))
+# 
 # act_di_SF_race$RcrtSI_Age_v1r0 <- ifelse(is.na(act_di_SF_race$RcrtSI_Age_v1r0), "Missing", "Populated")
 # act_di_SF_race$RcrtSI_Sex_v1r0 <- ifelse(is.na(act_di_SF_race$RcrtSI_Sex_v1r0), "Missing", "Populated")
 # act_di_SF_race$HdWd_WdConsent_v1r0 <- ifelse(act_di_SF_race$HdWd_WdConsent_v1r0=="104430631", "No", "Yes")
+# openxlsx::write.xlsx(act_di_SF_race,glue("Recruitment_Derived_QC_Rule76_Errors{currentDate}.xlsx"),row.names = F,na="")
+
+
 
 if (nrow(act_di_SF_race) == 0) {
   cat("No errors\n")
@@ -2218,6 +2227,25 @@ if (nrow(act_di_HFH_eth) == 0) {
 act_di_member <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_477091792) & 
                                      !(d_821247024=="922622075" & state_d_793822265=="854903954"))
 
+# ###  Ad-hoc Request ###
+# act_di_member <- act_di_member %>% filter(Site=="University of Chicago Medicine") %>% 
+#   select(Connect_ID, token, d_747006172, d_821247024, d_914594314, d_512820379, d_471593703)
+# colnames(act_di_member) <- c("Connect ID", 'token', 'HdWd_WdConsent_v1r0', "RcrtV_Verification_v1r0", "RcrtV_VerificationTm_V1R0",  "RcrtSI_RecruitType_v1r0", "RcrtSI_TypeTime_v1r0")
+# 
+# act_di_member <- act_di_member %>%
+#   mutate(RcrtV_Verification_v1r0 = case_when(RcrtV_Verification_v1r0=='875007964'	~ "Not yet verified",
+#                                              RcrtV_Verification_v1r0=='197316935'	~ "Verified",
+#                                              RcrtV_Verification_v1r0=='219863910'	~ "Cannot be verified",
+#                                              RcrtV_Verification_v1r0=='922622075'	~ "Duplicate",
+#                                              RcrtV_Verification_v1r0=='160161595'	~ "Outreach timed out"),
+#          RcrtSI_RecruitType_v1r0 = case_when(RcrtSI_RecruitType_v1r0=='180583933'	~ "Not active",
+#                                              RcrtSI_RecruitType_v1r0=='486306141'	~ "Active",
+#                                              RcrtSI_RecruitType_v1r0=='854703046'	~ "Passive"))
+# 
+# 
+# act_di_member$HdWd_WdConsent_v1r0 <- ifelse(act_di_member$HdWd_WdConsent_v1r0=="104430631", "No", "Yes")
+# openxlsx::write.xlsx(act_di_member,glue("Recruitment_Derived_QC_Rule81_Errors{currentDate}.xlsx"),row.names = F,na="")
+
 
 if (nrow(act_di_member) == 0) {
   cat("No errors\n")
@@ -2264,6 +2292,24 @@ if (nrow(act_di_cmpn) == 0) {
 act_di_elg <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_749475364) & 
                                      !(d_821247024=="922622075" & state_d_793822265=="854903954"))
 
+# ###  Ad-hoc Request ###
+# act_di_elg <- act_di_elg %>% filter(Site=="University of Chicago Medicine") %>% 
+#   select(Connect_ID, token, d_747006172, d_821247024, d_914594314, d_512820379, d_471593703)
+# colnames(act_di_elg) <- c("Connect ID", 'token', 'HdWd_WdConsent_v1r0', "RcrtV_Verification_v1r0", "RcrtV_VerificationTm_V1R0",  "RcrtSI_RecruitType_v1r0", "RcrtSI_TypeTime_v1r0")
+# 
+# act_di_elg <- act_di_elg %>%
+#   mutate(RcrtV_Verification_v1r0 = case_when(RcrtV_Verification_v1r0=='875007964'	~ "Not yet verified",
+#                                              RcrtV_Verification_v1r0=='197316935'	~ "Verified",
+#                                              RcrtV_Verification_v1r0=='219863910'	~ "Cannot be verified",
+#                                              RcrtV_Verification_v1r0=='922622075'	~ "Duplicate",
+#                                              RcrtV_Verification_v1r0=='160161595'	~ "Outreach timed out"),
+#          RcrtSI_RecruitType_v1r0 = case_when(RcrtSI_RecruitType_v1r0=='180583933'	~ "Not active",
+#                                              RcrtSI_RecruitType_v1r0=='486306141'	~ "Active",
+#                                              RcrtSI_RecruitType_v1r0=='854703046'	~ "Passive"))
+# 
+# 
+# act_di_elg$HdWd_WdConsent_v1r0 <- ifelse(act_di_elg$HdWd_WdConsent_v1r0=="104430631", "No", "Yes")
+# openxlsx::write.xlsx(act_di_elg,glue("Recruitment_Derived_QC_Rule83_Errors{currentDate}.xlsx"),row.names = F,na="")
 
 if (nrow(act_di_elg) == 0) {
   cat("No errors\n")

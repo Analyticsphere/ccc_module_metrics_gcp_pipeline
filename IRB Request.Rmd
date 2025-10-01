@@ -54,6 +54,9 @@ bq_auth()
 
 project <- "nih-nci-dceg-connect-prod-6d04"
 billing <- "nih-nci-dceg-connect-prod-6d04" 
+
+currentDate <- Sys.Date()
+  
 ```
 
 
@@ -178,7 +181,7 @@ knitr::opts_chunk$set(comment = NA)
 
 parts <- "SELECT Connect_ID, d_564964481, d_795827569, d_544150384, d_117249500, d_454445267,d_949302066 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` where Connect_ID IS NOT NULL and 
 d_821247024='197316935' and d_747006172!='353358909' and d_831041022!='353358909' and
-DATE(d_914594314) < '2024-10-01'" 
+DATE(d_914594314) < DATE(CURRENT_TIMESTAMP())" 
 parts_table <- bq_project_query(project, parts)
 parts_data <- bq_table_download(parts_table, bigint = "integer64",n_max = Inf, page_size = 10000)
 
@@ -215,7 +218,6 @@ irb$multi_racial <- ifelse(rowSums(irb[race_columns], na.rm = TRUE) > 1, 1, 0)
 
 
 ########## DOB
-currentDate <- Sys.Date()
 
 # Convert to numeric and handle non-numeric values
 irb <- irb %>%
@@ -264,7 +266,7 @@ irb = irb %>%  mutate(race= case_when(d_949302066==231311385 & multi_racial==1 ~
 ```{r Documenting, echo=FALSE, message=FALSE, warning=FALSE, collapse=TRUE}
 
 wd_ver <- "SELECT Connect_ID,d_821247024,d_747006172  FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` where Connect_ID IS NOT NULL
-and DATE(d_914594314) < '2024-10-01'" 
+and DATE(d_914594314) < DATE(CURRENT_TIMESTAMP())" 
 wd_ver_table <- bq_project_query(project, wd_ver)
 wd_ver_data <- bq_table_download(wd_ver_table, bigint = "integer64",n_max = Inf, page_size = 10000)
 
@@ -274,9 +276,9 @@ ver <- wd_ver_data %>%  filter(d_821247024=='197316935') #d_747006172!='35335890
 finished_m1 <- irb %>% filter(d_949302066=='231311385')
 current_date <- Sys.Date()
 
-cat("Data Extracted and Report Ran: 2025-04-23")
+cat(paste("Data Extracted and Report Ran: ", currentDate))
 
-cat("Data includes enrollment through 2024-09-30")
+cat(paste("Data includes enrollment through ", (currentDate-1)))
 
 cat("Total number of verified participants= ", nrow(ver))
 
