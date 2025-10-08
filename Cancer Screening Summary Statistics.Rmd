@@ -148,7 +148,7 @@ one_logic_funct <- function(CID, CID_prev, Prev_Answer, Title){
   dt_select <- screen %>%  filter(!!CID_SYM_P == Prev_Answer) %>%  select(Connect_ID, !!CID_SYM) 
   gt_yn <- dt_select  %>% dplyr::group_by(!!CID_SYM) %>% dplyr::summarize(n=n(), percentage=100*n/nrow(.)) %>% dplyr::ungroup() %>% dplyr::mutate(answer=recode(!!CID_SYM, !!!dict)) %>% replace_na(list(answer="Skipped this Question")) %>%  dplyr::select(answer, n, percentage)
   
-  gt_yn %>%  gt::gt(rowname_col = "row_lab")  %>%  
+  gt_yn %>%  gt::gt()  %>%
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md(Title)) %>% 
   cols_label(n= md("**N**"),  answer = md("**Answer**"), percentage = md("**%**")) %>% 
@@ -174,7 +174,7 @@ two_logic_funct <- function(CID, CID_prev, Prev_Answer1, Prev_Answer2,  Title){
   dt_select <- screen %>%  filter(!!CID_SYM_P == Prev_Answer1 | !!CID_SYM_P == Prev_Answer2) %>%  select(Connect_ID, !!CID_SYM) 
   gt_yn <- dt_select  %>% dplyr::group_by(!!CID_SYM) %>% dplyr::summarize(n=n(), percentage=100*n/nrow(.)) %>% dplyr::ungroup() %>% dplyr::mutate(answer=recode(!!CID_SYM, !!!dict)) %>% replace_na(list(answer="Skipped this Question")) %>%  dplyr::select(answer, n, percentage)
   
-  gt_yn %>%  gt::gt(rowname_col = "row_lab")  %>%  
+  gt_yn %>%  gt::gt()  %>%  
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md(Title)) %>% 
   cols_label(n= md("**N**"),  answer = md("**Answer**"), percentage = md("**%**")) %>% 
@@ -202,7 +202,7 @@ three_logic_funct <- function(CID, CID_prev, Prev_Answer1, Prev_Answer2, Prev_An
     select(Connect_ID, !!CID_SYM) 
   gt_yn <- dt_select  %>% dplyr::group_by(!!CID_SYM) %>% dplyr::summarize(n=n(), percentage=100*n/nrow(.)) %>% dplyr::ungroup() %>% dplyr::mutate(answer=recode(!!CID_SYM, !!!dict)) %>% replace_na(list(answer="Skipped this Question")) %>%  dplyr::select(answer, n, percentage)
   
-  gt_yn %>%  gt::gt(rowname_col = "row_lab")  %>%  
+  gt_yn %>%  gt::gt()  %>%  
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md(Title)) %>% 
   cols_label(n= md("**N**"),  answer = md("**Answer**"), percentage = md("**%**")) %>% 
@@ -230,7 +230,7 @@ four_logic_funct <- function(CID, CID_prev, Prev_Answer1, Prev_Answer2, Prev_Ans
     select(Connect_ID, !!CID_SYM) 
   gt_yn <- dt_select  %>% dplyr::group_by(!!CID_SYM) %>% dplyr::summarize(n=n(), percentage=100*n/nrow(.)) %>% dplyr::ungroup() %>% dplyr::mutate(answer=recode(!!CID_SYM, !!!dict)) %>% replace_na(list(answer="Skipped this Question")) %>%  dplyr::select(answer, n, percentage)
   
-  gt_yn %>%  gt::gt(rowname_col = "row_lab")  %>%  
+  gt_yn %>%  gt::gt()  %>%  
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md(Title)) %>% 
   cols_label(n= md("**N**"),  answer = md("**Answer**"), percentage = md("**%**")) %>% 
@@ -259,7 +259,7 @@ five_logic_funct <- function(CID, CID_prev, Prev_Answer1, Prev_Answer2, Prev_Ans
     select(Connect_ID, !!CID_SYM) 
   gt_yn <- dt_select  %>% dplyr::group_by(!!CID_SYM) %>% dplyr::summarize(n=n(), percentage=100*n/nrow(.)) %>% dplyr::ungroup() %>% dplyr::mutate(answer=recode(!!CID_SYM, !!!dict)) %>% replace_na(list(answer="Skipped this Question")) %>%  dplyr::select(answer, n, percentage)
   
-  gt_yn %>%  gt::gt(rowname_col = "row_lab")  %>%  
+  gt_yn %>%  gt::gt()  %>%  
   fmt_number(columns = "percentage", decimals = 2) %>% 
   tab_header(title = md(Title)) %>% 
   cols_label(n= md("**N**"),  answer = md("**Answer**"), percentage = md("**%**")) %>% 
@@ -325,7 +325,7 @@ pivot_sex <- which_sex2 %>%
 dt_sex <- pivot_sex %>%
   gt() %>%
   fmt_number(columns = "Percentage", decimals = 2) %>% 
-  fmt_number(column = "Frequency", decimals=0, use_seps = TRUE) %>%
+  fmt_number(columns = "Frequency", decimals=0, use_seps = TRUE) %>%
   tab_header(title = md("Body Parts Born With")) %>%
   cols_label(Frequency = md("**N**"), 
              Percentage = md("**%**"), 
@@ -401,7 +401,7 @@ pivot_data9 <- mhgroup9 %>%
 dt_mgr9 <- pivot_data9 %>%
   gt() %>%
   fmt_number(columns = "Percentage", decimals = 2) %>% 
-  fmt_number(column = "Frequency", decimals=0, use_seps = TRUE) %>%
+  fmt_number(columns = "Frequency", decimals=0, use_seps = TRUE) %>%
   tab_header(title = md("MHGROUP9: Surgeries")) %>%
   cols_label(Frequency = md("**N**"), 
              Percentage = md("**%**"), 
@@ -508,7 +508,7 @@ pivot_breast <- br_surg %>%
 dt_breast <- pivot_breast %>%
   gt() %>%
   fmt_number(columns = "Percentage", decimals = 2) %>% 
-  fmt_number(column = "Frequency", decimals=0, use_seps = TRUE) %>%
+  fmt_number(columns = "Frequency", decimals=0, use_seps = TRUE) %>%
   tab_header(title = md("Breast Surgeries")) %>%
   cols_label(Frequency = md("**N**"), 
              Percentage = md("**%**"), 
@@ -752,7 +752,7 @@ pivot_col <- col_grid %>%
 pivot_col %>%
   gt() %>%
   fmt_number(columns = "Percentage", decimals = 2) %>% 
-  fmt_number(column = "Frequency", decimals=0, use_seps = TRUE) %>%
+  fmt_number(columns = "Frequency", decimals=0, use_seps = TRUE) %>%
   tab_header(title = md("Tests or Procedures for Colorectal Cancer")) %>%
   cols_label(Frequency = md("**N**"), 
              Percentage = md("**%**"), 
@@ -938,7 +938,7 @@ pivot_skin <- skscr1 %>%
 pivot_skin %>%
   gt() %>%
   fmt_number(columns = "Percentage", decimals = 2) %>% 
-  fmt_number(column = "Frequency", decimals=0, use_seps = TRUE) %>%
+  fmt_number(columns = "Frequency", decimals=0, use_seps = TRUE) %>%
   tab_header(title = md("Portion of Skin Screened")) %>%
   cols_label(Frequency = md("**N**"), 
              Percentage = md("**%**"), 
@@ -1025,7 +1025,7 @@ pivot_prost <- prost_grid %>%
 pivot_prost %>%
     gt() %>%
     fmt_number(columns = "Percentage", decimals = 2) %>% 
-    fmt_number(column = "Frequency", decimals=0, use_seps = TRUE) %>%
+    fmt_number(columns = "Frequency", decimals=0, use_seps = TRUE) %>%
     tab_header(title = md("Tests or Procedures for Prostate Cancer")) %>%
     cols_label(Frequency = md("**N**"), 
                Percentage = md("**%**"), 
@@ -1122,7 +1122,7 @@ pivot_br_scr <- br_scr_grid %>%
 pivot_br_scr %>%
     gt() %>%
     fmt_number(columns = "Percentage", decimals = 2) %>% 
-    fmt_number(column = "Frequency", decimals=0, use_seps = TRUE) %>%
+    fmt_number(columns = "Frequency", decimals=0, use_seps = TRUE) %>%
     tab_header(title = md("Tests or Procedures for Breast Cancer")) %>%
     cols_label(Frequency = md("**N**"), 
                Percentage = md("**%**"), 
@@ -1240,7 +1240,7 @@ pivot_OV <- OV_grid %>%
 pivot_OV %>%
     gt() %>%
     fmt_number(columns = "Percentage", decimals = 2) %>% 
-    fmt_number(column = "Frequency", decimals=0, use_seps = TRUE) %>%
+    fmt_number(columns = "Frequency", decimals=0, use_seps = TRUE) %>%
     tab_header(title = md("Tests or Procedures for Ovarian Cancer")) %>%
     cols_label(Frequency = md("**N**"), 
                Percentage = md("**%**"), 
@@ -1323,7 +1323,7 @@ pivot_CERV <- CERV_grid %>%
 pivot_CERV %>%
     gt() %>%
     fmt_number(columns = "Percentage", decimals = 2) %>% 
-    fmt_number(column = "Frequency", decimals=0, use_seps = TRUE) %>%
+    fmt_number(columns = "Frequency", decimals=0, use_seps = TRUE) %>%
     tab_header(title = md("Tests or Procedures for Cervical Cancer")) %>%
     cols_label(Frequency = md("**N**"), 
                Percentage = md("**%**"), 
@@ -1423,7 +1423,7 @@ pivot_ENDO <- ENDO_grid %>%
 pivot_ENDO %>%
     gt() %>%
     fmt_number(columns = "Percentage", decimals = 2) %>% 
-    fmt_number(column = "Frequency", decimals=0, use_seps = TRUE) %>%
+    fmt_number(columns = "Frequency", decimals=0, use_seps = TRUE) %>%
     tab_header(title = md("Tests or Procedures for Endometrial Cancer")) %>%
     cols_label(Frequency = md("**N**"), 
                Percentage = md("**%**"), 
@@ -1540,7 +1540,7 @@ pivot_MULTI <- MULTI_grid %>%
 pivot_MULTI %>%
     gt() %>%
     fmt_number(columns = "Percentage", decimals = 2) %>% 
-    fmt_number(column = "Frequency", decimals=0, use_seps = TRUE) %>%
+    fmt_number(columns = "Frequency", decimals=0, use_seps = TRUE) %>%
     tab_header(title = md("Tests or Procedures for Multiple Cancer Types")) %>%
     cols_label(Frequency = md("**N**"), 
                Percentage = md("**%**"), 

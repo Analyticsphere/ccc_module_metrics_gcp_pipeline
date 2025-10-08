@@ -112,7 +112,7 @@ CID_qol <- QOL_rem %>% distinct(Connect_ID, .keep_all = TRUE)
 
 
  table1<- all_participants %>% 
-  gt() %>%
+  gt::gt() %>%
   tab_header(
     title = "Table 1: Total Participants Included in this Report, by Site"
   ) %>%
@@ -304,7 +304,7 @@ bold_rows <- c(1,4,5,8,9,12,13)
 final_notif_all_gt <- as_tibble(final_notif_all)
 
 # Create a gt table and use text_transform to apply formatting
-all_reminders <- final_notif_all_gt %>% gt(rowname_col = "row_lab") %>%
+all_reminders <- final_notif_all_gt %>% gt::gt() %>%
   cols_label("All Reminders"= md(" "), n = md("**n**"), "%" = md("**%**")) %>% 
    tab_header(title = md("Table 2. PROMIS Survey Reminders Evaluation, All Sites and All Notifications \n Among those Verified on or After December 1, 2023")) %>%
   tab_style(
@@ -449,7 +449,7 @@ bold_rows <- c(1,3,4,6,7,9)
 final_notif_all_gt <- as_tibble(final_notif_all)
 
 # Create a gt table and use text_transform to apply formatting
-all_reminders_before <- final_notif_all_gt %>% gt(rowname_col = "row_lab") %>%
+all_reminders_before <- final_notif_all_gt %>% gt::gt() %>%
   cols_label("All Reminders"= md(" "), n = md("**n**"), "%" = md("**%**")) %>% 
    tab_header(title = md("Table 3. PROMIS Survey Reminders Evaluation, All Sites and All Notifications \n Among those Verified Before December 1, 2023")) %>%
   tab_style(
