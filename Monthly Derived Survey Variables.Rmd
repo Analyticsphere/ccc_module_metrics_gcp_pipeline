@@ -52,20 +52,6 @@ bq_auth()
 
 ```{r merge1, include=FALSE, warning=FALSE}
 
-#Data Dictionary for column names
-dictionary <- rio::import("https://episphere.github.io/conceptGithubActions/aggregate.json",format = "json")
-dd <- dplyr::bind_rows(dictionary,.id="CID")
-dd <-rbindlist(dictionary,fill=TRUE,use.names=TRUE,idcol="CID")
-dd$`Variable Label`[is.na(dd$`Variable Label`)] <- replace_na(dd$'Variable Name')
-dd <- as.data.frame.matrix(do.call("rbind",dictionary)) 
-dd$CID <- rownames(dd)
-#https://shaivyakodan.medium.com/7-useful-r-packages-for-analysis-7f60d28dca98
-devtools::install_github("tidyverse/reprex")
-
-
-
-
-
 ## BQ Pull from the participants table just to use for versioning
 project <- "nih-nci-dceg-connect-prod-6d04"
 billing <- "nih-nci-dceg-connect-prod-6d04" 
@@ -231,9 +217,9 @@ dt_fam_canc_summary <- family %>% group_by(status) %>%  dplyr::summarize(n=n(), 
 
 #gt_total_func(dt_fam_canc_summary, "status", "Primary Relative(s) Diagnosed With Cancer")
 
-dt_fam_canc_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
+dt_fam_canc_summary %>%  gt::gt() %>%  
   fmt_number(columns = "percentage", decimals = 2) %>% 
-  fmt_number(column = "n", decimals=0, use_seps = TRUE) %>% 
+  fmt_number(columns = "n", decimals=0, use_seps = TRUE) %>% 
   tab_header(title = md("Primary Relative(s) Diagnosed With Cancer")) %>% 
   cols_label(n= md("**N**"), status = md("**Answer**"), percentage = md("**%**")) %>% 
   grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
@@ -297,9 +283,9 @@ cig_frequency= data_tib_all3  %>%
 dt_cig_frequency_summary <- cig_frequency %>% group_by(often) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(often, n, percentage)
 
 
-dt_cig_frequency_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
+dt_cig_frequency_summary %>%  gt::gt() %>%  
   fmt_number(columns = "percentage", decimals = 2) %>% 
-  fmt_number(column = "n", decimals=0, use_seps = TRUE) %>% 
+  fmt_number(columns = "n", decimals=0, use_seps = TRUE) %>% 
   tab_header(title = md("Frequency of Cigarette Smoking")) %>% 
   cols_label(n= md("**N**"), often = md("**Answer**"), percentage = md("**%**")) %>% 
   grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
@@ -334,9 +320,9 @@ cigar_frequency= data_tib_all3  %>%
 
 dt_cigar_frequency_summary <- cigar_frequency %>% group_by(often) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(often, n, percentage)
 
-dt_cigar_frequency_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
+dt_cigar_frequency_summary %>%  gt::gt() %>%  
   fmt_number(columns = "percentage", decimals = 2) %>% 
-  fmt_number(column = "n", decimals=0, use_seps = TRUE) %>% 
+  fmt_number(columns = "n", decimals=0, use_seps = TRUE) %>% 
   tab_header(title = md("Frequency of Cigar Smoking")) %>% 
   cols_label(n= md("**N**"), often = md("**Answer**"), percentage = md("**%**")) %>% 
   grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
@@ -372,9 +358,9 @@ e_cig_frequency= data_tib_all3  %>%
 
 dt_e_cig_frequency_summary <- e_cig_frequency %>% group_by(often) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(often, n, percentage)
 
-dt_e_cig_frequency_summary %>%  gt::gt(rowname_col = "row_lab") %>%  
+dt_e_cig_frequency_summary %>%  gt::gt() %>%  
   fmt_number(columns = "percentage", decimals = 2) %>% 
-  fmt_number(column = "n", decimals=0, use_seps = TRUE) %>% 
+  fmt_number(columns = "n", decimals=0, use_seps = TRUE) %>% 
   tab_header(title = md("Frequency of Electronic Cigarette Smoking")) %>% 
   cols_label(n= md("**N**"), often = md("**Answer**"), percentage = md("**%**")) %>% 
   grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>

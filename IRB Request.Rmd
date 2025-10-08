@@ -66,21 +66,6 @@ currentDate <- Sys.Date()
 
 ## MERGE MOD1V1, MOD1V2
 
-
-#Data Dictionary for column names
-dictionary <- rio::import("https://episphere.github.io/conceptGithubActions/aggregate.json",format = "json")
-dd <- dplyr::bind_rows(dictionary,.id="CID")
-dd <-rbindlist(dictionary,fill=TRUE,use.names=TRUE,idcol="CID")
-dd$`Variable Label`[is.na(dd$`Variable Label`)] <- replace_na(dd$'Variable Name')
-dd <- as.data.frame.matrix(do.call("rbind",dictionary)) 
-dd$CID <- rownames(dd)
-#https://shaivyakodan.medium.com/7-useful-r-packages-for-analysis-7f60d28dca98
-devtools::install_github("tidyverse/reprex")
-
-
-
-
-
 ## BQ Pull from the participants table just to use for versioning
 project <- "nih-nci-dceg-connect-prod-6d04"
 billing <- "nih-nci-dceg-connect-prod-6d04" 
@@ -266,7 +251,7 @@ irb = irb %>%  mutate(race= case_when(d_949302066==231311385 & multi_racial==1 ~
 ```{r Documenting, echo=FALSE, message=FALSE, warning=FALSE, collapse=TRUE}
 
 wd_ver <- "SELECT Connect_ID,d_821247024,d_747006172  FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` where Connect_ID IS NOT NULL
-and DATE(d_914594314) < DATE(CURRENT_TIMESTAMP())" 
+and DATE(d_914594314) < DATE(CURRENT_TIMESTAMP())"
 wd_ver_table <- bq_project_query(project, wd_ver)
 wd_ver_data <- bq_table_download(wd_ver_table, bigint = "integer64",n_max = Inf, page_size = 10000)
 
@@ -274,7 +259,6 @@ wd_ver_data <- bq_table_download(wd_ver_table, bigint = "integer64",n_max = Inf,
 wd <- wd_ver_data %>%  filter(d_747006172=='353358909' & d_821247024=='197316935')
 ver <- wd_ver_data %>%  filter(d_821247024=='197316935') #d_747006172!='353358909' & 
 finished_m1 <- irb %>% filter(d_949302066=='231311385')
-current_date <- Sys.Date()
 
 cat(paste("Data Extracted and Report Ran: ", currentDate))
 
@@ -294,9 +278,9 @@ cat("Of those,", nrow(finished_m1) , " submitted Module 1.")
  
 Participants who did not submit Module 1 are counted as race, ethnicity and sex = unknown.
 
-The question RACEETH was used for race and ethnicity.
+The question RACEETH was used for race and ethnicity. It is an optional question on Module 1; those who did not answer were classified as Unknown.
 
-The question on sex at birth was used for this report. It is a required question on Module 1.
+The question on SEX was used for this report. It is an optional question on Module 1; those who did not answer were classified as Unknown.
 
 The age listed is the age at consent, calculated by subtracting the DOB from the date the participant consented.
 

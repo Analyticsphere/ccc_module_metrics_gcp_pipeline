@@ -2470,3 +2470,148 @@ if (nrow(AB2) == 0) {
 }
 
 ```
+
+
+
+
+## 89. If RcrtCS_ConsentSumit_v1r0 does not exist then RcrtCS_Consented_v1r0 must = no or NA
+```{r Consent_Time, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+Cnsnt <- partsbq	%>% filter(is.na(d_454445267) & d_919254129=='353358909') 
+
+
+if (nrow(Cnsnt) == 0) {
+  cat("No errors\n")
+} else {
+
+  Cnsnt <- Cnsnt %>% select(Site, Connect_ID, token, d_454445267, d_919254129) %>%  safe_arrange(Site)
+
+  colnames(Cnsnt) <- c("Site", "Connect ID", 'token', 'RcrtCS_ConsentSumit_v1r0', "RcrtCS_Consented_v1r0")
+
+  knitr::kable(Cnsnt) %>%
+    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
+}
+
+```
+
+
+
+
+## 90. If RcrtUP_SubmitTime_v1r0 does not exist and HdWd_Destroydata_v1r0 = no, then RcrtUP_Submitted_v1r0 must = no or NA
+```{r UP_Sub_Time_NA, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+UP_Sub_Time <- partsbq	%>% filter(is.na(d_430551721) & d_831041022=='104430631' & d_699625233=='353358909') 
+
+
+if (nrow(UP_Sub_Time) == 0) {
+  cat("No errors\n")
+} else {
+
+  UP_Sub_Time <- UP_Sub_Time %>% select(Site, Connect_ID, token, d_430551721, d_699625233) %>%  safe_arrange(Site)
+
+  colnames(UP_Sub_Time) <- c("Site", "Connect ID", 'token', 'RcrtUP_SubmitTime_v1r0', "RcrtUP_Submitted_v1r0")
+
+  knitr::kable(UP_Sub_Time) %>%
+    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
+}
+
+```
+
+
+
+
+## 91. If RcrtUP_Submitted_v1r0=yes and HdWd_Destroydata_v1r0 = no, then RcrtCS_Consented_v1r0 must be yes.
+```{r UP_Sub_Time, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+UP_Sub_Time <- partsbq	%>% filter(d_699625233=='353358909' & d_831041022=='104430631' & (d_919254129=='104430631' | is.na(d_919254129)))
+
+
+if (nrow(UP_Sub_Time) == 0) {
+  cat("No errors\n")
+} else {
+
+  UP_Sub_Time <- UP_Sub_Time %>% select(Site, Connect_ID, token, d_699625233, d_919254129) %>%  safe_arrange(Site)
+
+  colnames(UP_Sub_Time) <- c("Site", "Connect ID", 'token', "RcrtUP_Submitted_v1r0", "RcrtCS_Consented_v1r0")
+
+  knitr::kable(UP_Sub_Time) %>%
+    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
+}
+
+```
+
+
+
+
+## 92. If RcrtSI_SignTime_v1r0 does not exist and HdWd_Destroydata_v1r0 = no, then RcrtSI_SignedIn_v1r0 must = no or NA
+```{r SignIn_Time_NA, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+SignIn_Time <- partsbq	%>% filter(is.na(d_335767902) & d_831041022=='104430631' & d_230663853=='353358909') 
+
+
+if (nrow(SignIn_Time) == 0) {
+  cat("No errors\n")
+} else {
+
+  SignIn_Time <- SignIn_Time %>% select(Site, Connect_ID, token, d_335767902, d_230663853) %>%  safe_arrange(Site)
+
+  colnames(SignIn_Time) <- c("Site", "Connect ID", 'token', 'RcrtSI_SignTime_v1r0', "RcrtSI_SignedIn_v1r0")
+
+  knitr::kable(SignIn_Time) %>%
+    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
+}
+
+```
+
+
+
+
+## 92. If RcrtV_VerificationTm_V1R0 does not exist and HdWd_Destroydata_v1r0 = no, then RcrtV_Verification_v1r0 must = not yet verified or NA
+```{r Verification_Time, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+Verification_Time <- partsbq	%>% filter(is.na(d_914594314) & d_831041022=='104430631' & d_821247024!='875007964') 
+
+
+if (nrow(Verification_Time) == 0) {
+  cat("No errors\n")
+} else {
+
+  Verification_Time <- Verification_Time %>% select(Site, Connect_ID, token, d_914594314, d_821247024) %>%  safe_arrange(Site)
+
+  colnames(Verification_Time) <- c("Site", "Connect ID", 'token', 'RcrtV_VerificationTm_V1R0', "RcrtV_Verification_v1r0")
+
+  knitr::kable(Verification_Time) %>%
+    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
+}
+
+```
+
+
+
+
+## 93. If RcrtV_Mannual_v1r0 = method not used or NA, then RcrtV_Outreach_v1r0 must be no  or NA
+```{r Man_OutRch, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+Man_OutRch <- partsbq	%>% filter((is.na(state_d_953614051) | state_d_953614051=='734437214') & state_d_188797763=='353358909') 
+
+
+if (nrow(Man_OutRch) == 0) {
+  cat("No errors\n")
+} else {
+
+  Man_OutRch <- Man_OutRch %>% select(Site, Connect_ID, token, state_d_953614051, state_d_188797763) %>%  safe_arrange(Site)
+
+  colnames(Man_OutRch) <- c("Site", "Connect ID", 'token', 'RcrtV_Mannual_v1r0', "RcrtV_Outreach_v1r0")
+
+  knitr::kable(Man_OutRch) %>%
+    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
+}
+
+```
+
