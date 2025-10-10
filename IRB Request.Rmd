@@ -164,7 +164,8 @@ knitr::opts_chunk$set(comment = NA)
 
 
 
-parts <- "SELECT Connect_ID, d_564964481, d_795827569, d_544150384, d_117249500, d_454445267,d_949302066 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` where Connect_ID IS NOT NULL and 
+parts <- "SELECT Connect_ID, d_564964481, d_795827569, d_544150384, d_117249500, d_454445267,d_949302066 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` 
+where Connect_ID IS NOT NULL and 
 d_821247024='197316935' and d_747006172!='353358909' and d_831041022!='353358909' and
 DATE(d_914594314) < DATE(CURRENT_TIMESTAMP())" 
 parts_table <- bq_project_query(project, parts)
@@ -250,7 +251,8 @@ irb = irb %>%  mutate(race= case_when(d_949302066==231311385 & multi_racial==1 ~
  
 ```{r Documenting, echo=FALSE, message=FALSE, warning=FALSE, collapse=TRUE}
 
-wd_ver <- "SELECT Connect_ID,d_821247024,d_747006172  FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` where Connect_ID IS NOT NULL
+wd_ver <- "SELECT Connect_ID,d_821247024,d_747006172  FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` 
+where Connect_ID IS NOT NULL
 and DATE(d_914594314) < DATE(CURRENT_TIMESTAMP())"
 wd_ver_table <- bq_project_query(project, wd_ver)
 wd_ver_data <- bq_table_download(wd_ver_table, bigint = "integer64",n_max = Inf, page_size = 10000)
@@ -338,10 +340,14 @@ knitr::kable(count_table, format.args = list(big.mark = ","),
 
 ```{r Table2, warning=FALSE, echo=FALSE, message=FALSE}
 
-irb$age_unit <- rep("Years", times=nrow(irb))
 
-table2csv <- irb %>%  group_by(Connect_ID) %>%  select(Connect_ID, race,race_hisp, sex_at_birth,age, age_unit) 
-table2csv <- table2csv[, c(2:ncol(table2csv))]
+table2csv <- irb %>%
+  group_by(race, race_hisp, sex_at_birth, age) %>%
+  arrange(race, race_hisp, sex_at_birth, age) %>% 
+  select(race, race_hisp, sex_at_birth, age) %>% 
+  mutate(age_unit = "Years")
+
+colnames(table2csv) <- c("Race", "Ethnicity", "Sex", "Age", "Age Unit")
 
 write.csv(table2csv,glue("Participant_Age_Data_Table_{currentDate}.csv"),row.names = F,na="")
 
