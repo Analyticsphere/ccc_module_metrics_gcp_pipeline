@@ -1349,18 +1349,22 @@ reinvite_date_type <- partsbq %>%  filter(!is.na(d_439351436) & is.na(d_28002166
 
 boxfolder = "194196493018"
 
-#### This ifelse statement is failing in GCP. Testing if it runs when removed from the live code
-# if (nrow(reinvite_date_type) < 50) {
-#   knitr::kable(reinvite_date_type, longtable = TRUE) %>%
-#     kable_styling(latex_options = "HOLD_position")
-# } else {
+if (nrow(reinvite_date_type) < 50) {
+  knitr::kable(reinvite_date_type, longtable = TRUE) %>%
+    kable_styling(latex_options = "HOLD_position")
+} else {
   cat(paste0(
     "There are ", nrow(reinvite_date_type), " rows. This has been made into a separate XLXS file called \n",
     "'Biospecimen_QC_Rule46_Errors", currentDate, "_boxfolder_", boxfolder, ".xlsx' \n"
   ))
   
+  ## These are failing in GC bc they're not UTF-8 characters, this converts the columns
+  reinvite_date_type[] <- lapply(reinvite_date_type, function(x) {
+  if (is.character(x)) iconv(x, to = "UTF-8", sub = "byte") else x
+})
+
   openxlsx::write.xlsx(reinvite_date_type,glue("Recruitment_Derived_QC_Rule46_Errors{currentDate}_boxfolder_{boxfolder}.xlsx"),row.names = F,na="")
-#}
+}
 
 ```
 
@@ -1675,13 +1679,13 @@ reinv_active <- partsbq %>%  filter(!is.na(d_439351436) & d_512820379!='48630614
 
 boxfolder = "194196493018"
 
-#### This ifelse statement is failing in GCP. Testing if it runs when removed from the live code
-# if (nrow(reinv_active) < 50) {
-#   reinv_active0 <- reinv_active %>% select(Connect_ID, token, d_439351436, d_512820379)
-#   
-#   knitr::kable(reinv_active0, longtable = TRUE) %>%
-#     kable_styling(latex_options = "HOLD_position")
-# } else {
+
+if (nrow(reinv_active) < 50) {
+  reinv_active0 <- reinv_active %>% select(Connect_ID, token, d_439351436, d_512820379)
+
+  knitr::kable(reinv_active0, longtable = TRUE) %>%
+    kable_styling(latex_options = "HOLD_position")
+} else {
   reinv_active1 <- reinv_active %>% 
     select(Site, Connect_ID, token, state_studyId, state_d_521025370,  d_512820379, state_d_793822265, d_821247024, d_919254129,
            d_280021666, d_439351436, state_d_934298480) 
@@ -1735,8 +1739,13 @@ boxfolder = "194196493018"
     "'Biospecimen_QC_Rule60_Errors", currentDate, "_boxfolder_", boxfolder, ".xlsx'\n"
   ))
   
+  ## These are failing in GC bc they're not UTF-8 characters, this converts the columns
+    reinvite_date_type[] <- lapply(reinvite_date_type, function(x) {
+  if (is.character(x)) iconv(x, to = "UTF-8", sub = "byte") else x
+})
+    
   openxlsx::write.xlsx(reinv_active1,glue("Recruitment_Derived_QC_Rule60_Errors{currentDate}_boxfolder_{boxfolder}.xlsx"),row.names = F,na="")
-#}
+}
 
 
 
