@@ -380,6 +380,7 @@ knitr::kable(sex_qc)  %>% kable_styling(latex_options = "HOLD_position")
 \FloatBarrier
 ### 9. All participants who complete Module1 after 2/14/2025 (for the English version) or 2/20 (for the spanish version) must respond to SEX2
 \FloatBarrier
+
 ```{r SEX2, echo=FALSE, warning=FALSE, message=FALSE}
 
 sex2_qc <- module1 %>% 

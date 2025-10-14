@@ -39,10 +39,6 @@ This Weekly Survey Module report contains metrics related to Connect survey comp
  # \captionsetup[figure]{labelformat=empty}
 
 
-#old.packages()
-#update.packages("tinytex")
-
-
 library(bigrquery)
 library(dplyr)
 library(gmodels)
@@ -63,6 +59,44 @@ library(rio)
 library(scales)
 library(gt)
 library(stringr) 
+library(logger) ## allows us to add messages in logs to find out when/where code breaks are happening
+
+
+######## Checking outdated R packages
+## Ensure CRAN mirror is set for both local and GCP environments
+knitr::opts_chunk$set(echo = FALSE)
+cran_mirror <- "https://cloud.r-project.org"
+options(repos = c(CRAN = cran_mirror))
+
+## Adding a note to the GCP logs
+outdated_packages <- tryCatch(
+  old.packages(repos = cran_mirror),
+  error = function(e) {
+    message("Warning: Unable to check for outdated packages. Error: ", e$message)
+    NULL
+  }
+)
+
+if (!is.null(outdated_packages)) {
+  log_info(paste0(
+    "The following R packages are outdated: ",
+    paste(rownames(outdated_packages), collapse = ", ")
+  ))
+} else {
+  log_info("No outdated packages found or CRAN unreachable.")
+}
+
+## Updating packages in GCP if necessary
+update.packages(ask = FALSE, checkBuilt = TRUE, repos = cran_mirror)
+
+## Update LaTeX packages
+tinytex::tlmgr_update()
+
+
+
+
+
+#update.packages("tinytex")
 
 
 bq_auth()
