@@ -336,19 +336,23 @@ knitr::kable(comp_by_site_totals ,
 all_srvy_comp_totals <- create_tbl_cross1(all_data,"process", "Recruit_Type", "column", "Sections Submitted", " ")
 
 
-overall_surveys <- knitr::kable(all_srvy_comp_totals ,
-                                col.names=c("Sections Submitted", "Active Verified","Passive Verified", "Total Verified"), 
-                                caption='Table 1.2. Initial Survey Submission Among Verified Participants \n Stratified by Active and Passive Recruits', 
-                                row.names=FALSE,align=c("l","c","c","c"), booktabs = TRUE) %>%  
+knitr::kable(all_srvy_comp_totals ,
+             col.names=c("Sections Submitted", "Active Verified","Passive Verified", "Total Verified"), 
+             caption='Table 1.2. Initial Survey Submission Among Verified Participants \n Stratified by Active and Passive Recruits', 
+             row.names=FALSE,align=c("l","c","c","c"), booktabs = TRUE) %>%  
   add_indent(seq(1, nrow(all_srvy_comp_totals) - 1))  %>%
-  kable_styling(latex_options = c("scale_down","hold_position"))
-
-add_footnote(overall_surveys, "Note: All sections were in MyConnect on July 5,2022. There were 766 verified participants beore that date.", notation = "none")
+  kable_styling(latex_options = c("scale_down","hold_position")) %>% 
+  footnote("All sections were in MyConnect on July 5, 2022. There were 766 verified participants before that date.", 
+           general_title = "Note: ", 
+           footnote_as_chunk = T)
 
 ```
 
 
 ```{r Table3, echo=FALSE, warning=FALSE, message=FALSE}
+
+## Each of these rows are essentially their own table
+## Keep row percentage but make into one table
 
 ## Baseline Survey Status Counts
 calculate_counts <- function(df, column_name, row_label) {
@@ -356,10 +360,10 @@ calculate_counts <- function(df, column_name, row_label) {
   value_counts <- sapply(c(972455046, 615768760, 231311385), function(value) {
     count <- sum(df[[column_name]] == value)
     formatted_count <- formatC(count, format = "f", big.mark = ",", digits = 0)
-    percentage <- round(100 * count / total_rows, 1)
+    percentage <- round(100 * count / total_rows, 2)
     paste0(formatted_count, " (", percentage, "%)")
   })
-  total_label <- paste(formatC(total_rows, format = "f", big.mark = ",", digits = 0), "(100%)")
+  total_label <- paste(formatC(total_rows, format = "f", big.mark = ",", digits = 0), "(100.00%)")
   c(row_label, value_counts, total_label)
 }
 
@@ -381,6 +385,8 @@ knitr::kable(section_comp,
              col.names=c("Section", "Not Started", "Started", "Submitted", "Total Verified Participants"), 
              row.names=FALSE, align=c("l","c","c","c","c"), booktabs = TRUE) %>% 
   kable_styling(latex_options = c("scale_down","hold_position"))
+
+
 
 
 ```
@@ -673,7 +679,7 @@ Numb5_table[dim(Numb5_table)[[1]]+1 , ] <- list("Total", paste(sum(Numb5$n), " (
 
 knitr::kable(Numb5_table, 
              caption='Table 1.8. Inital Survey Submission Status among Active Recruits who Could Not be Verified', 
-             col.names=c("Sections Submitted", "Active recruits"), 
+             col.names=c("Sections Submitted", "Active Recruits"), 
              row.names=FALSE, align=c("l","c"),digits=1, booktabs = TRUE) %>%  
   add_indent(c(1:2)) %>% 
   kable_styling(latex_options = "scale_down")
@@ -738,13 +744,14 @@ The SSN Baseline Survey was available at time of baseline study launch on 07/21/
 ```{r SSN, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
 
-ssn_surv_table <- create_tbl_cross2(all_data, "ssn_started", "provided4", "row", "Submission Status", "Portion of SSN Given", "Total Verified Participants")
+ssn_surv_table <- create_tbl_cross2(all_data, "ssn_started", "provided4", "row", "Submission Status", 
+                                    "Proportion of SSN Given", "Total Verified Participants")
 
 knitr::kable(ssn_surv_table, 
-             caption='Table 2.1 Portion of SSN Given by Submission Status of SSN Survey Among Verified Participants',
+             caption='Table 2.1 Proportion of SSN Given by Submission Status of SSN Survey Among Verified Participants',
              row.names=FALSE, align=c("l","c","c","c","c"), booktabs = TRUE) %>%
     kable_styling(latex_options = "scale_down") %>%  
-    add_indent(seq(1, nrow(ssn_surv_table) - 1)) #%>%  landscape()
+    add_indent(seq(1, nrow(ssn_surv_table) - 1))
 
 ```
 
@@ -772,12 +779,15 @@ covid_table <- create_tbl_cross1(covid,"Site", "COVID_status", "column", "Site",
 covid_df <- as.data.frame(covid_table)
 colnames(covid_df)[5] <- "Total Eligible for \n COVID-19 Survey"
 
-covid_table1 <- knitr::kable(covid_df, 
+knitr::kable(covid_df, 
              caption='Table 3.1 Baseline COVID Response Rate',
-             row.names=FALSE, align=c("l","c","c","c","c","c"), booktabs = TRUE) %>%
-    kable_styling(latex_options = "scale_down")
-
-add_footnote(covid_table1, "Note: This table includes all participants who are eligible for the stand alone COVID-19 Survey. Eligibility is defined as having donated a biospecimen collection on or after July 5th, 2023.", notation = "none")
+             row.names=FALSE, align=c("l","c","c","c","c","c"), booktabs = TRUE, escape = FALSE) %>%
+    kable_styling(latex_options = "scale_down", full_width = FALSE) %>% 
+  footnote( "Note: This table includes all participants who are eligible for the stand alone COVID-19 Survey. Eligibility is defined as having donated a biospecimen collection on or after July 5th, 2023.", 
+            general_title = "",
+            footnote_as_chunk = TRUE, 
+            escape = FALSE, 
+            threeparttable = TRUE)
 
 
 
@@ -818,12 +828,16 @@ Covid_time <- Covid_time %>%
            'Cumulative Percentage' = Cumulative_Percentage)
 
 
-covid_table2 <- knitr::kable(Covid_time, 
+knitr::kable(Covid_time, 
              caption='Table 3.2 Baseline COVID Survey Completion Length (in minutes) among Submitted COVID-19 Surveys',
-             row.names=FALSE, align=c("l","c","c"), booktabs = TRUE) %>%
+             row.names=FALSE, align=c("l","c","c"), booktabs = TRUE, escape = FALSE) %>%
   add_indent(c(1:(nrow(Covid_time)-1))) %>% 
-    kable_styling(latex_options = "scale_down") 
-add_footnote(covid_table2, "Note: To determine the length of COVID-19 Survey questions, only those who completed the stand alone COVID-19 Survey were included in this table. Those that completed the COVID-19 survey questions within the baseline biospecimen survey were not included.", notation = "none")
+    kable_styling(latex_options = "scale_down", full_width = FALSE)  %>% 
+  footnote("To determine the length of COVID-19 Survey questions, only those who completed the stand alone COVID-19 Survey were included in this table. Those that completed the COVID-19 survey questions within the baseline biospecimen survey were not included.",
+           general_title = "",
+           footnote_as_chunk = TRUE, 
+           escape = FALSE, 
+           threeparttable = TRUE)
 
 ```
 
@@ -1546,7 +1560,7 @@ colnames(after_QOL) <- c("Survey", "n", "eligible")
 after_QOL_table <- after_QOL %>%
   mutate(Percentage = (n / eligible) * 100,
          N_percent = paste0(formatC(n, big.mark = ",", format = "d"), 
-                            " (", round(Percentage, digits = 1), "%)")) %>% 
+                            " (", round(Percentage, digits = 2), "%)")) %>% 
   dplyr::rename('Eligible for Survey' = eligible,
          'N%' = N_percent) %>% 
     select('Survey', 'N%', 'Eligible for Survey')
@@ -1639,7 +1653,7 @@ summary_row <- data.frame(timeframe = "Total Submitted DHQ Surveys",
 
 dhq_time <- rbind(dhq_time, summary_row) %>%
     mutate(N_percent = paste0(formatC(n, big.mark = ",", format = "d"), 
-                              " (", round(Percentage, digits = 1), "%)"),
+                              " (", round(Percentage, digits = 2), "%)"),
            Cumulative_Percentage = round(cumsum(Percentage), digits=2))
 dhq_time$Cumulative_Percentage[nrow(dhq_time)] <- 100
 
@@ -2236,7 +2250,7 @@ colnames(after_CSH) <- c("Survey", "n", "eligible")
 after_CSH_table <- after_CSH %>%
   mutate(Percentage = (n / eligible) * 100,
          N_percent = paste0(formatC(n, big.mark = ",", format = "d"), 
-                            " (", round(Percentage, digits = 1), "%)")) %>% 
+                            " (", round(Percentage, digits = 2), "%)")) %>% 
   dplyr::rename('Eligible for Survey' = eligible,
          'N%' = N_percent) %>% 
     select('Survey', 'N%', 'Eligible for Survey')
@@ -2523,13 +2537,13 @@ summary_row <- data.frame(start_stop_time = "Total CES Eligible Participants",
 
 CES_TM <- rbind(CES_time, summary_row)
 
-CES_TM[1, 4] <- paste0(formatC(CES_TM[1, 2], big.mark = ",", format = "d"), " (", round(CES_TM[1, 3], digits = 1), "%)")
-CES_TM[2, 4] <- paste0(formatC(CES_TM[2, 2], big.mark = ",", format = "d"), " (", round(CES_TM[2, 3], digits = 1), "%)")
-CES_TM[3, 4] <- paste0(formatC(CES_TM[3, 2], big.mark = ",", format = "d"), " (", round(CES_TM[3, 3], digits = 1), "%)")
-CES_TM[4, 4] <- paste0(formatC(CES_TM[4, 2], big.mark = ",", format = "d"), " (", round(CES_TM[4, 3], digits = 1), "%)")
-CES_TM[5, 4] <- paste0(formatC(CES_TM[5, 2], big.mark = ",", format = "d"), " (", round(CES_TM[5, 3], digits = 1), "%)")
-CES_TM[6, 4] <- paste0(formatC(CES_TM[6, 2], big.mark = ",", format = "d"), " (", round(CES_TM[6, 3], digits = 1), "%)")
-CES_TM[7, 4] <- paste0(formatC(CES_TM[7, 2], big.mark = ",", format = "d"), " (", round(CES_TM[7, 3], digits = 1), "%)")
+CES_TM[1, 4] <- paste0(formatC(CES_TM[1, 2], big.mark = ",", format = "d"), " (", round(CES_TM[1, 3], digits = 2), "%)")
+CES_TM[2, 4] <- paste0(formatC(CES_TM[2, 2], big.mark = ",", format = "d"), " (", round(CES_TM[2, 3], digits = 2), "%)")
+CES_TM[3, 4] <- paste0(formatC(CES_TM[3, 2], big.mark = ",", format = "d"), " (", round(CES_TM[3, 3], digits = 2), "%)")
+CES_TM[4, 4] <- paste0(formatC(CES_TM[4, 2], big.mark = ",", format = "d"), " (", round(CES_TM[4, 3], digits = 2), "%)")
+CES_TM[5, 4] <- paste0(formatC(CES_TM[5, 2], big.mark = ",", format = "d"), " (", round(CES_TM[5, 3], digits = 2), "%)")
+CES_TM[6, 4] <- paste0(formatC(CES_TM[6, 2], big.mark = ",", format = "d"), " (", round(CES_TM[6, 3], digits = 2), "%)")
+CES_TM[7, 4] <- paste0(formatC(CES_TM[7, 2], big.mark = ",", format = "d"), " (", round(CES_TM[7, 3], digits = 2), "%)")
 
 
 CES_TM_table <- CES_TM[, c(1,4)]
@@ -2656,7 +2670,7 @@ colnames(after_CES) <- c("Survey", "n", "eligible")
 after_CES_table <- after_CES %>%
   mutate(Percentage = (n / eligible) * 100,
          N_percent = paste0(formatC(n, big.mark = ",", format = "d"), 
-                            " (", round(Percentage, digits = 1), "%)")) %>% 
+                            " (", round(Percentage, digits = 2), "%)")) %>% 
   dplyr::rename('Eligible for Survey' = eligible,
          'N%' = N_percent) %>% 
     select('Survey', 'N%', 'Eligible for Survey')
@@ -2691,7 +2705,7 @@ pref_lang_site <- all_data %>%
   tbl_cross(
     col = Pref_lang,
     row = Site,
-    digits=c(0,1),
+    digits=c(0,2),
     percent = "column",
     label=list(Pref_lang="Preferred Language",
                 Site = "Site"),
@@ -2731,14 +2745,14 @@ queries <- list(
                 on m1.Connect_ID=pts.Connect_ID
                 WHERE pts.Connect_ID IS NOT NULL and d_949302066='231311385' and
                 (pts.d_512820379='486306141' OR pts.d_512820379='854703046') and pts.d_821247024 = '197316935'",
-  #module1 v1 doesn't need to be merged in- language wasn't an option then so everyone is English by default. The case when below allows null survey language vaiables to be set to English already
+  #module1 v1 doesn't need to be merged in- language wasn't an option then so everyone is English by default. The case when below allows null survey language variables to be set to English already
   m2_lang_c = "SELECT pts.Connect_ID, m2.d_784119588 as language, d_255077064 
                 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
                 left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.module2_v2` m2
                 on m2.Connect_ID=pts.Connect_ID
                 WHERE pts.Connect_ID IS NOT NULL and d_536735468='231311385' and 
                 (pts.d_512820379='486306141' OR pts.d_512820379='854703046') and pts.d_821247024 = '197316935'",
-  #module2 v1 doesn't need to be merged in- language wasn't an option then so everyone is English by default. The case when below allows null survey language vaiables to be set to English already
+  #module2 v1 doesn't need to be merged in- language wasn't an option then so everyone is English by default. The case when below allows null survey language variables to be set to English already
   m3_lang_c = "SELECT pts.Connect_ID, m3.d_784119588 as language, d_255077064 
                 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
                 left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.module3_v1` m3
@@ -2810,7 +2824,7 @@ queries <- list(
 results_list <- list()
 
 
-## Download all the language prefrences, both in consent and per survey, to compare
+## Download all the language preferences, both in consent and per survey, to compare
 
 for (name in names(queries)) {
   query <- queries[[name]]
@@ -2842,7 +2856,7 @@ DHQ_lang <- results_list$DHQ_lang_c
 \FloatBarrier
 ```{r Svy_Lang_Diff, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
-#must match the order for survey_acronyms n he chunk below
+#must match the order for survey_acronyms in the chunk below
 survey_dfs <- list(m1_lang, m2_lang, m3_lang, m4_lang, BUM_lang, BU_lang, CV_lang, Mens_lang, MW_lang, QOL_lang, DHQ_lang, CSH_lang, CES_lang) 
 
 # Initialize an empty data frame to store results for all participants
@@ -2886,9 +2900,10 @@ scenario_counts <- final_scenarios %>%
 consist <- knitr::kable(scenario_counts,
                         caption = "Table 8.2. Consistency of Language Choice in Survey Completion",
                         row.names = FALSE, align = c("l", "c"), digits = 2, booktabs = TRUE) %>%
-  kable_styling(latex_options = "scale_down") # c("scale_down","hold_position")) 
-
-add_footnote(consist, "Note: Those who do not start any surveys will not have survey flags, and thus not be counted in this table. Those that start but do not complete a survey will still choose a survey language.", notation = "none")
+  kable_styling(latex_options = "scale_down") %>% 
+  footnote(general="Those who do not start any surveys will not have survey flags, and thus not be counted in this table. Those that start but do not complete a survey will still choose a survey language.", 
+           general_title = "Note: ", 
+           footnote_as_chunk = T)
 
 
 
@@ -2915,7 +2930,7 @@ create_table <- function(current_df, current_acronym) {
     tbl_cross(
       col =Flag,
       row = Survey,
-      digits = c(0, 1),
+      digits = c(0, 2),
       percent = "row",
       label = list(Flag = "Survey Flag",
                    Site = "Survey"),
