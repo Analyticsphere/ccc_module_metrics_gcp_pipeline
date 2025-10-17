@@ -45,9 +45,7 @@ RUN R -e 'tinytex::install_tinytex()'
 #RUN Rscript -e 'tinytex::install_tinytex(repository = "illinois")'
 
 # Preinstall the LaTeX packages used by Rmarkdown and other PDF libraries
-RUN R -e 'install.packages(c("multirow", "ulem", "environ", "colortbl", 
-"wrapfig", "pdflscape", "tabu", "threeparttable", "threeparttablex", "makecell", 
-"caption", "anyfontsize", "rmarkdown", "tidyverse"))'
+RUN R -e 'install.packages(c("multirow", "ulem", "environ", "colortbl", "pdflscape", "tabu", "threeparttable", "threeparttablex", "makecell", "caption", "anyfontsize", "rmarkdown", "tidyverse"))'
 #RUN Rscript -e 'tinytex::tlmgr_install(c("multirow", "ulem", "environ", "colortbl", "wrapfig", "pdflscape", "tabu", "threeparttable", "threeparttablex", "makecell", "caption", "anyfontsize"))'
 # Alternatively, using tlmgr directly:
 # RUN tlmgr install --repository=https://mirror.ctan.org/systems/texlive/tlnet multirow
