@@ -102,9 +102,6 @@ library(logger) ## allows us to add messages in logs to find out when/where code
 tinytex::tlmgr_update()
 
 
-
-
-
 #update.packages("tinytex")
 
 
@@ -112,7 +109,9 @@ bq_auth()
 
 ```
 
-
+```{r GCP_Test, include=FALSE}
+options(tinytex.verbose = TRUE)
+```
 
 ```{r BQPull, include=FALSE}
 knitr::opts_chunk$set(dev = "png",  comment = NA)
