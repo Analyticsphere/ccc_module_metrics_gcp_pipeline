@@ -47,7 +47,7 @@ library(lubridate)
 library(tidyverse)
 library(knitr)
 #install_tinytex()
-library(tinytex)
+#library(tinytex)
 #library(vtable)
 library(kableExtra)
 library(gtsummary)
@@ -99,7 +99,7 @@ library(logger) ## allows us to add messages in logs to find out when/where code
 # }
 
 ## Update LaTeX packages
-tinytex::tlmgr_update()
+#tinytex::tlmgr_update()
 
 
 #update.packages("tinytex")
@@ -110,7 +110,7 @@ bq_auth()
 ```
 
 ```{r GCP_Test, include=FALSE}
-options(tinytex.verbose = TRUE)
+#options(tinytex.verbose = TRUE)
 ```
 
 ```{r BQPull, include=FALSE}
