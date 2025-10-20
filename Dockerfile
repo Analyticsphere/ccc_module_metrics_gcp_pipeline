@@ -2,13 +2,6 @@
 
 FROM rocker/tidyverse:4.3
 
-
-
-######## Testing ##########
-# Start with a base R image
-FROM rocker/r-ver:4.4.0
-##########################
-
 # Set the correct path for xelatex
 ENV PATH="$PATH:/root/bin:/usr/local/lib"
 # Message daniel on gitter when this doesn't work
@@ -36,21 +29,15 @@ RUN apt-get update \
 #RUN install.r --error maps mapdata zipcodeR viridis ggthemes usmap #Rcpp
 #RUN R -e "install.packages(c('sf'), dependencies=TRUE, repos='http://cran.rstudio.com/')"
 
-
-###########.  Testing this change ###############################              
+              
 # Install tinytex
-RUN R -e 'install.packages("tinytex")'
-RUN R -e 'tinytex::install_tinytex()'
-#RUN Rscript -e 'tinytex::install_tinytex()'
+RUN Rscript -e 'tinytex::install_tinytex()'
 #RUN Rscript -e 'tinytex::install_tinytex(repository = "illinois")'
 
 # Preinstall the LaTeX packages used by Rmarkdown and other PDF libraries
-RUN R -e 'install.packages(c("multirow", "ulem", "environ", "colortbl", "pdflscape", "tabu", "threeparttable", "threeparttablex", "makecell", "caption", "anyfontsize", "rmarkdown", "tidyverse"))'
-#RUN Rscript -e 'tinytex::tlmgr_install(c("multirow", "ulem", "environ", "colortbl", "wrapfig", "pdflscape", "tabu", "threeparttable", "threeparttablex", "makecell", "caption", "anyfontsize"))'
+RUN Rscript -e 'tinytex::tlmgr_install(c("multirow", "ulem", "environ", "colortbl", "wrapfig", "pdflscape", "tabu", "threeparttable", "threeparttablex", "makecell", "caption", "anyfontsize"))'
 # Alternatively, using tlmgr directly:
 # RUN tlmgr install --repository=https://mirror.ctan.org/systems/texlive/tlnet multirow
-
-####################################################################
 
 # Install R libraries
 RUN install2.r --error plumber bigrquery dplyr googleCloudStorageR gargle \
@@ -97,21 +84,3 @@ COPY ["./Monthly Derived Survey Variables.Rmd", "Monthly Derived Survey Variable
 
 # Run R code
 ENTRYPOINT ["R", "-e","pr <- plumber::plumb('ccc_module_metrics_api.R'); pr$run(host='0.0.0.0', port=as.numeric(Sys.getenv('PORT')))"]
-
-
-
-
-############### Testing ################
- 
-# Set up the environment for your R script
-WORKDIR /app
- 
-# Copy your R script and R Markdown files
-COPY . /app
- 
-# The command to execute your R script
-# Assuming your script is `render_report.R` and it knits `report.Rmd`
-CMD ["Rscript", "render_report.R"]
-
-
-##############################
