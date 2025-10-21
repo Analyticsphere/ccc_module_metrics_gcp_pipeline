@@ -130,6 +130,7 @@ cross_table_df <- as.data.frame(cross__table)[-1, ]
  
 ```{r Occ_by_Site, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
+#### All Occurrences
 all_counts <- rca %>% 
   filter(!is.na(Site) & d_525972260==353358909) %>% 
   group_by(Site) %>%  tally()
@@ -141,13 +142,30 @@ all_counts_pts <- all_counts %>%
 all_counts_pts[(nrow(all_counts_pts)+1),] <- list("Total", paste0(sum(all_counts$n), " (100%)"))
 
 
-total_rows <- nrow(all_counts_pts)
-knitr::kable(all_counts_pts , 
+
+#### Post Verif Occurrences
+post_verif_counts <- rca %>% 
+  filter(!is.na(Site) & d_525972260==353358909 & 
+           as.Date(d_345545422) > as.Date(d_914594314)) %>% 
+  group_by(Site) %>%  tally()
+
+post_verif_counts_pts <- post_verif_counts %>% 
+  mutate(counts = paste0(post_verif_counts$n, " (", round(post_verif_counts$n/(sum(post_verif_counts$n))*100, digits=1), "%)")) %>% 
+  select(Site, counts)
+
+post_verif_counts_pts[(nrow(post_verif_counts_pts)+1),] <- list("Total", paste0(sum(post_verif_counts$n), " (100%)"))
+
+
+#### Combine
+all_counts_pts_split <- merge(all_counts_pts, post_verif_counts_pts, by="Site", sort = FALSE)
+
+
+knitr::kable(all_counts_pts_split, 
              caption='Table 1. Number of Cancer Occurrences by Healthcare System', 
-             row.names=FALSE,align=c("l","c"),
-             col.names=c("Site", "N (%)"),
+             row.names=FALSE,align=c("l","c","c"),
+             col.names=c("Site", "All Occurrences", "Post-Verif Occurrences"),
              booktabs = TRUE) %>%  
-  add_indent(seq(1, total_rows - 1))  %>% 
+  add_indent(seq(1, (nrow(all_counts_pts_split) - 1)))  %>% 
   kable_styling(latex_options = c("scale_down","hold_position")) 
 
 ```
