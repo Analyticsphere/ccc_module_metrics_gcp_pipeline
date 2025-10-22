@@ -890,7 +890,7 @@ knitr::kable(Covid_time,
 \FloatBarrier
 # 3-Month Quality of Life Survey
 The 3-Month Quality of Life Follow Up Survey is the PROMIS-29 survey. It is available to all verified participants that are not withdrawn at 3-months post-verification. The survey was released to prospective participants (verified on or after 12/01/2023) on 03/01/2024. On 08/29/2024 the survey was released to the backlog participants (verified before 12/01/2023).
-```{r Table11s, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+```{r Table11s, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
 
 
 
@@ -3152,3 +3152,531 @@ knitr::kable(BL_lang_SP, format.args = list(big.mark = ","), digits=2,
      kable_styling(latex_options = c("scale_down","hold_position"))
 
 ```
+
+
+\newpage
+# 2025 ROI Preference Survey
+The 2025 ROI Preference Survey is available to participants from October 29, 2025 to December 10, 2025. All participants who were verified on or before August 1, 2025, who are not withdrawn or deceased, and did not refuse all future activities or all future surveys were eligible.
+```{r roipref, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+
+
+##### Placeholder to create roicomplt variable in the all_data df
+### changed CIDs for survey status, what about date re: not eligible? Check requirements page re: eligibility
+
+roicomplt = ifelse(d_278023676 == 231311385 ,"Submitted",
+            ifelse(d_278023676 == 615768760, "Started",
+            ifelse(as.numeric(difftime(Sys.Date(), as.POSIXct(ymd_hms(d_914594314)), units="days")) < 90, "Not Eligible",
+            ifelse(d_278023676 == 972455046, "Not Started", "Error"))))
+
+
+
+####### Completion of 2025 ROI Pref Among Eligible Participants (like table 4.1)
+ROI_comp_elg <- all_data %>% filter(roicomplt!="Not Eligible") %>% 
+  mutate(roicomplt = factor(roicomplt, levels=c("Not Started", "Started", "Submitted"))) %>% 
+  select(Site, roicomplt) %>% dplyr::arrange(Site,roicomplt) %>% 
+  tbl_cross(
+  row = Site,
+  col = roicomplt,
+  label = list(qolcomplt ~ "Survey Completion",Site~"Site"),
+  percent = "row",
+  digits=c(0,2),
+  margin_text="Total ROI Pref Among Eligible Participants") 
+
+ROI_comp_elg[["table_body"]]$stat_0 <- sapply(strsplit(ROI_comp_elg[["table_body"]]$stat_0," "),"[",1)
+
+ROI_comp_elg <- ROI_comp_elg %>%
+  modify_header(stat_0 = "Total ROI Eligible \n Participants") %>%
+  modify_caption("Table 9.1. Completion of 2025 ROI Pref Among Eligible Participants") %>%
+  as_kable_extra(escape = FALSE, addtl_fmt = TRUE)
+
+ 
+ROI_comp_elg %>% kable_styling(latex_options = c("scale_down","hold_position"))
+
+
+add_footnote(ROI_comp_elg, "Note: There may be up to a 24-hour delay between a participant completing the survey and retrieving their submitted status and completion timestamp.", 
+             notation = "none")
+
+
+```
+
+
+```{r roibaseline, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+#####  Completion of 2025 ROI pref by Baseline Data Completeness, similar to table 4.2
+
+ROI_comp_BL_all <- all_data %>%  filter(roicomplt!="Not Eligible") 
+
+ROI_comp_BL <- create_tbl_cross2(ROI_comp_BL_all, "completion", "roicomplt", "row", "Completion", "ROI Completion", "Total ROI Eligible Participants")
+colnames(ROI_comp_BL)[5] <- "Total ROI Eligible \n Participants"
+
+
+knitr::kable(ROI_comp_BL, 
+             caption='Table 9.2. Completion of 2025 ROI Pref by Baseline Data Completeness',
+             row.names=FALSE, align=c("l","c","c","c","c"), booktabs = TRUE) %>%
+    kable_styling(latex_options = "scale_down") %>%  
+    add_indent(seq(1, nrow(QOL_comp_BL) - 1)) %>%  landscape()
+```
+
+
+```{r ROI_BySex_ByAge, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+
+
+ROI_Comp_by_Sex <- all_data %>% filter(roicomplt!="Not Eligible") %>% 
+  mutate(roicomplt = factor(roicomplt, levels=c("Not Started", "Started", "Submitted"))) %>% 
+  select(sex, roicomplt) %>% dplyr::arrange(sex,roicomplt) %>% 
+  tbl_cross(
+  row = sex,
+  col = roicomplt,
+  label = list(roicomplt ~ "Survey Completion",sex~"Sex"),
+  percent = "row",
+  digits=c(0,2),
+  margin_text="Total ROI Eligible Participants") 
+
+
+ROI_Comp_by_Sex_table <- ROI_Comp_by_Sex %>%
+  modify_header(stat_0 = "Total ROI Pref Eligible \n Participants") %>%
+  modify_caption("Table 9.3. 2025 ROI Pref Completion Rate by Site Defined Sex  \n  Among Eligible Participants") %>%
+  as_kable_extra(escape = FALSE, addtl_fmt = TRUE) %>% kable_styling(latex_options = c("scale_down","hold_position"))  
+
+
+# leave this?
+add_footnote(ROI_Comp_by_Sex_table, "Note: Sex defined as the de-identified sex data reported by sites at time of invitation.", 
+             notation = "none")
+
+
+
+
+
+ROI_Comp_by_Age <- all_data %>% filter(roicomplt!="Not Eligible") %>% 
+  mutate(roicomplt = factor(roicomplt, levels=c("Not Started", "Started", "Submitted"))) %>% 
+  select(age, roicomplt) %>% dplyr::arrange(age,roicomplt) %>% 
+  tbl_cross(
+  row = age,
+  col = roicomplt,
+  label = list(roicomplt ~ "Survey Completion",age~"Age"),
+  percent = "row",
+  digits=c(0,2),
+  margin_text="Total ROI Pref Eligible Participants") 
+
+
+ROI_Comp_by_Age <- ROI_Comp_by_Age %>%
+  modify_header(stat_0 = "Total ROI Pref Eligible \n Participants") %>%
+  modify_caption("Table 9.4. 2025 ROI Pref Completion Rate by Age \n Among Eligible Participants") %>%
+  as_kable_extra(escape = FALSE, addtl_fmt = TRUE)  %>% kable_styling(latex_options = c("scale_down","hold_position")) 
+
+
+# leave this?
+add_footnote(ROI_Comp_by_Age, "Note: Age defined as the de-identified age data reported by sites at time of invitation, not current age at time of survey completion.", 
+             notation="none")
+
+
+```
+
+
+
+```{r ROI_By_Race, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+
+
+ROI_Comp_by_race <- m1_comp %>% filter(roicomplt!="Not Eligible") %>% 
+  mutate(roicomplt = factor(roicomplt, levels=c("Not Started", "Started", "Submitted"))) %>% 
+  select(race, roicomplt) %>% dplyr::arrange(race,roicomplt) %>% 
+  tbl_cross(
+  row = race,
+  col = roicomplt,
+  label = list(roicomplt ~ "Survey Completion",race~"Race"),
+  percent = "row",
+  digits=c(0,2),
+  margin_text="Total ROI Pref Eligible Participants") 
+
+
+ROI_Comp_by_race <- ROI_Comp_by_race %>%
+  modify_header(stat_0 = "Total ROI Pref Eligible \n Participants") %>%
+  modify_caption("Table 9.5. 2025 ROI Pref Completion Rate by Race \n Among Eligible Participants") %>%
+  as_kable_extra(escape = FALSE, addtl_fmt = TRUE) %>% kable_styling(latex_options = c("scale_down","hold_position"))
+
+# will we need this for anything? keep this 
+
+roireduced <- all_data %>% filter(d_949302066 != 231311385 & roicomplt!="Not Eligible") # Those who are eligible for PROMIS but didn't complete mod1 yet
+
+
+# leave this or something like it? 
+
+add_footnote(ROI_Comp_by_race, paste0('Note: In order to determine race, Module 1 must first be completed. There are ', dim(roireduced)[[1]] , ' QOL eligible participants that have either not started or not finished Module 1.'),
+             notation="none")
+
+
+```
+
+
+```{r ROI_By_SiteRace, echo=FALSE, error=FALSE, message=FALSE, warning=FALSE}
+
+ROI_by_race <- all_data %>% filter(roicomplt!="Not Eligible") 
+
+ROI_by_race_df <- create_tbl_cross2(ROI_by_race, "race", "roicomplt", "row", "Race", "ROI Pref \n Survey Completion", "Total Verified Participants")
+
+
+# language -- verified (this example ) vs. eligible (github request)
+knitr::kable(ROI_by_race_df, 
+             caption="Table 9.5.a 2025 ROI Pref Completion Rate by Site Defined Race \n Among Verified Participants",
+             row.names=FALSE, align=c("l","c","c","c","c","c"), booktabs = TRUE) %>%
+    kable_styling(latex_options = "scale_down") %>%  
+    add_indent(seq(1, nrow(BL_by_Race_df) - 1)) %>%  landscape() %>%
+    footnote(general = "Note: Race defined as the de-identified race data reported by sites at time of invitation.",
+             general_title = "")
+
+```
+
+
+```{r QOL_By_Race_And_Sex, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+
+m1_comp = m1_comp %>%  mutate(sex_race= case_when(sex=="Female" & multi_racial==1 ~ "Female: Multi-Racial",
+                                            sex=="Female" & D_384191091_D_384191091_D_583826374==1 ~ "Female: American Indian or Native American",
+                                            sex=="Female" & D_384191091_D_384191091_D_636411467==1 ~ "Female: Asian/Asian American",
+                                            sex=="Female" & D_384191091_D_384191091_D_458435048==1 ~ "Female: Black, African American, or African",
+                                            sex=="Female" & D_384191091_D_384191091_D_706998638==1 ~ "Female: Hispanic, Latino, or Spanish",
+                                            sex=="Female" & D_384191091_D_384191091_D_973565052==1 ~ "Female: Middle Eastern or North African",
+                                            sex=="Female" & D_384191091_D_384191091_D_586825330==1 ~ "Female: Hawaiian or Pacific Islander",
+                                            sex=="Female" & D_384191091_D_384191091_D_412790539==1 ~ "Female: White",
+                                            sex=="Female" & (D_384191091_D_384191091_D_807835037==1 | !is.na(D_384191091_D_747350323)) ~ "Female: Other",
+                                            sex=="Female" & D_384191091_D_384191091_D_746038746==1 ~ "Female: Prefer Not to Answer",
+                                            
+                                            sex=="Male" & multi_racial==1 ~ "Male: Multi-Racial",
+                                            sex=="Male" & D_384191091_D_384191091_D_583826374==1 ~ "Male: American Indian or Native American",
+                                            sex=="Male" & D_384191091_D_384191091_D_636411467==1 ~ "Male: Asian/Asian American",
+                                            sex=="Male" & D_384191091_D_384191091_D_458435048==1 ~ "Male: Black, African American, or African",
+                                            sex=="Male" & D_384191091_D_384191091_D_706998638==1 ~ "Male: Hispanic, Latino, or Spanish",
+                                            sex=="Male" & D_384191091_D_384191091_D_973565052==1 ~ "Male: Middle Eastern or North African",
+                                            sex=="Male" & D_384191091_D_384191091_D_586825330==1 ~ "Male: Hawaiian or Pacific Islander",
+                                            sex=="Male" & D_384191091_D_384191091_D_412790539==1 ~ "Male: White",
+                                            sex=="Male" & (D_384191091_D_384191091_D_807835037==1 | !is.na(D_384191091_D_747350323)) ~ "Male: Other",
+                                            sex=="Male" & D_384191091_D_384191091_D_746038746==1 ~ "Male: Prefer Not to Answer",
+                                            
+                                            sex=="Unknown" & multi_racial==1 ~ "Unknown: Multi-Racial",
+                                            sex=="Unknown" & D_384191091_D_384191091_D_583826374==1 ~ "Unknown: American Indian or Native American",
+                                            sex=="Unknown" & D_384191091_D_384191091_D_636411467==1 ~ "Unknown: Asian/Asian American",
+                                            sex=="Unknown" & D_384191091_D_384191091_D_458435048==1 ~ "Unknown: Black, African American, or African",
+                                            sex=="Unknown" & D_384191091_D_384191091_D_706998638==1 ~ "Unknown: Hispanic, Latino, or Spanish",
+                                            sex=="Unknown" & D_384191091_D_384191091_D_973565052==1 ~ "Unknown: Middle Eastern or North African",
+                                            sex=="Unknown" & D_384191091_D_384191091_D_586825330==1 ~ "Unknown: Hawaiian or Pacific Islander",
+                                            sex=="Unknown" & D_384191091_D_384191091_D_412790539==1 ~ "Unknown: White",
+                                            sex=="Unknown" & (D_384191091_D_384191091_D_807835037==1 | !is.na(D_384191091_D_747350323)) ~ "Unknown: Other",
+                                            sex=="Unknown" & D_384191091_D_384191091_D_746038746==1 ~ "Unknown: Prefer Not to Answer",
+                                                     TRUE  ~ "Skipped this question"))
+
+Comp_by_sex_race <- m1_comp %>% filter(qolcomplt!="Not Eligible") %>% 
+  mutate(qolcomplt = factor(qolcomplt, levels=c("Not Started", "Started", "Submitted"))) %>% 
+  select(sex_race, qolcomplt) %>% dplyr::arrange(sex_race,qolcomplt) %>% 
+  tbl_cross(
+  row = sex_race,
+  col = qolcomplt,
+  label = list(qolcomplt ~ "Survey Completion",sex_race~"Sex and Race"),
+  percent = "row",
+  digits=c(0,2),
+  margin_text="Total QOL Eligible Participants") 
+
+
+Comp_by_sex_race <- Comp_by_sex_race %>%
+  modify_header(stat_0 = "Total QOL Eligible \n Participants") %>%
+  modify_caption("Table 4.6. 3-Month Quality of Life Survey Completion Rate by Sex and Race \n Among Eligible Participants") %>%
+  as_kable_extra(escape = FALSE, addtl_fmt = TRUE)
+
+reduced <- all_data %>% filter(d_949302066 != 231311385 & qolcomplt!="Not Eligible") # Those who are eligible for PROMIS but didn't complete mod1 yet
+
+Comp_by_sex_race %>% kable_styling(latex_options = c("scale_down","hold_position")) %>% 
+  footnote(general = paste0('In order to determine race, Module 1 must first be completed. There are ', dim(reduced)[[1]] , ' QOL eligible participants that have either not started or not finished Module 1.'),general_title = "Note: ", footnote_as_chunk = T)
+
+
+```
+
+
+```{r QOL_By_Demographic, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+
+m1_comp <- m1_comp %>%
+  mutate(
+    "White Women" = if_else(race == "White" & sex == "Female", 1, 0),
+    "Black Men" = if_else(race == "Black, African American, or African" & sex == "Male", 1, 0),
+    "Women Under 45" = if_else((age == "35-39" | age == "40-45") & sex == "Female", 1, 0),
+    "Women Over 45" = if_else((age == "46-50" | age == "51-55" | age == "56-60" | age == "61-65" | age == "66-70") & sex == "Female", 1, 0),
+    "Men Under 45" = if_else((age == "35-39" | age == "40-45") & sex == "Male", 1, 0),
+    "Men Over 45" = if_else((age == "46-50" | age == "51-55" | age == "56-60" | age == "61-65" | age == "66-70") & sex == "Male", 1, 0)
+  )
+
+# Can be in more then one category
+all_data_long <- m1_comp %>%
+  pivot_longer(cols = c("White Women", "Black Men", "Women Under 45", "Women Over 45", "Men Under 45", "Men Over 45"),
+               names_to = "Demographic_Group", values_to = "Flag") %>%
+  filter(Flag == 1)  # Keep only rows where participants are in one or more of these demographics
+
+
+Comp_by_Demographic <- all_data_long %>% 
+  filter(qolcomplt != "Not Eligible") %>%
+  mutate(qolcomplt = factor(qolcomplt, levels = c("Not Started", "Started", "Submitted")),
+         Demographic_Group = factor(Demographic_Group, levels=c("White Women","Black Men","Women Under 45","Women Over 45","Men Under 45","Men Over 45"))) %>%
+  select(Demographic_Group, qolcomplt) %>%
+  tbl_cross(
+    row = Demographic_Group,
+    col = qolcomplt,
+    label = list(qolcomplt ~ "Survey Completion", Demographic_Group ~ "Demographic"),
+    percent = "row",
+    digits = c(0, 2),
+    margin_text = "Total"
+  )
+
+
+Comp_by_Demographic <- Comp_by_Demographic %>%
+  modify_header(stat_0 = "Total") %>%
+  modify_caption("Table 4.7. 3-Month Quality of Life Survey Completion Rate \n by Demographic Among Eligible Participants") %>%
+  as_kable_extra(escape = FALSE, addtl_fmt = TRUE)
+
+# Style the table output
+Comp_by_Demographic %>% kable_styling(latex_options = c("scale_down", "hold_position"))  %>% 
+  footnote(general = "Participants may be counted more then once in these categories.",general_title = "Note: ", footnote_as_chunk = T)
+
+
+```
+
+\FloatBarrier
+```{r QOL_start_stop, echo=FALSE, warning=FALSE, message=FALSE}
+
+##### Back to wanting all participants, whether or not they finished Module 1. So switching back to all_data df
+
+
+QOL_time <- all_data %>% 
+  filter(qolcomplt=="Submitted") %>%
+  mutate(compTM_qol = as.numeric(difftime(as.POSIXct(ymd_hms(d_843688458)), as.POSIXct(ymd_hms(d_870643066)), units="mins")),
+         permission = case_when(compTM_qol<5 ~ "Under 5 Minutes",
+                                compTM_qol<10 ~ "5-10 Minutes",
+                                compTM_qol<15 ~ "10-15 Minutes",
+                                compTM_qol<20 ~ "15-20 Minutes",
+                                compTM_qol<30 ~ "20-30 Minutes",
+                                compTM_qol>=30 ~ "30+ Minutes"),
+         permission = factor(permission, levels=c("Under 5 Minutes", "5-10 Minutes", "10-15 Minutes", 
+                                                   "15-20 Minutes", "20-30 Minutes", "30+ Minutes")))  %>% 
+    group_by(permission) %>% tally() %>% 
+  mutate(Percentage = (n / sum(n)) * 100)
+
+
+
+summary_row <- data.frame(permission = "Total Submitted QOL Survey",
+                          n = sum(QOL_time$n),
+                          Percentage = 100)
+
+
+QOL_TM <- rbind(QOL_time, summary_row) %>%
+  mutate(N_percent = paste0(formatC(n, big.mark = ",", format = "d"), 
+                            " (", round(Percentage, digits = 1), "%)"),
+         Cumulative_Percentage = round(cumsum(Percentage), digits=2))
+QOL_TM$Cumulative_Percentage[nrow(QOL_TM)] <- 100
+
+QOL_TM <- QOL_TM %>% 
+  select(permission, N_percent, Cumulative_Percentage) %>%
+  dplyr::rename(`Completion Time` = permission, `N%` = N_percent,
+         'Cumulative Percentage' = Cumulative_Percentage)
+
+
+knitr::kable(QOL_TM, #format.args = list(big.mark = ","),
+             caption = 'Table 4.8. 3-Month Quality of Life Survey Completion Time from Start to Submit \n Among Eligible Participants That Submitted the Survey', 
+             booktabs=T, linesep = "", row.names=FALSE, align=c("l", "c", "c")) %>% 
+  add_indent(c(1:(nrow(QOL_TM)-1))) %>%  
+  kable_styling(latex_options = "scale_down") #c("scale_down","hold_position"))
+
+```
+
+
+```{r Table14, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+
+
+## Time from QOL trigger to submission of QOL survey
+# category= 3mo QOL Survey Reminders attempt=1st contact notification_time will be used in place of FIRST_QOL_REMINDER
+
+trig_qol <- bq_project_query(project,
+query="SELECT distinct(token), notification_time FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications`
+where category='3mo QOL Survey Reminders' and attempt='1st contact'")
+trigger <- bigrquery::bq_table_download(trig_qol,bigint = "integer64")
+
+
+trigger_time <- left_join(all_data, trigger, by="token")
+
+
+## Those verified before 12/1/2023 were notified in batches that there's a new survey. New participants become eligible after 90 days  
+trigger_time <- trigger_time %>%
+  mutate(trig = case_when(d_914594314 <= as.Date("2023-12-01") ~ ymd_hms(notification_time),
+                          TRUE ~ ymd_hms(d_914594314) + days(90)))
+
+trig_time<- trigger_time %>%  filter(qolcomplt=="Submitted") %>%
+  mutate(trigTM_qol = as.numeric(difftime(as.POSIXct(ymd_hms(d_843688458)), as.POSIXct(ymd_hms(trig)), units="days")))
+
+Trig_table = trig_time %>%
+  dplyr::summarize('N'=n(),
+                   Min = round(min(trigTM_qol, na.rm = TRUE), digits=2),
+                   Q1 = round(quantile(trigTM_qol, 0.25, na.rm = TRUE), digits=2),
+                   Median = round(median(trigTM_qol, na.rm = TRUE), digits=2),
+                   Mean = round(mean(trigTM_qol, na.rm = TRUE),  digits=2),
+                   SD= round(sd(trigTM_qol, na.rm = TRUE), digits=2),
+                   Q3 = round(quantile(trigTM_qol, 0.75, na.rm = TRUE), digits=2),
+                   'Perc.90' = round(quantile(trigTM_qol, 0.90, na.rm = TRUE), digits=2),
+                   Max = round(max(trigTM_qol, na.rm = TRUE), digits=2))
+
+knitr::kable(Trig_table, 
+             caption = 'Table 4.9. 3-Month Quality of Life Survey Completion from Trigger to Submit for \n Verified Participants, in Days', 
+             row.names=FALSE, format.args = list(big.mark = ","), linesep = "", 
+             booktabs = T, align=c("l", "c", "c", "c", "c", "c", "c", "c", "c")) %>% 
+  kable_styling(latex_options = c("scale_down","hold_position")) 
+
+```
+
+
+```{r QOL_ver_time, echo=FALSE, warning=FALSE, message=FALSE}
+
+qol_ver<- all_data %>%  filter(qolcomplt != "Not Eligible") %>% 
+  mutate(ver_surv = case_when(as.Date(d_914594314) < "2023-01-01" ~ "More than 1 Year",
+                              as.Date(d_914594314) < "2023-07-01" ~ "6 Months - 1 Year",
+                              as.Date(d_914594314) < "2024-01-01" ~ "3 Months - 6 Months",
+                              as.Date(d_914594314) >= "2024-01-01" ~ "At 3 Months"),
+         ver_surv = factor(ver_surv, levels=c("More than 1 Year","6 Months - 1 Year","3 Months - 6 Months","At 3 Months")))
+
+
+qol_ver_df <- create_tbl_cross2(qol_ver, "ver_surv", "qolcomplt", "row", "Time from Verification to QOL Survey Release", "Survey Completion", 
+                                "Total QOL Eligible Participants")
+
+colnames(qol_ver_df)[5] <- "Total QOL Eligible \n Participants"
+knitr::kable(qol_ver_df, 
+             caption='Table 4.10. 3-Month Quality of Life Survey Completion By Time from Verification to QOL Survey Release',
+             row.names=FALSE, align=c("l","c","c","c","c"), booktabs = TRUE) %>%
+    kable_styling(latex_options = "scale_down") %>%  
+    add_indent(seq(1, nrow(qol_ver_df) - 1)) %>%  landscape()
+  
+
+
+```
+
+
+
+```{r BL_PROMIS_timeframe, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+
+
+#BU
+trig_BU <- bq_project_query(project,
+query="SELECT distinct(token), min(notification_time) as BU_time #distinct token to account for duplicate notifications
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications`
+where (category='Baseline Clinical Blood and Urine Sample Survey Reminders' and attempt='1st contact') OR
+(category='Baseline Clinical Biospecimen Survey Reminder' and attempt='1st contact')
+group by token")
+trigger_BU <- bigrquery::bq_table_download(trig_BU,bigint = "integer64")
+
+
+#BUM
+trig_BUM <- bq_project_query(project,
+query="SELECT distinct(token), min(notification_time) as BUM_time #distinct token to account for duplicate notifications
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications`
+where category='Baseline Research Biospecimen Survey Reminders' and attempt='1st contact' OR 
+category='Biospecimen Survey Reminder' and attempt='1st contact'
+group by token")
+trigger_BUM <- bigrquery::bq_table_download(trig_BUM,bigint = "integer64")
+
+
+trigger_time <- left_join(trigger_time, trigger_BU, by="token") %>%  left_join(trigger_BUM)
+
+
+################   Numerator  ##############
+
+#Completed QOL before or on the same day as BL survey-- now within 30 days
+BL_QOL <- trigger_time %>%
+  filter(qolcomplt == "Submitted") %>%
+    mutate(BOH = as.Date(d_843688458) <= as.Date(d_517311251) & difftime(as.Date(d_517311251), as.Date(d_843688458), units="days") <31,
+         MRE = as.Date(d_843688458) <= as.Date(d_832139544) & difftime( as.Date(d_832139544), as.Date(d_843688458), units="days") <31,
+         SAS = as.Date(d_843688458) <= as.Date(d_770257102) & difftime( as.Date(d_770257102), as.Date(d_843688458), units="days") <31,
+         LAW = as.Date(d_843688458) <= as.Date(d_264644252) & difftime( as.Date(d_264644252), as.Date(d_843688458), units="days") <31,
+         BUM = (as.Date(BUM_time) < as.Date(trig) ) & (as.Date(d_843688458) <= as.Date(d_222161762)) & difftime( as.Date(d_222161762), as.Date(d_843688458), units="days") <31,  
+         BU = (as.Date(BU_time) < as.Date(trig) ) & (as.Date(d_843688458) <= as.Date(d_764863765)) & difftime( as.Date(d_764863765), as.Date(d_843688458), units="days") <31,
+         MW = (as.Date(d_173836415_d_266600170_d_319972665_d_661940160) < as.Date(trig)) & 
+           (as.Date(d_843688458) <= as.Date(d_195145666)) & difftime( as.Date(d_195145666), as.Date(d_843688458), units="days") <31,
+         COVID = (as.Date(d_556788178) < as.Date(trig)) & (as.Date(d_556788178) >= as.Date("2023-07-05")) & 
+           (as.Date(d_843688458) <= as.Date(d_784810139)) & difftime( as.Date(d_784810139),as.Date(d_843688458),units="days") <31) %>%
+  pivot_longer(
+    cols = c(BOH, MRE, SAS, LAW, BUM, BU, MW, COVID),
+    names_to = "qol_timeframe",
+    values_to = "is_in_timeframe"
+  ) %>%
+  filter(is_in_timeframe) %>%  # Keep only TRUE rows
+  group_by(qol_timeframe) %>%
+  tally()
+
+
+#############    Denominator #################
+
+## Determine when a person was QOL eligible
+# trigger_time <- trigger_time %>%
+#   mutate(trig = case_when(d_914594314 < as.Date("2023-12-01") ~ ymd_hms(notification_time),
+#                           TRUE ~ ymd_hms(d_914594314) + days(90)))
+
+## Determine when a participant was BL survey eligible
+#MRE/SAS/LAW- once BOH completed ----   d_517311251
+#BUM/BU- when notified by email 
+#MW- when notified the MW kit was shipped
+#COVID- pushed to prod on 7/5/2023 and requires biospecimen donation 
+
+
+
+
+
+## Those that are eligible for QOL, and eligible for whichever BL module, but hadn't completed that BL module upon QOL eligibility activation
+BL_time_eligible <- trigger_time %>%
+  filter(!is.na(qolcomplt) & qolcomplt != "Not Eligible") %>%
+  mutate( BOH = is.na(d_517311251) | (as.Date(trig) <= as.Date(d_517311251)),
+          MRE = !is.na(d_517311251) & (is.na(d_832139544) | as.Date(trig) <= as.Date(d_832139544)),
+          SAS = !is.na(d_517311251) & (is.na(d_770257102) | as.Date(trig) <= as.Date(d_770257102)),
+          LAW = !is.na(d_517311251) & (is.na(d_264644252) | as.Date(trig) <= as.Date(d_264644252)),
+          BUM = (as.Date(BUM_time) < as.Date(trig))  & (is.na(d_222161762) | as.Date(trig) <= as.Date(d_222161762)),
+          BU = (as.Date(BU_time) < as.Date(trig))  & (is.na(d_764863765) | as.Date(trig) <= as.Date(d_764863765)),
+          MW = (as.Date(d_173836415_d_266600170_d_319972665_d_661940160) < as.Date(trig)) &
+            (is.na(d_195145666) | as.Date(trig) <= as.Date(d_195145666)),
+          COVID = as.Date(d_556788178) < as.Date(trig) &
+            as.Date(d_556788178) >= as.Date("2023-07-05") &
+            (is.na(d_784810139) | as.Date(trig) <= as.Date(d_784810139))) %>%
+  pivot_longer(
+    cols = c(BOH, MRE, SAS, LAW, BUM, BU, MW, COVID),
+    names_to = "qol_timeframe",
+    values_to = "is_in_timeframe"
+  ) %>%
+  filter(is_in_timeframe) %>%  # Keep only rows where the condition is TRUE
+  group_by(qol_timeframe) %>%
+  tally()
+
+
+
+###############################################################################
+
+after_QOL <- cbind(BL_QOL, BL_time_eligible)
+after_QOL <- after_QOL[c(1,6,8,5,3,2,7,4), c(1,2,4)] # row order BOH, MRE, SAS, LAW, BUM, BU, MW, COVID, and remove repeated column
+colnames(after_QOL) <- c("Survey", "n", "eligible")
+
+after_QOL_table <- after_QOL %>%
+  mutate(Percentage = (n / eligible) * 100,
+         N_percent = paste0(formatC(n, big.mark = ",", format = "d"), 
+                            " (", round(Percentage, digits = 2), "%)")) %>% 
+  dplyr::rename('Eligible for Survey' = eligible,
+         'N%' = N_percent) %>% 
+    select('Survey', 'N%', 'Eligible for Survey')
+
+
+knitr::kable(after_QOL_table,
+             caption = 'Table 4.11. Baseline Survey Completion Within 30 days of 3-Month Quality of Life Survey Survey Completion', 
+             booktabs=T, linesep = "", row.names=FALSE, align=c("l", "c", "c")) %>% 
+  kable_styling(latex_options = "scale_down") %>% 
+  footnote(general = "Note: Percentages calculated among those who were eligible but had not yet completed the survey at the time of QOL invitation.", 
+           general_title = "",
+         footnote_as_chunk = TRUE, 
+         escape = FALSE, 
+         threeparttable = TRUE)
+
+
+
+```
+
+
+
+
