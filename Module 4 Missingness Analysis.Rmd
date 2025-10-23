@@ -14,6 +14,7 @@ output:
   pdf_document:
     latex_engine: pdflatex
     df_print: default
+    toc: yes
 ---
 
 This report gives the distribution of all Module 4 missing responses using the skip logic from Qx:  https://nih.app.box.com/file/923661036132?s=o816d6804w154fqf5y161ii7ngvcezqg for those that completed this survey.
@@ -1702,7 +1703,573 @@ create_kable_table(dt_work19_summary, "Number of Showers or Baths per Week")
 ```
 
 # Section 2: Commuting
-```{r Commuting, warning=FALSE, echo=FALSE, message=FALSE}
+
+## Work Commute Post COVID-19 Pandemic
+```{r PostCOVID, warning=FALSE, echo=FALSE, message=FALSE}
+
+### This section was added on 4/24/25. Only those that started Mod4 on or after this dat would see this section
+
+postpan_sect <- Mod4 %>% filter(as.Date(d_452942800)>="2025-04-24")
+
+work19_postpan= postpan_sect %>%  
+  mutate(Question = case_when(is.na(D_699873889)~"WORK2019POSTPAN"))
+
+dt_work19_postpan_summary <- work19_postpan %>% dplyr::group_by(Question) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Question, n, percentage)
+dt_work19_postpan_summary <- dt_work19_postpan_summary[1,]
+
+create_kable_table(dt_work19_postpan_summary, "Work Currently for Pay")
+
+
+
+
+
+days_work19_postpan= postpan_sect %>%  filter(D_699873889==353358909) %>%  
+  mutate(Question = case_when(is.na(D_213152981)~"Skipped DAYSWORK"))
+
+dt_days_work19_postpan_summary <- days_work19_postpan %>% dplyr::group_by(Question) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Question, n, percentage)
+dt_days_work19_postpan_summary <- dt_days_work19_postpan_summary[1,]
+
+create_kable_table(dt_days_work19_postpan_summary, "Days per Week Currently Working")
+
+
+
+
+days_work19_postpan= postpan_sect %>%  filter(D_699873889==353358909) %>%  
+  mutate(Question = case_when(is.na(D_871276836)~"Skipped WORKRES"))
+
+dt_days_work19_postpan_summary <- days_work19_postpan %>% dplyr::group_by(Question) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Question, n, percentage)
+dt_days_work19_postpan_summary <- dt_days_work19_postpan_summary[1,]
+
+create_kable_table(dt_days_work19_postpan_summary, "Daily Work Tasks Include Driving")
+
+
+
+
+commute_postpan_num= postpan_sect %>%  filter(D_871276836!=353358909) %>%  
+  mutate(Question = case_when(is.na(D_660218333)~"Skipped NUMWORK"))
+
+dt_commute_postpan_num_summary <- commute_postpan_num %>% dplyr::group_by(Question) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Question, n, percentage)
+dt_commute_postpan_num_summary <- dt_commute_postpan_num_summary[1,]
+
+create_kable_table(dt_commute_postpan_num_summary, "Number of Commutes to Different Workplaces per Week")
+
+
+
+
+curwork_postpan= postpan_sect %>%  filter(D_871276836!=353358909 & (D_660218333==759356722 | D_660218333==185036360)) %>%  
+  mutate(Question = case_when(is.na(D_263959391_D_560853245) & is.na(D_263959391_D_307515427) &
+                                is.na(D_263959391_D_422521705) & is.na(D_263959391_D_627183798) & 
+                               is.na(D_263959391_D_901141257)& is.na(D_263959391_D_599770535) &
+                                is.na(D_263959391_D_268600708) ~"Skipped All Employer Info"))
+
+dt_curwork_postpan_summary <- curwork_postpan %>% dplyr::group_by(Question) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Question, n, percentage)
+dt_curwork_postpan_summary <- dt_curwork_postpan_summary[1,]
+
+dt_curwork_postpan_summary[2,1] <- "Skipped Employer Name" 
+dt_curwork_postpan_summary[2,2] <- sum(is.na(curwork_postpan$D_263959391_D_560853245))
+dt_curwork_postpan_summary[2,3] <- (sum(is.na(curwork_postpan$D_263959391_D_560853245))/dim(curwork_postpan)[[1]])*100
+
+dt_curwork_postpan_summary[3,1] <- "Skipped Employer Street Number" 
+dt_curwork_postpan_summary[3,2] <- sum(is.na(curwork_postpan$D_263959391_D_307515427))
+dt_curwork_postpan_summary[3,3] <- (sum(is.na(curwork_postpan$D_263959391_D_307515427))/dim(curwork_postpan)[[1]])*100
+
+dt_curwork_postpan_summary[4,1] <- "Skipped Employer Street Name" 
+dt_curwork_postpan_summary[4,2] <- sum(is.na(curwork_postpan$D_263959391_D_422521705))
+dt_curwork_postpan_summary[4,3] <- (sum(is.na(curwork_postpan$D_263959391_D_422521705))/dim(curwork_postpan)[[1]])*100
+
+dt_curwork_postpan_summary[5,1] <- "Skipped Employer City" 
+dt_curwork_postpan_summary[5,2] <- sum(is.na(curwork_postpan$D_263959391_D_627183798))
+dt_curwork_postpan_summary[5,3] <- (sum(is.na(curwork_postpan$D_263959391_D_627183798))/dim(curwork_postpan)[[1]])*100
+
+dt_curwork_postpan_summary[6,1] <- "Skipped Employer State" 
+dt_curwork_postpan_summary[6,2] <- sum(is.na(curwork_postpan$D_263959391_D_901141257))
+dt_curwork_postpan_summary[6,3] <- (sum(is.na(curwork_postpan$D_263959391_D_901141257))/dim(curwork_postpan)[[1]])*100
+
+dt_curwork_postpan_summary[7,1] <- "Skipped Employer ZIP" 
+dt_curwork_postpan_summary[7,2] <- sum(is.na(curwork_postpan$D_263959391_D_599770535 ))
+dt_curwork_postpan_summary[7,3] <- (sum(is.na(curwork_postpan$D_263959391_D_599770535 ))/dim(curwork_postpan)[[1]])*100
+
+dt_curwork_postpan_summary[8,1] <- "Skipped Employer Country" 
+dt_curwork_postpan_summary[8,2] <- sum(is.na(curwork_postpan$D_263959391_D_268600708))
+dt_curwork_postpan_summary[8,3] <- (sum(is.na(curwork_postpan$D_263959391_D_268600708))/dim(curwork_postpan)[[1]])*100
+
+create_kable_table(dt_curwork_postpan_summary, "Current Employer (Most Often Commuted to)")
+
+
+
+
+
+
+
+curwork_postpan2= postpan_sect %>%  filter(D_871276836!=353358909 & D_986316055_D_986316055_D_178420302!="1" & (D_660218333==759356722 | D_660218333==185036360)) %>%  
+  mutate(Question = case_when(is.na(D_263959391_D_627183798) & is.na(D_986316055_D_515150210) ~"Skipped City"))
+
+dt_curwork_postpan2_summary <- curwork_postpan2 %>% dplyr::group_by(Question) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Question, n, percentage)
+dt_curwork_postpan2_summary <- dt_curwork_postpan2_summary[1,]
+
+dt_curwork_postpan2_summary[2,1] <- "Skipped Employer State" 
+dt_curwork_postpan2_summary[2,2] <- sum(is.na(curwork_postpan2$D_263959391_D_901141257) & is.na(curwork_postpan2$D_986316055_D_182449282))
+dt_curwork_postpan2_summary[2,3] <- (sum(is.na(curwork_postpan2$D_263959391_D_901141257) & is.na(curwork_postpan2$D_986316055_D_182449282))/dim(curwork_postpan2)[[1]])*100
+
+dt_curwork_postpan2_summary[3,1] <- "Skipped Employer ZIP" 
+dt_curwork_postpan2_summary[3,2] <- sum(is.na(curwork_postpan2$D_263959391_D_599770535) & is.na(curwork_postpan2$D_986316055_D_609408466))
+dt_curwork_postpan2_summary[3,3] <- (sum(is.na(curwork_postpan2$D_263959391_D_599770535) & is.na(curwork_postpan2$D_986316055_D_609408466))/dim(curwork_postpan2)[[1]])*100
+
+dt_curwork_postpan2_summary[4,1] <- "Skipped Employer Country" 
+dt_curwork_postpan2_summary[4,2] <- sum(is.na(curwork_postpan2$D_263959391_D_268600708) & is.na(curwork_postpan2$D_986316055_D_702591232))
+dt_curwork_postpan2_summary[4,3] <- (sum(is.na(curwork_postpan2$D_263959391_D_268600708) & is.na(curwork_postpan2$D_986316055_D_702591232))/dim(curwork_postpan2)[[1]])*100
+
+create_kable_table(dt_curwork_postpan2_summary, "Current Employer Address Follow-Up")
+
+
+
+
+
+
+curwork_postpan3= postpan_sect %>% 
+  filter((D_660218333==759356722 | D_660218333==185036360) &
+           D_116032363_D_116032363_D_178420302!="1" & D_871276836!=353358909 &
+           is.na(D_263959391_D_307515427) & is.na(D_263959391_D_422521705) & 
+           
+           ((!is.na(D_263959391_D_627183798) | !is.na(D_263959391_D_901141257) | 
+               !is.na(D_263959391_D_599770535) | !is.na(D_263959391_D_268600708)) | 
+              
+              (!is.na(D_986316055_D_515150210) | !is.na(D_986316055_D_182449282) |
+                 !is.na(D_986316055_D_609408466) |!is.na(D_986316055_D_702591232))))
+
+
+curwork_postpan3= curwork_postpan3 %>%  mutate(Question = case_when(is.na(D_116032363_D_330163034) ~"Skipped Cross Street 1"))
+
+dt_curwork_postpan3_summary <- curwork_postpan3 %>% dplyr::group_by(Question) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Question, n, percentage)
+dt_curwork_postpan3_summary <- dt_curwork_postpan3_summary[1,]
+
+dt_curwork_postpan3_summary[2,1] <- "Skipped Cross Street 2" 
+dt_curwork_postpan3_summary[2,2] <- sum(is.na(curwork_postpan3$D_116032363_D_555595404))
+dt_curwork_postpan3_summary[2,3] <- (sum(is.na(curwork_postpan3$D_116032363_D_520264332))/dim(curwork_postpan3)[[1]])*100
+
+create_kable_table(dt_curwork_postpan3_summary, "Current Employer Buidling Cross Streets")
+
+
+
+
+
+
+
+curwork_postpanYR1_MOS= postpan_sect %>%   
+  filter(D_871276836!=353358909 & (D_660218333==759356722 | D_660218333==185036360))
+
+
+curwork_postpanYR1_MOS= curwork_postpanYR1_MOS %>%  mutate(Question = case_when(is.na(D_870675371_D_900611792) ~"Skipped Month Job Started"))
+
+dt_curwork_postpanYR1_MOS_summary <- curwork_postpanYR1_MOS %>% dplyr::group_by(Question) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Question, n, percentage)
+dt_curwork_postpanYR1_MOS_summary <- dt_curwork_postpanYR1_MOS_summary[1,]
+
+dt_curwork_postpanYR1_MOS_summary[2,1] <- "Skipped Year Job Started" 
+dt_curwork_postpanYR1_MOS_summary[2,2] <- sum(is.na(curwork_postpanYR1_MOS$D_870675371_D_594558885))
+dt_curwork_postpanYR1_MOS_summary[2,3] <- (sum(is.na(curwork_postpanYR1_MOS$D_870675371_D_594558885))/dim(curwork_postpanYR1_MOS)[[1]])*100
+
+dt_curwork_postpanYR1_MOS_summary[3,1] <- "Skipped Months a Year Commuting" 
+dt_curwork_postpanYR1_MOS_summary[3,2] <- sum(is.na(curwork_postpanYR1_MOS$D_788065155))
+dt_curwork_postpanYR1_MOS_summary[3,3] <- (sum(is.na(curwork_postpanYR1_MOS$D_788065155))/dim(curwork_postpanYR1_MOS)[[1]])*100
+
+create_kable_table(dt_curwork_postpanYR1_MOS_summary, "Commuting to Current Employer")
+
+
+
+
+
+
+
+curwork_postpanT1= postpan_sect %>%   
+  filter(D_871276836!=353358909 & (D_660218333==759356722 | D_660218333==185036360))
+
+curwork_postpanT1= curwork_postpanT1 %>%  mutate(Question = case_when(is.na(D_421586693_D_421586693_D_767755239) ~"Skipped if Commute Inlcudes a Car"))
+
+dt_curwork_postpanT1_summary <- curwork_postpanT1 %>% dplyr::group_by(Question) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Question, n, percentage)
+dt_curwork_postpanT1_summary <- dt_curwork_postpanT1_summary[1,]
+
+dt_curwork_postpanT1_summary[2,1] <- "Skipped if Commute Inlcudes a Taxi" 
+dt_curwork_postpanT1_summary[2,2] <- sum(is.na(curwork_postpanT1$D_421586693_D_421586693_D_385609081))
+dt_curwork_postpanT1_summary[2,3] <- (sum(is.na(curwork_postpanT1$D_421586693_D_421586693_D_385609081))/dim(curwork_postpanT1)[[1]])*100
+
+dt_curwork_postpanT1_summary[3,1] <- "Skipped if Commute Inlcudes a Motorcycle" 
+dt_curwork_postpanT1_summary[3,2] <- sum(is.na(curwork_postpanT1$D_421586693_D_421586693_D_502946054))
+dt_curwork_postpanT1_summary[3,3] <- (sum(is.na(curwork_postpanT1$D_421586693_D_421586693_D_502946054))/dim(curwork_postpanT1)[[1]])*100
+
+dt_curwork_postpanT1_summary[4,1] <- "Skipped if Commute Inlcudes a Bus" 
+dt_curwork_postpanT1_summary[4,2] <- sum(is.na(curwork_postpanT1$D_421586693_D_421586693_D_151757360))
+dt_curwork_postpanT1_summary[4,3] <- (sum(is.na(curwork_postpanT1$D_421586693_D_421586693_D_151757360))/dim(curwork_postpanT1)[[1]])*100
+
+dt_curwork_postpanT1_summary[5,1] <- "Skipped if Commute Inlcudes a Subway" 
+dt_curwork_postpanT1_summary[5,2] <- sum(is.na(curwork_postpanT1$D_421586693_D_421586693_D_363747463))
+dt_curwork_postpanT1_summary[5,3] <- (sum(is.na(curwork_postpanT1$D_421586693_D_421586693_D_363747463))/dim(curwork_postpanT1)[[1]])*100
+
+dt_curwork_postpanT1_summary[6,1] <- "Skipped if Commute Inlcudes Biking" 
+dt_curwork_postpanT1_summary[6,2] <- sum(is.na(curwork_postpanT1$D_421586693_D_421586693_D_626380300))
+dt_curwork_postpanT1_summary[6,3] <- (sum(is.na(curwork_postpanT1$D_421586693_D_421586693_D_626380300))/dim(curwork_postpanT1)[[1]])*100
+
+dt_curwork_postpanT1_summary[7,1] <- "Skipped if Commute Inlcudes Walking" 
+dt_curwork_postpanT1_summary[7,2] <- sum(is.na(curwork_postpanT1$D_421586693_D_421586693_D_817932069))
+dt_curwork_postpanT1_summary[7,3] <- (sum(is.na(curwork_postpanT1$D_421586693_D_421586693_D_817932069))/dim(curwork_postpanT1)[[1]])*100
+
+dt_curwork_postpanT1_summary[8,1] <- "Skipped if Commute Inlcudes Another Method" 
+dt_curwork_postpanT1_summary[8,2] <- sum(is.na(curwork_postpanT1$D_421586693_D_421586693_D_466212511) & is.na(curwork_postpanT1$D_421586693_D_669966323))
+dt_curwork_postpanT1_summary[8,3] <- (sum(is.na(curwork_postpanT1$D_421586693_D_421586693_D_466212511) & is.na(curwork_postpanT1$D_421586693_D_669966323))/dim(curwork_postpanT1)[[1]])*100
+
+create_kable_table(dt_curwork_postpanT1_summary, "Commuting Methods to Work ")
+
+
+
+
+
+
+curwork_postpanT2A_H= postpan_sect %>%   
+  filter( (is.na(D_733638576_D_583216333) & D_421586693_D_421586693_D_767755239==1 | 
+             is.na(D_733638576_D_920653797) & D_421586693_D_421586693_D_385609081==1 |
+             is.na(D_733638576_D_843066684) & D_421586693_D_421586693_D_502946054==1 |
+             is.na(D_733638576_D_101850740) & D_421586693_D_421586693_D_151757360==1 |
+             is.na(D_733638576_D_317194063) & D_421586693_D_421586693_D_363747463==1 |
+             is.na(D_733638576_D_621948602) & D_421586693_D_421586693_D_626380300==1 |
+             is.na(D_733638576_D_175502589) & D_421586693_D_421586693_D_817932069==1 |
+             is.na(D_733638576_D_614443767) & D_421586693_D_421586693_D_466212511==1 ) &
+            
+            D_871276836!=353358909 & (D_660218333==759356722 | D_660218333==185036360) &
+            
+           (D_421586693_D_421586693_D_385609081==1 | D_421586693_D_421586693_D_767755239==1 |
+              D_421586693_D_421586693_D_502946054==1 | D_421586693_D_421586693_D_151757360==1 |
+              is.na(D_733638576_D_920653797) | is.na(D_733638576_D_920653797)))
+
+curwork_postpanT2A_H= curwork_postpanT2A_H %>%  
+  mutate(Question = case_when(is.na(D_733638576_D_583216333) & D_421586693_D_421586693_D_767755239==1 ~"Skipped Time Spent in a Car"))
+
+dt_curwork_postpanT2A_H_summary <- curwork_postpanT2A_H %>% dplyr::group_by(Question) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Question, n, percentage)
+dt_curwork_postpanT2A_H_summary <- dt_curwork_postpanT2A_H_summary[1,]
+
+dt_curwork_postpanT2A_H_summary[2,1] <- "Skipped Time Spent in a Taxi" 
+taxi <- curwork_postpanT2A_H %>% filter(D_421586693_D_421586693_D_385609081==1)
+dt_curwork_postpanT2A_H_summary[2,2] <- sum(is.na(taxi$D_733638576_D_920653797))
+dt_curwork_postpanT2A_H_summary[2,3] <- (sum(is.na(taxi$D_733638576_D_920653797))/dim(taxi)[[1]])*100
+
+dt_curwork_postpanT2A_H_summary[3,1] <- "Skipped Time Spent in a Motorcycle" 
+motorcycle <- curwork_postpanT2A_H %>% filter(D_421586693_D_421586693_D_502946054==1)
+dt_curwork_postpanT2A_H_summary[3,2] <- sum(is.na(motorcycle$D_733638576_D_843066684))
+dt_curwork_postpanT2A_H_summary[3,3] <- (sum(is.na(motorcycle$D_733638576_D_843066684))/dim(motorcycle)[[1]])*100
+
+dt_curwork_postpanT2A_H_summary[4,1] <- "Skipped Time Spent in a Bus" 
+bus <- curwork_postpanT2A_H %>% filter(D_421586693_D_421586693_D_151757360==1)
+dt_curwork_postpanT2A_H_summary[4,2] <- sum(is.na(bus$D_733638576_D_101850740))
+dt_curwork_postpanT2A_H_summary[4,3] <- (sum(is.na(bus$D_733638576_D_101850740))/dim(bus)[[1]])*100
+
+dt_curwork_postpanT2A_H_summary[5,1] <- "Skipped Time Spent in a Subway" 
+subway <- curwork_postpanT2A_H %>% filter(D_421586693_D_421586693_D_363747463==1)
+dt_curwork_postpanT2A_H_summary[5,2] <- sum(is.na(subway$D_733638576_D_317194063))
+dt_curwork_postpanT2A_H_summary[5,3] <- (sum(is.na(subway$D_733638576_D_317194063))/dim(subway)[[1]])*100
+
+dt_curwork_postpanT2A_H_summary[6,1] <- "Skipped Time Spent Biking" 
+bike <- curwork_postpanT2A_H %>% filter(D_421586693_D_421586693_D_626380300==1)
+dt_curwork_postpanT2A_H_summary[6,2] <- sum(is.na(bike$D_733638576_D_621948602))
+dt_curwork_postpanT2A_H_summary[6,3] <- (sum(is.na(bike$D_733638576_D_621948602))/dim(bike)[[1]])*100
+
+dt_curwork_postpanT2A_H_summary[7,1] <- "Skipped Time Spent Walking" 
+walk <- curwork_postpanT2A_H %>% filter(D_421586693_D_421586693_D_817932069==1)
+dt_curwork_postpanT2A_H_summary[7,2] <- sum(is.na(walk$D_733638576_D_175502589))
+dt_curwork_postpanT2A_H_summary[7,3] <- (sum(is.na(walk$D_733638576_D_175502589))/dim(walk)[[1]])*100
+
+dt_curwork_postpanT2A_H_summary[8,1] <- "Skipped Time Spent in Another Method" 
+method <- curwork_postpanT2A_H %>% filter(D_421586693_D_421586693_D_466212511==1)
+dt_curwork_postpanT2A_H_summary[8,2] <- sum(is.na(method$D_733638576_D_614443767))
+dt_curwork_postpanT2A_H_summary[8,3] <- (sum(is.na(method$D_733638576_D_614443767))/dim(method)[[1]])*100
+
+create_kable_table(dt_curwork_postpanT2A_H_summary, "Time Spent in Each Commuting Method ")
+
+
+
+
+
+curwork_postpanT3_4_5= postpan_sect %>%  filter( (is.na(D_166943843) | is.na(D_173155090) | is.na(D_234136107)) & 
+                                   D_871276836!=353358909 & (D_660218333==759356722 | D_660218333==185036360) &
+                                     
+                                     (D_733638576_D_583216333!=428999623 & !is.na(D_733638576_D_583216333)) |
+                                     (D_733638576_D_920653797!=428999623 & !is.na(D_733638576_D_920653797)) |
+                                     (D_733638576_D_843066684!=428999623 & !is.na(D_733638576_D_843066684)) |
+                                     (D_733638576_D_101850740!=428999623 & !is.na(D_733638576_D_101850740)) |
+                                     (D_733638576_D_317194063!=428999623 & !is.na(D_733638576_D_317194063)) |
+                                     (D_733638576_D_621948602!=428999623 & !is.na(D_733638576_D_621948602)) |
+                                     (D_733638576_D_175502589!=428999623 & !is.na(D_733638576_D_175502589)) |
+                                     (D_733638576_D_614443767!=428999623 & !is.na(D_733638576_D_614443767))) %>% 
+  mutate(Question = case_when(is.na(D_166943843) ~"Skipped Time on Highways"))
+
+dt_curwork_postpanT3_4_5_summary <- curwork_postpanT3_4_5 %>% dplyr::group_by(Question) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Question, n, percentage)
+dt_curwork_postpanT3_4_5_summary <- dt_curwork_postpanT3_4_5_summary[1,]
+
+dt_curwork_postpanT3_4_5_summary[2,1] <- "Skipped Time on Major Roads" 
+dt_curwork_postpanT3_4_5_summary[2,2] <- sum(is.na(curwork_postpanT3_4_5$D_173155090))
+dt_curwork_postpanT3_4_5_summary[2,3] <- (sum(is.na(curwork_postpanT3_4_5$D_173155090))/dim(curwork_postpanT3_4_5)[[1]])*100
+
+dt_curwork_postpanT3_4_5_summary[3,1] <- "Skipped Time on  Local Roads" 
+dt_curwork_postpanT3_4_5_summary[3,2] <- sum(is.na(curwork_postpanT3_4_5$D_234136107))
+dt_curwork_postpanT3_4_5_summary[3,3] <- (sum(is.na(curwork_postpanT3_4_5$D_234136107))/dim(curwork_postpanT3_4_5)[[1]])*100
+
+create_kable_table(dt_curwork_postpanT3_4_5_summary, "Time Commuting on Road Types ")
+
+
+
+
+
+curwork_postpanT6_summary <- postpan_sect %>% filter(D_871276836!=353358909 & (D_660218333==759356722 | D_660218333==185036360) & is.na(D_666629067) ) %>% 
+  mutate(Question = case_when(is.na(D_666629067) ~"Skipped curwork_postpanT6"))
+curwork_postpanT6 <- curwork_postpanT6_summary %>% dplyr::group_by(Question) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Question, n, percentage)
+curwork_postpanT6 <- curwork_postpanT6[1,]
+
+create_kable_table(curwork_postpanT6, "Days per Week Commuting to Current Workplace")
+
+
+
+
+
+curwork_postpanT7_summary <- postpan_sect %>% filter(D_871276836!=353358909 & (D_660218333==759356722 | D_660218333==185036360) & is.na(D_614208066)) %>% 
+  mutate(Question = case_when(is.na(D_614208066) ~"Skipped curwork_postpanT7"))
+curwork_postpanT7 <- curwork_postpanT7_summary %>% dplyr::group_by(Question) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Question, n, percentage)
+curwork_postpanT7 <- curwork_postpanT7[1,]
+
+create_kable_table(curwork_postpanT7, "Same Type of Transportation on Commute Home ")
+
+
+
+
+
+curwork_postpanT8= postpan_sect  %>%  filter(D_614208066==353358909 & D_871276836!=353358909 & (D_660218333==759356722 | D_660218333==185036360)) %>%  mutate(Question = case_when(is.na(D_308634850) ~"Skipped curwork_postpanT8"))
+         
+dt_curwork_postpanT8_summary <- curwork_postpanT8 %>% dplyr::group_by(Question) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Question, n, percentage)
+dt_curwork_postpanT8_summary <- dt_curwork_postpanT8_summary[1,]
+
+create_kable_table(dt_curwork_postpanT8_summary, "Time of Commute Home versus Commute to Work ")
+
+
+
+
+
+
+curwork_postpanT9= postpan_sect %>%   
+  filter(D_614208066!=353358909 & D_699873889==353358909)
+
+curwork_postpanT9= curwork_postpanT9 %>%  mutate(Question = case_when(is.na(D_799598595_D_799598595_D_339946103) ~"Skipped if Commute Inlcudes a Car"))
+
+dt_curwork_postpanT9_summary <- curwork_postpanT9 %>% dplyr::group_by(Question) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Question, n, percentage)
+dt_curwork_postpanT9_summary <- dt_curwork_postpanT9_summary[1,]
+
+dt_curwork_postpanT9_summary[2,1] <- "Skipped if Commute Inlcudes a Taxi" 
+dt_curwork_postpanT9_summary[2,2] <- sum(is.na(curwork_postpanT9$D_799598595_D_799598595_D_364857371))
+dt_curwork_postpanT9_summary[2,3] <- (sum(is.na(curwork_postpanT9$D_799598595_D_799598595_D_364857371))/dim(curwork_postpanT9)[[1]])*100
+
+dt_curwork_postpanT9_summary[3,1] <- "Skipped if Commute Inlcudes a Motorcycle" 
+dt_curwork_postpanT9_summary[3,2] <- sum(is.na(curwork_postpanT9$D_799598595_D_799598595_D_315356220))
+dt_curwork_postpanT9_summary[3,3] <- (sum(is.na(curwork_postpanT9$D_799598595_D_799598595_D_315356220))/dim(curwork_postpanT9)[[1]])*100
+
+dt_curwork_postpanT9_summary[4,1] <- "Skipped if Commute Inlcudes a Bus" 
+dt_curwork_postpanT9_summary[4,2] <- sum(is.na(curwork_postpanT9$D_799598595_D_799598595_D_363036517))
+dt_curwork_postpanT9_summary[4,3] <- (sum(is.na(curwork_postpanT9$D_799598595_D_799598595_D_363036517))/dim(curwork_postpanT9)[[1]])*100
+
+dt_curwork_postpanT9_summary[5,1] <- "Skipped if Commute Inlcudes a Subway" 
+dt_curwork_postpanT9_summary[5,2] <- sum(is.na(curwork_postpanT9$D_799598595_D_799598595_D_978362655))
+dt_curwork_postpanT9_summary[5,3] <- (sum(is.na(curwork_postpanT9$D_799598595_D_799598595_D_978362655))/dim(curwork_postpanT9)[[1]])*100
+
+dt_curwork_postpanT9_summary[6,1] <- "Skipped if Commute Inlcudes Biking" 
+dt_curwork_postpanT9_summary[6,2] <- sum(is.na(curwork_postpanT9$D_799598595_D_799598595_D_175003260))
+dt_curwork_postpanT9_summary[6,3] <- (sum(is.na(curwork_postpanT9$D_799598595_D_799598595_D_175003260))/dim(curwork_postpanT9)[[1]])*100
+
+dt_curwork_postpanT9_summary[7,1] <- "Skipped if Commute Inlcudes Walking" 
+dt_curwork_postpanT9_summary[7,2] <- sum(is.na(curwork_postpanT9$D_799598595_D_799598595_D_648051649))
+dt_curwork_postpanT9_summary[7,3] <- (sum(is.na(curwork_postpanT9$D_799598595_D_799598595_D_648051649))/dim(curwork_postpanT9)[[1]])*100
+
+dt_curwork_postpanT9_summary[8,1] <- "Skipped if Commute Inlcudes Another Method" 
+dt_curwork_postpanT9_summary[8,2] <- sum(is.na(curwork_postpanT9$D_799598595_D_799598595_D_957052257) & is.na(curwork_postpanT9$D_799598595_D_968445508))
+dt_curwork_postpanT9_summary[8,3] <- (sum(is.na(curwork_postpanT9$D_799598595_D_799598595_D_957052257) & is.na(curwork_postpanT9$D_799598595_D_968445508))/dim(curwork_postpanT9)[[1]])*100
+
+create_kable_table(dt_curwork_postpanT9_summary, "Commuting Methods Home From Work ")
+
+
+
+
+
+
+curwork_postpanT10A= postpan_sect %>%   
+  filter(is.na(D_532260562_D_827461454) & D_308634850!=353358909 & D_871276836!=353358909 & (D_660218333==759356722 | D_660218333==185036360) &
+           ifelse(D_614208066==104430631, D_799598595_D_799598595_D_339946103==1,
+                  ifelse(is.na(D_614208066), D_799598595_D_799598595_D_339946103==1,
+                         ifelse(D_308634850==104430631, D_421586693_D_421586693_D_767755239==1,
+                                ifelse(is.na(D_308634850), D_421586693_D_421586693_D_767755239==1, TRUE))))) ##should this be else true or else NA? Doesn't seem to change outcome
+curwork_postpanT10A= curwork_postpanT10A %>%  mutate(Question = case_when(is.na(D_532260562_D_827461454) ~"Skipped curwork_postpanT10A"))
+
+dt_curwork_postpanT10A_summary <- curwork_postpanT10A %>% dplyr::group_by(Question) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Question, n, percentage)
+
+create_kable_table(dt_curwork_postpanT10A_summary, "Time Commuting Home in the Car ")
+
+
+
+
+
+curwork_postpanT10B= postpan_sect %>%   
+  filter(is.na(D_532260562_D_306356124) & D_308634850!=353358909 & D_871276836!=353358909 & (D_660218333==759356722 | D_660218333==185036360) &
+           ifelse(D_614208066==104430631, D_799598595_D_799598595_D_364857371==1,
+                  ifelse(is.na(D_614208066), D_799598595_D_799598595_D_364857371==1,
+                         ifelse(D_308634850==104430631, D_421586693_D_421586693_D_385609081==1,
+                                ifelse(is.na(D_308634850), D_421586693_D_421586693_D_385609081==1, NA)))))
+curwork_postpanT10B= curwork_postpanT10B %>%  mutate(Question = case_when(is.na(D_532260562_D_306356124) ~"Skipped curwork_postpanT10B"))
+
+dt_curwork_postpanT10B_summary <- curwork_postpanT10B %>% dplyr::group_by(Question) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Question, n, percentage)
+
+create_kable_table(dt_curwork_postpanT10B_summary, "Time Commuting Home in a Taxi ")
+
+
+
+
+
+curwork_postpanT10C= postpan_sect %>%  
+  filter(is.na(D_532260562_D_884514292)  & D_308634850!=353358909 & D_871276836!=353358909 & (D_660218333==759356722 | D_660218333==185036360) &
+           ifelse(D_614208066==104430631, D_799598595_D_799598595_D_315356220==1,
+                  ifelse(is.na(D_614208066), D_799598595_D_799598595_D_315356220==1,
+                         ifelse(D_308634850==104430631, D_421586693_D_421586693_D_502946054==1,
+                                ifelse(is.na(D_308634850), D_421586693_D_421586693_D_502946054==1, NA)))))
+curwork_postpanT10C= curwork_postpanT10C %>%  mutate(Question = case_when(is.na(D_532260562_D_884514292) ~"Skipped curwork_postpanT10C"))
+
+dt_curwork_postpanT10C_summary <- curwork_postpanT10C %>% dplyr::group_by(Question) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Question, n, percentage)
+
+create_kable_table(dt_curwork_postpanT10C_summary, "Time Commuting Home in a Motorcycle ")
+
+
+
+
+
+curwork_postpanT10D= postpan_sect %>%   
+  filter(is.na(D_532260562_D_570556451) & D_308634850!=353358909 & D_871276836!=353358909 & (D_660218333==759356722 | D_660218333==185036360) &
+           ifelse(D_614208066==104430631, D_799598595_D_799598595_D_363036517==1,
+                  ifelse(is.na(D_614208066), D_799598595_D_799598595_D_363036517==1,
+                         ifelse(D_308634850==104430631, D_421586693_D_421586693_D_151757360==1,
+                                ifelse(is.na(D_308634850), D_421586693_D_421586693_D_151757360==1, NA)))))
+curwork_postpanT10D= curwork_postpanT10D %>%  mutate(Question = case_when(is.na(D_532260562_D_570556451) ~"Skipped curwork_postpanT10D"))
+
+dt_curwork_postpanT10D_summary <- curwork_postpanT10D %>% dplyr::group_by(Question) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Question, n, percentage)
+
+create_kable_table(dt_curwork_postpanT10D_summary, "Time Commuting Home on a Bus ")
+
+
+
+
+
+curwork_postpanT10E= postpan_sect %>%  
+  filter(is.na(D_532260562_D_303089793) & D_308634850!=353358909 & D_871276836!=353358909 & (D_660218333==759356722 | D_660218333==185036360) &
+           ifelse(D_614208066==104430631, D_799598595_D_799598595_D_978362655==1,
+                  ifelse(is.na(D_614208066), D_799598595_D_799598595_D_978362655==1,
+                         ifelse(D_308634850==104430631, D_421586693_D_421586693_D_363747463==1,
+                                ifelse(is.na(D_308634850), D_421586693_D_421586693_D_363747463==1, NA)))))
+curwork_postpanT10E= curwork_postpanT10E %>%  mutate(Question = case_when(is.na(D_532260562_D_303089793) ~"Skipped curwork_postpanT10E"))
+
+dt_curwork_postpanT10E_summary <- curwork_postpanT10E %>% dplyr::group_by(Question) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Question, n, percentage)
+
+create_kable_table(dt_curwork_postpanT10E_summary, "Time Commuting Home on a Subway ")
+
+
+
+
+
+curwork_postpanT10F= postpan_sect %>%   
+  filter(is.na(D_532260562_D_848543458) & D_308634850!=353358909 & D_871276836!=353358909 & (D_660218333==759356722 | D_660218333==185036360) &
+           ifelse(D_614208066==104430631, D_799598595_D_799598595_D_175003260==1,
+                  ifelse(is.na(D_614208066), D_799598595_D_799598595_D_175003260==1,
+                         ifelse(D_308634850==104430631, D_421586693_D_421586693_D_626380300==1,
+                                ifelse(is.na(D_308634850), D_421586693_D_421586693_D_626380300==1, NA)))))
+curwork_postpanT10F= curwork_postpanT10F %>%  mutate(Question = case_when(is.na(D_532260562_D_848543458) ~"Skipped curwork_postpanT10F"))
+
+dt_curwork_postpanT10F_summary <- curwork_postpanT10F %>% dplyr::group_by(Question) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Question, n, percentage)
+
+create_kable_table(dt_curwork_postpanT10F_summary, "Time Commuting Home on a Bike ")
+
+
+
+
+
+curwork_postpanT10G= postpan_sect %>%  
+  filter(is.na(D_532260562_D_543804307) & D_308634850!=353358909 & D_871276836!=353358909 & (D_660218333==759356722 | D_660218333==185036360) &
+           ifelse(D_614208066==104430631, D_799598595_D_799598595_D_648051649==1,
+                  ifelse(is.na(D_614208066), D_799598595_D_799598595_D_648051649==1,
+                         ifelse(D_308634850==104430631, D_421586693_D_421586693_D_817932069==1,
+                                ifelse(is.na(D_308634850), D_421586693_D_421586693_D_817932069==1, NA)))))
+curwork_postpanT10G= curwork_postpanT10G %>%  mutate(Question = case_when(is.na(D_532260562_D_543804307) ~"Skipped curwork_postpanT10F"))
+
+dt_curwork_postpanT10G_summary <- curwork_postpanT10G %>% dplyr::group_by(Question) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Question, n, percentage)
+
+create_kable_table(dt_curwork_postpanT10G_summary, "Time Commuting Home by Walking ")
+
+
+
+
+
+# curwork_postpanT10H= postpan_sect %>%  select(D_532260562_D_654108399) %>%  
+#   filter(D_308634850!=353358909 & D_871276836!=353358909 & (D_660218333==759356722 | D_660218333==185036360) &
+#            ifelse(D_614208066==104430631, is.na(D_799598595_D_799598595_D_968445508),
+#                   ifelse(is.na(D_614208066), is.na(D_799598595_D_799598595_D_968445508),
+#                          ifelse(D_308634850==104430631, is.na(D_421586693_D_421586693_D_421586693_D_466212511),
+#                                 ifelse(is.na(D_308634850), is.na(D_421586693_D_421586693_D_421586693_D_466212511), NA)))))
+# vis_miss(curwork_postpanT10H)+labs(y= "Participants", title="curwork_postpanT10H")
+
+
+
+curwork_postpanT11_12_13= postpan_sect %>%   
+  filter( D_871276836!=353358909 & (D_660218333==759356722 | D_660218333==185036360) &
+            
+            (D_532260562_D_827461454!=428999623 & !is.na(D_532260562_D_827461454)) | 
+            (D_532260562_D_306356124!=428999623 & !is.na(D_532260562_D_306356124)) |
+            (D_532260562_D_884514292!=428999623 & !is.na(D_532260562_D_884514292)) | 
+            (D_532260562_D_570556451!=428999623 & !is.na(D_532260562_D_570556451)) |
+            (D_532260562_D_303089793!=428999623 & !is.na(D_532260562_D_303089793)) | 
+            (D_532260562_D_848543458!=428999623 & !is.na(D_532260562_D_848543458)) |
+            (D_532260562_D_543804307!=428999623 & !is.na(D_532260562_D_543804307)) |
+            (D_532260562_D_654108399!=428999623 & !is.na(D_532260562_D_654108399)))
+
+
+
+curwork_postpanT11_12_13= curwork_postpanT11_12_13 %>%  mutate(Question = case_when(is.na(D_242268237) ~"Skipped if it Includes Highways"))
+
+dt_curwork_postpanT11_12_13_summary <- curwork_postpanT11_12_13 %>% dplyr::group_by(Question) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Question, n, percentage)
+dt_curwork_postpanT11_12_13_summary <- dt_curwork_postpanT11_12_13_summary[1,]
+
+dt_curwork_postpanT11_12_13_summary[2,1] <- "Skipped if it Includes Major Roads" 
+dt_curwork_postpanT11_12_13_summary[2,2] <- sum(is.na(curwork_postpanT11_12_13$D_568581510))
+dt_curwork_postpanT11_12_13_summary[2,3] <- (sum(is.na(curwork_postpanT11_12_13$D_568581510))/dim(curwork_postpanT11_12_13)[[1]])*100
+
+dt_curwork_postpanT11_12_13_summary[3,1] <- "Skipped if it Includes Local Roads" 
+dt_curwork_postpanT11_12_13_summary[3,2] <- sum(is.na(curwork_postpanT11_12_13$D_277953784))
+dt_curwork_postpanT11_12_13_summary[3,3] <- (sum(is.na(curwork_postpanT11_12_13$D_277953784))/dim(curwork_postpanT11_12_13)[[1]])*100
+
+dt_curwork_postpanT11_12_13_summary <- dt_curwork_postpanT11_12_13_summary[c(2,3),]
+
+create_kable_table(dt_curwork_postpanT11_12_13_summary, "Travel Commute Type ")
+
+
+
+
+
+
+
+
+curwork_postpanT14= postpan_sect %>%  filter(D_871276836!=353358909 & (D_660218333==759356722 | D_660218333==185036360)) %>% 
+  mutate(Question = case_when(is.na(D_510872569) ~"Skipped curwork_postpanT14"))
+
+dt_curwork_postpanT14_summary <- curwork_postpanT14 %>% dplyr::group_by(Question) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Question, n, percentage)
+dt_curwork_postpanT14_summary <- dt_curwork_postpanT14_summary[1,]
+
+create_kable_table(dt_curwork_postpanT14_summary, "Days per Week Commuting Home ")
+
+
+
+
+```
+
+
+
+## Work Commute Before the COVID-19 Pandemic
+```{r PreCOVID, warning=FALSE, echo=FALSE, message=FALSE}
 
 work19= Mod4 %>%  
   mutate(Question = case_when(is.na(D_694113343)~"Skipped WORK2019"))
@@ -1726,13 +2293,6 @@ create_kable_table(dt_days_work19_summary, "Days per Week Worked in 2019")
 
 
 
-```
-
-
-
-
-## Work Commute Before the COVID-19 Pandemic
-```{r PreCOVID, warning=FALSE, echo=FALSE, message=FALSE}
 
 days_work19= Mod4 %>%  filter(D_694113343==353358909) %>%  
   mutate(Question = case_when(is.na(D_374639590)~"Skipped WORKRES"))
@@ -1763,7 +2323,7 @@ curwork= Mod4 %>%  filter(D_374639590!=353358909 & (D_828801156==759356722 | D_8
 dt_curwork_summary <- curwork %>% dplyr::group_by(Question) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Question, n, percentage)
 dt_curwork_summary <- dt_curwork_summary[1,]
 
-dt_curwork_summary[2,1] <- "Skipped Employer Street Name" 
+dt_curwork_summary[2,1] <- "Skipped Employer Name" 
 dt_curwork_summary[2,2] <- sum(is.na(curwork$D_596318751_D_411791779))
 dt_curwork_summary[2,3] <- (sum(is.na(curwork$D_596318751_D_411791779))/dim(curwork)[[1]])*100
 
@@ -1911,7 +2471,7 @@ dt_CURWORKT1_summary[8,1] <- "Skipped if Commute Inlcudes Another Method"
 dt_CURWORKT1_summary[8,2] <- sum(is.na(CURWORKT1$D_635467479_D_635467479_D_509121242) & is.na(CURWORKT1$D_635467479_D_902077989))
 dt_CURWORKT1_summary[8,3] <- (sum(is.na(CURWORKT1$D_635467479_D_635467479_D_509121242) & is.na(CURWORKT1$D_635467479_D_902077989))/dim(CURWORKT1)[[1]])*100
 
-create_kable_table(dt_CURWORKT1_summary, "Commuting Methods to Work (Current Position)")
+create_kable_table(dt_CURWORKT1_summary, "Commuting Methods to Work ")
 
 
 
@@ -1972,7 +2532,7 @@ method <- CURWORKT2A_H %>% filter(D_635467479_D_902077989==1)
 dt_CURWORKT2A_H_summary[8,2] <- sum(is.na(method$D_440093675_D_662584384))
 dt_CURWORKT2A_H_summary[8,3] <- (sum(is.na(method$D_440093675_D_662584384))/dim(method)[[1]])*100
 
-create_kable_table(dt_CURWORKT2A_H_summary, "Time Spent in Each Commuting Method (Current Position)")
+create_kable_table(dt_CURWORKT2A_H_summary, "Time Spent in Each Commuting Method ")
 
 
 
@@ -1997,7 +2557,7 @@ dt_CURWORKT3_4_5_summary[3,1] <- "Skipped Time on  Local Roads"
 dt_CURWORKT3_4_5_summary[3,2] <- sum(is.na(CURWORKT3_4_5$D_333362587))
 dt_CURWORKT3_4_5_summary[3,3] <- (sum(is.na(CURWORKT3_4_5$D_333362587))/dim(CURWORKT3_4_5)[[1]])*100
 
-create_kable_table(dt_CURWORKT3_4_5_summary, "Time Commuting on Road Types (Current Position)")
+create_kable_table(dt_CURWORKT3_4_5_summary, "Time Commuting on Road Types ")
 
 
 
@@ -2019,7 +2579,7 @@ CURWORKT7_summary <- Mod4 %>% filter(D_374639590!=353358909 & (D_828801156==7593
 CURWORKT7 <- CURWORKT7_summary %>% dplyr::group_by(Question) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Question, n, percentage)
 CURWORKT7 <- CURWORKT7[1,]
 
-create_kable_table(CURWORKT7, "Same Type of Transportation on Commute Home (Current Position)")
+create_kable_table(CURWORKT7, "Same Type of Transportation on Commute Home ")
 
 
 
@@ -2030,7 +2590,7 @@ CURWORKT8= Mod4  %>%  filter(D_684542266==353358909 & D_374639590!=353358909 & (
 dt_CURWORKT8_summary <- CURWORKT8 %>% dplyr::group_by(Question) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Question, n, percentage)
 dt_CURWORKT8_summary <- dt_CURWORKT8_summary[1,]
 
-create_kable_table(dt_CURWORKT8_summary, "Time of Commute Home versus Commute to Work (Current Position)")
+create_kable_table(dt_CURWORKT8_summary, "Time of Commute Home versus Commute to Work ")
 
 
 
@@ -2073,7 +2633,7 @@ dt_CURWORKT9_summary[8,1] <- "Skipped if Commute Inlcudes Another Method"
 dt_CURWORKT9_summary[8,2] <- sum(is.na(CURWORKT9$D_404697804_D_404697804_D_244488084) & is.na(CURWORKT9$D_404697804_D_631088397))
 dt_CURWORKT9_summary[8,3] <- (sum(is.na(CURWORKT9$D_404697804_D_404697804_D_244488084) & is.na(CURWORKT9$D_404697804_D_631088397))/dim(CURWORKT9)[[1]])*100
 
-create_kable_table(dt_CURWORKT9_summary, "Commuting Methods Home From Work (Current Position)")
+create_kable_table(dt_CURWORKT9_summary, "Commuting Methods Home From Work ")
 
 
 
@@ -2090,7 +2650,7 @@ CURWORKT10A= CURWORKT10A %>%  mutate(Question = case_when(is.na(D_786253125_D_65
 
 dt_CURWORKT10A_summary <- CURWORKT10A %>% dplyr::group_by(Question) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Question, n, percentage)
 
-create_kable_table(dt_CURWORKT10A_summary, "Time Commuting Home in the Car (Current Position)")
+create_kable_table(dt_CURWORKT10A_summary, "Time Commuting Home in the Car ")
 
 
 
@@ -2106,7 +2666,7 @@ CURWORKT10B= CURWORKT10B %>%  mutate(Question = case_when(is.na(D_786253125_D_55
 
 dt_CURWORKT10B_summary <- CURWORKT10B %>% dplyr::group_by(Question) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Question, n, percentage)
 
-create_kable_table(dt_CURWORKT10B_summary, "Time Commuting Home in a Taxi (Current Position)")
+create_kable_table(dt_CURWORKT10B_summary, "Time Commuting Home in a Taxi ")
 
 
 
@@ -2122,7 +2682,7 @@ CURWORKT10C= CURWORKT10C %>%  mutate(Question = case_when(is.na(D_786253125_D_77
 
 dt_CURWORKT10C_summary <- CURWORKT10C %>% dplyr::group_by(Question) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Question, n, percentage)
 
-create_kable_table(dt_CURWORKT10C_summary, "Time Commuting Home in a Motorcycle (Current Position)")
+create_kable_table(dt_CURWORKT10C_summary, "Time Commuting Home in a Motorcycle ")
 
 
 
@@ -2138,7 +2698,7 @@ CURWORKT10D= CURWORKT10D %>%  mutate(Question = case_when(is.na(D_786253125_D_14
 
 dt_CURWORKT10D_summary <- CURWORKT10D %>% dplyr::group_by(Question) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Question, n, percentage)
 
-create_kable_table(dt_CURWORKT10D_summary, "Time Commuting Home on a Bus (Current Position)")
+create_kable_table(dt_CURWORKT10D_summary, "Time Commuting Home on a Bus ")
 
 
 
@@ -2154,7 +2714,7 @@ CURWORKT10E= CURWORKT10E %>%  mutate(Question = case_when(is.na(D_786253125_D_10
 
 dt_CURWORKT10E_summary <- CURWORKT10E %>% dplyr::group_by(Question) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Question, n, percentage)
 
-create_kable_table(dt_CURWORKT10E_summary, "Time Commuting Home on a Subway (Current Position)")
+create_kable_table(dt_CURWORKT10E_summary, "Time Commuting Home on a Subway ")
 
 
 
@@ -2170,7 +2730,7 @@ CURWORKT10F= CURWORKT10F %>%  mutate(Question = case_when(is.na(D_786253125_D_82
 
 dt_CURWORKT10F_summary <- CURWORKT10F %>% dplyr::group_by(Question) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Question, n, percentage)
 
-create_kable_table(dt_CURWORKT10F_summary, "Time Commuting Home on a Bike (Current Position)")
+create_kable_table(dt_CURWORKT10F_summary, "Time Commuting Home on a Bike ")
 
 
 
@@ -2186,7 +2746,7 @@ CURWORKT10G= CURWORKT10G %>%  mutate(Question = case_when(is.na(D_786253125_D_28
 
 dt_CURWORKT10G_summary <- CURWORKT10G %>% dplyr::group_by(Question) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Question, n, percentage)
 
-create_kable_table(dt_CURWORKT10G_summary, "Time Commuting Home by Walking (Current Position)")
+create_kable_table(dt_CURWORKT10G_summary, "Time Commuting Home by Walking ")
 
 
 
@@ -2226,7 +2786,7 @@ dt_curworkT11_12_13_summary[3,3] <- (sum(is.na(curworkT11_12_13$D_168563469))/di
 
 dt_curworkT11_12_13_summary <- dt_curworkT11_12_13_summary[c(2,3),]
 
-create_kable_table(dt_curworkT11_12_13_summary, "Travel Commute Type (Current Position)")
+create_kable_table(dt_curworkT11_12_13_summary, "Travel Commute Type ")
 
 
 
@@ -2241,7 +2801,7 @@ CURWORKT14= Mod4 %>%  filter(D_374639590!=353358909 & (D_828801156==759356722 | 
 dt_CURWORKT14_summary <- CURWORKT14 %>% dplyr::group_by(Question) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(Question, n, percentage)
 dt_CURWORKT14_summary <- dt_CURWORKT14_summary[1,]
 
-create_kable_table(dt_CURWORKT14_summary, "Days per Week Commuting Home (Current Position)")
+create_kable_table(dt_CURWORKT14_summary, "Days per Week Commuting Home ")
 
 
 
@@ -3014,7 +3574,7 @@ create_kable_table(dt_CURSCHT1_summary, "Commuting Methods to School")
 # dt_CURSCHT2A_H_summary[8,2] <- sum(is.na(method$D_716117817_D_135529881_D_154229258))
 # dt_CURSCHT2A_H_summary[8,3] <- (sum(is.na(method$D_716117817_D_135529881_D_154229258))/dim(method)[[1]])*100
 # 
-# create_kable_table(dt_CURSCHT2A_H_summary, "Time Spent in Each Commuting Method (Current Position)")
+# create_kable_table(dt_CURSCHT2A_H_summary, "Time Spent in Each Commuting Method ")
 
 
 
