@@ -3193,13 +3193,10 @@ knitr::kable(BL_lang_SP, format.args = list(big.mark = ","), digits=2,
 <!-- ROI_comp_elg <- ROI_comp_elg %>% -->
 <!--   modify_header(stat_0 = "Total ROI Eligible \n Participants") %>% -->
 <!--   modify_caption("Table 9.1. Completion of 2025 ROI Pref Among Eligible Participants") %>% -->
-<!--   as_kable_extra(escape = FALSE, addtl_fmt = TRUE) -->
+<!--   as_kable_extra(escape = FALSE, addtl_fmt = TRUE) %>% -->
+<!--   kable_styling(latex_options = c("scale_down","hold_position") -->
 
-
-<!-- ROI_comp_elg %>% kable_styling(latex_options = c("scale_down","hold_position")) -->
-
-
-<!-- add_footnote(ROI_comp_elg, "Note: There may be up to a 24-hour delay between a participant completing the survey and retrieving their submitted status and completion timestamp.",  -->
+<!--   add_footnote(ROI_comp_elg, "Note: There may be up to a 24-hour delay between a participant completing the survey and retrieving their submitted status and completion timestamp.", -->
 <!--              notation = "none") -->
 
 
