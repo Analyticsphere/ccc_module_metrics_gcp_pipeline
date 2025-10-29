@@ -126,7 +126,8 @@ d_831041022, d_255077064, d_320303124, d_684635302, d_843688458, d_870643066, d_
 state_d_934298480, state_d_706256705, state_d_435027713, d_199471989, d_956490759, d_263355177,
 state_d_684926335, state_d_849518448, state_d_119643471, state_d_253532712, d_764863765, d_195145666, 
 d_784810139, d_176068627, d_389890053, d_609630315, d_173836415_d_266600170_d_319972665_d_661940160, 
-d_220186468, d_268176409, d_784810139, d_253883960, d_265193023, d_109610692, d_610227793, d_692560814, d_747006172, d_501613780, d_109610692
+d_220186468, d_268176409, d_784810139, d_253883960, d_265193023, d_109610692, d_610227793, d_692560814, d_747006172, d_501613780, d_109610692, d_278023676, d_543379310, d_993557295
+
 -- d_692560814, d_109610692, d_610227793, d_748726394
 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` where Connect_ID IS NOT NULL  and (d_512820379='486306141' OR d_512820379='854703046')" 
 
@@ -217,17 +218,19 @@ all_data <- all_data %>%  mutate(Site = case_when(d_827220437==472940358 ~ "Bayl
                                                                                       units="days")) < 90, "Not Eligible",
                                                                   ifelse(d_320303124 == 972455046, "Not Started", "Error")))),
                                 
-                                # # RcrtV_Verification_v1r0 = 1 - must be verified
-                                # # AND RcrtV_VerificationTm_V1R0 LE 08/01/2025 - must have been verified on or before this date
-                                # # AND HdWd_WdConsent_v1r0 = 0 = and not withdrawn 
-                                # 
-                                #   roicomplt = ifelse(d_278023676 == 231311385 ,"Submitted",
-                                #               ifelse(d_278023676 == 615768760, "Started",
-                                #               ifelse(as.Date(d_914594314) > "2025-08-01" | # ineligible if verified after August 1 2025
-                                #                        d_875007964 != "197316935" | # ineligible if verification status isn't "verified"
-                                #                        d_747006172 != "104430631"), "Not Eligible", # ineligible if consent is withdrawn
-                                #               ifelse(d_278023676 == 972455046, "Not Started", "Error"))),
-
+#                                 # RcrtV_Verification_v1r0 = 1 - must be verified
+#                                 # AND RcrtV_VerificationTm_V1R0 LE 08/01/2025 - must have been verified on or before this date
+#                                 # AND HdWd_WdConsent_v1r0 = 0 = and not withdrawn
+# 
+#                                 roicomplt = case_when(
+#                                   d_278023676 == 231311385 ~ "Submitted",
+#                                   d_278023676 == 615768760 ~ "Started",
+#                                   as.Date(d_914594314) > as.Date("2025-08-01") |     # ineligible if verified after August 1 2025
+# #                                    d_875007964 != "197316935" |                     # ineligible if verification status isn't "verified"
+#                                     d_747006172 != "104430631" ~ "Not Eligible",     # ineligible if consent is withdrawn
+#                                   d_278023676 == 972455046 ~ "Not Started",
+#                                   TRUE ~ "Not Eligible"
+#                                 ),
 
                                 
                                 
@@ -3452,11 +3455,21 @@ knitr::kable(BL_lang_SP, format.args = list(big.mark = ","), digits=2,
 <!-- trigger <- bigrquery::bq_table_download(trig_roi,bigint = "integer64") -->
 
 
+
 <!-- trigger_time <- left_join(all_data, trigger, by="token") -->
 
 
-<!-- trig_time<- trigger_time %>%  filter(roicomplt=="Submitted") %>% -->
-<!--   mutate(trigTM_roi = as.numeric(difftime(as.POSIXct(ymd_hms(d_543379310)), as.POSIXct(ymd_hms(trig)), units="days"))) -->
+<!-- # For submitted cases, compute days from trigger to submission. -->
+
+<!-- # this is currently showing nothing in stage because none of the submitted test surveys had a notification time  -->
+
+<!-- trig_time <- trigger_time %>% -->
+<!--   filter(roicomplt == "Submitted") %>% -->
+<!--   mutate( -->
+<!--     trigTM_roi = as.numeric( -->
+<!--       difftime(ymd_hms(d_543379310), notification_time, units = "days") -->
+<!--     ) -->
+<!--   ) -->
 
 <!-- Trig_table = trig_time %>% -->
 <!--   dplyr::summarize('N'=n(), -->
