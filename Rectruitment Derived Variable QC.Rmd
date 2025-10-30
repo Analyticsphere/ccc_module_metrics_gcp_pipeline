@@ -2628,3 +2628,43 @@ if (nrow(Man_OutRch) == 0) {
 
 ```
 
+<!-- \FloatBarrier -->
+<!-- ## 94. If the ROI Pref Survey Status flag is null, there should be no survey data. -->
+
+<!-- ```{r survey_data_m1, echo=FALSE, warning=FALSE, message=FALSE} -->
+
+
+<!-- roi_null_bq <- -->
+<!-- "SELECT Connect_ID, -->
+<!-- CASE -->
+<!--     WHEN d_827220437 = '125001209' THEN 'Kaiser Permanente Colorado' -->
+<!--     WHEN d_827220437 = '472940358' THEN 'Baylor Scott & White Health' -->
+<!--     WHEN d_827220437 = '300267574' THEN 'Kaiser Permanente Hawaii' -->
+<!--     WHEN d_827220437 = '303349821' THEN 'Marshfield Clinic Health System' -->
+<!--     WHEN d_827220437 = '327912200' THEN 'Kaiser Permanente Georgia' -->
+<!--     WHEN d_827220437 = '452412599' THEN 'Kaiser Permanente Northwest' -->
+<!--     WHEN d_827220437 = '517700004' THEN 'National Cancer Institute' -->
+<!--     WHEN d_827220437 = '531629870' THEN 'HealthPartners' -->
+<!--     WHEN d_827220437 = '548392715' THEN 'Henry Ford Health System' -->
+<!--     WHEN d_827220437 = '657167265' THEN 'Sanford Health' -->
+<!--     WHEN d_827220437 = '809703864' THEN 'University of Chicago Medicine' -->
+<!--     ELSE NULL -->
+<!-- END AS Site -->
+<!-- FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` -->
+<!-- where d_278023676 is null and -->
+<!-- Connect_ID in (select Connect_ID from `nih-nci-dceg-connect-prod-6d04.FlatConnect.preference2025` ) -->
+<!-- order by Site" -->
+
+<!-- roi_null_bq_table <- bq_project_query(project, roi_null_bq) -->
+<!-- roi_null <- bq_table_download(roi_null_bq_table, bigint = "integer64") -->
+
+
+<!-- if (nrow(roi_null) == 0) { -->
+<!--   cat("No errors\n") -->
+<!-- } else { -->
+<!--   knitr::kable(roi_null) %>% -->
+<!--     kable_styling(latex_options = "scale_down") -->
+<!-- } -->
+
+
+<!-- ``` -->
