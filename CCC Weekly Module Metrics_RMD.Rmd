@@ -3175,6 +3175,24 @@ knitr::kable(BL_lang_SP, format.args = list(big.mark = ","), digits=2,
 ```
 
 
+<!-- ```{r ROI_testing, echo=FALSE, warning=FALSE, message=FALSE, results='asis'} -->
+
+<!-- roi_complete_eligible <- all_data %>% -->
+<!--   mutate( -->
+<!--     roicomplt = case_when( -->
+<!--       as.Date(d_914594314) > as.Date("2025-08-01") ~ "Not Eligible",   # verified after Aug 1, 2025 -->
+<!--       d_821247024 != "197316935" ~ "Not Eligible",                    # not verified -->
+<!--       d_747006172 != "104430631" ~ "Not Eligible",                    # consent withdrawn -->
+<!--       TRUE ~ "Eligible"                                               # meets all criteria -->
+<!--     ) -->
+<!--   ) -->
+<!-- › -->
+<!-- roi_complete_eligible %>% -->
+<!--   count(roicomplt) -->
+
+<!-- ``` -->
+
+
 <!-- \newpage -->
 <!-- # 2025 ROI Preference Survey -->
 <!-- The 2025 ROI Preference Survey is available to participants from October 29, 2025 to December 10, 2025. All participants who were verified on or before August 1, 2025, who are not withdrawn or deceased, and did not refuse all future activities or all future surveys were eligible. -->
