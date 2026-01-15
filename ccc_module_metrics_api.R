@@ -75,11 +75,12 @@ function(report, testing = FALSE) {
     }
 
     # Render the rmarkdown file
-    rmarkdown::render(r_file_name
-                   ,
+    knitr::opts_chunk$set(dev = "cairo_pdf") # Cairo-pdf is sa
+    rmarkdown::render(r_file_name,
       output_format = output_format,
       output_file = report_fid,
-      clean = TRUE
+      clean = TRUE,
+      envir = new.env()
     )
   } else if (is_r_file) {
     source(r_file_name)
