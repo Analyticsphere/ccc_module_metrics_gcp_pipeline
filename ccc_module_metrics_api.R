@@ -36,6 +36,7 @@ function(report, testing = FALSE) {
   r_file_name <- configuration$r_file_name
   report_file_name <- configuration$report_file_name
   bucket <- configuration$bucket
+  latex_artifact_bucket <- configuration$latex_artifact_bucket 
   print(paste0("bucket: ", bucket))
   if (testing) {
     box_folders <- configuration$test_box_folders
@@ -106,14 +107,10 @@ function(report, testing = FALSE) {
     x # Return the file name for further processing if needed
   })
   
-<<<<<<< HEAD
-  # Send LaTeX .tex and .log files to GCS (bucket 'latex_artifacts') for debugging
-=======
-  # Send LaTeX .tex and .log files to Box for debugging
->>>>>>> 40aaa209c6a2c2382e01a11a663a273c2aebbde5
+  # Send LaTeX .tex and .log files to GCS for debugging
   filelist <- list.files(pattern = "*.tex$|*.log$")
   uploaded_files <- lapply(filelist, function(x) {
-    gcs_upload(x, bucket = "latex_artifacts", name = x)
+    gcs_upload(x, bucket = latex_artifact_bucket, name = x)
     print(paste("Uploaded file:", x))
     x # Return the file name for further processing if needed
   })

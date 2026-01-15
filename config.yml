@@ -2,6 +2,7 @@ default:
   report_maintainer: "Kelsey Dowling"
   pipeline_maintainer: "Jake Peters"
   bucket: "ccc_weekly_metrics_report"
+  latex_artifact_bucket: "latex_artifacts"
   test_box_folders: 
     - "222593912729"
   gcp_info:
