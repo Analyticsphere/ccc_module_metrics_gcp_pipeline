@@ -1475,7 +1475,7 @@ if (nrow(dhq_qualified) == 0) {
   cat("No errors\n")
 } else {
   
-  dhq_qualified <- dhq_qualified %>% select(Site, Connect_ID, d_176068627, verif_days, d_747006172) %>%  safe_arrange(Site)
+  dhq_qualified <- dhq_qualified %>% select(Site, Connect_ID, d_692560814, verif_days, d_747006172) %>%  safe_arrange(Site)
 
   colnames(dhq_qualified) <- c("Site", "Connect ID", "Survey Flag", "verif_days", "WD_Status")
 
