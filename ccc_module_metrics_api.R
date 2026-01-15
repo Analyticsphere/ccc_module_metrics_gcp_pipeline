@@ -107,7 +107,7 @@ function(report, testing = FALSE) {
   })
   
   # Send LaTeX .tex and .log files to Box for debugging
-  filelist < list.files(pattern = "*.tex$|*.log$")
+  filelist <- list.files(pattern = "*.tex$|*.log$")
   uploaded_files <- lapply(filelist, function(x) {
     gcs_upload(x, bucket = "latex_artifacts", name = x)
     print(paste("Uploaded file:", x))
