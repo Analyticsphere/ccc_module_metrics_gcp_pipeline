@@ -75,11 +75,12 @@ function(report, testing = FALSE) {
     }
 
     # Render the rmarkdown file
-    rmarkdown::render(r_file_name
-                   ,
+    knitr::opts_chunk$set(dev = "cairo_pdf") # Cairo-pdf is sa
+    rmarkdown::render(r_file_name,
       output_format = output_format,
       output_file = report_fid,
-      clean = TRUE
+      clean = TRUE,
+      envir = new.env()
     )
   } else if (is_r_file) {
     source(r_file_name)
@@ -104,8 +105,20 @@ function(report, testing = FALSE) {
     print(paste("Uploaded file:", x))
     x # Return the file name for further processing if needed
   })
-
-  # Return a string for for API testing purposes
+  
+<<<<<<< HEAD
+  # Send LaTeX .tex and .log files to GCS (bucket 'latex_artifacts') for debugging
+=======
+  # Send LaTeX .tex and .log files to GCS (bucket 'latex_artifacts') for debugging
+>>>>>>> 40aaa209c6a2c2382e01a11a663a273c2aebbde5
+  filelist <- list.files(pattern = "*.tex$|*.log$")
+  uploaded_files <- lapply(filelist, function(x) {
+    gcs_upload(x, bucket = "latex_artifacts", name = x)
+    print(paste("Uploaded file:", x))
+    x # Return the file name for further processing if needed
+  })
+  
+  # Return a string for API testing purposes
   ret_str <- paste("All done. Check", bucket, "for", report_fid)
   print(ret_str)
   return(ret_str)
