@@ -67,7 +67,7 @@ COPY ["./Module_2_Custom_QC.Rmd", "Module_2_Custom_QC.Rmd"]
 COPY ["./Module_3_Custom_QC.Rmd", "Module_3_Custom_QC.Rmd"]
 COPY ["./Cancer Screening Summary Statistics.Rmd", "Cancer Screening Summary Statistics.Rmd"]
 COPY ["./Monthly Derived Survey Variables.Rmd", "Monthly Derived Survey Variables.Rmd"]
-COPY ["./entrypoint.R", "entrypoint.R"]"
+COPY ["./entrypoint.R", "entrypoint.R"]
 
 # Run R code
 EXPOSE 8080

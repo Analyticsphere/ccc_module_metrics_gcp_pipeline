@@ -117,7 +117,7 @@ function(report, testing = FALSE) {
     print(paste("Uploaded file:", x))
     x # Return the file name for further processing if needed
   })
-  
+
   # Return a string for API testing purposes
   ret_str <- paste("All done. Check", bucket, "for", report_fid)
   print(ret_str)
