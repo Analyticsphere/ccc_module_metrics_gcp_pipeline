@@ -1,22 +1,10 @@
 # Dockerfile
 
-FROM rocker/tidyverse:4.3
+FROM rocker/tidyverse:4.4.3
 
 # Set the correct path for xelatex
 ENV PATH="$PATH:/root/bin:/usr/local/lib"
-# Message daniel on gitter when this doesn't work
 
-# Install tinytex linux dependencies, pandoc, and rmarkdown
-# Reference: https://github.com/csdaw/rmarkdown-tinytex/blob/master/Dockerfile
-RUN apt-get update \
-  && apt-get install -y --no-install-recommends \
-    wget \
-    graphviz \ 
-    imagemagick \
-    perl && \
-    /rocker_scripts/install_pandoc.sh && \
-    install2.r rmarkdown 
-    
 # Install tinytex
 RUN Rscript -e 'tinytex::install_tinytex()'
 #RUN Rscript -e 'tinytex::install_tinytex(repository = "illinois")'
@@ -27,11 +15,10 @@ RUN Rscript -e 'tinytex::tlmgr_install(c("multirow", "ulem", "environ", "colortb
 # RUN tlmgr install --repository=https://mirror.ctan.org/systems/texlive/tlnet multirow
 
 # Install R libraries
-RUN install2.r --error plumber bigrquery dplyr googleCloudStorageR gargle \
-               tools epiDisplay lubridate tidyverse knitr gtsummary tidyr \
-               googleCloudStorageR reshape gmodels lubridate config magick \
+RUN install2.r --error plumber bigrquery googleCloudStorageR gargle \
+               tools epiDisplay knitr gtsummary reshape gmodels config magick \
                foreach arsenal rio gridExtra scales data.table listr sqldf \
-               expss gmodels magrittr naniar UpSetR RColorBrewer ggrepel DBI logger
+               expss magrittr naniar UpSetR RColorBrewer DBI logger
                
 # These libraries might not be available from install2.R so use CRAN
 RUN R -e "install.packages(c('gt', 'vtable', 'pdftools'), dependencies=TRUE, repos='http://cran.rstudio.com/')"
