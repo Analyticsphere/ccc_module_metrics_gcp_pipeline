@@ -54,6 +54,8 @@ COPY ["./Cancer Screening Summary Statistics.Rmd", "Cancer Screening Summary Sta
 COPY ["./Monthly Derived Survey Variables.Rmd", "Monthly Derived Survey Variables.Rmd"]
 COPY ["./entrypoint.R", "entrypoint.R"]
 
+ENV GCS_SERVICE_ACCOUNT_EMAIL="qa-qc-prod@nih-nci-dceg-connect-prod-6d04.iam.gserviceaccount.com"
+
 # Run R code
 EXPOSE 8080
 
