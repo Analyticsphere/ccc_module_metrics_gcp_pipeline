@@ -105,8 +105,18 @@ function(report, testing = FALSE) {
     print(paste("Uploaded file:", x))
     x # Return the file name for further processing if needed
   })
+  
 
-  # Return a string for for API testing purposes
+  # Send LaTeX .tex and .log files to GCS (bucket 'latex_artifacts') for debugging
+
+  filelist <- list.files(pattern = "*.tex$|*.log$")
+  uploaded_files <- lapply(filelist, function(x) {
+    gcs_upload(x, bucket = "latex_artifacts", name = x)
+    print(paste("Uploaded file:", x))
+    x # Return the file name for further processing if needed
+  })
+  
+  # Return a string for API testing purposes
   ret_str <- paste("All done. Check", bucket, "for", report_fid)
   print(ret_str)
   return(ret_str)
