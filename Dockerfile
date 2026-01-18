@@ -17,19 +17,6 @@ RUN apt-get update \
     /rocker_scripts/install_pandoc.sh && \
     install2.r rmarkdown 
     
-# Install dependencies for sf (used for Kelsey's mapping)
-# Note that these dependencies and the Rcpp, rgdal and sf packages add a lot of
-# time to the build. Remove them if not required for other reports.
-#RUN apt-get -y update \
-#  && apt-get install -y  \
-#  libudunits2-dev \
-#  libgdal-dev \
-#  libgeos-dev \
-#  libproj-dev
-#RUN install.r --error maps mapdata zipcodeR viridis ggthemes usmap #Rcpp
-#RUN R -e "install.packages(c('sf'), dependencies=TRUE, repos='http://cran.rstudio.com/')"
-
-              
 # Install tinytex
 RUN Rscript -e 'tinytex::install_tinytex()'
 #RUN Rscript -e 'tinytex::install_tinytex(repository = "illinois")'
@@ -80,7 +67,9 @@ COPY ["./Module_2_Custom_QC.Rmd", "Module_2_Custom_QC.Rmd"]
 COPY ["./Module_3_Custom_QC.Rmd", "Module_3_Custom_QC.Rmd"]
 COPY ["./Cancer Screening Summary Statistics.Rmd", "Cancer Screening Summary Statistics.Rmd"]
 COPY ["./Monthly Derived Survey Variables.Rmd", "Monthly Derived Survey Variables.Rmd"]
-
+COPY ["./entrypoint.R", "entrypoint.R"]"
 
 # Run R code
-ENTRYPOINT ["R", "-e","pr <- plumber::plumb('ccc_module_metrics_api.R'); pr$run(host='0.0.0.0', port=as.numeric(Sys.getenv('PORT')))"]
+EXPOSE 8080
+
+ENTRYPOINT ["Rscript", "entrypoint.R"]

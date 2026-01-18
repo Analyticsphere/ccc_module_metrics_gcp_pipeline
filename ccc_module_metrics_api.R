@@ -74,15 +74,26 @@ function(report, testing = FALSE) {
     if (is.null(output_format)) {
       stop("Report file extension is invalid. Script did not execute.")
     }
-
-    # Render the rmarkdown file
-    knitr::opts_chunk$set(dev = "cairo_pdf") # Cairo-pdf is sa
-    rmarkdown::render(r_file_name,
-      output_format = output_format,
-      output_file = report_fid,
-      clean = TRUE,
-      envir = new.env()
-    )
+  
+    tryCatch({
+      # Render the rmarkdown file
+      rmarkdown::render(r_file_name,
+                        output_format = output_format,
+                        output_file = report_fid,
+                        clean = TRUE,
+                        envir = new.env()
+      )
+      print("R Markdown rendered successfully.")
+    }, error = function(e) {
+      print(paste("Rendering failed with error: ", e$message))
+    }, finally = {
+      # Always attempt to send .tex and .log files to GCS
+      latex_artifact_files <- list.files(pattern = "*.tex$|*.log$")
+      lapply(latex_artifact_files, function(x) {
+        gcs_upload(x, bucket = latex_artifact_bucket, name = x)
+        print(paste("Uploaded LaTeX artifact file:", x))
+      })
+    })
   } else if (is_r_file) {
     source(r_file_name)
   } else {
@@ -103,14 +114,6 @@ function(report, testing = FALSE) {
   filelist <- list.files(pattern = "*.csv$|*.pdf$")
   uploaded_files <- lapply(filelist, function(x) {
     gcs_upload(x, bucket = bucket, name = x)
-    print(paste("Uploaded file:", x))
-    x # Return the file name for further processing if needed
-  })
-  
-  # Send LaTeX .tex and .log files to GCS (bucket 'latex_artifacts') for debugging
-  filelist <- list.files(pattern = "*.tex$|*.log$")
-  uploaded_files <- lapply(filelist, function(x) {
-    gcs_upload(x, bucket = latex_artifact_bucket, name = x)
     print(paste("Uploaded file:", x))
     x # Return the file name for further processing if needed
   })
