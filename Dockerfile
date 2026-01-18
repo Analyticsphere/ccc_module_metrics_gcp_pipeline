@@ -5,15 +5,13 @@ FROM rocker/tidyverse:4.4.3
 # Set the correct path for xelatex
 ENV PATH="$PATH:/root/bin:/usr/local/lib"
 
-# Install tinytex
-RUN Rscript -e 'tinytex::install_tinytex()'
-#RUN Rscript -e 'tinytex::install_tinytex(repository = "illinois")'
-
-# Preinstall the LaTeX packages used by Rmarkdown and other PDF libraries
-RUN Rscript -e 'tinytex::tlmgr_install(c("multirow", "ulem", "environ", "colortbl", "wrapfig", "pdflscape", "tabu", "threeparttable", "threeparttablex", "makecell", "caption", "anyfontsize"))'
-# Alternatively, using tlmgr directly:
-# RUN tlmgr install --repository=https://mirror.ctan.org/systems/texlive/tlnet multirow
-
+# Install TinyTeX and necessary LaTeX packages
+RUN Rscript -e 'tinytex::install_tinytex()' && \
+    Rscript -e 'tinytex::tlmgr_install(c( \
+      "multirow", "ulem", "environ", "colortbl", "wrapfig", "pdflscape", \
+      "tabu", "threeparttable", "threeparttablex", "makecell", "caption", \
+      "anyfontsize"))'
+      
 # Install R libraries
 RUN install2.r --error plumber bigrquery googleCloudStorageR gargle \
                tools epiDisplay knitr gtsummary reshape gmodels config magick \
