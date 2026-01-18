@@ -9,7 +9,6 @@ library(rmarkdown)
 library(googleCloudStorageR)
 library(gargle)
 library(tools)
-library(config)
 library(glue)
 
 #* heartbeat...for testing purposes only. Not required to run analysis.
@@ -74,7 +73,12 @@ function(report, testing = FALSE) {
     if (is.null(output_format)) {
       stop("Report file extension is invalid. Script did not execute.")
     }
-  
+    
+    # Authenticate with Google Storage and write report file to bucket
+    scope <- c("https://www.googleapis.com/auth/cloud-platform")
+    token <- token_fetch(scopes = scope)
+    gcs_auth(token = token)
+    
     tryCatch({
       # Render the rmarkdown file
       rmarkdown::render(r_file_name,
@@ -104,11 +108,6 @@ function(report, testing = FALSE) {
   # They do not persist after rmarkdown::render for some reports, including mod1_stats
   bucket <- config::get(value = "bucket")
   report_fid <- Sys.getenv("REPORT_FID")
-
-  # Authenticate with Google Storage and write report file to bucket
-  scope <- c("https://www.googleapis.com/auth/cloud-platform")
-  token <- token_fetch(scopes = scope)
-  gcs_auth(token = token)
 
   # Loop through CSV and PDF files, write them to GCP Cloud Storage, and print their names
   filelist <- list.files(pattern = "*.csv$|*.pdf$")
