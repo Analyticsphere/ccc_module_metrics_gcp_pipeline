@@ -3245,8 +3245,6 @@ add_footnote(pref_lang_site, "Note: Preferred language is based on language of s
 
 
 
-
-
 ```{r Survey_Flag_Setup, echo=FALSE, error=FALSE, message=FALSE, warning=FALSE}
 
 
@@ -3338,16 +3336,16 @@ queries <- list(
   DHQ_lang_c = "SELECT Connect_ID, d_748726394  as language, d_255077064 -- here dhq language is in the participants table NOT the DHQ table
                 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants`
                 WHERE Connect_ID IS NOT NULL and d_692560814='231311385'  and
-               (d_512820379='486306141' OR d_512820379='854703046') and d_821247024 = '197316935'"
+               (d_512820379='486306141' OR d_512820379='854703046') and d_821247024 = '197316935'",
   
   
-#   ROI_lang_c = "SELECT pts.Connect_ID, csh.d_784119588 as language, d_255077064
-#                 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
-#                 left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.cancerScreeningHistorySurvey` csh
-#                 on csh.Connect_ID=pts.Connect_ID
-#                 WHERE pts.Connect_ID IS NOT NULL and d_176068627='231311385' and 
-#                 (pts.d_512820379='486306141' OR pts.d_512820379='854703046') and pts.d_821247024 = '197316935'"
-# 
+  ROI_lang_c = "SELECT pts.Connect_ID, pref.d_784119588 as language, d_255077064
+                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
+                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.preference2026` pref
+                on pref.Connect_ID=pts.Connect_ID
+                WHERE pts.Connect_ID IS NOT NULL and d_278023676 ='231311385' and
+                (pts.d_512820379='486306141' OR pts.d_512820379='854703046') and pts.d_821247024 = '197316935'"
+
 )
 
 
@@ -3377,19 +3375,20 @@ QOL_lang <- results_list$QOL_lang_c
 CES_lang <- results_list$CES_lang_c
 CSH_lang <- results_list$CSH_lang_c
 DHQ_lang <- results_list$DHQ_lang_c
-# ROI_lang <- results_list$ROI_lang_c
+ROI_lang <- results_list$ROI_lang_c
 
 
 
 ```
 
 
+\newpage
+
 \FloatBarrier
 ```{r Svy_Lang_Diff, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
 #must match the order for survey_acronyms in the chunk below
-survey_dfs <- list(m1_lang, m2_lang, m3_lang, m4_lang, BUM_lang, BU_lang, CV_lang, Mens_lang, MW_lang, QOL_lang, DHQ_lang, CSH_lang, CES_lang 
-                   # ROI_lang
+survey_dfs <- list(m1_lang, m2_lang, m3_lang, m4_lang, BUM_lang, BU_lang, CV_lang, Mens_lang, MW_lang, QOL_lang, DHQ_lang, CSH_lang, CES_lang, ROI_lang
                    ) 
 
 # Initialize an empty data frame to store results for all participants
@@ -3431,22 +3430,18 @@ scenario_counts <- final_scenarios %>%
   dplyr::rename(Scenario = scenario, 'Total Participants' = n)
 
 consist <- knitr::kable(scenario_counts,
-                        caption = "Table 9.2. Consistency of Language Choice in Survey Completion",
-                        row.names = FALSE, align = c("l", "c"), digits = 2, booktabs = TRUE) %>%
-  kable_styling(latex_options = "scale_down") %>% 
-  footnote(general="Those who do not start any surveys will not have survey flags, and thus not be counted in this table. Those that start but do not complete a survey will still choose a survey language.", 
-           general_title = "Note: ", 
-           footnote_as_chunk = T)
+             caption = "Table 9.2. Consistency of Language Choice in Survey Completion",
+             row.names = FALSE, align = c("l", "c"), digits = 2, booktabs = TRUE) %>%
+  kable_styling(latex_options = "scale_down")  %>%  landscape() %>% 
+  footnote(general="Those who do not start any surveys will not have survey flags, \n and thus not be counted in this table. Those that start but do not complete a survey will still choose a survey language.",
+           general_title = "")
 
 knitr::kable(scenario_counts,
              caption = "Table 9.2. Consistency of Language Choice in Survey Completion",
              row.names = FALSE, align = c("l", "c"), digits = 2, booktabs = TRUE) %>%
-  kable_styling(latex_options = "scale_down") %>% 
-  footnote(
-    general = "Those who do not start any surveys will not have survey flags, and thus not be counted in this table. Those that start but do not complete a survey will still choose a survey language.",
-    general_title = "Note: ",
-    footnote_as_chunk = TRUE
-  )
+  kable_styling(latex_options = "scale_down")  %>%  landscape() %>% 
+  footnote(general="Those who do not start any surveys will not have survey flags, \n and thus not be counted in this table. Those that start but do not complete a survey will still choose a survey language.",
+           general_title = "")
 
 
 ```
@@ -3456,8 +3451,8 @@ knitr::kable(scenario_counts,
 ```{r Svy_Lang_Compare, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
 # must match the order for survey_dfs in the chunk above
-survey_acronyms <- c("BOH", "MRE", "SAS", "LAW", "BUM", "BU", "COVID", "MENS", "MW", "QOL", "DHQ", "CSH",  "CES" 
-                     # "ROI"
+survey_acronyms <- c("BOH", "MRE", "SAS", "LAW", "BUM", "BU", "COVID", "MENS", "MW", "QOL", "DHQ", "CSH",  "CES", 
+                     "ROI"
                      ) 
 
 
@@ -3596,7 +3591,7 @@ SAS_LangE <- start_stop_lang(all_data, "d_976570371", 231311385, "English", "m3_
 LAW_LangE <- start_stop_lang(all_data, "d_663265240", 231311385, "English", "m4_comp_mins")
 DHQ_LangE <- start_stop_lang(all_data, "d_692560814", 231311385, "English", "dhq_comp_mins")
 CSH_LangE <- start_stop_lang(all_data, "d_176068627", 231311385, "English", "csh_comp_mins")
-# ROI_LangE <- start_stop_lang(all_data, "d_176068627", 231311385, "English", "roi_comp_mins")
+ROI_LangE <- start_stop_lang(all_data, "d_278023676", 231311385, "English", "roi_comp_mins")
 
 BOH_LangSP <- start_stop_lang(all_data, "d_949302066", 231311385, "Spanish", "m1_comp_mins")
 MRE_LangSP <- start_stop_lang(all_data, "d_536735468", 231311385, "Spanish", "m2_comp_mins")
@@ -3604,7 +3599,7 @@ SAS_LangSP <- start_stop_lang(all_data, "d_976570371", 231311385, "Spanish", "m3
 LAW_LangSP <- start_stop_lang(all_data, "d_663265240", 231311385, "Spanish", "m4_comp_mins")
 DHQ_LangSP <- start_stop_lang(all_data, "d_692560814", 231311385, "Spanish", "dhq_comp_mins")
 CSH_LangSP <- start_stop_lang(all_data, "d_176068627", 231311385, "Spanish", "csh_comp_mins")
-#  ROI_LangSP <- start_stop_lang(all_data, "d_176068627", 231311385, "Spanish", "roi_comp_mins")
+ROI_LangSP <- start_stop_lang(all_data, "d_278023676", 231311385, "Spanish", "roi_comp_mins")
 
 
 BL_lang_E <- rbind(BOH_LangE, MRE_LangE, SAS_LangE, LAW_LangE)
@@ -3653,15 +3648,15 @@ knitr::kable(BL_lang_SP, format.args = list(big.mark = ","), digits=2,
               row.names=FALSE, align=c("l","c","c","c","c","c","c","c","c"),booktabs = TRUE)%>%
      kable_styling(latex_options = c("scale_down","hold_position"))
  
- #  knitr::kable(ROI_LangE, format.args = list(big.mark = ","), digits=2,
- #              caption='Table 9.7.a Time (in minutes) from Start to Submit of ROI Preference Survey for English',
- #              row.names=FALSE, align=c("l","c","c","c","c","c","c","c","c"), booktabs = TRUE)%>%
- #     kable_styling(latex_options = c("scale_down","hold_position"))
- # 
- # knitr::kable(ROI_LangSP, format.args = list(big.mark = ","), digits=2,
- #              caption='Table 9.7.b Time (in minutes) from Start to Submit of ROI Preference Survey for Spanish',
- #              row.names=FALSE, align=c("l","c","c","c","c","c","c","c","c"),booktabs = TRUE)%>%
- #     kable_styling(latex_options = c("scale_down","hold_position"))
+  knitr::kable(ROI_LangE, format.args = list(big.mark = ","), digits=2,
+              caption='Table 9.7.a Time (in minutes) from Start to Submit of ROI Preference Survey for English',
+              row.names=FALSE, align=c("l","c","c","c","c","c","c","c","c"), booktabs = TRUE)%>%
+     kable_styling(latex_options = c("scale_down","hold_position"))
+
+ knitr::kable(ROI_LangSP, format.args = list(big.mark = ","), digits=2,
+              caption='Table 9.7.b Time (in minutes) from Start to Submit of ROI Preference Survey for Spanish',
+              row.names=FALSE, align=c("l","c","c","c","c","c","c","c","c"),booktabs = TRUE)%>%
+     kable_styling(latex_options = c("scale_down","hold_position"))
 
 ```
 
