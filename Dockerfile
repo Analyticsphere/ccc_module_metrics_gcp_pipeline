@@ -16,7 +16,7 @@ RUN Rscript -e 'tinytex::install_tinytex()' && \
 RUN install2.r --error plumber bigrquery googleCloudStorageR gargle \
                tools epiDisplay knitr gtsummary reshape gmodels config magick \
                foreach arsenal rio gridExtra scales data.table listr sqldf \
-               expss magrittr naniar UpSetR RColorBrewer DBI logger
+               expss magrittr naniar UpSetR RColorBrewer DBI logger ggrepel
                
 # These libraries might not be available from install2.R so use CRAN
 RUN R -e "install.packages(c('gt', 'vtable', 'pdftools'), dependencies=TRUE, repos='http://cran.rstudio.com/')"
