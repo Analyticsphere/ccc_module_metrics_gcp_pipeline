@@ -9,7 +9,6 @@ library(rmarkdown)
 library(googleCloudStorageR)
 library(gargle)
 library(tools)
-library(config)
 library(glue)
 
 #* heartbeat...for testing purposes only. Not required to run analysis.
@@ -36,6 +35,7 @@ function(report, testing = FALSE) {
   r_file_name <- configuration$r_file_name
   report_file_name <- configuration$report_file_name
   bucket <- configuration$bucket
+  latex_artifact_bucket <- configuration$latex_artifact_bucket 
   print(paste0("bucket: ", bucket))
   if (testing) {
     box_folders <- configuration$test_box_folders
@@ -73,15 +73,31 @@ function(report, testing = FALSE) {
     if (is.null(output_format)) {
       stop("Report file extension is invalid. Script did not execute.")
     }
-
-    # Render the rmarkdown file
-    knitr::opts_chunk$set(dev = "cairo_pdf") # Cairo-pdf is sa
-    rmarkdown::render(r_file_name,
-      output_format = output_format,
-      output_file = report_fid,
-      clean = TRUE,
-      envir = new.env()
-    )
+    
+    # Authenticate with Google Storage and write report file to bucket
+    scope <- c("https://www.googleapis.com/auth/cloud-platform")
+    token <- token_fetch(scopes = scope)
+    gcs_auth(token = token)
+    
+    tryCatch({
+      # Render the rmarkdown file
+      rmarkdown::render(r_file_name,
+                        output_format = output_format,
+                        output_file = report_fid,
+                        clean = TRUE,
+                        envir = new.env()
+      )
+      print("R Markdown rendered successfully.")
+    }, error = function(e) {
+      print(paste("Rendering failed with error: ", e$message))
+    }, finally = {
+      # Always attempt to send .tex and .log files to GCS
+      latex_artifact_files <- list.files(pattern = "*.tex$|*.log$")
+      lapply(latex_artifact_files, function(x) {
+        gcs_upload(x, bucket = latex_artifact_bucket, name = x)
+        print(paste("Uploaded LaTeX artifact file:", x))
+      })
+    })
   } else if (is_r_file) {
     source(r_file_name)
   } else {
@@ -93,11 +109,6 @@ function(report, testing = FALSE) {
   bucket <- config::get(value = "bucket")
   report_fid <- Sys.getenv("REPORT_FID")
 
-  # Authenticate with Google Storage and write report file to bucket
-  scope <- c("https://www.googleapis.com/auth/cloud-platform")
-  token <- token_fetch(scopes = scope)
-  gcs_auth(token = token)
-
   # Loop through CSV and PDF files, write them to GCP Cloud Storage, and print their names
   filelist <- list.files(pattern = "*.csv$|*.pdf$")
   uploaded_files <- lapply(filelist, function(x) {
@@ -105,17 +116,7 @@ function(report, testing = FALSE) {
     print(paste("Uploaded file:", x))
     x # Return the file name for further processing if needed
   })
-  
 
-  # Send LaTeX .tex and .log files to GCS (bucket 'latex_artifacts') for debugging
-
-  filelist <- list.files(pattern = "*.tex$|*.log$")
-  uploaded_files <- lapply(filelist, function(x) {
-    gcs_upload(x, bucket = "latex_artifacts", name = x)
-    print(paste("Uploaded file:", x))
-    x # Return the file name for further processing if needed
-  })
-  
   # Return a string for API testing purposes
   ret_str <- paste("All done. Check", bucket, "for", report_fid)
   print(ret_str)
