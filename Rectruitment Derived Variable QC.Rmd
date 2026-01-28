@@ -1466,7 +1466,8 @@ if (nrow(comp_DHQ) == 0) {
 ```{r dhq_qualified, echo=FALSE, warning=FALSE, message=FALSE}
 
 dhq_qualified <- partsbq %>%  filter((d_692560814==615768760 | d_692560814==231311385) & 
-                                       !(d_821247024 == 197316935 & as.Date(d_914594314) >="2024-12-01" & d_747006172==104430631 & 
+                                       !(d_821247024 == 197316935 & as.Date(d_914594314) >="2024-12-01" & 
+                                           d_747006172==104430631 & 
                                            difftime(Sys.Date(), as.Date(d_914594314), units="days") >=180)) %>% 
   mutate(verif_days = difftime(Sys.Date(), as.Date(d_914594314), units="days"))
 
@@ -1476,7 +1477,6 @@ if (nrow(dhq_qualified) == 0) {
 } else {
   
   dhq_qualified <- dhq_qualified %>% select(Site, Connect_ID, d_692560814, verif_days, d_747006172) %>%  safe_arrange(Site)
-  
   colnames(dhq_qualified) <- c("Site", "Connect ID", "Survey Flag", "verif_days", "WD_Status")
   
   knitr::kable(dhq_qualified) %>%

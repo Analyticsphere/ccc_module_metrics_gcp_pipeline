@@ -1,34 +1,102 @@
 # cloudbuild.yaml
 #
+# This Cloud Build configuration file builds, pushes, and deploys a Docker image for the
+# "ccc-module-metrics-api" service. Both caching and tagging strategies are applied
+# for efficient rebuilds and clear versioning.
+
+steps:
+
+ # Build the container image
+ # - The image is tagged with both $COMMIT_SHA (for traceability) and "latest" (for caching purposes).
+ # - The "--cache-from" flag ensures that unchanged layers from the "latest" tag can be reused, 
+ #   speeding up rebuilds when the Dockerfile and dependencies don't change.
+ - name: 'gcr.io/cloud-builders/docker'
+   args: [
+     'build',
+     '-t', 'gcr.io/nih-nci-dceg-connect-prod-6d04/ccc-module-metrics-api:$COMMIT_SHA',      # Tag image with the current Git commit SHA for traceability
+     '-t', 'gcr.io/nih-nci-dceg-connect-prod-6d04/ccc-module-metrics-api:latest',           # Tag image with "latest" for caching
+     '--cache-from', 'gcr.io/nih-nci-dceg-connect-prod-6d04/ccc-module-metrics-api:latest', # Use the "latest" tag for layer caching
+     '.'
+   ]
+   timeout: 1200s
+
+ # Push the container image with :COMMIT_SHA tag
+ - name: 'gcr.io/cloud-builders/docker'
+   args: ['push', 'gcr.io/nih-nci-dceg-connect-prod-6d04/ccc-module-metrics-api:$COMMIT_SHA']
+
+ # Push the container image with :latest tag
+ - name: 'gcr.io/cloud-builders/docker'
+   args: ['push', 'gcr.io/nih-nci-dceg-connect-prod-6d04/ccc-module-metrics-api:latest']
+
+ # Deploy container image to Cloud Run
+ - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+   entrypoint: gcloud
+   args: [
+     'run', 'deploy', 'ccc-module-metrics-api',
+     '--image=gcr.io/nih-nci-dceg-connect-prod-6d04/ccc-module-metrics-api:$COMMIT_SHA',
+     '--concurrency=1',
+     '--cpu=8',
+     '--memory=32Gi',
+     '--region=us-central1',
+     '--service-account=qa-qc-prod@nih-nci-dceg-connect-prod-6d04.iam.gserviceaccount.com'
+   ]
+
+# Cloud Build suggested HIGHCPU machine type to improve build time, previously 12+ minutes
+options:
+  machineType: 'E2_HIGHCPU_8'
+
+tags:
+  - reporting_pipeline
+  - module_metrics
+
+images:
+  - 'gcr.io/nih-nci-dceg-connect-prod-6d04/ccc-module-metrics-api:$COMMIT_SHA'
+  - 'gcr.io/nih-nci-dceg-connect-prod-6d04/ccc-module-metrics-api:latest'
 steps:
 
  # Build the container image
  - name: 'gcr.io/cloud-builders/docker'
-   args: ['build','-t', 'gcr.io/nih-nci-dceg-connect-prod-6d04/ccc-module-metrics-api:$COMMIT_SHA', '.']
+   args: [
+     'build',
+     '-t', 'gcr.io/nih-nci-dceg-connect-prod-6d04/ccc-module-metrics-api:$COMMIT_SHA',
+     '-t', 'gcr.io/nih-nci-dceg-connect-prod-6d04/ccc-module-metrics-api:latest',
+     '--cache-from', 'gcr.io/nih-nci-dceg-connect-prod-6d04/ccc-module-metrics-api:latest',
+     '.'
+   ]
    timeout: 1200s
-   
- # Push the container image to Container Registry
+
+ # Push the container image with :COMMIT_SHA tag
  - name: 'gcr.io/cloud-builders/docker'
    args: ['push', 'gcr.io/nih-nci-dceg-connect-prod-6d04/ccc-module-metrics-api:$COMMIT_SHA']
-   
+
+ # Push the container image with :latest tag
+ - name: 'gcr.io/cloud-builders/docker'
+   args: ['push', 'gcr.io/nih-nci-dceg-connect-prod-6d04/ccc-module-metrics-api:latest']
+
  # Deploy container image to Cloud Run
  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
    entrypoint: gcloud
-   args: ['run','deploy','ccc-module-metrics-api', 
-   '--image=gcr.io/nih-nci-dceg-connect-prod-6d04/ccc-module-metrics-api:$COMMIT_SHA', 
-   '--concurrency=1', 
-   '--cpu=8','--memory=32Gi', 
-   '--region=us-central1', 
-   '--service-account=qa-qc-prod@nih-nci-dceg-connect-prod-6d04.iam.gserviceaccount.com']
+   args: [
+     'run', 'deploy', 'ccc-module-metrics-api',
+     '--image=gcr.io/nih-nci-dceg-connect-prod-6d04/ccc-module-metrics-api:$COMMIT_SHA',
+     '--concurrency=1',
+     '--cpu=8',
+     '--memory=32Gi',
+     '--region=us-central1',
+     '--service-account=qa-qc-prod@nih-nci-dceg-connect-prod-6d04.iam.gserviceaccount.com'
+   ]
 
-# Cloud Build suggested High CPU to improve build time which was previousl 12+ minutes
+# Cloud Build suggested HIGHCPU machine type to improve build time, previously 12+ minutes
 options:
   machineType: 'E2_HIGHCPU_8'
-  
 
 tags:
   - reporting_pipeline
-  - module_metrics    
-  
+  - module_metrics
+
+# Images built during this process
+# - The $COMMIT_SHA tag allows for specific version tracking of builds.
+# - The "latest" tag is used for caching in subsequent builds.
 images:
- - 'gcr.io/nih-nci-dceg-connect-prod-6d04/ccc-module-metrics-api:$COMMIT_SHA'
+  - 'gcr.io/nih-nci-dceg-connect-prod-6d04/ccc-module-metrics-api:$COMMIT_SHA'
+  - 'gcr.io/nih-nci-dceg-connect-prod-6d04/ccc-module-metrics-api:latest'

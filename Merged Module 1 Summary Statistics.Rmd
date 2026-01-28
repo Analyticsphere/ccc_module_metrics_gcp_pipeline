@@ -1445,27 +1445,61 @@ create_kable_table_w_footnote(mhgroup2_long, Condition, "MHGROUP2: Diagnosed Res
 
 \FloatBarrier
 ```{r MHGroup2Diagn, warning=FALSE, echo=FALSE, message=FALSE}
-###Respiratory
+
+### Respiratory
+
+# Respiratory derived age variables, converting all to numeric:
+
+module1 <- module1 %>%
+  mutate(
+    # Convert year of birth
+    d_544150384 = as.numeric(as.character(d_544150384)),
+    
+    # Chronic Lung Disease variables
+    D_448722126_D_261863326 = as.numeric(as.character(D_448722126_D_261863326)),
+    cld_derived_age = D_448722126_D_261863326 - d_544150384,
+    
+    # Asthma variables
+    D_201449164_D_261863326 = as.numeric(as.character(D_201449164_D_261863326)),
+    asth_derived_age = D_201449164_D_261863326 - d_544150384,
+    
+    # Hay Fever variables
+    D_436333358_D_261863326 = as.numeric(as.character(D_436333358_D_261863326)),
+    hay_derived_age = D_436333358_D_261863326 - d_544150384
+  )
+
+
+# fill "age at diagnosis" variables to derived_age NAs so derived_age variables have all info
+
+module1 <- module1 %>%
+  mutate(
+    cld_derived_age  = if_else(is.na(cld_derived_age),  as.numeric(as.character(D_448722126_D_206625031)), cld_derived_age),
+    asth_derived_age = if_else(is.na(asth_derived_age), as.numeric(as.character(D_201449164_D_206625031)), asth_derived_age),
+    hay_derived_age  = if_else(is.na(hay_derived_age),  as.numeric(as.character(D_436333358_D_206625031)), hay_derived_age)
+  )
+
+# adjusted these to display all three for comparison
 
 
 #cat("Chronic Lung Disease Diagnosis")
-cld_a_dg=boxp_funct(D_448722126_D_206625031,"Chronic Lung Disease Age at Diagnosis","Age")
-cld_y_dg=boxp_funct(D_448722126_D_261863326,"Chronic Lung Disease Year of Diagnosis","Year")
-grid.arrange(cld_a_dg, cld_y_dg, nrow=2)
-
+cld_ad_dg = boxp_funct(cld_derived_age, "Chronic Lung Disease Age at Diagnosis, Derived", "Age")
+cld_a_dg  = boxp_funct(D_448722126_D_206625031, "Chronic Lung Disease Age at Diagnosis", "Age")
+cld_y_dg  = boxp_funct(D_448722126_D_261863326, "Chronic Lung Disease Year of Diagnosis", "Year")
+grid.arrange(cld_ad_dg, cld_a_dg, cld_y_dg, nrow = 3)
 
 
 #cat("Asthma Diagnosis")
-asth_a_dg=boxp_funct(D_201449164_D_206625031,"Asthma Age at Diagnosis","Age")
-asth_y_dg=boxp_funct(D_201449164_D_261863326,"Asthma Year of Diagnosis","Year")
-grid.arrange(asth_a_dg, asth_y_dg, nrow=2)
-
+asth_ad_dg = boxp_funct(asth_derived_age, "Asthma Age at Diagnosis, Derived", "Age")
+asth_a_dg  = boxp_funct(D_201449164_D_206625031, "Asthma Age at Diagnosis", "Age")
+asth_y_dg  = boxp_funct(D_201449164_D_261863326, "Asthma Year of Diagnosis", "Year")
+grid.arrange(asth_ad_dg, asth_a_dg, asth_y_dg, nrow = 3)
 
 
 #cat("Hay Fever Diagnosis")
-hay_a_dg=boxp_funct(D_436333358_D_206625031,"Hay Fever Age at Diagnosis","Age")
-hay_y_dg=boxp_funct(D_436333358_D_261863326,"Hay Fever Year of Diagnosis","Year")
-grid.arrange(hay_a_dg, hay_y_dg, nrow=2)
+hay_ad_dg = boxp_funct(hay_derived_age, "Hay Fever Age at Diagnosis, Derived", "Age")
+hay_a_dg  = boxp_funct(D_436333358_D_206625031, "Hay Fever Age at Diagnosis", "Age")
+hay_y_dg  = boxp_funct(D_436333358_D_261863326, "Hay Fever Year of Diagnosis", "Year")
+grid.arrange(hay_ad_dg, hay_a_dg, hay_y_dg, nrow = 3)
 
 
 ```
@@ -1529,74 +1563,265 @@ create_kable_table_w_footnote(mhgroup3_long, Condition, "MHGROUP3: Diagnosed Dig
 
 \FloatBarrier
 ```{r MHGroup3Diagn, warning=FALSE, echo=FALSE, message=FALSE}
+### Gastrointestinal
+
+# GI derived age variables, converting all to numeric:
+
+module1 <- module1 %>%
+  mutate(
+    # Convert year of birth
+    d_544150384 = as.numeric(as.character(d_544150384)),
+    
+    # GERD
+    D_554782332_D_261863326 = as.numeric(as.character(D_554782332_D_261863326)),
+    gerd_derived_age = D_554782332_D_261863326 - d_544150384,
+    
+    # Barrett's Esophagus
+    D_409622468_D_261863326 = as.numeric(as.character(D_409622468_D_261863326)),
+    barr_derived_age = D_409622468_D_261863326 - d_544150384,
+    
+    # IBS
+    D_448476881_D_261863326 = as.numeric(as.character(D_448476881_D_261863326)),
+    ibs_derived_age = D_448476881_D_261863326 - d_544150384,
+    
+    # IBD
+    D_459764934_D_261863326 = as.numeric(as.character(D_459764934_D_261863326)),
+    ibd_derived_age = D_459764934_D_261863326 - d_544150384,
+    
+    # Diverticulitis
+    D_374697037_D_261863326 = as.numeric(as.character(D_374697037_D_261863326)),
+    div_derived_age = D_374697037_D_261863326 - d_544150384,
+    
+    # Ulcerative Colitis
+    D_580911251_D_261863326 = as.numeric(as.character(D_580911251_D_261863326)),
+    uc_derived_age = D_580911251_D_261863326 - d_544150384,
+    
+    # Crohn's Disease
+    D_190347832_D_261863326 = as.numeric(as.character(D_190347832_D_261863326)),
+    crohns_derived_age = D_190347832_D_261863326 - d_544150384,
+    
+    # Celiac Disease
+    D_624777141_D_261863326 = as.numeric(as.character(D_624777141_D_261863326)),
+    cel_derived_age = D_624777141_D_261863326 - d_544150384,
+    
+    # Gallstones
+    D_980403315_D_261863326 = as.numeric(as.character(D_980403315_D_261863326)),
+    gall_derived_age = D_980403315_D_261863326 - d_544150384,
+    
+    # Liver Cirrhosis
+    D_936039586_D_261863326 = as.numeric(as.character(D_936039586_D_261863326)),
+    liver_derived_age = D_936039586_D_261863326 - d_544150384,
+    
+    # Pancreatitis
+    D_430472084_D_261863326 = as.numeric(as.character(D_430472084_D_261863326)),
+    panc_derived_age = D_430472084_D_261863326 - d_544150384
+  )
+
+# subset of the data to check for accuracy across columns — GERD
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_554782332_D_206625031,
+#     D_554782332_D_261863326,
+#     d_544150384,
+#     gerd_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Barrett's Esophagus
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_409622468_D_206625031,
+#     D_409622468_D_261863326,
+#     d_544150384,
+#     barr_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Irritable Bowel Syndrome
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_448476881_D_206625031,
+#     D_448476881_D_261863326,
+#     d_544150384,
+#     ibs_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Inflammatory Bowel Disease
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_459764934_D_206625031,
+#     D_459764934_D_261863326,
+#     d_544150384,
+#     ibd_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Diverticulitis
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_374697037_D_206625031,
+#     D_374697037_D_261863326,
+#     d_544150384,
+#     div_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Ulcerative Colitis
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_580911251_D_206625031,
+#     D_580911251_D_261863326,
+#     d_544150384,
+#     uc_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Crohn's Disease
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_190347832_D_206625031,
+#     D_190347832_D_261863326,
+#     d_544150384,
+#     crohns_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Celiac Disease
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_624777141_D_206625031,
+#     D_624777141_D_261863326,
+#     d_544150384,
+#     cel_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Gallstones
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_980403315_D_206625031,
+#     D_980403315_D_261863326,
+#     d_544150384,
+#     gall_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Liver Cirrhosis
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_936039586_D_206625031,
+#     D_936039586_D_261863326,
+#     d_544150384,
+#     liver_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Pancreatitis
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_430472084_D_206625031,
+#     D_430472084_D_261863326,
+#     d_544150384,
+#     panc_derived_age
+#   )
+
+# fill "age at diagnosis" variables to derived_age NAs so derived_age variables have all info
+
+module1 <- module1 %>%
+  mutate(
+    gerd_derived_age   = if_else(is.na(gerd_derived_age),   as.numeric(as.character(D_554782332_D_206625031)), gerd_derived_age),
+    barr_derived_age   = if_else(is.na(barr_derived_age),   as.numeric(as.character(D_409622468_D_206625031)), barr_derived_age),
+    ibs_derived_age    = if_else(is.na(ibs_derived_age),    as.numeric(as.character(D_448476881_D_206625031)), ibs_derived_age),
+    ibd_derived_age    = if_else(is.na(ibd_derived_age),    as.numeric(as.character(D_459764934_D_206625031)), ibd_derived_age),
+    div_derived_age    = if_else(is.na(div_derived_age),    as.numeric(as.character(D_374697037_D_206625031)), div_derived_age),
+    uc_derived_age     = if_else(is.na(uc_derived_age),     as.numeric(as.character(D_580911251_D_206625031)), uc_derived_age),
+    crohns_derived_age = if_else(is.na(crohns_derived_age), as.numeric(as.character(D_190347832_D_206625031)), crohns_derived_age),
+    cel_derived_age    = if_else(is.na(cel_derived_age),    as.numeric(as.character(D_624777141_D_206625031)), cel_derived_age),
+    gall_derived_age   = if_else(is.na(gall_derived_age),   as.numeric(as.character(D_980403315_D_206625031)), gall_derived_age),
+    liver_derived_age  = if_else(is.na(liver_derived_age),  as.numeric(as.character(D_936039586_D_206625031)), liver_derived_age),
+    panc_derived_age   = if_else(is.na(panc_derived_age),   as.numeric(as.character(D_430472084_D_206625031)), panc_derived_age)
+  )
+
+# 3-panel layout for each diagnosis (Derived Age, Age at Diagnosis, Year of Diagnosis)
 
 
 #cat("Esophageal Acid Reflux (GERD) Diagnosis")
-gerd_a_dg=boxp_funct(D_554782332_D_206625031,"Esophageal Acid Reflux Age at Diagnosis","Age")
-gerd_y_dg=boxp_funct(D_554782332_D_261863326,"Esophageal Acid Reflux Year of Diagnosis","Year")
-grid.arrange(gerd_a_dg, gerd_y_dg, nrow=2)
+gerd_ad_dg = boxp_funct(gerd_derived_age, "Esophageal Acid Reflux Age at Diagnosis, Derived", "Age")
+gerd_a_dg  = boxp_funct(D_554782332_D_206625031, "Esophageal Acid Reflux Age at Diagnosis", "Age")
+gerd_y_dg  = boxp_funct(D_554782332_D_261863326, "Esophageal Acid Reflux Year of Diagnosis", "Year")
+grid.arrange(gerd_ad_dg, gerd_a_dg, gerd_y_dg, nrow = 3)
 
 
 #cat("Barretts Esophagus Diagnosis")
-barr_a_dg=boxp_funct(D_409622468_D_206625031,"Barrett's Esophagus Age at Diagnosis","Age")
-barr_y_dg=boxp_funct(D_409622468_D_261863326,"Barrett's Esophagus Year of Diagnosis","Year")
-grid.arrange(barr_a_dg, barr_y_dg, nrow=2)
-
+barr_ad_dg = boxp_funct(barr_derived_age, "Barrett's Esophagus Age at Diagnosis, Derived", "Age")
+barr_a_dg  = boxp_funct(D_409622468_D_206625031, "Barrett's Esophagus Age at Diagnosis", "Age")
+barr_y_dg  = boxp_funct(D_409622468_D_261863326, "Barrett's Esophagus Year of Diagnosis", "Year")
+grid.arrange(barr_ad_dg, barr_a_dg, barr_y_dg, nrow = 3)
 
 
 #cat("Irritable Bowel Syndrome Diagnosis")
-ibs_a_dg=boxp_funct(D_448476881_D_206625031,"Irritable Bowel Syndrome Age at Diagnosis","Age")
-ibs_y_dg=boxp_funct(D_448476881_D_261863326,"Irritable Bowel Syndrome Year of Diagnosis","Year") 
-grid.arrange(ibs_a_dg, ibs_y_dg, nrow=2)
+ibs_ad_dg = boxp_funct(ibs_derived_age, "Irritable Bowel Syndrome Age at Diagnosis, Derived", "Age")
+ibs_a_dg  = boxp_funct(D_448476881_D_206625031, "Irritable Bowel Syndrome Age at Diagnosis", "Age")
+ibs_y_dg  = boxp_funct(D_448476881_D_261863326, "Irritable Bowel Syndrome Year of Diagnosis", "Year")
+grid.arrange(ibs_ad_dg, ibs_a_dg, ibs_y_dg, nrow = 3)
 
 
 #cat("Inflammatory Bowel Disease Diagnosis")
-ibd_a_dg=boxp_funct(D_459764934_D_206625031,"Inflammatory Bowel Disease Age at Diagnosis","Age") 
-ibd_y_dg=boxp_funct(D_459764934_D_261863326,"Inflammatory Bowel Disease Year of Diagnosis","Year")
-grid.arrange(ibd_a_dg, ibd_y_dg, nrow=2)
-
+ibd_ad_dg = boxp_funct(ibd_derived_age, "Inflammatory Bowel Disease Age at Diagnosis, Derived", "Age")
+ibd_a_dg  = boxp_funct(D_459764934_D_206625031, "Inflammatory Bowel Disease Age at Diagnosis", "Age")
+ibd_y_dg  = boxp_funct(D_459764934_D_261863326, "Inflammatory Bowel Disease Year of Diagnosis", "Year")
+grid.arrange(ibd_ad_dg, ibd_a_dg, ibd_y_dg, nrow = 3)
 
 
 #cat("Diverticulitis or Diverticulosis Diagnosis")
-div_a_dg=boxp_funct(D_374697037_D_206625031,"Diverticulitis Age at Diagnosis","Age") 
-div_y_dg=boxp_funct(D_374697037_D_261863326,"Diverticulitis Year of Diagnosis","Year")
-grid.arrange(div_a_dg, div_y_dg, nrow=2)
+div_ad_dg = boxp_funct(div_derived_age, "Diverticulitis Age at Diagnosis, Derived", "Age")
+div_a_dg  = boxp_funct(D_374697037_D_206625031, "Diverticulitis Age at Diagnosis", "Age")
+div_y_dg  = boxp_funct(D_374697037_D_261863326, "Diverticulitis Year of Diagnosis", "Year")
+grid.arrange(div_ad_dg, div_a_dg, div_y_dg, nrow = 3)
 
 
 #cat("Ulcerative Colitis Diagnosis")
-uc_a_dg=boxp_funct(D_580911251_D_206625031,"Ulcerative Colitis Age at Diagnosis","Age") 
-uc_y_dg=boxp_funct(D_580911251_D_261863326,"Ulcerative Colitis Year of Diagnosis","Year") 
-grid.arrange(uc_a_dg, uc_y_dg, nrow=2)
+uc_ad_dg = boxp_funct(uc_derived_age, "Ulcerative Colitis Age at Diagnosis, Derived", "Age")
+uc_a_dg  = boxp_funct(D_580911251_D_206625031, "Ulcerative Colitis Age at Diagnosis", "Age")
+uc_y_dg  = boxp_funct(D_580911251_D_261863326, "Ulcerative Colitis Year of Diagnosis", "Year")
+grid.arrange(uc_ad_dg, uc_a_dg, uc_y_dg, nrow = 3)
 
 
 #cat("Crohn's Disease Diagnosis")
-crohns_a_dg=boxp_funct(D_190347832_D_206625031,"Crohn's Disease Age at Diagnosis","Age")
-crohns_y_dg=boxp_funct(D_190347832_D_261863326,"Crohn's Disease Year of Diagnosis","Year")
-grid.arrange(crohns_a_dg, crohns_y_dg, nrow=2)
+crohns_ad_dg = boxp_funct(crohns_derived_age, "Crohn's Disease Age at Diagnosis, Derived", "Age")
+crohns_a_dg  = boxp_funct(D_190347832_D_206625031, "Crohn's Disease Age at Diagnosis", "Age")
+crohns_y_dg  = boxp_funct(D_190347832_D_261863326, "Crohn's Disease Year of Diagnosis", "Year")
+grid.arrange(crohns_ad_dg, crohns_a_dg, crohns_y_dg, nrow = 3)
 
 
 #cat("Celiac Disease (also known as Gluten-Sensitive Enteropathy) Diagnosis")
-cel_a_dg=boxp_funct(D_624777141_D_206625031,"Celiac Disease Age at Diagnosis","Age") 
-cel_y_dg=boxp_funct(D_624777141_D_261863326,"Celiac Disease Year of Diagnosis","Year") 
-grid.arrange(cel_a_dg, cel_y_dg, nrow=2)
+cel_ad_dg = boxp_funct(cel_derived_age, "Celiac Disease Age at Diagnosis, Derived", "Age")
+cel_a_dg  = boxp_funct(D_624777141_D_206625031, "Celiac Disease Age at Diagnosis", "Age")
+cel_y_dg  = boxp_funct(D_624777141_D_261863326, "Celiac Disease Year of Diagnosis", "Year")
+grid.arrange(cel_ad_dg, cel_a_dg, cel_y_dg, nrow = 3)
 
 
 #cat("Gallstones (Biliary Stones) Diagnosis")
-gall_a_dg=boxp_funct(D_980403315_D_206625031,"Gallstones Age at Diagnosis","Age") 
-gall_y_dg=boxp_funct(D_980403315_D_261863326,"Gallstones Year of Diagnosis","Year")
-grid.arrange(gall_a_dg, gall_y_dg, nrow=2)
+gall_ad_dg = boxp_funct(gall_derived_age, "Gallstones Age at Diagnosis, Derived", "Age")
+gall_a_dg  = boxp_funct(D_980403315_D_206625031, "Gallstones Age at Diagnosis", "Age")
+gall_y_dg  = boxp_funct(D_980403315_D_261863326, "Gallstones Year of Diagnosis", "Year")
+grid.arrange(gall_ad_dg, gall_a_dg, gall_y_dg, nrow = 3)
 
 
 #cat("Liver Cirrhosis Diagnosis")
-liver_a_dg=boxp_funct(D_936039586_D_206625031,"Liver Cirrhosis Age at Diagnosis","Age") 
-liver_y_dg=boxp_funct(D_936039586_D_261863326,"Liver Cirrhosis Year of Diagnosis","Year")
-grid.arrange(liver_a_dg, liver_y_dg, nrow=2)
+liver_ad_dg = boxp_funct(liver_derived_age, "Liver Cirrhosis Age at Diagnosis, Derived", "Age")
+liver_a_dg  = boxp_funct(D_936039586_D_206625031, "Liver Cirrhosis Age at Diagnosis", "Age")
+liver_y_dg  = boxp_funct(D_936039586_D_261863326, "Liver Cirrhosis Year of Diagnosis", "Year")
+grid.arrange(liver_ad_dg, liver_a_dg, liver_y_dg, nrow = 3)
 
 
 #cat("Pancreatitis Diagnosis")
-panc_a_dg=boxp_funct(D_430472084_D_206625031,"Pancreatitis Age at Diagnosis","Age") 
-panc_y_dg=boxp_funct(D_430472084_D_261863326,"Pancreatitis Year of Diagnosis","Year")
-grid.arrange(panc_a_dg, panc_y_dg, nrow=2)
+panc_ad_dg = boxp_funct(panc_derived_age, "Pancreatitis Age at Diagnosis, Derived", "Age")
+panc_a_dg  = boxp_funct(D_430472084_D_206625031, "Pancreatitis Age at Diagnosis", "Age")
+panc_y_dg  = boxp_funct(D_430472084_D_261863326, "Pancreatitis Year of Diagnosis", "Year")
+grid.arrange(panc_ad_dg, panc_a_dg, panc_y_dg, nrow = 3)
 
 
 ```
@@ -1648,25 +1873,93 @@ create_kable_table_w_footnote(mhgroup4_long, Condition, "MHGROUP4: Diagnosed wit
 ```{r MHGroup4Diagn, warning=FALSE, echo=FALSE, message=FALSE}
 #MHGROUP4
 
+### Endocrine / Metabolic
 
-#cat("Thyroid Diagnosis") 
-thy_a_dg=boxp_funct(D_139655599_D_206625031,"Thyroid Disease Age at Diagnosis","Age") 
-thy_y_dg=boxp_funct(D_139655599_D_261863326,"Thyroid Disease Year of Diagnosis","Year")
-grid.arrange(thy_a_dg, thy_y_dg, nrow=2)
+# Endocrine derived age variables, converting all to numeric:
 
+module1 <- module1 %>%
+  mutate(
+    # Convert year of birth
+    d_544150384 = as.numeric(as.character(d_544150384)),
+    
+    # Thyroid Disease variables
+    D_139655599_D_261863326 = as.numeric(as.character(D_139655599_D_261863326)),
+    thy_derived_age = D_139655599_D_261863326 - d_544150384,
+    
+    # Diabetes variables
+    D_301679110_D_261863326 = as.numeric(as.character(D_301679110_D_261863326)),
+    dieb_derived_age = D_301679110_D_261863326 - d_544150384,
+    
+    # Graves Disease variables
+    D_810918716_D_261863326 = as.numeric(as.character(D_810918716_D_261863326)),
+    graves_derived_age = D_810918716_D_261863326 - d_544150384
+  )
 
-#cat("Diabetes") 
+# subset of the data to check for accuracy across columns — Thyroid Disease
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_139655599_D_206625031,
+#     D_139655599_D_261863326,
+#     d_544150384,
+#     thy_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Diabetes
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_301679110_D_206625031,
+#     D_301679110_D_261863326,
+#     d_544150384,
+#     dieb_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Graves Disease
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_810918716_D_206625031,
+#     D_810918716_D_261863326,
+#     d_544150384,
+#     graves_derived_age
+#   )
+
+# fill "age at diagnosis" variables to derived_age NAs so derived_age variables have all info
+
+module1 <- module1 %>%
+  mutate(
+    thy_derived_age    = if_else(is.na(thy_derived_age),    as.numeric(as.character(D_139655599_D_206625031)), thy_derived_age),
+    dieb_derived_age   = if_else(is.na(dieb_derived_age),   as.numeric(as.character(D_301679110_D_206625031)), dieb_derived_age),
+    graves_derived_age = if_else(is.na(graves_derived_age), as.numeric(as.character(D_810918716_D_206625031)), graves_derived_age)
+  )
+
+#cat("Diabetes")
 one_logic_funct(D_494032093, D_900541533_D_158044532, 1, "Type of Diabetes")
 
-dieb_a_dg=boxp_funct(D_301679110_D_206625031,"Diabetes Age at Diagnosis","Age") 
-dieb_y_dg=boxp_funct(D_301679110_D_261863326,"Diabetes Year of Diagnosis","Year")
-grid.arrange(dieb_a_dg, dieb_y_dg, nrow=2)
+# 3-panel layout for each diagnosis (Derived Age, Age at Diagnosis, Year of Diagnosis)
 
 
-#cat("Graves Disease Diagnosis") 
-graves_a_dg=boxp_funct(D_810918716_D_206625031,"Graves Disease Age at Diagnosis","Age") 
-graves_y_dg=boxp_funct(D_810918716_D_261863326,"Graves Disease Year of Diagnosis","Year") 
-grid.arrange(graves_a_dg, graves_y_dg, nrow=2)
+#cat("Thyroid Diagnosis")
+thy_ad_dg = boxp_funct(thy_derived_age, "Thyroid Disease Age at Diagnosis, Derived", "Age")
+thy_a_dg  = boxp_funct(D_139655599_D_206625031, "Thyroid Disease Age at Diagnosis", "Age")
+thy_y_dg  = boxp_funct(D_139655599_D_261863326, "Thyroid Disease Year of Diagnosis", "Year")
+grid.arrange(thy_ad_dg, thy_a_dg, thy_y_dg, nrow = 3)
+
+
+#cat("Diabetes Diagnosis")
+dieb_ad_dg = boxp_funct(dieb_derived_age, "Diabetes Age at Diagnosis, Derived", "Age")
+dieb_a_dg  = boxp_funct(D_301679110_D_206625031, "Diabetes Age at Diagnosis", "Age")
+dieb_y_dg  = boxp_funct(D_301679110_D_261863326, "Diabetes Year of Diagnosis", "Year")
+grid.arrange(dieb_ad_dg, dieb_a_dg, dieb_y_dg, nrow = 3)
+
+
+#cat("Graves Disease Diagnosis")
+graves_ad_dg = boxp_funct(graves_derived_age, "Graves Disease Age at Diagnosis, Derived", "Age")
+graves_a_dg  = boxp_funct(D_810918716_D_206625031, "Graves Disease Age at Diagnosis", "Age")
+graves_y_dg  = boxp_funct(D_810918716_D_261863326, "Graves Disease Year of Diagnosis", "Year")
+grid.arrange(graves_ad_dg, graves_a_dg, graves_y_dg, nrow = 3)
+
 
 ```
 
@@ -1709,16 +2002,68 @@ create_kable_table_w_footnote(mhgroup5_long, Condition, "MHGROUP5: Diagnosed wit
 ```{r MHGroup5Diagn, warning=FALSE, echo=FALSE, message=FALSE}
 #MHGROUP5
 
+### Renal / Kidney
+
+# Renal derived age variables, converting all to numeric:
+
+module1 <- module1 %>%
+  mutate(
+    # Convert year of birth
+    d_544150384 = as.numeric(as.character(d_544150384)),
+    
+    # Kidney Stones variables
+    D_989016875_D_261863326 = as.numeric(as.character(D_989016875_D_261863326)),
+    kds_derived_age = D_989016875_D_261863326 - d_544150384,
+    
+    # Chronic Kidney Disease variables
+    D_878094302_D_261863326 = as.numeric(as.character(D_878094302_D_261863326)),
+    chk_derived_age = D_878094302_D_261863326 - d_544150384
+  )
+
+# subset of the data to check for accuracy across columns — Kidney Stones
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_989016875_D_206625031,
+#     D_989016875_D_261863326,
+#     d_544150384,
+#     kds_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Chronic Kidney Disease
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_878094302_D_206625031,
+#     D_878094302_D_261863326,
+#     d_544150384,
+#     chk_derived_age
+#   )
+
+# fill "age at diagnosis" variables to derived_age NAs so derived_age variables have all info
+
+module1 <- module1 %>%
+  mutate(
+    kds_derived_age = if_else(is.na(kds_derived_age), as.numeric(as.character(D_989016875_D_206625031)), kds_derived_age),
+    chk_derived_age = if_else(is.na(chk_derived_age), as.numeric(as.character(D_878094302_D_206625031)), chk_derived_age)
+  )
+
+# 3-panel layout for each diagnosis (Derived Age, Age at Diagnosis, Year of Diagnosis)
+
+
 #cat("Kidney Stones Diagnosis")
-kds_a_dg=boxp_funct(D_989016875_D_206625031,"Kidney Stones Age at Diagnosis","Age") 
-kds_y_dg=boxp_funct(D_989016875_D_261863326,"Kidney Stones Year of Diagnosis","Year")
-grid.arrange(kds_a_dg, kds_y_dg, nrow=2)
+kds_ad_dg = boxp_funct(kds_derived_age, "Kidney Stones Age at Diagnosis, Derived", "Age")
+kds_a_dg  = boxp_funct(D_989016875_D_206625031, "Kidney Stones Age at Diagnosis", "Age")
+kds_y_dg  = boxp_funct(D_989016875_D_261863326, "Kidney Stones Year of Diagnosis", "Year")
+grid.arrange(kds_ad_dg, kds_a_dg, kds_y_dg, nrow = 3)
 
 
 #cat("Chronic Kidney Disease (Chronic Kidney Failure) Diagnosis")
-chk_a_dg=boxp_funct(D_878094302_D_206625031,"Chronic Kidney Disease Age at Diagnosis","Age") 
-chk_y_dg=boxp_funct(D_878094302_D_261863326,"Chronic Kidney Disease Year of Diagnosis","Year")
-grid.arrange(chk_a_dg, chk_y_dg, nrow=2)
+chk_ad_dg = boxp_funct(chk_derived_age, "Chronic Kidney Disease Age at Diagnosis, Derived", "Age")
+chk_a_dg  = boxp_funct(D_878094302_D_206625031, "Chronic Kidney Disease Age at Diagnosis", "Age")
+chk_y_dg  = boxp_funct(D_878094302_D_261863326, "Chronic Kidney Disease Year of Diagnosis", "Year")
+grid.arrange(chk_ad_dg, chk_a_dg, chk_y_dg, nrow = 3)
+
 
 
 ```
@@ -1764,22 +2109,91 @@ create_kable_table_w_footnote(mhgroup6_long, Condition, "MHGROUP6: Diagnosed wit
 \FloatBarrier
 ```{r MHGroup6Diagn, warning=FALSE, echo=FALSE, message=FALSE}
 #MHGROUP6 
+
+
+### Rheumatologic / Autoimmune
+
+# Rheumatologic derived age variables, converting all to numeric:
+
+module1 <- module1 %>%
+  mutate(
+    # Convert year of birth
+    d_544150384 = as.numeric(as.character(d_544150384)),
+    
+    # Rheumatoid Arthritis variables
+    D_173101988_D_261863326 = as.numeric(as.character(D_173101988_D_261863326)),
+    ra_derived_age = D_173101988_D_261863326 - d_544150384,
+    
+    # Lupus variables
+    D_245861186_D_261863326 = as.numeric(as.character(D_245861186_D_261863326)),
+    lup_derived_age = D_245861186_D_261863326 - d_544150384,
+    
+    # Gout variables
+    D_420423416_D_261863326 = as.numeric(as.character(D_420423416_D_261863326)),
+    gout_derived_age = D_420423416_D_261863326 - d_544150384
+  )
+
+# subset of the data to check for accuracy across columns — Rheumatoid Arthritis
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_173101988_D_206625031,
+#     D_173101988_D_261863326,
+#     d_544150384,
+#     ra_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Lupus
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_245861186_D_206625031,
+#     D_245861186_D_261863326,
+#     d_544150384,
+#     lup_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Gout
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_420423416_D_206625031,
+#     D_420423416_D_261863326,
+#     d_544150384,
+#     gout_derived_age
+#   )
+
+# fill "age at diagnosis" variables to derived_age NAs so derived_age variables have all info
+
+module1 <- module1 %>%
+  mutate(
+    ra_derived_age   = if_else(is.na(ra_derived_age),   as.numeric(as.character(D_173101988_D_206625031)), ra_derived_age),
+    lup_derived_age  = if_else(is.na(lup_derived_age),  as.numeric(as.character(D_245861186_D_206625031)), lup_derived_age),
+    gout_derived_age = if_else(is.na(gout_derived_age), as.numeric(as.character(D_420423416_D_206625031)), gout_derived_age)
+  )
+
+# 3-panel layout for each diagnosis (Derived Age, Age at Diagnosis, Year of Diagnosis)
+
+
 #cat("Rheumatoid Arthritis Diagnosis")
-ra_a_dg=boxp_funct(D_173101988_D_206625031,"Rheumatoid Arthritis Age at Diagnosis","Age") 
-ra_y_dg=boxp_funct(D_173101988_D_261863326,"Rheumatoid Arthritis Year of Diagnosis","Year") 
-grid.arrange(ra_a_dg, ra_y_dg, nrow=2)
+ra_ad_dg = boxp_funct(ra_derived_age, "Rheumatoid Arthritis Age at Diagnosis, Derived", "Age")
+ra_a_dg  = boxp_funct(D_173101988_D_206625031, "Rheumatoid Arthritis Age at Diagnosis", "Age")
+ra_y_dg  = boxp_funct(D_173101988_D_261863326, "Rheumatoid Arthritis Year of Diagnosis", "Year")
+grid.arrange(ra_ad_dg, ra_a_dg, ra_y_dg, nrow = 3)
 
 
 #cat("Lupus Diagnosis")
-lup_a_dg=boxp_funct(D_245861186_D_206625031,"Lupus Age at Diagnosis","Age") 
-lup_y_dg=boxp_funct(D_245861186_D_261863326,"Lupus Year of Diagnosis","Year") 
-grid.arrange(lup_a_dg, lup_y_dg, nrow=2)
+lup_ad_dg = boxp_funct(lup_derived_age, "Lupus Age at Diagnosis, Derived", "Age")
+lup_a_dg  = boxp_funct(D_245861186_D_206625031, "Lupus Age at Diagnosis", "Age")
+lup_y_dg  = boxp_funct(D_245861186_D_261863326, "Lupus Year of Diagnosis", "Year")
+grid.arrange(lup_ad_dg, lup_a_dg, lup_y_dg, nrow = 3)
 
 
 #cat("Gout Diagnosis")
-gout_a_dg=boxp_funct(D_420423416_D_206625031,"Gout Age at Diagnosis","Age") 
-gout_y_dg=boxp_funct(D_420423416_D_261863326,"Gout Year of Diagnosis","Year") 
-grid.arrange(gout_a_dg, gout_y_dg, nrow=2)
+gout_ad_dg = boxp_funct(gout_derived_age, "Gout Age at Diagnosis, Derived", "Age")
+gout_a_dg  = boxp_funct(D_420423416_D_206625031, "Gout Age at Diagnosis", "Age")
+gout_y_dg  = boxp_funct(D_420423416_D_261863326, "Gout Year of Diagnosis", "Year")
+grid.arrange(gout_ad_dg, gout_a_dg, gout_y_dg, nrow = 3)
 
 
 ```
@@ -1839,68 +2253,251 @@ create_kable_table_w_footnote(mhgroup7_long, Condition, "MHGROUP7: Diagnosed Inf
 ```{r MHGroup7Diagn, warning=FALSE, echo=FALSE, message=FALSE}
 #MHGROUP7
 
+### Infectious Diseases / STIs
+
+# Infectious derived age variables, converting all to numeric:
+
+module1 <- module1 %>%
+  mutate(
+    # Convert year of birth
+    d_544150384 = as.numeric(as.character(d_544150384)),
+    
+    # Infectious Mononucleosis
+    D_915230886_D_261863326 = as.numeric(as.character(D_915230886_D_261863326)),
+    mono_derived_age = D_915230886_D_261863326 - d_544150384,
+    
+    # Shingles
+    D_530548878_D_261863326 = as.numeric(as.character(D_530548878_D_261863326)),
+    shn_derived_age = D_530548878_D_261863326 - d_544150384,
+    
+    # Chronic Hepatitis B or C
+    D_469947273_D_261863326 = as.numeric(as.character(D_469947273_D_261863326)),
+    hepbc_derived_age = D_469947273_D_261863326 - d_544150384,
+    
+    # Gonorrhea
+    D_685735916_D_261863326 = as.numeric(as.character(D_685735916_D_261863326)),
+    gon_derived_age = D_685735916_D_261863326 - d_544150384,
+    
+    # Chlamydia
+    D_954405492_D_261863326 = as.numeric(as.character(D_954405492_D_261863326)),
+    chla_derived_age = D_954405492_D_261863326 - d_544150384,
+    
+    # Trichomoniasis
+    D_103397024_D_261863326 = as.numeric(as.character(D_103397024_D_261863326)),
+    trich_derived_age = D_103397024_D_261863326 - d_544150384,
+    
+    # Syphilis
+    D_931470797_D_261863326 = as.numeric(as.character(D_931470797_D_261863326)),
+    syph_derived_age = D_931470797_D_261863326 - d_544150384,
+    
+    # Genital Warts
+    D_922524563_D_261863326 = as.numeric(as.character(D_922524563_D_261863326)),
+    wart_derived_age = D_922524563_D_261863326 - d_544150384,
+    
+    # HPV
+    D_978485677_D_261863326 = as.numeric(as.character(D_978485677_D_261863326)),
+    hpv_derived_age = D_978485677_D_261863326 - d_544150384,
+    
+    # HIV/AIDS
+    D_523188839_D_261863326 = as.numeric(as.character(D_523188839_D_261863326)),
+    hiv_derived_age = D_523188839_D_261863326 - d_544150384
+  )
+
+# subset of the data to check for accuracy across columns — Infectious Mononucleosis
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_915230886_D_206625031,
+#     D_915230886_D_261863326,
+#     d_544150384,
+#     mono_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Shingles
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_530548878_D_206625031,
+#     D_530548878_D_261863326,
+#     d_544150384,
+#     shn_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Chronic Hepatitis B or C
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_469947273_D_206625031,
+#     D_469947273_D_261863326,
+#     d_544150384,
+#     hepbc_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Gonorrhea
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_685735916_D_206625031,
+#     D_685735916_D_261863326,
+#     d_544150384,
+#     gon_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Chlamydia
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_954405492_D_206625031,
+#     D_954405492_D_261863326,
+#     d_544150384,
+#     chla_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Trichomoniasis
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_103397024_D_206625031,
+#     D_103397024_D_261863326,
+#     d_544150384,
+#     trich_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Syphilis
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_931470797_D_206625031,
+#     D_931470797_D_261863326,
+#     d_544150384,
+#     syph_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Genital Warts
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_922524563_D_206625031,
+#     D_922524563_D_261863326,
+#     d_544150384,
+#     wart_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — HPV
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_978485677_D_206625031,
+#     D_978485677_D_261863326,
+#     d_544150384,
+#     hpv_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — HIV/AIDS
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_523188839_D_206625031,
+#     D_523188839_D_261863326,
+#     d_544150384,
+#     hiv_derived_age
+#   )
+
+# HPV specific fix 
+module1 <- module1 %>%
+  mutate(
+    D_978485677_D_206625031 = as.numeric(as.character(D_978485677_D_206625031)),
+    D_978485677_D_206625031 = round(D_978485677_D_206625031, digits = 0)
+  )
+
+# fill "age at diagnosis" variables to derived_age NAs so derived_age variables have all info
+
+module1 <- module1 %>%
+  mutate(
+    mono_derived_age  = if_else(is.na(mono_derived_age),  as.numeric(as.character(D_915230886_D_206625031)), mono_derived_age),
+    shn_derived_age   = if_else(is.na(shn_derived_age),   as.numeric(as.character(D_530548878_D_206625031)), shn_derived_age),
+    hepbc_derived_age = if_else(is.na(hepbc_derived_age), as.numeric(as.character(D_469947273_D_206625031)), hepbc_derived_age),
+    gon_derived_age   = if_else(is.na(gon_derived_age),   as.numeric(as.character(D_685735916_D_206625031)), gon_derived_age),
+    chla_derived_age  = if_else(is.na(chla_derived_age),  as.numeric(as.character(D_954405492_D_206625031)), chla_derived_age),
+    trich_derived_age = if_else(is.na(trich_derived_age), as.numeric(as.character(D_103397024_D_206625031)), trich_derived_age),
+    syph_derived_age  = if_else(is.na(syph_derived_age),  as.numeric(as.character(D_931470797_D_206625031)), syph_derived_age),
+    wart_derived_age  = if_else(is.na(wart_derived_age),  as.numeric(as.character(D_922524563_D_206625031)), wart_derived_age),
+    hpv_derived_age   = if_else(is.na(hpv_derived_age),   as.numeric(as.character(D_978485677_D_206625031)), hpv_derived_age),
+    hiv_derived_age   = if_else(is.na(hiv_derived_age),   as.numeric(as.character(D_523188839_D_206625031)), hiv_derived_age)
+  )
+
+# 3-panel layout for each diagnosis (Derived Age, Age at Diagnosis, Year of Diagnosis)
+
 
 #cat("Infectious Mononucleosis (Mono or Kissing Disease) Diagnosis")
-mono_a_dg=boxp_funct(D_915230886_D_206625031,"Infectious Mononucleosis Age at Diagnosis","Age") 
-mono_y_dg=boxp_funct(D_915230886_D_261863326,"Infectious Mononucleosis Year of Diagnosis","Year")
-grid.arrange(mono_a_dg, mono_y_dg, nrow=2)
+mono_ad_dg = boxp_funct(mono_derived_age, "Infectious Mononucleosis Age at Diagnosis, Derived", "Age")
+mono_a_dg  = boxp_funct(D_915230886_D_206625031, "Infectious Mononucleosis Age at Diagnosis", "Age")
+mono_y_dg  = boxp_funct(D_915230886_D_261863326, "Infectious Mononucleosis Year of Diagnosis", "Year")
+grid.arrange(mono_ad_dg, mono_a_dg, mono_y_dg, nrow = 3)
 
 
 #cat("Shingles (Herpes Zoster) Diagnosis")
-shn_a_dg=boxp_funct(D_530548878_D_206625031,"Shingles Age at Diagnosis","Age") 
-shn_y_dg=boxp_funct(D_530548878_D_261863326,"Shingles Year of Diagnosis","Year")
-grid.arrange(shn_a_dg, shn_y_dg, nrow=2)
+shn_ad_dg = boxp_funct(shn_derived_age, "Shingles Age at Diagnosis, Derived", "Age")
+shn_a_dg  = boxp_funct(D_530548878_D_206625031, "Shingles Age at Diagnosis", "Age")
+shn_y_dg  = boxp_funct(D_530548878_D_261863326, "Shingles Year of Diagnosis", "Year")
+grid.arrange(shn_ad_dg, shn_a_dg, shn_y_dg, nrow = 3)
 
 
 #cat("Chronic Hepatitis B or C Diagnosis")
-hepbc_a_dg=boxp_funct(D_469947273_D_206625031,"Chronic Hepatitis B or C Age at Diagnosis","Age") 
-hepbc_y_dg=boxp_funct(D_469947273_D_261863326,"Chronic Hepatitis B or C Year of Diagnosis","Year") 
-grid.arrange(hepbc_a_dg, hepbc_y_dg, nrow=2)
+hepbc_ad_dg = boxp_funct(hepbc_derived_age, "Chronic Hepatitis B or C Age at Diagnosis, Derived", "Age")
+hepbc_a_dg  = boxp_funct(D_469947273_D_206625031, "Chronic Hepatitis B or C Age at Diagnosis", "Age")
+hepbc_y_dg  = boxp_funct(D_469947273_D_261863326, "Chronic Hepatitis B or C Year of Diagnosis", "Year")
+grid.arrange(hepbc_ad_dg, hepbc_a_dg, hepbc_y_dg, nrow = 3)
 
 
 #cat("Gonorrhea Diagnosis")
-gon_a_dg=boxp_funct(D_685735916_D_206625031,"Gonorrhea Age at Diagnosis","Age")  
-gon_y_dg=boxp_funct(D_685735916_D_261863326,"Gonorrhea Year of Diagnosis","Year")
-grid.arrange(gon_a_dg, gon_y_dg, nrow=2)
+gon_ad_dg = boxp_funct(gon_derived_age, "Gonorrhea Age at Diagnosis, Derived", "Age")
+gon_a_dg  = boxp_funct(D_685735916_D_206625031, "Gonorrhea Age at Diagnosis", "Age")
+gon_y_dg  = boxp_funct(D_685735916_D_261863326, "Gonorrhea Year of Diagnosis", "Year")
+grid.arrange(gon_ad_dg, gon_a_dg, gon_y_dg, nrow = 3)
 
 
 #cat("Chlamydia Diagnosis")
-chla_a_dg=boxp_funct(D_954405492_D_206625031,"Chlamydia Age at Diagnosis","Age")  
-chla_y_dg=boxp_funct(D_954405492_D_261863326,"Chlamydia Year of Diagnosis","Year")
-grid.arrange(chla_a_dg, chla_y_dg, nrow=2)
+chla_ad_dg = boxp_funct(chla_derived_age, "Chlamydia Age at Diagnosis, Derived", "Age")
+chla_a_dg  = boxp_funct(D_954405492_D_206625031, "Chlamydia Age at Diagnosis", "Age")
+chla_y_dg  = boxp_funct(D_954405492_D_261863326, "Chlamydia Year of Diagnosis", "Year")
+grid.arrange(chla_ad_dg, chla_a_dg, chla_y_dg, nrow = 3)
 
 
 #cat("Trichomoniasis Diagnosis")
-trich_a_dg=boxp_funct(D_103397024_D_206625031,"Trichomoniasis Age at Diagnosis","Age")  
-trich_y_dg=boxp_funct(D_103397024_D_261863326,"Trichomoniasis Year of Diagnosis","Year")
-grid.arrange(trich_a_dg, trich_y_dg, nrow=2)
+trich_ad_dg = boxp_funct(trich_derived_age, "Trichomoniasis Age at Diagnosis, Derived", "Age")
+trich_a_dg  = boxp_funct(D_103397024_D_206625031, "Trichomoniasis Age at Diagnosis", "Age")
+trich_y_dg  = boxp_funct(D_103397024_D_261863326, "Trichomoniasis Year of Diagnosis", "Year")
+grid.arrange(trich_ad_dg, trich_a_dg, trich_y_dg, nrow = 3)
 
 
 #cat("Syphilis Diagnosis")
-syph_a_dg=boxp_funct(D_931470797_D_206625031,"Syphilis Age at Diagnosis","Age") 
-syph_y_dg=boxp_funct(D_931470797_D_261863326,"Syphilis Year of Diagnosis","Year")
-grid.arrange(syph_a_dg, syph_y_dg, nrow=2)
+syph_ad_dg = boxp_funct(syph_derived_age, "Syphilis Age at Diagnosis, Derived", "Age")
+syph_a_dg  = boxp_funct(D_931470797_D_206625031, "Syphilis Age at Diagnosis", "Age")
+syph_y_dg  = boxp_funct(D_931470797_D_261863326, "Syphilis Year of Diagnosis", "Year")
+grid.arrange(syph_ad_dg, syph_a_dg, syph_y_dg, nrow = 3)
 
 
 #cat("Genital Warts Diagnosis")
-wart_a_dg=boxp_funct(D_922524563_D_206625031,"Genital Warts Age at Diagnosis","Age") 
-wart_y_dg=boxp_funct(D_922524563_D_261863326,"Genital Warts Year of Diagnosis","Year")
-grid.arrange(wart_a_dg, wart_y_dg, nrow=2)
+wart_ad_dg = boxp_funct(wart_derived_age, "Genital Warts Age at Diagnosis, Derived", "Age")
+wart_a_dg  = boxp_funct(D_922524563_D_206625031, "Genital Warts Age at Diagnosis", "Age")
+wart_y_dg  = boxp_funct(D_922524563_D_261863326, "Genital Warts Year of Diagnosis", "Year")
+grid.arrange(wart_ad_dg, wart_a_dg, wart_y_dg, nrow = 3)
 
 
 #cat("HPV Diagnosis")
-#someone put 18.44 years old and is causing issues with plot, need to remove
-module1$D_978485677_D_206625031 = as.numeric(module1$D_978485677_D_206625031)
-module1$D_978485677_D_206625031 = round(module1$D_978485677_D_206625031, digits=0)
-hpv_a_dg=boxp_funct(D_978485677_D_206625031,"HPV Age at Diagnosis","Age") 
-hpv_y_dg=boxp_funct(D_978485677_D_261863326,"HPV Year of Diagnosis","Year")
-grid.arrange(hpv_a_dg, hpv_y_dg, nrow=2)
+hpv_ad_dg = boxp_funct(hpv_derived_age, "HPV Age at Diagnosis, Derived", "Age")
+hpv_a_dg  = boxp_funct(D_978485677_D_206625031, "HPV Age at Diagnosis", "Age")
+hpv_y_dg  = boxp_funct(D_978485677_D_261863326, "HPV Year of Diagnosis", "Year")
+grid.arrange(hpv_ad_dg, hpv_a_dg, hpv_y_dg, nrow = 3)
 
 
 #cat("HIV/AIDS Diagnosis")
-hiv_a_dg=boxp_funct(D_523188839_D_206625031,"HIV/AIDS Age at Diagnosis","Age") 
-hiv_y_dg=boxp_funct(D_523188839_D_261863326,"HIV/AIDS Year of Diagnosis","Year")
-grid.arrange(hiv_a_dg, hiv_y_dg, nrow=2)
+hiv_ad_dg = boxp_funct(hiv_derived_age, "HIV/AIDS Age at Diagnosis, Derived", "Age")
+hiv_a_dg  = boxp_funct(D_523188839_D_206625031, "HIV/AIDS Age at Diagnosis", "Age")
+hiv_y_dg  = boxp_funct(D_523188839_D_261863326, "HIV/AIDS Year of Diagnosis", "Year")
+grid.arrange(hiv_ad_dg, hiv_a_dg, hiv_y_dg, nrow = 3)
+
 
 
 ```
@@ -1958,52 +2555,179 @@ create_kable_table_w_footnote(mhgroup8_long, Condition, "MHGROUP8: Diagnosed Uri
 
 \FloatBarrier
 ```{r MHGroup8Diagn, warning=FALSE, echo=FALSE, message=FALSE}
-##Urinary and Reproductive 
+
+
+### Urinary and Reproductive
+
+# Urinary/Reproductive derived age variables, converting all to numeric:
+
+module1 <- module1 %>%
+  mutate(
+    # Convert year of birth
+    d_544150384 = as.numeric(as.character(d_544150384)),
+    
+    # Uterine Fibroid
+    D_846786840_D_261863326 = as.numeric(as.character(D_846786840_D_261863326)),
+    utern_derived_age = D_846786840_D_261863326 - d_544150384,
+    
+    # Endometriosis
+    D_423547108_D_261863326 = as.numeric(as.character(D_423547108_D_261863326)),
+    endo_derived_age = D_423547108_D_261863326 - d_544150384,
+    
+    # PCOS
+    D_852898339_D_261863326 = as.numeric(as.character(D_852898339_D_261863326)),
+    pcos_derived_age = D_852898339_D_261863326 - d_544150384,
+    
+    # Enlarged Prostate
+    D_467061940_D_261863326 = as.numeric(as.character(D_467061940_D_261863326)),
+    enlg_derived_age = D_467061940_D_261863326 - d_544150384,
+    
+    # Fibrocystic Breast
+    D_619481697_D_261863326 = as.numeric(as.character(D_619481697_D_261863326)),
+    fib_derived_age = D_619481697_D_261863326 - d_544150384,
+    
+    # DCIS
+    D_219956652_D_261863326 = as.numeric(as.character(D_219956652_D_261863326)),
+    duct_derived_age = D_219956652_D_261863326 - d_544150384
+  )
+
+# subset of the data to check for accuracy across columns — Uterine Fibroid
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_846786840_D_206625031,
+#     D_846786840_D_261863326,
+#     d_544150384,
+#     utern_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Endometriosis
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_423547108_D_206625031,
+#     D_423547108_D_261863326,
+#     d_544150384,
+#     endo_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — PCOS
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_852898339_D_206625031,
+#     D_852898339_D_261863326,
+#     d_544150384,
+#     pcos_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Enlarged Prostate
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_467061940_D_206625031,
+#     D_467061940_D_261863326,
+#     d_544150384,
+#     enlg_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Fibrocystic Breast
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_619481697_D_206625031,
+#     D_619481697_D_261863326,
+#     d_544150384,
+#     fib_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — DCIS
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_219956652_D_206625031,
+#     D_219956652_D_261863326,
+#     d_544150384,
+#     duct_derived_age
+#   )
+
+# fill "age at diagnosis" variables to derived_age NAs so derived_age variables have all info
+
+module1 <- module1 %>%
+  mutate(
+    utern_derived_age = if_else(is.na(utern_derived_age), as.numeric(as.character(D_846786840_D_206625031)), utern_derived_age),
+    endo_derived_age  = if_else(is.na(endo_derived_age),  as.numeric(as.character(D_423547108_D_206625031)), endo_derived_age),
+    pcos_derived_age  = if_else(is.na(pcos_derived_age),  as.numeric(as.character(D_852898339_D_206625031)), pcos_derived_age),
+    enlg_derived_age  = if_else(is.na(enlg_derived_age),  as.numeric(as.character(D_467061940_D_206625031)), enlg_derived_age),
+    fib_derived_age   = if_else(is.na(fib_derived_age),   as.numeric(as.character(D_619481697_D_206625031)), fib_derived_age),
+    duct_derived_age  = if_else(is.na(duct_derived_age),  as.numeric(as.character(D_219956652_D_206625031)), duct_derived_age)
+  )
+
+# 3-panel layout for each diagnosis (Derived Age, Age at Diagnosis, Year of Diagnosis)
 
 
 #cat("Uterine Fibroid Diagnosis")
-utern_a_dg=boxp_funct(D_846786840_D_206625031,"Uterine Fibroid Age at Diagnosis","Age") 
-utern_y_dg=boxp_funct(D_846786840_D_261863326,"Uterine Fibroid Year of Diagnosis","Year")
-grid.arrange(utern_a_dg, utern_y_dg, nrow=2)
+utern_ad_dg = boxp_funct(utern_derived_age, "Uterine Fibroid Age at Diagnosis, Derived", "Age")
+utern_a_dg  = boxp_funct(D_846786840_D_206625031, "Uterine Fibroid Age at Diagnosis", "Age")
+utern_y_dg  = boxp_funct(D_846786840_D_261863326, "Uterine Fibroid Year of Diagnosis", "Year")
+grid.arrange(utern_ad_dg, utern_a_dg, utern_y_dg, nrow = 3)
 
 
 #cat("Endometriosis Diagnosis")
-endo_a_dg=boxp_funct(D_423547108_D_206625031,"Endometriosis Age at Diagnosis","Age") 
-endo_y_dg=boxp_funct(D_423547108_D_261863326,"Endometriosis Year of Diagnosis","Year")
-grid.arrange(endo_a_dg, endo_y_dg, nrow=2)
-  #diagnosed with surgery 
-endo=round((sum(module1$D_266847650==353358909, na.rm=T)/sum(module1$D_725626004_D_863286658==1, na.rm=T))*100, digits=2)
+endo_ad_dg = boxp_funct(endo_derived_age, "Endometriosis Age at Diagnosis, Derived", "Age")
+endo_a_dg  = boxp_funct(D_423547108_D_206625031, "Endometriosis Age at Diagnosis", "Age")
+endo_y_dg  = boxp_funct(D_423547108_D_261863326, "Endometriosis Year of Diagnosis", "Year")
+grid.arrange(endo_ad_dg, endo_a_dg, endo_y_dg, nrow = 3)
+
+# diagnosed with surgery
+endo = round(
+  (sum(module1$D_266847650 == 353358909, na.rm = TRUE) / sum(module1$D_725626004_D_863286658 == 1, na.rm = TRUE)) * 100,
+  digits = 2
+)
 cat("Proportion of Endometriosis Cases Confirmed with Surgery:", endo, "%")
 
 
 #cat("Polycystic Ovary System (PCOS) Diagnosis")
-pcos_a_dg=boxp_funct(D_852898339_D_206625031,"Polycystic Ovary System Age at Diagnosis","Age") 
-pcos_y_dg=boxp_funct(D_852898339_D_261863326,"Polycystic Ovary System Year of Diagnosis","Year")
-grid.arrange(pcos_a_dg, pcos_y_dg, nrow=2)
+pcos_ad_dg = boxp_funct(pcos_derived_age, "Polycystic Ovary System Age at Diagnosis, Derived", "Age")
+pcos_a_dg  = boxp_funct(D_852898339_D_206625031, "Polycystic Ovary System Age at Diagnosis", "Age")
+pcos_y_dg  = boxp_funct(D_852898339_D_261863326, "Polycystic Ovary System Year of Diagnosis", "Year")
+grid.arrange(pcos_ad_dg, pcos_a_dg, pcos_y_dg, nrow = 3)
 
 
 #cat("Enlarged Prostate Diagnosis")
-enlg_a_dg=boxp_funct(D_467061940_D_206625031,"Enlarged Prostate Age at Diagnosis","Age") 
-enlg_y_dg=boxp_funct(D_467061940_D_261863326,"Enlarged Prostate Year of Diagnosis","Year") 
-grid.arrange(enlg_a_dg, enlg_y_dg, nrow=2)
+enlg_ad_dg = boxp_funct(enlg_derived_age, "Enlarged Prostate Age at Diagnosis, Derived", "Age")
+enlg_a_dg  = boxp_funct(D_467061940_D_206625031, "Enlarged Prostate Age at Diagnosis", "Age")
+enlg_y_dg  = boxp_funct(D_467061940_D_261863326, "Enlarged Prostate Year of Diagnosis", "Year")
+grid.arrange(enlg_ad_dg, enlg_a_dg, enlg_y_dg, nrow = 3)
 
 
 #cat("Fibrocystic Breast Diagnosis")
-fib_a_dg=boxp_funct(D_619481697_D_206625031,"Fibrocystic Breast Age at Diagnosis","Age") 
-fib_y_dg=boxp_funct(D_619481697_D_261863326,"Fibrocystic Breast Year of Diagnosis","Year") 
-grid.arrange(fib_a_dg, fib_y_dg, nrow=2)
-  #diagnosed with biopsy
-fibro=round((sum(module1$D_134642404==353358909, na.rm=T)/sum(module1$D_725626004_D_746542057==1, na.rm=T))*100, digits=2)
+fib_ad_dg = boxp_funct(fib_derived_age, "Fibrocystic Breast Age at Diagnosis, Derived", "Age")
+fib_a_dg  = boxp_funct(D_619481697_D_206625031, "Fibrocystic Breast Age at Diagnosis", "Age")
+fib_y_dg  = boxp_funct(D_619481697_D_261863326, "Fibrocystic Breast Year of Diagnosis", "Year")
+grid.arrange(fib_ad_dg, fib_a_dg, fib_y_dg, nrow = 3)
+
+# diagnosed with biopsy
+fibro = round(
+  (sum(module1$D_134642404 == 353358909, na.rm = TRUE) / sum(module1$D_725626004_D_746542057 == 1, na.rm = TRUE)) * 100,
+  digits = 2
+)
 cat("Proportion of Fibrocystic Breast Cases Confirmed with Biopsy:", fibro, "%")
 
 
-#cat("Ductal Carcinoma in situ(DCIS) Diagnosis")
-duct_a_dg=boxp_funct(D_219956652_D_206625031,"DCIS Age at Diagnosis","Age") 
-duct_y_dg=boxp_funct(D_219956652_D_261863326,"DCIS Year of Diagnosis","Year") ##why does this have years with decimals?
-grid.arrange(duct_a_dg, duct_y_dg, nrow=2)
-  #diagnosed with biopsy
-ductal=round((sum(module1$D_852236900==353358909, na.rm=T)/sum(module1$D_725626004_D_854945381==1, na.rm=T))*100, digits=2)
+#cat("Ductal Carcinoma in situ (DCIS) Diagnosis")
+duct_ad_dg = boxp_funct(duct_derived_age, "DCIS Age at Diagnosis, Derived", "Age")
+duct_a_dg  = boxp_funct(D_219956652_D_206625031, "DCIS Age at Diagnosis", "Age")
+duct_y_dg  = boxp_funct(D_219956652_D_261863326, "DCIS Year of Diagnosis", "Year")
+grid.arrange(duct_ad_dg, duct_a_dg, duct_y_dg, nrow = 3)
+
+# diagnosed with biopsy
+ductal = round(
+  (sum(module1$D_852236900 == 353358909, na.rm = TRUE) / sum(module1$D_725626004_D_854945381 == 1, na.rm = TRUE)) * 100,
+  digits = 2
+)
 cat("Proportion of DCIS Cases Confirmed with Biopsy:", ductal, "%")
+
 
 
 ```
@@ -2022,10 +2746,63 @@ gc()
 
 ###Depression
 simple_funct(D_347860896, "DEPRESS: Diagnosed with Clinical Depression")
-  
-depress_a_dg=boxp_funct(D_301414575_D_206625031,"Depression Age at Diagnosis","Age") 
-depress_y_dg=boxp_funct(D_301414575_D_261863326,"Depression Year of Diagnosis","Year")
-grid.arrange(depress_a_dg, depress_y_dg, nrow=2)
+
+### Mental Health
+
+# Depression derived age variables, converting all to numeric:
+
+module1 <- module1 %>%
+  mutate(
+    # Convert year of birth
+    d_544150384 = as.numeric(as.character(d_544150384)),
+    
+    # Depression variables
+    D_301414575_D_261863326 = as.numeric(as.character(D_301414575_D_261863326)),
+    depress_derived_age = D_301414575_D_261863326 - d_544150384
+  )
+
+# subset of the data to check for accuracy across columns — Depression
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_301414575_D_206625031,
+#     D_301414575_D_261863326,
+#     d_544150384,
+#     depress_derived_age
+#   )
+
+# fill "age at diagnosis" variables to derived_age NAs so derived_age variables have all info
+
+module1 <- module1 %>%
+  mutate(
+    depress_derived_age = if_else(
+      is.na(depress_derived_age),
+      as.numeric(as.character(D_301414575_D_206625031)),
+      depress_derived_age
+    )
+  )
+
+# 3-panel layout for Depression (Derived Age, Age at Diagnosis, Year of Diagnosis)
+
+
+#cat("Depression Diagnosis")
+depress_ad_dg = boxp_funct(
+  depress_derived_age,
+  "Depression Age at Diagnosis, Derived",
+  "Age"
+)
+depress_a_dg  = boxp_funct(
+  D_301414575_D_206625031,
+  "Depression Age at Diagnosis",
+  "Age"
+)
+depress_y_dg  = boxp_funct(
+  D_301414575_D_261863326,
+  "Depression Year of Diagnosis",
+  "Year"
+)
+grid.arrange(depress_ad_dg, depress_a_dg, depress_y_dg, nrow = 3)
+
 
 ```
 
@@ -2106,102 +2883,335 @@ create_kable_table_w_footnote(mhgroup9_long, Condition, "MHGROUP9: Surgeries Had
 
 \FloatBarrier
 ```{r MHGroup9Diagn, warning=FALSE, echo=FALSE, message=FALSE}
-#	Tonsils removed (tonsillectomy)
-tonsil_a_sg=boxp_funct(D_367884741_D_206625031,"Age at Tonisllectomy Surgery","Age") 
-tonsil_y_sg=boxp_funct(D_367884741_D_261863326,"Year of Tonisllectomy Surgery","Year")
-grid.arrange(tonsil_a_sg, tonsil_y_sg, nrow=2)
+
+### Surgery
+
+# Surgery derived age variables, converting all to numeric:
+
+module1 <- module1 %>%
+  mutate(
+    # Convert year of birth
+    d_544150384 = as.numeric(as.character(d_544150384)),
+    
+    # Tonsillectomy
+    D_367884741_D_261863326 = as.numeric(as.character(D_367884741_D_261863326)),
+    tonsil_derived_age = D_367884741_D_261863326 - d_544150384,
+    
+    # Cholecystectomy (Gallbladder removed)
+    D_178353079_D_261863326 = as.numeric(as.character(D_178353079_D_261863326)),
+    gall_derived_age = D_178353079_D_261863326 - d_544150384,
+    
+    # Appendectomy (Appendix removed)
+    D_550075233_D_261863326 = as.numeric(as.character(D_550075233_D_261863326)),
+    apdx_derived_age = D_550075233_D_261863326 - d_544150384,
+    
+    # Liposuction
+    D_860920332_D_261863326 = as.numeric(as.character(D_860920332_D_261863326)),
+    lipo_derived_age = D_860920332_D_261863326 - d_544150384,
+    
+    # Bariatric surgery (lap band, gastric bypass)
+    D_986613440_D_261863326 = as.numeric(as.character(D_986613440_D_261863326)),
+    bar_sg_derived_age = D_986613440_D_261863326 - d_544150384,
+    
+    # Hysterectomy
+    D_150352141_D_261863326 = as.numeric(as.character(D_150352141_D_261863326)),
+    hyst_derived_age = D_150352141_D_261863326 - d_544150384,
+    
+    # Tubal Ligation
+    D_122887481_D_261863326 = as.numeric(as.character(D_122887481_D_261863326)),
+    tublig_derived_age = D_122887481_D_261863326 - d_544150384,
+    
+    # Oophorectomy (age/year of surgery)
+    D_534007917_D_261863326 = as.numeric(as.character(D_534007917_D_261863326)),
+    ooph_derived_age = D_534007917_D_261863326 - d_544150384,
+    
+    # Salpingectomy (age/year of surgery)
+    D_752636038_D_261863326 = as.numeric(as.character(D_752636038_D_261863326)),
+    salp_derived_age = D_752636038_D_261863326 - d_544150384,
+    
+    # Vasectomy (age/year of surgery)
+    D_518750011_D_261863326 = as.numeric(as.character(D_518750011_D_261863326)),
+    vasec_derived_age = D_518750011_D_261863326 - d_544150384,
+    
+    # Orchiectomy / Ochidectomy (age/year of surgery)
+    D_275770221_D_261863326 = as.numeric(as.character(D_275770221_D_261863326)),
+    orch_derived_age = D_275770221_D_261863326 - d_544150384,
+    
+    # Prostatectomy (age/year of surgery)  NOTE: year variable is D_882152987_D_802622485 in your code
+    D_882152987_D_802622485 = as.numeric(as.character(D_882152987_D_802622485)),
+    prost_derived_age = D_882152987_D_802622485 - d_544150384,
+    
+    # Penectomy (Penis removed)
+    D_527057404_D_261863326 = as.numeric(as.character(D_527057404_D_261863326)),
+    penis_derived_age = D_527057404_D_261863326 - d_544150384
+  )
+
+# subset of the data to check for accuracy across columns — Tonsillectomy
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_367884741_D_206625031,
+#     D_367884741_D_261863326,
+#     d_544150384,
+#     tonsil_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Cholecystectomy
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_178353079_D_206625031,
+#     D_178353079_D_261863326,
+#     d_544150384,
+#     gall_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Appendectomy
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_550075233_D_206625031,
+#     D_550075233_D_261863326,
+#     d_544150384,
+#     apdx_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Liposuction
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_860920332_D_206625031,
+#     D_860920332_D_261863326,
+#     d_544150384,
+#     lipo_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Bariatric Surgery
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_986613440_D_206625031,
+#     D_986613440_D_261863326,
+#     d_544150384,
+#     bar_sg_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Hysterectomy
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_150352141_D_206625031,
+#     D_150352141_D_261863326,
+#     d_544150384,
+#     hyst_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Tubal Ligation
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_122887481_D_206625031,
+#     D_122887481_D_261863326,
+#     d_544150384,
+#     tublig_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Oophorectomy
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_534007917_D_206625031,
+#     D_534007917_D_261863326,
+#     d_544150384,
+#     ooph_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Salpingectomy
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_752636038_D_206625031,
+#     D_752636038_D_261863326,
+#     d_544150384,
+#     salp_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Vasectomy
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_518750011_D_206625031,
+#     D_518750011_D_261863326,
+#     d_544150384,
+#     vasec_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Orchiectomy / Ochidectomy
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_275770221_D_206625031,
+#     D_275770221_D_261863326,
+#     d_544150384,
+#     orch_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Prostatectomy
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_882152987_D_206625031,
+#     D_882152987_D_802622485,
+#     d_544150384,
+#     prost_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Penectomy
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_527057404_D_206625031,
+#     D_527057404_D_261863326,
+#     d_544150384,
+#     penis_derived_age
+#   )
+
+# fill "age at surgery" variables to derived_age NAs so derived_age variables have all info
+
+module1 <- module1 %>%
+  mutate(
+    tonsil_derived_age = if_else(is.na(tonsil_derived_age), as.numeric(as.character(D_367884741_D_206625031)), tonsil_derived_age),
+    gall_derived_age   = if_else(is.na(gall_derived_age),   as.numeric(as.character(D_178353079_D_206625031)), gall_derived_age),
+    apdx_derived_age   = if_else(is.na(apdx_derived_age),   as.numeric(as.character(D_550075233_D_206625031)), apdx_derived_age),
+    lipo_derived_age   = if_else(is.na(lipo_derived_age),   as.numeric(as.character(D_860920332_D_206625031)), lipo_derived_age),
+    bar_sg_derived_age = if_else(is.na(bar_sg_derived_age), as.numeric(as.character(D_986613440_D_206625031)), bar_sg_derived_age),
+    hyst_derived_age   = if_else(is.na(hyst_derived_age),   as.numeric(as.character(D_150352141_D_206625031)), hyst_derived_age),
+    tublig_derived_age = if_else(is.na(tublig_derived_age), as.numeric(as.character(D_122887481_D_206625031)), tublig_derived_age),
+    ooph_derived_age   = if_else(is.na(ooph_derived_age),   as.numeric(as.character(D_534007917_D_206625031)), ooph_derived_age),
+    salp_derived_age   = if_else(is.na(salp_derived_age),   as.numeric(as.character(D_752636038_D_206625031)), salp_derived_age),
+    vasec_derived_age  = if_else(is.na(vasec_derived_age),  as.numeric(as.character(D_518750011_D_206625031)), vasec_derived_age),
+    orch_derived_age   = if_else(is.na(orch_derived_age),   as.numeric(as.character(D_275770221_D_206625031)), orch_derived_age),
+    prost_derived_age  = if_else(is.na(prost_derived_age),  as.numeric(as.character(D_882152987_D_206625031)), prost_derived_age),
+    penis_derived_age  = if_else(is.na(penis_derived_age),  as.numeric(as.character(D_527057404_D_206625031)), penis_derived_age)
+  )
+
+# 3-panel layout for each surgery (Derived Age, Age at Surgery, Year of Surgery)
 
 
-#	Gallbladder removed (cholecystectomy)
-gall_a_sg=boxp_funct(D_178353079_D_206625031,"Age at Cholecystectomy Surgery","Age") 
-gall_y_sg=boxp_funct(D_178353079_D_261863326,"Year of Cholecystectomy Surgery","Year")
-grid.arrange(gall_a_sg, gall_y_sg, nrow=2)
+# Tonsils removed (tonsillectomy)
+tonsil_ad_sg = boxp_funct(tonsil_derived_age, "Age at Tonsillectomy Surgery, Derived", "Age")
+tonsil_a_sg  = boxp_funct(D_367884741_D_206625031, "Age at Tonisllectomy Surgery", "Age")
+tonsil_y_sg  = boxp_funct(D_367884741_D_261863326, "Year of Tonisllectomy Surgery", "Year")
+grid.arrange(tonsil_ad_sg, tonsil_a_sg, tonsil_y_sg, nrow = 3)
 
 
-#	Appendix removed (appendectomy)
-apdx_a_sg=boxp_funct(D_550075233_D_206625031,"Age at Appendectomy Surgery","Age") 
-apdx_y_sg=boxp_funct(D_550075233_D_261863326,"Year of Appendectomy Surgery","Year")
-grid.arrange(apdx_a_sg, apdx_y_sg, nrow=2)
+# Gallbladder removed (cholecystectomy)
+gall_ad_sg = boxp_funct(gall_derived_age, "Age at Cholecystectomy Surgery, Derived", "Age")
+gall_a_sg  = boxp_funct(D_178353079_D_206625031, "Age at Cholecystectomy Surgery", "Age")
+gall_y_sg  = boxp_funct(D_178353079_D_261863326, "Year of Cholecystectomy Surgery", "Year")
+grid.arrange(gall_ad_sg, gall_a_sg, gall_y_sg, nrow = 3)
 
 
-#	Liposuction
-lipo_a_sg=boxp_funct(D_860920332_D_206625031,"Age at Liposuction Surgery","Age") 
-lipo_y_sg=boxp_funct(D_860920332_D_261863326,"Year of Liposuction Surgery","Year")
-grid.arrange(lipo_a_sg, lipo_y_sg, nrow=2)
+# Appendix removed (appendectomy)
+apdx_ad_sg = boxp_funct(apdx_derived_age, "Age at Appendectomy Surgery, Derived", "Age")
+apdx_a_sg  = boxp_funct(D_550075233_D_206625031, "Age at Appendectomy Surgery", "Age")
+apdx_y_sg  = boxp_funct(D_550075233_D_261863326, "Year of Appendectomy Surgery", "Year")
+grid.arrange(apdx_ad_sg, apdx_a_sg, apdx_y_sg, nrow = 3)
 
 
-#	Bariatric surgery (lap band, gastric bypass)
-bar_sg_a_sg=boxp_funct(D_986613440_D_206625031,"Age at Gastric Bypass Surgery","Age")
-bar_sg_y_sg=boxp_funct(D_986613440_D_261863326,"Year of Gastric Bypass Surgery","Year")
-grid.arrange(bar_sg_a_sg, bar_sg_y_sg, nrow=2)
+# Liposuction
+lipo_ad_sg = boxp_funct(lipo_derived_age, "Age at Liposuction Surgery, Derived", "Age")
+lipo_a_sg  = boxp_funct(D_860920332_D_206625031, "Age at Liposuction Surgery", "Age")
+lipo_y_sg  = boxp_funct(D_860920332_D_261863326, "Year of Liposuction Surgery", "Year")
+grid.arrange(lipo_ad_sg, lipo_a_sg, lipo_y_sg, nrow = 3)
 
 
-#cat("Hysterectomy") 
-hyst_a_sg=boxp_funct(D_150352141_D_206625031,"Age at Hysterectomy","Age") 
-hyst_y_sg=boxp_funct(D_150352141_D_261863326,"Year of Hysterectomy","Year")
-grid.arrange(hyst_a_sg, hyst_y_sg, nrow=2)
+# Bariatric surgery (lap band, gastric bypass)
+bar_sg_ad_sg = boxp_funct(bar_sg_derived_age, "Age at Gastric Bypass Surgery, Derived", "Age")
+bar_sg_a_sg  = boxp_funct(D_986613440_D_206625031, "Age at Gastric Bypass Surgery", "Age")
+bar_sg_y_sg  = boxp_funct(D_986613440_D_261863326, "Year of Gastric Bypass Surgery", "Year")
+grid.arrange(bar_sg_ad_sg, bar_sg_a_sg, bar_sg_y_sg, nrow = 3)
 
 
-#cat("Tubal Ligation")  
-tublig_a_sg=boxp_funct(D_122887481_D_206625031,"Age at Tubal Ligation Surgery","Age") 
-tublig_y_sg=boxp_funct(D_122887481_D_261863326,"Year of Tubal Ligation Surgery","Year")
-grid.arrange(tublig_a_sg, tublig_y_sg, nrow=2)
+#cat("Hysterectomy")
+hyst_ad_sg = boxp_funct(hyst_derived_age, "Age at Hysterectomy, Derived", "Age")
+hyst_a_sg  = boxp_funct(D_150352141_D_206625031, "Age at Hysterectomy", "Age")
+hyst_y_sg  = boxp_funct(D_150352141_D_261863326, "Year of Hysterectomy", "Year")
+grid.arrange(hyst_ad_sg, hyst_a_sg, hyst_y_sg, nrow = 3)
+
+
+#cat("Tubal Ligation")
+tublig_ad_sg = boxp_funct(tublig_derived_age, "Age at Tubal Ligation Surgery, Derived", "Age")
+tublig_a_sg  = boxp_funct(D_122887481_D_206625031, "Age at Tubal Ligation Surgery", "Age")
+tublig_y_sg  = boxp_funct(D_122887481_D_261863326, "Year of Tubal Ligation Surgery", "Year")
+grid.arrange(tublig_ad_sg, tublig_a_sg, tublig_y_sg, nrow = 3)
 
 
 #cat("Oophorectomy")
-  #type
-cat(round((sum(module1$D_378892977==333647143, na.rm=T)/sum(module1$D_624179836_D_630100221==1, na.rm=T))*100, digits=2), "% Had One Ovary Removed")
-cat(round((sum(module1$D_378892977==109972911, na.rm=T)/sum(module1$D_624179836_D_630100221==1, na.rm=T))*100, digits=2), "% Had Both Ovaries Removed")
-cat(round((sum(module1$D_378892977==535003378, na.rm=T)/sum(module1$D_624179836_D_630100221==1, na.rm=T))*100, digits=2), "% Had Neither of These Oophorectomy Types")
-  #age/year of surgery
-ooph_a_sg=boxp_funct(D_534007917_D_206625031,"Age at Tubal Oophorectomy","Age") 
-ooph_y_sg=boxp_funct(D_534007917_D_261863326,"Year of Tubal Oophorectomy","Year")
-grid.arrange(ooph_a_sg, ooph_y_sg, nrow=2)
+# type
+cat(round((sum(module1$D_378892977 == 333647143, na.rm = TRUE) / sum(module1$D_624179836_D_630100221 == 1, na.rm = TRUE)) * 100, digits = 2), "% Had One Ovary Removed")
+cat(round((sum(module1$D_378892977 == 109972911, na.rm = TRUE) / sum(module1$D_624179836_D_630100221 == 1, na.rm = TRUE)) * 100, digits = 2), "% Had Both Ovaries Removed")
+cat(round((sum(module1$D_378892977 == 535003378, na.rm = TRUE) / sum(module1$D_624179836_D_630100221 == 1, na.rm = TRUE)) * 100, digits = 2), "% Had Neither of These Oophorectomy Types")
+
+# age/year of surgery
+ooph_ad_sg = boxp_funct(ooph_derived_age, "Age at Tubal Oophorectomy, Derived", "Age")
+ooph_a_sg  = boxp_funct(D_534007917_D_206625031, "Age at Tubal Oophorectomy", "Age")
+ooph_y_sg  = boxp_funct(D_534007917_D_261863326, "Year of Tubal Oophorectomy", "Year")
+grid.arrange(ooph_ad_sg, ooph_a_sg, ooph_y_sg, nrow = 3)
 
 
-#cat("Salpingectomy") 
-  #type
-cat(round((sum(module1$D_224791140==448068764, na.rm=T)/sum(module1$D_624179836_D_692881833==1, na.rm=T))*100, digits=2), "% Had One Fallopian Tube Removed")
-cat(round((sum(module1$D_224791140==537173119, na.rm=T)/sum(module1$D_624179836_D_692881833==1, na.rm=T))*100, digits=2), "% Had Both Fallopian Tubes Removed")
-cat(round((sum(module1$D_224791140==535003378, na.rm=T)/sum(module1$D_624179836_D_692881833==1, na.rm=T))*100, digits=2), "% Had Neither of These Salpingectomy Types")
-  #age/year
-salp_a_sg=boxp_funct(D_752636038_D_206625031,"Age at Tubal Salpingectomy","Age") 
-salp_y_sg=boxp_funct(D_752636038_D_261863326,"Year of Tubal Salpingectomy","Year")
-grid.arrange(salp_a_sg, salp_y_sg, nrow=2)
+#cat("Salpingectomy")
+# type
+cat(round((sum(module1$D_224791140 == 448068764, na.rm = TRUE) / sum(module1$D_624179836_D_692881833 == 1, na.rm = TRUE)) * 100, digits = 2), "% Had One Fallopian Tube Removed")
+cat(round((sum(module1$D_224791140 == 537173119, na.rm = TRUE) / sum(module1$D_624179836_D_692881833 == 1, na.rm = TRUE)) * 100, digits = 2), "% Had Both Fallopian Tubes Removed")
+cat(round((sum(module1$D_224791140 == 535003378, na.rm = TRUE) / sum(module1$D_624179836_D_692881833 == 1, na.rm = TRUE)) * 100, digits = 2), "% Had Neither of These Salpingectomy Types")
+
+# age/year
+salp_ad_sg = boxp_funct(salp_derived_age, "Age at Tubal Salpingectomy, Derived", "Age")
+salp_a_sg  = boxp_funct(D_752636038_D_206625031, "Age at Tubal Salpingectomy", "Age")
+salp_y_sg  = boxp_funct(D_752636038_D_261863326, "Year of Tubal Salpingectomy", "Year")
+grid.arrange(salp_ad_sg, salp_a_sg, salp_y_sg, nrow = 3)
 
 
-#	Vasectomy 
-vasec_a_sg=boxp_funct(D_518750011_D_206625031,"Age at Tubal Vasectomy","Age") 
-vasec_y_sg=boxp_funct(D_518750011_D_261863326,"Year of Tubal Vasectomy","Year")
-grid.arrange(vasec_a_sg, vasec_y_sg, nrow=2)
+# Vasectomy
+vasec_ad_sg = boxp_funct(vasec_derived_age, "Age at Tubal Vasectomy, Derived", "Age")
+vasec_a_sg  = boxp_funct(D_518750011_D_206625031, "Age at Tubal Vasectomy", "Age")
+vasec_y_sg  = boxp_funct(D_518750011_D_261863326, "Year of Tubal Vasectomy", "Year")
+grid.arrange(vasec_ad_sg, vasec_a_sg, vasec_y_sg, nrow = 3)
 
 
-#cat("Orchiectomy or Ochidectomy") 
-  #type
-cat(round((sum(module1$D_946504570==770550588, na.rm=T)/sum(module1$D_624179836_D_532603425==1, na.rm=T))*100, digits=2), "% Had One Testicle Removed")
-cat(round((sum(module1$D_946504570==970716952, na.rm=T)/sum(module1$D_624179836_D_532603425==1, na.rm=T))*100, digits=2), "% Had Both Testicles Removed")
-cat(round((sum(module1$D_946504570==535003378, na.rm=T)/sum(module1$D_624179836_D_532603425==1, na.rm=T))*100, digits=2), "% Had Neither of These Orchiectomy or Ochidectomy Types")
-  #age/year
-orch_a_sg=boxp_funct(D_275770221_D_206625031,"Age at Orchiectomy Surgery","Age") 
-orch_y_sg=boxp_funct(D_275770221_D_261863326,"Year of Orchiectomy Surgery","Year")
-grid.arrange(orch_a_sg, orch_y_sg, nrow=2)
+#cat("Orchiectomy or Ochidectomy")
+# type
+cat(round((sum(module1$D_946504570 == 770550588, na.rm = TRUE) / sum(module1$D_624179836_D_532603425 == 1, na.rm = TRUE)) * 100, digits = 2), "% Had One Testicle Removed")
+cat(round((sum(module1$D_946504570 == 970716952, na.rm = TRUE) / sum(module1$D_624179836_D_532603425 == 1, na.rm = TRUE)) * 100, digits = 2), "% Had Both Testicles Removed")
+cat(round((sum(module1$D_946504570 == 535003378, na.rm = TRUE) / sum(module1$D_624179836_D_532603425 == 1, na.rm = TRUE)) * 100, digits = 2), "% Had Neither of These Orchiectomy or Ochidectomy Types")
+
+# age/year
+orch_ad_sg = boxp_funct(orch_derived_age, "Age at Orchiectomy Surgery, Derived", "Age")
+orch_a_sg  = boxp_funct(D_275770221_D_206625031, "Age at Orchiectomy Surgery", "Age")
+orch_y_sg  = boxp_funct(D_275770221_D_261863326, "Year of Orchiectomy Surgery", "Year")
+grid.arrange(orch_ad_sg, orch_a_sg, orch_y_sg, nrow = 3)
 
 
-#cat("Prostatectomy") 
-  #type
-cat(round((sum(module1$D_107060069==524029283, na.rm=T)/sum(module1$D_624179836_D_733236542==1, na.rm=T))*100, digits=2), "% Had Part of Prostate Removed")
-cat(round((sum(module1$D_107060069==500023550, na.rm=T)/sum(module1$D_624179836_D_733236542==1, na.rm=T))*100, digits=2), "% Had Whole Prostate Removed")
-cat(round((sum(module1$D_107060069==535003378, na.rm=T)/sum(module1$D_624179836_D_733236542==1, na.rm=T))*100, digits=2), "% Had Neither of These Prostatectomy Types")
-  #age/year
-prost_a_sg=boxp_funct(D_882152987_D_206625031,"Age at Prostatectomy Surgery","Age") 
-prost_y_sg=boxp_funct(D_882152987_D_802622485,"Year of Prostatectomy Surgery","Year") 
-grid.arrange(prost_a_sg, prost_y_sg, nrow=2)
+#cat("Prostatectomy")
+# type
+cat(round((sum(module1$D_107060069 == 524029283, na.rm = TRUE) / sum(module1$D_624179836_D_733236542 == 1, na.rm = TRUE)) * 100, digits = 2), "% Had Part of Prostate Removed")
+cat(round((sum(module1$D_107060069 == 500023550, na.rm = TRUE) / sum(module1$D_624179836_D_733236542 == 1, na.rm = TRUE)) * 100, digits = 2), "% Had Whole Prostate Removed")
+cat(round((sum(module1$D_107060069 == 535003378, na.rm = TRUE) / sum(module1$D_624179836_D_733236542 == 1, na.rm = TRUE)) * 100, digits = 2), "% Had Neither of These Prostatectomy Types")
+
+# age/year  NOTE: year variable is D_882152987_D_802622485 in your code
+prost_ad_sg = boxp_funct(prost_derived_age, "Age at Prostatectomy Surgery, Derived", "Age")
+prost_a_sg  = boxp_funct(D_882152987_D_206625031, "Age at Prostatectomy Surgery", "Age")
+prost_y_sg  = boxp_funct(D_882152987_D_802622485, "Year of Prostatectomy Surgery", "Year")
+grid.arrange(prost_ad_sg, prost_a_sg, prost_y_sg, nrow = 3)
 
 
-#	Penis removed (penectomy) 
-penis_a_sg=boxp_funct(D_527057404_D_206625031,"Age at Penectomy Surgery","Age") 
-penis_y_sg=boxp_funct(D_527057404_D_261863326,"Year of Penectomy Surgery","Year")
-grid.arrange(penis_a_sg, penis_y_sg, nrow=2)
+# Penis removed (penectomy)
+penis_ad_sg = boxp_funct(penis_derived_age, "Age at Penectomy Surgery, Derived", "Age")
+penis_a_sg  = boxp_funct(D_527057404_D_206625031, "Age at Penectomy Surgery", "Age")
+penis_y_sg  = boxp_funct(D_527057404_D_261863326, "Year of Penectomy Surgery", "Year")
+grid.arrange(penis_ad_sg, penis_a_sg, penis_y_sg, nrow = 3)
+
 
 
 ```
@@ -2269,58 +3279,246 @@ create_kable_table_w_footnote(dt_surgeryBrst_long, Condition, "BREASTSUR: Types 
 
 \FloatBarrier
 ```{r BreastSurgYear, warning=FALSE, echo=FALSE, message=FALSE}
+
+
+
+### Breast Surgeries
+
+# Breast surgery derived age variables, converting all to numeric:
+
+module1 <- module1 %>%
+  mutate(
+    # Convert year of birth
+    d_544150384 = as.numeric(as.character(d_544150384)),
+    
+    # Breast Implants
+    D_477690298_D_802622485 = as.numeric(as.character(D_477690298_D_802622485)),
+    implant_derived_age = D_477690298_D_802622485 - d_544150384,
+    
+    # Mastopexy
+    D_176453768_D_802622485 = as.numeric(as.character(D_176453768_D_802622485)),
+    mastop_derived_age = D_176453768_D_802622485 - d_544150384,
+    
+    # Breast Reconstruction
+    D_145786416_D_802622485 = as.numeric(as.character(D_145786416_D_802622485)),
+    recon_derived_age = D_145786416_D_802622485 - d_544150384,
+    
+    # Breast Reduction
+    D_287605131_D_802622485 = as.numeric(as.character(D_287605131_D_802622485)),
+    reduct_derived_age = D_287605131_D_802622485 - d_544150384,
+    
+    # Partial Mastectomy
+    D_701157499_D_802622485 = as.numeric(as.character(D_701157499_D_802622485)),
+    prtms_derived_age = D_701157499_D_802622485 - d_544150384,
+    
+    # Mastectomy
+    D_428639167_D_802622485 = as.numeric(as.character(D_428639167_D_802622485)),
+    mastec_derived_age = D_428639167_D_802622485 - d_544150384,
+    
+    # Double Mastectomy
+    D_282355641_D_802622485 = as.numeric(as.character(D_282355641_D_802622485)),
+    dbmas_derived_age = D_282355641_D_802622485 - d_544150384,
+    
+    # Breast Abscess
+    D_539301647_D_802622485 = as.numeric(as.character(D_539301647_D_802622485)),
+    abscess_derived_age = D_539301647_D_802622485 - d_544150384,
+    
+    # Lactiferous Surgery
+    D_579225381_D_802622485 = as.numeric(as.character(D_579225381_D_802622485)),
+    lact_derived_age = D_579225381_D_802622485 - d_544150384,
+    
+    # Other Breast Surgery
+    D_891214661_D_802622485 = as.numeric(as.character(D_891214661_D_802622485)),
+    othb_derived_age = D_891214661_D_802622485 - d_544150384
+  )
+
+# subset of the data to check for accuracy across columns — Breast Implants
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_477690298_D_623218391,
+#     D_477690298_D_802622485,
+#     d_544150384,
+#     implant_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Mastopexy
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_176453768_D_623218391,
+#     D_176453768_D_802622485,
+#     d_544150384,
+#     mastop_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Breast Reconstruction
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_145786416_D_623218391,
+#     D_145786416_D_802622485,
+#     d_544150384,
+#     recon_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Breast Reduction
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_287605131_D_623218391,
+#     D_287605131_D_802622485,
+#     d_544150384,
+#     reduct_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Partial Mastectomy
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_701157499_D_623218391,
+#     D_701157499_D_802622485,
+#     d_544150384,
+#     prtms_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Mastectomy
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_428639167_D_623218391,
+#     D_428639167_D_802622485,
+#     d_544150384,
+#     mastec_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Double Mastectomy
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_282355641_D_623218391,
+#     D_282355641_D_802622485,
+#     d_544150384,
+#     dbmas_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Breast Abscess
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_539301647_D_623218391,
+#     D_539301647_D_802622485,
+#     d_544150384,
+#     abscess_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Lactiferous Surgery
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_579225381_D_623218391,
+#     D_579225381_D_802622485,
+#     d_544150384,
+#     lact_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Other Breast Surgery
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_891214661_D_623218391,
+#     D_891214661_D_802622485,
+#     d_544150384,
+#     othb_derived_age
+#   )
+
+# fill "age at surgery" variables to derived_age NAs so derived_age variables have all info
+
+module1 <- module1 %>%
+  mutate(
+    implant_derived_age = if_else(is.na(implant_derived_age), as.numeric(as.character(D_477690298_D_623218391)), implant_derived_age),
+    mastop_derived_age  = if_else(is.na(mastop_derived_age),  as.numeric(as.character(D_176453768_D_623218391)), mastop_derived_age),
+    recon_derived_age   = if_else(is.na(recon_derived_age),   as.numeric(as.character(D_145786416_D_623218391)), recon_derived_age),
+    reduct_derived_age  = if_else(is.na(reduct_derived_age),  as.numeric(as.character(D_287605131_D_623218391)), reduct_derived_age),
+    prtms_derived_age   = if_else(is.na(prtms_derived_age),   as.numeric(as.character(D_701157499_D_623218391)), prtms_derived_age),
+    mastec_derived_age  = if_else(is.na(mastec_derived_age),  as.numeric(as.character(D_428639167_D_623218391)), mastec_derived_age),
+    dbmas_derived_age   = if_else(is.na(dbmas_derived_age),   as.numeric(as.character(D_282355641_D_623218391)), dbmas_derived_age),
+    abscess_derived_age = if_else(is.na(abscess_derived_age), as.numeric(as.character(D_539301647_D_623218391)), abscess_derived_age),
+    lact_derived_age    = if_else(is.na(lact_derived_age),    as.numeric(as.character(D_579225381_D_623218391)), lact_derived_age),
+    othb_derived_age    = if_else(is.na(othb_derived_age),    as.numeric(as.character(D_891214661_D_623218391)), othb_derived_age)
+  )
+
+# 3-panel layout for each breast surgery (Derived Age, Age at Surgery, Year of Surgery)
+
+
 #cat("Breast Implants")
-implant_a_sg=boxp_funct(D_477690298_D_623218391,"Age at Breast Implants Surgery","Age")
-implant_y_sg=boxp_funct(D_477690298_D_802622485,"Year of Breast Implants Surgery","Year")
-grid.arrange(implant_a_sg, implant_y_sg, nrow=2)
+implant_ad_sg = boxp_funct(implant_derived_age, "Age at Breast Implants Surgery, Derived", "Age")
+implant_a_sg  = boxp_funct(D_477690298_D_623218391, "Age at Breast Implants Surgery", "Age")
+implant_y_sg  = boxp_funct(D_477690298_D_802622485, "Year of Breast Implants Surgery", "Year")
+grid.arrange(implant_ad_sg, implant_a_sg, implant_y_sg, nrow = 3)
 
 
 #cat("Mastopexy")
-mastop_a_sg=boxp_funct(D_176453768_D_623218391,"Age at Mastopexy Surgery","Age")
-mastop_y_sg=boxp_funct(D_176453768_D_802622485,"Year of Mastopexy Surgery","Year")
-grid.arrange(mastop_a_sg, mastop_y_sg, nrow=2)
+mastop_ad_sg = boxp_funct(mastop_derived_age, "Age at Mastopexy Surgery, Derived", "Age")
+mastop_a_sg  = boxp_funct(D_176453768_D_623218391, "Age at Mastopexy Surgery", "Age")
+mastop_y_sg  = boxp_funct(D_176453768_D_802622485, "Year of Mastopexy Surgery", "Year")
+grid.arrange(mastop_ad_sg, mastop_a_sg, mastop_y_sg, nrow = 3)
 
 
 #cat("Breast Reconstruction")
-recon_a_sg=boxp_funct(D_145786416_D_623218391,"Age at Breast Reconstruction Surgery","Age")
-recon_y_sg=boxp_funct(D_145786416_D_802622485,"Year of Breast Reconstruction Surgery","Year") 
-grid.arrange(recon_a_sg, recon_y_sg, nrow=2)
+recon_ad_sg = boxp_funct(recon_derived_age, "Age at Breast Reconstruction Surgery, Derived", "Age")
+recon_a_sg  = boxp_funct(D_145786416_D_623218391, "Age at Breast Reconstruction Surgery", "Age")
+recon_y_sg  = boxp_funct(D_145786416_D_802622485, "Year of Breast Reconstruction Surgery", "Year")
+grid.arrange(recon_ad_sg, recon_a_sg, recon_y_sg, nrow = 3)
+
 
 #cat("Breast Reduction")
-reduct_a_sg=boxp_funct(D_287605131_D_623218391,"Age at Breast Reduction Surgery","Age")
-reduct_y_sg=boxp_funct(D_287605131_D_802622485,"Year of Breast Reduction Surgery","Year")
-grid.arrange(reduct_a_sg, reduct_y_sg, nrow=2)
+reduct_ad_sg = boxp_funct(reduct_derived_age, "Age at Breast Reduction Surgery, Derived", "Age")
+reduct_a_sg  = boxp_funct(D_287605131_D_623218391, "Age at Breast Reduction Surgery", "Age")
+reduct_y_sg  = boxp_funct(D_287605131_D_802622485, "Year of Breast Reduction Surgery", "Year")
+grid.arrange(reduct_ad_sg, reduct_a_sg, reduct_y_sg, nrow = 3)
+
 
 #cat("Partial Mastectomy")
-prtms_a_sg=boxp_funct(D_701157499_D_623218391,"Age at Partial Mastectomy Surgery","Age")
-prtms_y_sg=boxp_funct(D_701157499_D_802622485,"Year of Partial Mastectomy Surgery","Year")
-grid.arrange(prtms_a_sg, prtms_y_sg, nrow=2)
+prtms_ad_sg = boxp_funct(prtms_derived_age, "Age at Partial Mastectomy Surgery, Derived", "Age")
+prtms_a_sg  = boxp_funct(D_701157499_D_623218391, "Age at Partial Mastectomy Surgery", "Age")
+prtms_y_sg  = boxp_funct(D_701157499_D_802622485, "Year of Partial Mastectomy Surgery", "Year")
+grid.arrange(prtms_ad_sg, prtms_a_sg, prtms_y_sg, nrow = 3)
+
 
 #cat("Mastectomy")
-mastec_a_sg=boxp_funct(D_428639167_D_623218391,"Age at Mastectomy Surgery","Age") 
-mastec_y_sg=boxp_funct(D_428639167_D_802622485,"Year of Mastectomy Surgery","Year") 
-grid.arrange(mastec_a_sg, mastec_y_sg, nrow=2)
+mastec_ad_sg = boxp_funct(mastec_derived_age, "Age at Mastectomy Surgery, Derived", "Age")
+mastec_a_sg  = boxp_funct(D_428639167_D_623218391, "Age at Mastectomy Surgery", "Age")
+mastec_y_sg  = boxp_funct(D_428639167_D_802622485, "Year of Mastectomy Surgery", "Year")
+grid.arrange(mastec_ad_sg, mastec_a_sg, mastec_y_sg, nrow = 3)
+
 
 #cat("Double Mastectomy")
-dbmas_a_sg=boxp_funct(D_282355641_D_623218391,"Age at Double Mastectomy Surgery","Age")
-dbmas_y_sg=boxp_funct(D_282355641_D_802622485,"Year of Double Mastectomy Surgery","Year")
-grid.arrange(dbmas_a_sg, dbmas_y_sg, nrow=2)
+dbmas_ad_sg = boxp_funct(dbmas_derived_age, "Age at Double Mastectomy Surgery, Derived", "Age")
+dbmas_a_sg  = boxp_funct(D_282355641_D_623218391, "Age at Double Mastectomy Surgery", "Age")
+dbmas_y_sg  = boxp_funct(D_282355641_D_802622485, "Year of Double Mastectomy Surgery", "Year")
+grid.arrange(dbmas_ad_sg, dbmas_a_sg, dbmas_y_sg, nrow = 3)
+
 
 #cat("Breast Abscess")
-abscess_a_sg=boxp_funct(D_539301647_D_623218391,"Age at Breast Abscess Surgery","Age") 
-abscess_y_sg=boxp_funct(D_539301647_D_802622485,"Year of Breast Abscess Surgery","Year") 
-grid.arrange(abscess_a_sg, abscess_y_sg, nrow=2)
+abscess_ad_sg = boxp_funct(abscess_derived_age, "Age at Breast Abscess Surgery, Derived", "Age")
+abscess_a_sg  = boxp_funct(D_539301647_D_623218391, "Age at Breast Abscess Surgery", "Age")
+abscess_y_sg  = boxp_funct(D_539301647_D_802622485, "Year of Breast Abscess Surgery", "Year")
+grid.arrange(abscess_ad_sg, abscess_a_sg, abscess_y_sg, nrow = 3)
+
 
 #cat("Lactiferous Surgery")
-lact_a_sg=boxp_funct(D_579225381_D_623218391,"Age at Removal of Lactiferous Surgery","Age")
-lact_y_sg=boxp_funct(D_579225381_D_802622485,"Year of Removal of Lactiferous Surgery","Year")
-grid.arrange(lact_a_sg, lact_y_sg, nrow=2)
+lact_ad_sg = boxp_funct(lact_derived_age, "Age at Removal of Lactiferous Surgery, Derived", "Age")
+lact_a_sg  = boxp_funct(D_579225381_D_623218391, "Age at Removal of Lactiferous Surgery", "Age")
+lact_y_sg  = boxp_funct(D_579225381_D_802622485, "Year of Removal of Lactiferous Surgery", "Year")
+grid.arrange(lact_ad_sg, lact_a_sg, lact_y_sg, nrow = 3)
+
 
 #cat("Other Breast Surgery")
-othb_a_sg=boxp_funct(D_891214661_D_623218391,"Age at Other Breast Surgery","Age")
-othb_y_sg=boxp_funct(D_891214661_D_802622485,"Year of Other Breast Surgery","Year")
-grid.arrange(othb_a_sg, othb_y_sg, nrow=2)
-
+othb_ad_sg = boxp_funct(othb_derived_age, "Age at Other Breast Surgery, Derived", "Age")
+othb_a_sg  = boxp_funct(D_891214661_D_623218391, "Age at Other Breast Surgery", "Age")
+othb_y_sg  = boxp_funct(D_891214661_D_802622485, "Year of Other Breast Surgery", "Year")
+grid.arrange(othb_ad_sg, othb_a_sg, othb_y_sg, nrow = 3)
 
 
 ```
@@ -2335,18 +3533,77 @@ simple_funct(D_453252072, "BLDTRANS: Ever have a Blood Transfusion")
 #how many
 hist_funct(D_795940097, "Number of Blood Transfusions", "Transfusions", "Frequency")
 
-#First transfusion
-  ##sum(table(module1$D_406011084_D_206625031)) #age
-module1$D_406011084_D_206625031=as.numeric(module1$D_406011084_D_206625031) ##boxplot was having issues with 0 
-trans1_a=boxp_funct(D_406011084_D_206625031,"Age at First Blood Transfusion","Age") 
-trans1_y=boxp_funct(D_406011084_D_261863326,"Year at First Blood Transfusion","Year") 
-grid.arrange(trans1_a, trans1_y, nrow=2)
+### Blood Transfusions
 
-#Age at last transfusion
-  ##sum(table(module1$D_593017220_D_206625031)) #age
-trans_a_last=boxp_funct(D_593017220_D_206625031,"Age at Last Blood Transfusion","Age")
-trans_y_last=boxp_funct(D_593017220_D_261863326,"Year at Last Blood Transfusion","Year") 
-grid.arrange(trans_a_last, trans_y_last, nrow=2)
+# Transfusion derived age variables, converting all to numeric:
+
+module1 <- module1 %>%
+  mutate(
+    # Convert year of birth
+    d_544150384 = as.numeric(as.character(d_544150384)),
+    
+    # First transfusion (boxplot issues with 0)
+    D_406011084_D_206625031 = as.numeric(as.character(D_406011084_D_206625031)),
+    D_406011084_D_261863326 = as.numeric(as.character(D_406011084_D_261863326)),
+    trans1_derived_age = D_406011084_D_261863326 - d_544150384,
+    
+    # Last transfusion
+    D_593017220_D_261863326 = as.numeric(as.character(D_593017220_D_261863326)),
+    trans_last_derived_age = D_593017220_D_261863326 - d_544150384
+  )
+
+# subset of the data to check for accuracy across columns — First Blood Transfusion
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_406011084_D_206625031,
+#     D_406011084_D_261863326,
+#     d_544150384,
+#     trans1_derived_age
+#   )
+
+# subset of the data to check for accuracy across columns — Last Blood Transfusion
+# subset_module1 <- module1 %>%
+#   select(
+#     Connect_ID,
+#     D_593017220_D_206625031,
+#     D_593017220_D_261863326,
+#     d_544150384,
+#     trans_last_derived_age
+#   )
+
+# fill "age at transfusion" variables to derived_age NAs so derived_age variables have all info
+
+module1 <- module1 %>%
+  mutate(
+    trans1_derived_age = if_else(
+      is.na(trans1_derived_age),
+      as.numeric(as.character(D_406011084_D_206625031)),
+      trans1_derived_age
+    ),
+    trans_last_derived_age = if_else(
+      is.na(trans_last_derived_age),
+      as.numeric(as.character(D_593017220_D_206625031)),
+      trans_last_derived_age
+    )
+  )
+
+# 3-panel layout for each transfusion variable (Derived Age, Age, Year)
+
+
+# First transfusion
+trans1_ad = boxp_funct(trans1_derived_age, "Age at First Blood Transfusion, Derived", "Age")
+trans1_a  = boxp_funct(D_406011084_D_206625031, "Age at First Blood Transfusion", "Age")
+trans1_y  = boxp_funct(D_406011084_D_261863326, "Year at First Blood Transfusion", "Year")
+grid.arrange(trans1_ad, trans1_a, trans1_y, nrow = 3)
+
+
+# Last transfusion
+trans_last_ad = boxp_funct(trans_last_derived_age, "Age at Last Blood Transfusion, Derived", "Age")
+trans_a_last  = boxp_funct(D_593017220_D_206625031, "Age at Last Blood Transfusion", "Age")
+trans_y_last  = boxp_funct(D_593017220_D_261863326, "Year at Last Blood Transfusion", "Year")
+grid.arrange(trans_last_ad, trans_a_last, trans_y_last, nrow = 3)
+
 ```
 
 \newpage
