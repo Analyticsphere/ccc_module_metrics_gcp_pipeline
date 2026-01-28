@@ -1467,7 +1467,8 @@ if (nrow(comp_DHQ) == 0) {
 
 dhq_qualified <- partsbq %>%  filter((d_692560814==615768760 | d_692560814==231311385) & 
                                        !(d_821247024 == 197316935 & as.Date(d_914594314) >="2024-12-01" & 
-                                           d_747006172==104430631 & 
+                                           #not wd or wd after survey completion
+                                           (d_747006172==104430631 | (as.Date(d_659990606) > as.Date(d_610227793))) &
                                            difftime(Sys.Date(), as.Date(d_914594314), units="days") >=180)) %>% 
   mutate(verif_days = difftime(Sys.Date(), as.Date(d_914594314), units="days"))
 
