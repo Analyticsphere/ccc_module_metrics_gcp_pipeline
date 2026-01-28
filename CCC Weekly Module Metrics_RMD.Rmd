@@ -2764,25 +2764,18 @@ The 2026 ROI Preference Survey is available to participants from January 9th to 
 
 
 ####### Completion of 2026 ROI Pref Among Eligible Participants (like table 4.1)
-ROI_comp_elg <- all_data %>% filter(roicomplt!="Not Eligible") %>%
-  mutate(roicomplt = factor(roicomplt, levels=c("Not Started", "Started", "Submitted"))) %>%
-  select(Site, roicomplt) %>% dplyr::arrange(Site,roicomplt) %>%
-  tbl_cross(
-  row = Site,
-  col = roicomplt,
-  label = list(roicomplt ~ "Survey Completion",Site~"Site"),
-  percent = "row",
-  digits=c(0,2),
-  margin_text="Total ROI Pref Eligible Participants")
 
-ROI_comp_elg[["table_body"]]$stat_0 <- sapply(strsplit(ROI_comp_elg[["table_body"]]$stat_0," "),"[",1)
+ROI_comp_elg <- all_data %>% filter(roicomplt!="Not Eligible") 
 
-ROI_comp_elg %>%
-  modify_header(stat_0 = "Total ROI Pref Eligible Participants") %>%
-  modify_caption("Table 8.1. Completion of 2026 ROI Pref Among Eligible Participants") %>%
-  as_kable() %>%   
-  kable_styling(latex_options = c("scale_down", "hold_position"))
+roi_table1<- create_tbl_cross1(ROI_comp_elg, 'Site', 'roicomplt', 'row', 'Site', 'Survey Completion')
 
+colnames(roi_table1)[5] <- "Total ROI Pref \n Eligible Participants"
+
+knitr::kable(roi_table1, 
+             caption='Table 8.1. Completion of 2026 ROI Pref Among Eligible Participants',
+             row.names=FALSE, align=c("l","c","c","c","c","c"), booktabs = TRUE) %>%
+    kable_styling(latex_options = "scale_down")  %>% 
+  add_indent(seq(1, nrow(roi_table1) - 1))
 
 ```
 
@@ -3429,19 +3422,16 @@ scenario_counts <- final_scenarios %>%
   count(scenario) %>%
   dplyr::rename(Scenario = scenario, 'Total Participants' = n)
 
-consist <- knitr::kable(scenario_counts,
-             caption = "Table 9.2. Consistency of Language Choice in Survey Completion",
-             row.names = FALSE, align = c("l", "c"), digits = 2, booktabs = TRUE) %>%
-  kable_styling(latex_options = "scale_down")  %>%  landscape() %>% 
-  footnote(general="Those who do not start any surveys will not have survey flags, \n and thus not be counted in this table. Those that start but do not complete a survey will still choose a survey language.",
-           general_title = "")
 
 knitr::kable(scenario_counts,
              caption = "Table 9.2. Consistency of Language Choice in Survey Completion",
              row.names = FALSE, align = c("l", "c"), digits = 2, booktabs = TRUE) %>%
-  kable_styling(latex_options = "scale_down")  %>%  landscape() %>% 
-  footnote(general="Those who do not start any surveys will not have survey flags, \n and thus not be counted in this table. Those that start but do not complete a survey will still choose a survey language.",
-           general_title = "")
+  kable_styling(latex_options = "scale_down")  %>%  #landscape() %>% 
+  footnote(general="Those who do not start any surveys will not have survey flags, and thus not be counted in this table. Those that start but do not complete a survey will still choose a survey language.",
+           general_title = "",
+           footnote_as_chunk = TRUE,
+           escape = FALSE,
+           threeparttable = TRUE)
 
 
 ```
