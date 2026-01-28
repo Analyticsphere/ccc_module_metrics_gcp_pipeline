@@ -126,12 +126,11 @@ d_831041022, d_255077064, d_320303124, d_684635302, d_843688458, d_870643066, d_
 state_d_934298480, state_d_706256705, state_d_435027713, d_199471989, d_956490759, d_263355177,
 state_d_684926335, state_d_849518448, state_d_119643471, state_d_253532712, d_764863765, d_195145666, 
 d_784810139, d_176068627, d_389890053, d_609630315, d_173836415_d_266600170_d_319972665_d_661940160, 
-d_220186468, d_268176409, d_784810139, d_253883960, d_265193023, d_109610692, d_610227793, d_692560814, d_747006172, d_501613780, d_109610692
+d_220186468, d_268176409, d_784810139, d_253883960, d_265193023, d_109610692, d_610227793, d_692560814, d_747006172, d_501613780, d_109610692,
+d_278023676, d_543379310, d_993557295 
 
 -- d_692560814, d_109610692, d_610227793, d_748726394
 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` where Connect_ID IS NOT NULL  and (d_512820379='486306141' OR d_512820379='854703046')" 
-
-# add d_278023676, d_543379310, d_993557295 after ROI is in prod to run the time metrics
 
 
 #Verification status condition below, we have one table counting non-verifieds so it had to be separated out of the BQ conditionality
@@ -221,19 +220,18 @@ all_data <- all_data %>%  mutate(Site = case_when(d_827220437==472940358 ~ "Bayl
                                                                                       units="days")) < 90, "Not Eligible",
                                                                   ifelse(d_320303124 == 972455046, "Not Started", "Error")))),
                                 
-#                                 # RcrtV_Verification_v1r0 = 1 - must be verified
-#                                 # AND RcrtV_VerificationTm_V1R0 LE 08/01/2025 - must have been verified on or before this date
-#                                 # AND HdWd_WdConsent_v1r0 = 0 = and not withdrawn
-# 
-#                                 roicomplt = case_when(
-#                                   d_278023676 == 231311385 ~ "Submitted",
-#                                   d_278023676 == 615768760 ~ "Started",
-#                                   as.Date(d_914594314) > as.Date("2025-08-01") |     # ineligible if verified after August 1 2025
-# #                                    d_875007964 != "197316935" |                     # ineligible if verification status isn't "verified"
-#                                     d_747006172 != "104430631" ~ "Not Eligible",     # ineligible if consent is withdrawn
-#                                   d_278023676 == 972455046 ~ "Not Started",
-#                                   TRUE ~ "Not Eligible"
-#                                 ),
+                                # RcrtV_Verification_v1r0 = 1 - must be verified
+                                # AND RcrtV_VerificationTm_V1R0 LE 08/01/2025 - must have been verified on or before this date
+                                # AND HdWd_WdConsent_v1r0 = 0 = and not withdrawn
+
+                                roicomplt = case_when(d_278023676 == 231311385 ~ "Submitted",
+                                                      d_278023676 == 615768760 ~ "Started",
+                                                      as.Date(d_914594314) > as.Date("2025-08-01") |     # ineligible if verified after August 1 2025
+                                                        d_821247024  != "197316935" |                     # ineligible if verification status isn't "verified"
+                                                        d_747006172 != "104430631" ~ "Not Eligible",     # ineligible if consent is withdrawn
+                                                      d_278023676 == 972455046 ~ "Not Started",
+                                                      TRUE ~ "Not Eligible"
+                                ),
 
                                 
                                 
@@ -276,7 +274,8 @@ all_data <- all_data %>%  mutate(Site = case_when(d_827220437==472940358 ~ "Bayl
                                  m3_comp_mins = as.numeric(difftime(as.POSIXct(ymd_hms(d_770257102)), as.POSIXct(ymd_hms(d_386488297)), units="hours"))*60,
                                  m4_comp_mins = as.numeric(difftime(as.POSIXct(ymd_hms(d_264644252)), as.POSIXct(ymd_hms(d_452942800)), units="hours"))*60,
                                  dhq_comp_mins = as.numeric(difftime(as.POSIXct(ymd_hms(d_610227793)), as.POSIXct(ymd_hms(d_109610692)), units="hours"))*60,
-                                 csh_comp_mins = as.numeric(difftime(as.POSIXct(ymd_hms(d_389890053)), as.POSIXct(ymd_hms(d_609630315)), units="hours"))*60)
+                                 csh_comp_mins = as.numeric(difftime(as.POSIXct(ymd_hms(d_389890053)), as.POSIXct(ymd_hms(d_609630315)), units="hours"))*60,
+                                 roi_comp_mins = as.numeric(difftime(as.POSIXct(ymd_hms(d_543379310)), as.POSIXct(ymd_hms(d_993557295)), units="hours"))*60)
 
 all_data$Site <- factor(all_data$Site, levels=c("Baylor Scott and White","HealthPartners", "Henry Ford","Marshfield","Sanford","UChicago","KP Colorado","KP Georgia", "KP Hawaii","KP Northwest"))
 all_data$BL_comp <- factor(all_data$BL_comp, levels=c("All", "2 or 3 Sections", "BOH Only", "None"))
@@ -2522,7 +2521,7 @@ CSH_Comp_by_Demographic %>% kable_styling(latex_options = c("scale_down", "hold_
 
 \newpage
 \FloatBarrier
-# Connect Experience Survey
+# 2024 Connect Experience Survey
 The Connect Experience Cross-Sectional Survey (CES) was released to eligible participants (verified between 03/01/2024 and 07/31/2024 and not withdrawn) on 10/03/2024. This survey was a one-time cross-sectional survey that is no longer being newly released to participants.
 ```{r CES, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
@@ -2759,6 +2758,463 @@ knitr::kable(after_CES_table,
 
 \FloatBarrier
 \newpage                   
+# 2026 ROI Preference Survey
+The 2026 ROI Preference Survey is available to participants from January 9th to February 25 2026. All participants who were verified on or before August 1, 2025, who are not withdrawn or deceased, and did not refuse all future activities or all future surveys were eligible.
+```{r roipref, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+
+
+####### Completion of 2026 ROI Pref Among Eligible Participants (like table 4.1)
+ROI_comp_elg <- all_data %>% filter(roicomplt!="Not Eligible") %>%
+  mutate(roicomplt = factor(roicomplt, levels=c("Not Started", "Started", "Submitted"))) %>%
+  select(Site, roicomplt) %>% dplyr::arrange(Site,roicomplt) %>%
+  tbl_cross(
+  row = Site,
+  col = roicomplt,
+  label = list(roicomplt ~ "Survey Completion",Site~"Site"),
+  percent = "row",
+  digits=c(0,2),
+  margin_text="Total ROI Pref Eligible Participants")
+
+ROI_comp_elg[["table_body"]]$stat_0 <- sapply(strsplit(ROI_comp_elg[["table_body"]]$stat_0," "),"[",1)
+
+ROI_comp_elg %>%
+  modify_header(stat_0 = "Total ROI Pref Eligible Participants") %>%
+  modify_caption("Table 8.1. Completion of 2026 ROI Pref Among Eligible Participants") %>%
+  as_kable() %>%   
+  kable_styling(latex_options = c("scale_down", "hold_position"))
+
+
+```
+
+
+```{r roibaseline, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+#####  Completion of 2026 ROI Pref by Baseline Data Completeness, similar to table 4.2
+
+ROI_comp_BL_all <- all_data %>%  filter(roicomplt!="Not Eligible")
+
+ROI_comp_BL <- create_tbl_cross2(ROI_comp_BL_all, "completion", "roicomplt", "row", "Completion", "ROI Completion", "Total ROI Pref Eligible Participants")
+colnames(ROI_comp_BL)[5] <- "Total ROI Pref Eligible Participants"
+
+
+knitr::kable(ROI_comp_BL,
+             caption='Table 8.2. Completion of 2026 ROI Pref by Baseline Data Completeness',
+             row.names=FALSE, align=c("l","c","c","c","c"), booktabs = TRUE) %>%
+    kable_styling(latex_options = "scale_down") %>%
+    add_indent(seq(1, nrow(ROI_comp_BL) - 1)) %>%  landscape()
+```
+```{r ROI_start_stop, echo=FALSE, warning=FALSE, message=FALSE}
+
+##### Back to wanting all participants, whether or not they finished Module 1. So switching back to all_data df
+
+
+ROI_time <- all_data %>%
+  filter(roicomplt=="Submitted") %>%
+  mutate(compTM_roi = as.numeric(difftime(as.POSIXct(ymd_hms(d_543379310)), as.POSIXct(ymd_hms(d_993557295)), units="mins")),
+         permission = case_when(compTM_roi<5 ~ "Under 5 Minutes",
+                                compTM_roi<10 ~ "5-10 Minutes",
+                                compTM_roi<15 ~ "10-15 Minutes",
+                                compTM_roi<20 ~ "15-20 Minutes",
+                                compTM_roi<30 ~ "20-30 Minutes",
+                                compTM_roi>=30 ~ "30+ Minutes"),
+         permission = factor(permission, levels=c("Under 5 Minutes", "5-10 Minutes", "10-15 Minutes",
+                                                   "15-20 Minutes", "20-30 Minutes", "30+ Minutes")))  %>%
+    group_by(permission) %>% tally() %>%
+  mutate(Percentage = (n / sum(n)) * 100)
+
+
+
+summary_row <- data.frame(permission = "Total Submitted ROI Survey",
+                          n = sum(ROI_time$n),
+                          Percentage = 100)
+
+
+ROI_TM <- rbind(ROI_time, summary_row) %>%
+  mutate(N_percent = paste0(formatC(n, big.mark = ",", format = "d"),
+                            " (", round(Percentage, digits = 1), "%)"),
+         Cumulative_Percentage = round(cumsum(Percentage), digits=2))
+ROI_TM$Cumulative_Percentage[nrow(ROI_TM)] <- 100
+
+ROI_TM <- ROI_TM %>%
+  select(permission, N_percent, Cumulative_Percentage) %>%
+  dplyr::rename(`Completion Time` = permission, `N%` = N_percent,
+         'Cumulative Percentage' = Cumulative_Percentage)
+
+
+knitr::kable(ROI_TM, #format.args = list(big.mark = ","),
+             caption = 'Table 8.3. 2026 ROI Pref Completion Time from Start to Submit \n Among Eligible Participants That Submitted the Survey',
+             booktabs=T, linesep = "", row.names=FALSE, align=c("l", "c", "c")) %>%
+  add_indent(c(1:(nrow(ROI_TM)-1))) %>%
+  kable_styling(latex_options = "scale_down") #c("scale_down","hold_position"))
+
+```
+
+
+```{r ROI_trigger, echo=FALSE, warning=FALSE, message=FALSE}
+
+## Time from ROI trigger to submission of ROI survey
+
+# SELECT DISTINCT token, notification_time as ROI_notif
+# FROM `nih-nci-dceg-connect-dev.FlatConnect.notifications`
+# WHERE category = '2026 Return of Results Preference Survey Reminders'
+#   AND attempt IN ('1st contact', '1st contact group 2');
+
+trig_roi <- bq_project_query(project,
+query="SELECT distinct(token), notification_time as ROI_notif FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications`
+where category='2026 Return of Results Preference Survey Reminders'")
+trigger_ROI <- bigrquery::bq_table_download(trig_roi,bigint = "integer64")
+
+trigger_time_ROI <- left_join(trigger_time, trigger_ROI, by="token")
+
+
+# For submitted cases, compute days from trigger to submission.
+
+trig_time <- trigger_time_ROI %>%
+  filter(roicomplt == "Submitted") %>%
+  select(Connect_ID, d_543379310, ROI_notif, roicomplt) %>%
+  mutate(
+    trigTM_roi = as.numeric(
+      difftime(
+        ymd_hms(d_543379310),
+        ROI_notif,
+        units = "days"
+      )
+    )
+  )
+
+
+Trig_table = trig_time %>%
+  dplyr::summarize('N'=n(),
+                   Min = round(min(trigTM_roi, na.rm = TRUE), digits=2),
+                   Q1 = round(quantile(trigTM_roi, 0.25, na.rm = TRUE), digits=2),
+                   Median = round(median(trigTM_roi, na.rm = TRUE), digits=2),
+                   Mean = round(mean(trigTM_roi, na.rm = TRUE),  digits=2),
+                   SD= round(sd(trigTM_roi, na.rm = TRUE), digits=2),
+                   Q3 = round(quantile(trigTM_roi, 0.75, na.rm = TRUE), digits=2),
+                   'Perc.90' = round(quantile(trigTM_roi, 0.90, na.rm = TRUE), digits=2),
+                   Max = round(max(trigTM_roi, na.rm = TRUE), digits=2))
+
+knitr::kable(Trig_table,
+             caption = 'Table 8.4. 2026 ROI Pref Completion from Trigger to Submit for \n Verified Participants, in Days',
+             row.names=FALSE, format.args = list(big.mark = ","), linesep = "",
+             booktabs = T, align=c("l", "c", "c", "c", "c", "c", "c", "c", "c")) %>%
+  kable_styling(latex_options = c("scale_down","hold_position"))
+
+```
+
+
+
+```{r BL_ROI_timeframe, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+
+
+################   Numerator  ##############
+
+#Completed ROI before or on the same day as BL survey-- now within 30 days
+BL_ROI <- trigger_time_ROI %>%
+  filter(roicomplt == "Submitted") %>%
+    mutate(BOH = as.Date(d_543379310) <= as.Date(d_517311251) & difftime(as.Date(d_517311251), as.Date(d_543379310), units="days") <31,
+         MRE = as.Date(d_543379310) <= as.Date(d_832139544) & difftime( as.Date(d_832139544), as.Date(d_543379310), units="days") <31,
+         SAS = as.Date(d_543379310) <= as.Date(d_770257102) & difftime( as.Date(d_770257102), as.Date(d_543379310), units="days") <31,
+         LAW = as.Date(d_543379310) <= as.Date(d_264644252) & difftime( as.Date(d_264644252), as.Date(d_543379310), units="days") <31,
+         BUM = (as.Date(BUM_time) < as.Date(ROI_notif) ) & (as.Date(d_543379310) <= as.Date(d_222161762)) & difftime( as.Date(d_222161762), as.Date(d_543379310), units="days") <31,
+         BU = (as.Date(BU_time) < as.Date(ROI_notif) ) & (as.Date(d_543379310) <= as.Date(d_764863765)) & difftime( as.Date(d_764863765), as.Date(d_543379310), units="days") <31,
+         MW = (as.Date(d_173836415_d_266600170_d_319972665_d_661940160) < as.Date(ROI_notif)) &
+           (as.Date(d_543379310) <= as.Date(d_195145666)) & difftime( as.Date(d_195145666), as.Date(d_543379310), units="days") <31,
+         COVID = (as.Date(d_556788178) < as.Date(ROI_notif)) & (as.Date(d_556788178) >= as.Date("2023-07-05")) &
+           (as.Date(d_543379310) <= as.Date(d_784810139)) & difftime( as.Date(d_784810139),as.Date(d_543379310),units="days") <31) %>%
+  pivot_longer(
+    cols = c(BOH, MRE, SAS, LAW, BUM, BU, MW, COVID),
+    names_to = "roi_timeframe",
+    values_to = "is_in_timeframe"
+  ) %>%
+  filter(is_in_timeframe) %>%  # Keep only TRUE rows
+  group_by(roi_timeframe) %>%
+  tally()
+
+
+#############    Denominator #################
+
+## Determine when a person was QOL eligible
+# trigger_time <- trigger_time %>%
+#   mutate(trig = case_when(d_914594314 < as.Date("2023-12-01") ~ ymd_hms(notification_time),
+#                           TRUE ~ ymd_hms(d_914594314) + days(90)))
+
+## Determine when a participant was BL survey eligible
+#MRE/SAS/LAW- once BOH completed ----   d_517311251
+#BUM/BU- when notified by email
+#MW- when notified the MW kit was shipped
+#COVID- pushed to prod on 7/5/2023 and requires biospecimen donation
+
+
+
+
+
+## Those that are eligible for ROI, and eligible for whichever BL module, but hadn't completed that BL module upon ROI eligibility activation
+ROI_BL_time_eligible <- trigger_time_ROI %>%
+  filter(!is.na(roicomplt) & roicomplt != "Not Eligible") %>%
+  mutate( BOH = is.na(d_517311251) | (as.Date(ROI_notif) <= as.Date(d_517311251)),
+          MRE = !is.na(d_517311251) & (is.na(d_832139544) | as.Date(ROI_notif) <= as.Date(d_832139544)),
+          SAS = !is.na(d_517311251) & (is.na(d_770257102) | as.Date(ROI_notif) <= as.Date(d_770257102)),
+          LAW = !is.na(d_517311251) & (is.na(d_264644252) | as.Date(ROI_notif) <= as.Date(d_264644252)),
+          BUM = (as.Date(BUM_time) < as.Date(ROI_notif))  & (is.na(d_222161762) | as.Date(ROI_notif) <= as.Date(d_222161762)),
+          BU = (as.Date(BU_time) < as.Date(ROI_notif))  & (is.na(d_764863765) | as.Date(ROI_notif) <= as.Date(d_764863765)),
+          MW = (as.Date(d_173836415_d_266600170_d_319972665_d_661940160) < as.Date(trig)) &
+            (is.na(d_195145666) | as.Date(trig) <= as.Date(d_195145666)),
+          COVID = as.Date(d_556788178) < as.Date(trig) &
+            as.Date(d_556788178) >= as.Date("2023-07-05") &
+            (is.na(d_784810139) | as.Date(trig) <= as.Date(d_784810139))) %>%
+  pivot_longer(
+    cols = c(BOH, MRE, SAS, LAW, BUM, BU, MW, COVID),
+    names_to = "roi_timeframe",
+    values_to = "is_in_timeframe"
+  ) %>%
+  filter(is_in_timeframe) %>%  # Keep only rows where the condition is TRUE
+  group_by(roi_timeframe) %>%
+  tally()
+
+
+
+###############################################################################
+
+after_ROI <- cbind(BL_ROI, ROI_BL_time_eligible)
+after_ROI <- after_ROI[c(1,6,8,5,3,2,7,4), c(1,2,4)] # row order BOH, MRE, SAS, LAW, BUM, BU, MW, COVID, and remove repeated column
+colnames(after_ROI) <- c("Survey", "n", "eligible")
+
+after_ROI_table <- after_ROI %>%
+  mutate(Percentage = (n / eligible) * 100,
+         N_percent = paste0(formatC(n, big.mark = ",", format = "d"),
+                            " (", round(Percentage, digits = 2), "%)")) %>%
+  dplyr::rename('Eligible for Survey' = eligible,
+         'N%' = N_percent) %>%
+    select('Survey', 'N%', 'Eligible for Survey')
+
+
+knitr::kable(after_ROI_table,
+             caption = 'Table 8.5. Baseline Survey Completion Within 30 days of 2026 ROI Pref Completion ',
+             booktabs=T, linesep = "", row.names=FALSE, align=c("l", "c", "c")) %>%
+  kable_styling(latex_options = "scale_down") %>%
+  footnote(general = "Note: Percentages calculated among those who were eligible but had not yet completed the survey at the time of ROI invitation.",
+           general_title = "",
+         footnote_as_chunk = TRUE,
+         escape = FALSE,
+         threeparttable = TRUE)
+
+
+
+```
+
+
+\FloatBarrier
+
+```{r ROI_ver_time, echo=FALSE, warning=FALSE, message=FALSE}
+
+# using release date as January 09 2026:
+
+roi_ver <- all_data %>%
+  filter(roicomplt != "Not Eligible") %>%
+  mutate(
+    roi_ver_surv = case_when(
+      as.Date(d_914594314) < as.Date("2025-01-09") ~ "More than 1 Year",
+      as.Date(d_914594314) < as.Date("2025-07-09") ~ "6 Months - 1 Year",
+      as.Date(d_914594314) < as.Date("2025-10-09") ~ "3 Months - 6 Months",
+      as.Date(d_914594314) >= as.Date("2025-10-09") ~ "At 3 Months"
+    ),
+    roi_ver_surv = factor(
+      roi_ver_surv,
+      levels = c(
+        "More than 1 Year",
+        "6 Months - 1 Year",
+        "3 Months - 6 Months",
+        "At 3 Months"
+      )
+    )
+  )
+
+
+
+roi_ver_df <- create_tbl_cross2(roi_ver, "roi_ver_surv", "roicomplt", "row", "Time from Verification to ROI Survey Release", "Survey Completion",
+                                "Total ROI Pref Eligible Participants")
+
+colnames(roi_ver_df)[5] <- "Total ROI Pref Eligible Participants"
+knitr::kable(roi_ver_df,
+             caption='Table 8.6. 2026 ROI Pref Completion By Time from Verification to ROI Survey Release',
+             row.names=FALSE, align=c("l","c","c","c","c"), booktabs = TRUE) %>%
+    kable_styling(latex_options = "scale_down") %>%
+    add_indent(seq(1, nrow(roi_ver_df) - 1)) %>%  landscape()
+
+
+
+```
+
+
+
+
+```{r ROI_BySex_ByAge, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+
+
+ROI_Comp_by_Sex <- all_data %>% filter(roicomplt!="Not Eligible") %>%
+  mutate(roicomplt = factor(roicomplt, levels=c("Not Started", "Started", "Submitted"))) %>%
+  select(sex, roicomplt) %>% dplyr::arrange(sex,roicomplt) %>%
+  tbl_cross(
+  row = sex,
+  col = roicomplt,
+  label = list(roicomplt ~ "Survey Completion",sex~"Sex"),
+  percent = "row",
+  digits=c(0,2),
+  margin_text="Total ROI Pref Eligible Participants")
+
+
+ROI_Comp_by_Sex_table <- ROI_Comp_by_Sex %>%
+  modify_header(stat_0 = "Total ROI Pref Eligible Participants") %>%
+  modify_caption("Table 8.7. 2026 ROI Pref Completion Rate by Site Defined Sex  \n  Among Eligible Participants") %>%
+  as_kable_extra(escape = FALSE, addtl_fmt = TRUE) %>% kable_styling(latex_options = c("scale_down","hold_position"))
+
+
+# leave this?
+add_footnote(ROI_Comp_by_Sex_table, "Note: Sex defined as the de-identified sex data reported by sites at time of invitation.",
+             notation = "none")
+
+
+ROI_Comp_by_Age <- all_data %>% filter(roicomplt!="Not Eligible") %>%
+  mutate(roicomplt = factor(roicomplt, levels=c("Not Started", "Started", "Submitted"))) %>%
+  select(age, roicomplt) %>% dplyr::arrange(age,roicomplt) %>%
+  tbl_cross(
+  row = age,
+  col = roicomplt,
+  label = list(roicomplt ~ "Survey Completion",age~"Age"),
+  percent = "row",
+  digits=c(0,2),
+  margin_text="Total ROI Pref Eligible Participants")
+
+
+ROI_Comp_by_Age <- ROI_Comp_by_Age %>%
+  modify_header(stat_0 = "Total ROI Pref Eligible Participants") %>%
+  modify_caption("Table 8.8. 2026 ROI Pref Completion Rate by Age \n Among Eligible Participants") %>%
+  as_kable_extra(escape = FALSE, addtl_fmt = TRUE)  %>% kable_styling(latex_options = c("scale_down","hold_position"))
+
+
+# leave this?
+add_footnote(ROI_Comp_by_Age, "Note: Age defined as the de-identified age data reported by sites at time of invitation, not current age at time of survey completion.",
+             notation="none")
+
+
+```
+
+
+
+```{r ROI_By_Race, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+
+
+ROI_Comp_by_race <- m1_comp %>% filter(roicomplt!="Not Eligible") %>%
+  mutate(roicomplt = factor(roicomplt, levels=c("Not Started", "Started", "Submitted"))) %>%
+  select(race, roicomplt) %>% dplyr::arrange(race,roicomplt) %>%
+  tbl_cross(
+  row = race,
+  col = roicomplt,
+  label = list(roicomplt ~ "Survey Completion",race~"Race"),
+  percent = "row",
+  digits=c(0,2),
+  margin_text="Total ROI Pref Eligible Participants")
+
+
+ROI_Comp_by_race <- ROI_Comp_by_race %>%
+  modify_header(stat_0 = "Total ROI Pref Eligible \n Participants") %>%
+  modify_caption("Table 8.9. 2026 ROI Pref Completion Rate by Race \n Among Eligible Participants") %>%
+  as_kable_extra(escape = FALSE, addtl_fmt = TRUE) %>% kable_styling(latex_options = c("scale_down","hold_position"))
+
+# will we need this for anything? keep this
+
+roireduced <- all_data %>% filter(d_949302066 != 231311385 & roicomplt!="Not Eligible") # Those who are eligible for ROI but didn't complete mod1 yet
+
+
+# leave this or something like it?
+
+add_footnote(ROI_Comp_by_race, paste0('Note: In order to determine race, Module 1 must first be completed. There are ', dim(roireduced)[[1]] , ' ROI eligible participants that have either not started or not finished Module 1.'),
+             notation="none")
+
+
+```
+
+
+```{r ROI_By_SiteRace, echo=FALSE, error=FALSE, message=FALSE, warning=FALSE}
+
+ROI_by_race <- all_data %>% filter(roicomplt!="Not Eligible")
+
+ROI_by_race_df <- create_tbl_cross2(ROI_by_race, "race", "roicomplt", "row", "Race", "ROI Pref \n Survey Completion", "Total Verified Participants")
+
+
+# language -- verified (this example ) vs. eligible (github request)
+knitr::kable(ROI_by_race_df,
+             caption="Table 8.9.a 2026 ROI Pref Completion Rate by Site Defined Race \n Among Verified Participants",
+             row.names=FALSE, align=c("l","c","c","c","c","c"), booktabs = TRUE) %>%
+    kable_styling(latex_options = "scale_down") %>%
+    add_indent(seq(1, nrow(BL_by_Race_df) - 1)) %>%  landscape() %>%
+    footnote(general = "Note: Race defined as the de-identified race data reported by sites at time of invitation.",
+             general_title = "")
+
+```
+
+
+```{r ROI_By_Race_And_Sex, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+
+ROI_Comp_by_sex_race <- m1_comp %>% filter(roicomplt!="Not Eligible") %>%
+  mutate(roicomplt = factor(roicomplt, levels=c("Not Started", "Started", "Submitted"))) %>%
+  select(sex_race, roicomplt) %>% dplyr::arrange(sex_race,roicomplt) %>%
+  tbl_cross(
+  row = sex_race,
+  col = roicomplt,
+  label = list(roicomplt ~ "Survey Completion",sex_race~"Sex and Race"),
+  percent = "row",
+  digits=c(0,2),
+  margin_text="Total ROI Pref Eligible Participants")
+
+
+ROI_Comp_by_sex_race <- ROI_Comp_by_sex_race %>%
+  modify_header(stat_0 = "Total ROI Pref Eligible Participants") %>%
+  modify_caption("Table 8.10. 2026 ROI Pref Completion Rate by Sex and Race \n Among Eligible Participants") %>%
+  as_kable_extra(escape = FALSE, addtl_fmt = TRUE)
+
+reduced <- all_data %>% filter(d_949302066 != 231311385 & roicomplt!="Not Eligible") # Those who are eligible for ROI but didn't complete mod1 yet
+
+ROI_Comp_by_sex_race %>% kable_styling(latex_options = c("scale_down","hold_position")) %>%
+  footnote(general = paste0('In order to determine race, Module 1 must first be completed. There are ', dim(reduced)[[1]] , ' ROI eligible participants that have either not started or not finished Module 1.'),general_title = "Note: ", footnote_as_chunk = T)
+
+
+```
+
+
+```{r ROI_By_Demographic, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+
+ROI_Comp_by_Demographic <- all_data_long %>%
+  filter(roicomplt != "Not Eligible") %>%
+  mutate(roicomplt = factor(roicomplt, levels = c("Not Started", "Started", "Submitted")),
+         Demographic_Group = factor(Demographic_Group, levels=c("White Women","Black Men","Women Under 45","Women Over 45","Men Under 45","Men Over 45"))) %>%
+  select(Demographic_Group, roicomplt) %>%
+  tbl_cross(
+    row = Demographic_Group,
+    col = roicomplt,
+    label = list(roicomplt ~ "Survey Completion", Demographic_Group ~ "Demographic"),
+    percent = "row",
+    digits = c(0, 2),
+    margin_text = "Total"
+  )
+
+
+ROI_Comp_by_Demographic <- ROI_Comp_by_Demographic %>%
+  modify_header(stat_0 = "Total") %>%
+  modify_caption("Table 8.11. 2026 ROI Pref Completion Rate \n by Demographic Among Eligible Participants") %>%
+  as_kable_extra(escape = FALSE, addtl_fmt = TRUE)
+
+# Style the table output
+ROI_Comp_by_Demographic %>% kable_styling(latex_options = c("scale_down", "hold_position"))  %>%
+  footnote(general = "Participants may be counted more then once in these categories.",general_title = "Note: ", footnote_as_chunk = T)
+
+
+```
+
+
+
 
 # Survey Metrics by Language Completed
 Spanish was made available in MyConnect beginning August 1, 2024. All surveys are now available in both English and Spanish. Surveys released after 08/01/2024 were available in both English and Spanish at time of survey release.
@@ -2777,7 +3233,7 @@ pref_lang_site <- all_data %>%
     missing="ifany",
     margin_text="Total") %>% 
   modify_header(stat_0 = "Total") %>%
-  modify_caption("Table 8.1. Preferred Language by Site") %>%
+  modify_caption("Table 9.1. Preferred Language by Site") %>%
   as_kable_extra(escape = FALSE, addtl_fmt = TRUE) %>%  
   kable_styling(latex_options = "scale_down") 
 
@@ -2785,8 +3241,6 @@ add_footnote(pref_lang_site, "Note: Preferred language is based on language of s
              notation="none")
 
 ```
-
-
 
 
 
@@ -2882,7 +3336,16 @@ queries <- list(
   DHQ_lang_c = "SELECT Connect_ID, d_748726394  as language, d_255077064 -- here dhq language is in the participants table NOT the DHQ table
                 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants`
                 WHERE Connect_ID IS NOT NULL and d_692560814='231311385'  and
-               (d_512820379='486306141' OR d_512820379='854703046') and d_821247024 = '197316935'"
+               (d_512820379='486306141' OR d_512820379='854703046') and d_821247024 = '197316935'",
+  
+  
+  ROI_lang_c = "SELECT pts.Connect_ID, pref.d_784119588 as language, d_255077064
+                FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
+                left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.preference2026` pref
+                on pref.Connect_ID=pts.Connect_ID
+                WHERE pts.Connect_ID IS NOT NULL and d_278023676 ='231311385' and
+                (pts.d_512820379='486306141' OR pts.d_512820379='854703046') and pts.d_821247024 = '197316935'"
+
 )
 
 
@@ -2912,17 +3375,21 @@ QOL_lang <- results_list$QOL_lang_c
 CES_lang <- results_list$CES_lang_c
 CSH_lang <- results_list$CSH_lang_c
 DHQ_lang <- results_list$DHQ_lang_c
+ROI_lang <- results_list$ROI_lang_c
 
 
 
 ```
 
 
+\newpage
+
 \FloatBarrier
 ```{r Svy_Lang_Diff, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
 #must match the order for survey_acronyms in the chunk below
-survey_dfs <- list(m1_lang, m2_lang, m3_lang, m4_lang, BUM_lang, BU_lang, CV_lang, Mens_lang, MW_lang, QOL_lang, DHQ_lang, CSH_lang, CES_lang) 
+survey_dfs <- list(m1_lang, m2_lang, m3_lang, m4_lang, BUM_lang, BU_lang, CV_lang, Mens_lang, MW_lang, QOL_lang, DHQ_lang, CSH_lang, CES_lang, ROI_lang
+                   ) 
 
 # Initialize an empty data frame to store results for all participants
 all_scenarios <- data.frame(Connect_ID = character(), Flag = character(), Pref_lang = character(), stringsAsFactors = FALSE)
@@ -2963,13 +3430,18 @@ scenario_counts <- final_scenarios %>%
   dplyr::rename(Scenario = scenario, 'Total Participants' = n)
 
 consist <- knitr::kable(scenario_counts,
-                        caption = "Table 8.2. Consistency of Language Choice in Survey Completion",
-                        row.names = FALSE, align = c("l", "c"), digits = 2, booktabs = TRUE) %>%
-  kable_styling(latex_options = "scale_down") %>% 
-  footnote(general="Those who do not start any surveys will not have survey flags, and thus not be counted in this table. Those that start but do not complete a survey will still choose a survey language.", 
-           general_title = "Note: ", 
-           footnote_as_chunk = T)
+             caption = "Table 9.2. Consistency of Language Choice in Survey Completion",
+             row.names = FALSE, align = c("l", "c"), digits = 2, booktabs = TRUE) %>%
+  kable_styling(latex_options = "scale_down")  %>%  landscape() %>% 
+  footnote(general="Those who do not start any surveys will not have survey flags, \n and thus not be counted in this table. Those that start but do not complete a survey will still choose a survey language.",
+           general_title = "")
 
+knitr::kable(scenario_counts,
+             caption = "Table 9.2. Consistency of Language Choice in Survey Completion",
+             row.names = FALSE, align = c("l", "c"), digits = 2, booktabs = TRUE) %>%
+  kable_styling(latex_options = "scale_down")  %>%  landscape() %>% 
+  footnote(general="Those who do not start any surveys will not have survey flags, \n and thus not be counted in this table. Those that start but do not complete a survey will still choose a survey language.",
+           general_title = "")
 
 
 ```
@@ -2979,7 +3451,9 @@ consist <- knitr::kable(scenario_counts,
 ```{r Svy_Lang_Compare, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
 # must match the order for survey_dfs in the chunk above
-survey_acronyms <- c("BOH", "MRE", "SAS", "LAW", "BUM", "BU", "COVID", "MENS", "MW", "QOL", "DHQ", "CSH",  "CES") 
+survey_acronyms <- c("BOH", "MRE", "SAS", "LAW", "BUM", "BU", "COVID", "MENS", "MW", "QOL", "DHQ", "CSH",  "CES", 
+                     "ROI"
+                     ) 
 
 
 create_table <- function(current_df, current_acronym) {
@@ -3056,7 +3530,7 @@ final_df_condition2 <- do.call(rbind, all_flags_list_condition2)
 
 
 knitr::kable(final_df_overall,
-               caption = paste0("Table 8.3. Survey Completion by Survey Language \n Among All Participants"),
+               caption = paste0("Table 9.3. Survey Completion by Survey Language \n Among All Participants"),
                row.names = FALSE, align = c("l","c","c","c"), digits = 2, booktabs = TRUE) %>% 
   add_indent(1:nrow(final_df_overall)) %>%  
   kable_styling(latex_options = "scale_down") %>% 
@@ -3067,7 +3541,7 @@ knitr::kable(final_df_overall,
            threeparttable = TRUE)
 
 knitr::kable(final_df_condition1,
-               caption = paste0("Table 8.3.a. Survey Completion by Survey Language \n Among Participants with Preferred language of Spanish"),
+               caption = paste0("Table 9.3.a. Survey Completion by Survey Language \n Among Participants with Preferred language of Spanish"),
                row.names = FALSE, align = c("l","c","c","c"), digits = 2, booktabs = TRUE) %>% 
   add_indent(1:nrow(final_df_condition1)) %>%  
   kable_styling(latex_options = "scale_down") %>%  
@@ -3078,7 +3552,7 @@ knitr::kable(final_df_condition1,
            threeparttable = TRUE)
 
 knitr::kable(final_df_condition2,
-               caption = paste0("Table 8.3.b. Survey Completion by Survey Language \n Among Participants with Preferred language of English"),
+               caption = paste0("Table 9.3.b. Survey Completion by Survey Language \n Among Participants with Preferred language of English"),
                row.names = FALSE, align = c("l","c","c","c"), digits = 2, booktabs = TRUE) %>% 
   add_indent(1:nrow(final_df_condition2)) %>%  
   kable_styling(latex_options = "scale_down")  %>% 
@@ -3117,6 +3591,7 @@ SAS_LangE <- start_stop_lang(all_data, "d_976570371", 231311385, "English", "m3_
 LAW_LangE <- start_stop_lang(all_data, "d_663265240", 231311385, "English", "m4_comp_mins")
 DHQ_LangE <- start_stop_lang(all_data, "d_692560814", 231311385, "English", "dhq_comp_mins")
 CSH_LangE <- start_stop_lang(all_data, "d_176068627", 231311385, "English", "csh_comp_mins")
+ROI_LangE <- start_stop_lang(all_data, "d_278023676", 231311385, "English", "roi_comp_mins")
 
 BOH_LangSP <- start_stop_lang(all_data, "d_949302066", 231311385, "Spanish", "m1_comp_mins")
 MRE_LangSP <- start_stop_lang(all_data, "d_536735468", 231311385, "Spanish", "m2_comp_mins")
@@ -3124,7 +3599,7 @@ SAS_LangSP <- start_stop_lang(all_data, "d_976570371", 231311385, "Spanish", "m3
 LAW_LangSP <- start_stop_lang(all_data, "d_663265240", 231311385, "Spanish", "m4_comp_mins")
 DHQ_LangSP <- start_stop_lang(all_data, "d_692560814", 231311385, "Spanish", "dhq_comp_mins")
 CSH_LangSP <- start_stop_lang(all_data, "d_176068627", 231311385, "Spanish", "csh_comp_mins")
-
+ROI_LangSP <- start_stop_lang(all_data, "d_278023676", 231311385, "Spanish", "roi_comp_mins")
 
 
 BL_lang_E <- rbind(BOH_LangE, MRE_LangE, SAS_LangE, LAW_LangE)
@@ -3142,518 +3617,49 @@ colnames(BL_lang_E)[1] <- "Section"
 colnames(BL_lang_SP)[1] <- "Section"
 
 knitr::kable(BL_lang_E, format.args = list(big.mark = ","), digits=2, 
-             caption='Table 8.4.a Time (in minutes) from Start to Submit of Initial Survey Modules for English',
+             caption='Table 9.4.a Time (in minutes) from Start to Submit of Initial Survey Modules for English',
              row.names=FALSE, align=c("l","c","c","c","c","c","c","c","c"), booktabs = TRUE)%>% 
     kable_styling(latex_options = c("scale_down","hold_position")) 
 
 knitr::kable(BL_lang_SP, format.args = list(big.mark = ","), digits=2, 
-             caption='Table 8.4.b Time (in minutes) from Start to Submit of Initial Survey Modules for Spanish',
+             caption='Table 9.4.b Time (in minutes) from Start to Submit of Initial Survey Modules for Spanish',
              row.names=FALSE, align=c("l","c","c","c","c","c","c","c","c"),booktabs = TRUE)%>% 
     kable_styling(latex_options = c("scale_down","hold_position")) 
 
 
  knitr::kable(DHQ_LangE, format.args = list(big.mark = ","), digits=2,
-              caption='Table 8.5.a Time (in minutes) from Start to Submit of 6-month Diet History Questionaire for English',
+              caption='Table 9.5.a Time (in minutes) from Start to Submit of 6-month Diet History Questionaire for English',
               row.names=FALSE, align=c("l","c","c","c","c","c","c","c","c"), booktabs = TRUE)%>%
      kable_styling(latex_options = c("scale_down","hold_position"))
 
  knitr::kable(DHQ_LangSP, format.args = list(big.mark = ","), digits=2,
-              caption='Table 8.5.b Time (in minutes) from Start to Submit of 6-month Diet History Questionaire for Spanish',
+              caption='Table 9.5.b Time (in minutes) from Start to Submit of 6-month Diet History Questionaire for Spanish',
               row.names=FALSE, align=c("l","c","c","c","c","c","c","c","c"),booktabs = TRUE)%>%
      kable_styling(latex_options = c("scale_down","hold_position"))
 
 
  knitr::kable(CSH_LangE, format.args = list(big.mark = ","), digits=2,
-              caption='Table 8.6.a Time (in minutes) from Start to Submit of Cancer Screening History Survey for English',
+              caption='Table 9.6.a Time (in minutes) from Start to Submit of Cancer Screening History Survey for English',
               row.names=FALSE, align=c("l","c","c","c","c","c","c","c","c"), booktabs = TRUE)%>%
      kable_styling(latex_options = c("scale_down","hold_position"))
 
  knitr::kable(CSH_LangSP, format.args = list(big.mark = ","), digits=2,
-              caption='Table 8.6.b Time (in minutes) from Start to Submit of Cancer Screening History Survey for Spanish',
+              caption='Table 9.6.b Time (in minutes) from Start to Submit of Cancer Screening History Survey for Spanish',
+              row.names=FALSE, align=c("l","c","c","c","c","c","c","c","c"),booktabs = TRUE)%>%
+     kable_styling(latex_options = c("scale_down","hold_position"))
+ 
+  knitr::kable(ROI_LangE, format.args = list(big.mark = ","), digits=2,
+              caption='Table 9.7.a Time (in minutes) from Start to Submit of ROI Preference Survey for English',
+              row.names=FALSE, align=c("l","c","c","c","c","c","c","c","c"), booktabs = TRUE)%>%
+     kable_styling(latex_options = c("scale_down","hold_position"))
+
+ knitr::kable(ROI_LangSP, format.args = list(big.mark = ","), digits=2,
+              caption='Table 9.7.b Time (in minutes) from Start to Submit of ROI Preference Survey for Spanish',
               row.names=FALSE, align=c("l","c","c","c","c","c","c","c","c"),booktabs = TRUE)%>%
      kable_styling(latex_options = c("scale_down","hold_position"))
 
 ```
 
-
-<!-- \newpage -->
-<!-- # 2025 ROI Preference Survey -->
-<!-- The 2025 ROI Preference Survey is available to participants from October 29, 2025 to December 10, 2025. All participants who were verified on or before August 1, 2025, who are not withdrawn or deceased, and did not refuse all future activities or all future surveys were eligible. -->
-<!-- ```{r roipref, echo=FALSE, message=FALSE, warning=FALSE, results='asis'} -->
-
-
-<!-- ####### Completion of 2025 ROI Pref Among Eligible Participants (like table 4.1) -->
-<!-- ROI_comp_elg <- all_data %>% filter(roicomplt!="Not Eligible") %>%  -->
-<!--   mutate(roicomplt = factor(roicomplt, levels=c("Not Started", "Started", "Submitted"))) %>%  -->
-<!--   select(Site, roicomplt) %>% dplyr::arrange(Site,roicomplt) %>%  -->
-<!--   tbl_cross( -->
-<!--   row = Site, -->
-<!--   col = roicomplt, -->
-<!--   label = list(roicomplt ~ "Survey Completion",Site~"Site"), -->
-<!--   percent = "row", -->
-<!--   digits=c(0,2), -->
-<!--   margin_text="Total ROI Pref Among Eligible Participants")  -->
-
-<!-- ROI_comp_elg[["table_body"]]$stat_0 <- sapply(strsplit(ROI_comp_elg[["table_body"]]$stat_0," "),"[",1) -->
-
-<!-- ROI_comp_elg <- ROI_comp_elg %>% -->
-<!--   modify_header(stat_0 = "Total ROI Eligible \n Participants") %>% -->
-<!--   modify_caption("Table 9.1. Completion of 2025 ROI Pref Among Eligible Participants") %>% -->
-<!--   as_kable_extra(escape = FALSE, addtl_fmt = TRUE) %>% -->
-<!--   kable_styling(latex_options = c("scale_down","hold_position") -->
-
-<!--   add_footnote(ROI_comp_elg, "Note: There may be up to a 24-hour delay between a participant completing the survey and retrieving their submitted status and completion timestamp.", -->
-<!--              notation = "none") -->
-
-
-<!-- ``` -->
-
-
-<!-- ```{r roibaseline, echo=FALSE, warning=FALSE, message=FALSE, results='asis'} -->
-<!-- #####  Completion of 2025 ROI pref by Baseline Data Completeness, similar to table 4.2 -->
-
-<!-- ROI_comp_BL_all <- all_data %>%  filter(roicomplt!="Not Eligible")  -->
-
-<!-- ROI_comp_BL <- create_tbl_cross2(ROI_comp_BL_all, "completion", "roicomplt", "row", "Completion", "ROI Completion", "Total ROI Eligible Participants") -->
-<!-- colnames(ROI_comp_BL)[5] <- "Total ROI Eligible \n Participants" -->
-
-
-<!-- knitr::kable(ROI_comp_BL,  -->
-<!--              caption='Table 9.2. Completion of 2025 ROI Pref by Baseline Data Completeness', -->
-<!--              row.names=FALSE, align=c("l","c","c","c","c"), booktabs = TRUE) %>% -->
-<!--     kable_styling(latex_options = "scale_down") %>%   -->
-<!--     add_indent(seq(1, nrow(ROI_comp_BL) - 1)) %>%  landscape() -->
-<!-- ``` -->
-
-
-<!-- ```{r ROI_BySex_ByAge, echo=FALSE, warning=FALSE, message=FALSE, results='asis'} -->
-
-
-<!-- ROI_Comp_by_Sex <- all_data %>% filter(roicomplt!="Not Eligible") %>%  -->
-<!--   mutate(roicomplt = factor(roicomplt, levels=c("Not Started", "Started", "Submitted"))) %>%  -->
-<!--   select(sex, roicomplt) %>% dplyr::arrange(sex,roicomplt) %>%  -->
-<!--   tbl_cross( -->
-<!--   row = sex, -->
-<!--   col = roicomplt, -->
-<!--   label = list(roicomplt ~ "Survey Completion",sex~"Sex"), -->
-<!--   percent = "row", -->
-<!--   digits=c(0,2), -->
-<!--   margin_text="Total ROI Eligible Participants")  -->
-
-
-<!-- ROI_Comp_by_Sex_table <- ROI_Comp_by_Sex %>% -->
-<!--   modify_header(stat_0 = "Total ROI Pref Eligible \n Participants") %>% -->
-<!--   modify_caption("Table 9.3. 2025 ROI Pref Completion Rate by Site Defined Sex  \n  Among Eligible Participants") %>% -->
-<!--   as_kable_extra(escape = FALSE, addtl_fmt = TRUE) %>% kable_styling(latex_options = c("scale_down","hold_position"))   -->
-
-
-<!-- # leave this? -->
-<!-- add_footnote(ROI_Comp_by_Sex_table, "Note: Sex defined as the de-identified sex data reported by sites at time of invitation.",  -->
-<!--              notation = "none") -->
-
-
-
-
-
-<!-- ROI_Comp_by_Age <- all_data %>% filter(roicomplt!="Not Eligible") %>%  -->
-<!--   mutate(roicomplt = factor(roicomplt, levels=c("Not Started", "Started", "Submitted"))) %>%  -->
-<!--   select(age, roicomplt) %>% dplyr::arrange(age,roicomplt) %>%  -->
-<!--   tbl_cross( -->
-<!--   row = age, -->
-<!--   col = roicomplt, -->
-<!--   label = list(roicomplt ~ "Survey Completion",age~"Age"), -->
-<!--   percent = "row", -->
-<!--   digits=c(0,2), -->
-<!--   margin_text="Total ROI Pref Eligible Participants")  -->
-
-
-<!-- ROI_Comp_by_Age <- ROI_Comp_by_Age %>% -->
-<!--   modify_header(stat_0 = "Total ROI Pref Eligible \n Participants") %>% -->
-<!--   modify_caption("Table 9.4. 2025 ROI Pref Completion Rate by Age \n Among Eligible Participants") %>% -->
-<!--   as_kable_extra(escape = FALSE, addtl_fmt = TRUE)  %>% kable_styling(latex_options = c("scale_down","hold_position"))  -->
-
-
-<!-- # leave this? -->
-<!-- add_footnote(ROI_Comp_by_Age, "Note: Age defined as the de-identified age data reported by sites at time of invitation, not current age at time of survey completion.",  -->
-<!--              notation="none") -->
-
-
-<!-- ``` -->
-
-
-
-<!-- ```{r ROI_By_Race, echo=FALSE, warning=FALSE, message=FALSE, results='asis'} -->
-
-
-<!-- ROI_Comp_by_race <- m1_comp %>% filter(roicomplt!="Not Eligible") %>%  -->
-<!--   mutate(roicomplt = factor(roicomplt, levels=c("Not Started", "Started", "Submitted"))) %>%  -->
-<!--   select(race, roicomplt) %>% dplyr::arrange(race,roicomplt) %>%  -->
-<!--   tbl_cross( -->
-<!--   row = race, -->
-<!--   col = roicomplt, -->
-<!--   label = list(roicomplt ~ "Survey Completion",race~"Race"), -->
-<!--   percent = "row", -->
-<!--   digits=c(0,2), -->
-<!--   margin_text="Total ROI Pref Eligible Participants")  -->
-
-
-<!-- ROI_Comp_by_race <- ROI_Comp_by_race %>% -->
-<!--   modify_header(stat_0 = "Total ROI Pref Eligible \n Participants") %>% -->
-<!--   modify_caption("Table 9.5. 2025 ROI Pref Completion Rate by Race \n Among Eligible Participants") %>% -->
-<!--   as_kable_extra(escape = FALSE, addtl_fmt = TRUE) %>% kable_styling(latex_options = c("scale_down","hold_position")) -->
-
-<!-- # will we need this for anything? keep this  -->
-
-<!-- roireduced <- all_data %>% filter(d_949302066 != 231311385 & roicomplt!="Not Eligible") # Those who are eligible for PROMIS but didn't complete mod1 yet -->
-
-
-<!-- # leave this or something like it?  -->
-
-<!-- add_footnote(ROI_Comp_by_race, paste0('Note: In order to determine race, Module 1 must first be completed. There are ', dim(roireduced)[[1]] , ' ROI eligible participants that have either not started or not finished Module 1.'), -->
-<!--              notation="none") -->
-
-
-<!-- ``` -->
-
-
-<!-- ```{r ROI_By_SiteRace, echo=FALSE, error=FALSE, message=FALSE, warning=FALSE} -->
-
-<!-- ROI_by_race <- all_data %>% filter(roicomplt!="Not Eligible")  -->
-
-<!-- ROI_by_race_df <- create_tbl_cross2(ROI_by_race, "race", "roicomplt", "row", "Race", "ROI Pref \n Survey Completion", "Total Verified Participants") -->
-
-
-<!-- # language -- verified (this example ) vs. eligible (github request) -->
-<!-- knitr::kable(ROI_by_race_df,  -->
-<!--              caption="Table 9.5.a 2025 ROI Pref Completion Rate by Site Defined Race \n Among Verified Participants", -->
-<!--              row.names=FALSE, align=c("l","c","c","c","c","c"), booktabs = TRUE) %>% -->
-<!--     kable_styling(latex_options = "scale_down") %>%   -->
-<!--     add_indent(seq(1, nrow(BL_by_Race_df) - 1)) %>%  landscape() %>% -->
-<!--     footnote(general = "Note: Race defined as the de-identified race data reported by sites at time of invitation.", -->
-<!--              general_title = "") -->
-
-<!-- ``` -->
-
-
-<!-- ```{r ROI_By_Race_And_Sex, echo=FALSE, warning=FALSE, message=FALSE, results='asis'} -->
-
-<!-- ROI_Comp_by_sex_race <- m1_comp %>% filter(roicomplt!="Not Eligible") %>%  -->
-<!--   mutate(roicomplt = factor(roicomplt, levels=c("Not Started", "Started", "Submitted"))) %>%  -->
-<!--   select(sex_race, roicomplt) %>% dplyr::arrange(sex_race,roicomplt) %>%  -->
-<!--   tbl_cross( -->
-<!--   row = sex_race, -->
-<!--   col = roicomplt, -->
-<!--   label = list(roicomplt ~ "Survey Completion",sex_race~"Sex and Race"), -->
-<!--   percent = "row", -->
-<!--   digits=c(0,2), -->
-<!--   margin_text="Total ROI Eligible Participants")  -->
-
-
-<!-- ROI_Comp_by_sex_race <- ROI_Comp_by_sex_race %>% -->
-<!--   modify_header(stat_0 = "Total ROI Eligible \n Participants") %>% -->
-<!--   modify_caption("Table 9.6. 2025 ROI Pref Completion Rate by Sex and Race \n Among Eligible Participants") %>% -->
-<!--   as_kable_extra(escape = FALSE, addtl_fmt = TRUE) -->
-
-<!-- reduced <- all_data %>% filter(d_949302066 != 231311385 & roicomplt!="Not Eligible") # Those who are eligible for ROI but didn't complete mod1 yet -->
-
-<!-- ROI_Comp_by_sex_race %>% kable_styling(latex_options = c("scale_down","hold_position")) %>%  -->
-<!--   footnote(general = paste0('In order to determine race, Module 1 must first be completed. There are ', dim(reduced)[[1]] , ' ROI eligible participants that have either not started or not finished Module 1.'),general_title = "Note: ", footnote_as_chunk = T) -->
-
-
-<!-- ``` -->
-
-
-<!-- ```{r ROI_By_Demographic, echo=FALSE, warning=FALSE, message=FALSE, results='asis'} -->
-
-<!-- ROI_Comp_by_Demographic <- all_data_long %>%  -->
-<!--   filter(roicomplt != "Not Eligible") %>% -->
-<!--   mutate(roicomplt = factor(roicomplt, levels = c("Not Started", "Started", "Submitted")), -->
-<!--          Demographic_Group = factor(Demographic_Group, levels=c("White Women","Black Men","Women Under 45","Women Over 45","Men Under 45","Men Over 45"))) %>% -->
-<!--   select(Demographic_Group, roicomplt) %>% -->
-<!--   tbl_cross( -->
-<!--     row = Demographic_Group, -->
-<!--     col = roicomplt, -->
-<!--     label = list(roicomplt ~ "Survey Completion", Demographic_Group ~ "Demographic"), -->
-<!--     percent = "row", -->
-<!--     digits = c(0, 2), -->
-<!--     margin_text = "Total" -->
-<!--   ) -->
-
-
-<!-- ROI_Comp_by_Demographic <- ROI_Comp_by_Demographic %>% -->
-<!--   modify_header(stat_0 = "Total") %>% -->
-<!--   modify_caption("Table 9.7. 2025 ROI Pref Completion Rate \n by Demographic Among Eligible Participants") %>% -->
-<!--   as_kable_extra(escape = FALSE, addtl_fmt = TRUE) -->
-
-<!-- # Style the table output -->
-<!-- ROI_Comp_by_Demographic %>% kable_styling(latex_options = c("scale_down", "hold_position"))  %>%  -->
-<!--   footnote(general = "Participants may be counted more then once in these categories.",general_title = "Note: ", footnote_as_chunk = T) -->
-
-
-<!-- ``` -->
-
-<!-- \FloatBarrier -->
-<!-- ```{r ROI_start_stop, echo=FALSE, warning=FALSE, message=FALSE} -->
-
-<!-- ##### Back to wanting all participants, whether or not they finished Module 1. So switching back to all_data df -->
-
-
-<!-- ROI_time <- all_data %>%  -->
-<!--   filter(roicomplt=="Submitted") %>% -->
-<!--   mutate(compTM_roi = as.numeric(difftime(as.POSIXct(ymd_hms(d_543379310)), as.POSIXct(ymd_hms(d_993557295)), units="mins")), -->
-<!--          permission = case_when(compTM_roi<5 ~ "Under 5 Minutes", -->
-<!--                                 compTM_roi<10 ~ "5-10 Minutes", -->
-<!--                                 compTM_roi<15 ~ "10-15 Minutes", -->
-<!--                                 compTM_roi<20 ~ "15-20 Minutes", -->
-<!--                                 compTM_roi<30 ~ "20-30 Minutes", -->
-<!--                                 compTM_roi>=30 ~ "30+ Minutes"), -->
-<!--          permission = factor(permission, levels=c("Under 5 Minutes", "5-10 Minutes", "10-15 Minutes",  -->
-<!--                                                    "15-20 Minutes", "20-30 Minutes", "30+ Minutes")))  %>%  -->
-<!--     group_by(permission) %>% tally() %>%  -->
-<!--   mutate(Percentage = (n / sum(n)) * 100) -->
-
-
-
-<!-- summary_row <- data.frame(permission = "Total Submitted ROI Survey", -->
-<!--                           n = sum(ROI_time$n), -->
-<!--                           Percentage = 100) -->
-
-
-<!-- ROI_TM <- rbind(ROI_time, summary_row) %>% -->
-<!--   mutate(N_percent = paste0(formatC(n, big.mark = ",", format = "d"),  -->
-<!--                             " (", round(Percentage, digits = 1), "%)"), -->
-<!--          Cumulative_Percentage = round(cumsum(Percentage), digits=2)) -->
-<!-- ROI_TM$Cumulative_Percentage[nrow(ROI_TM)] <- 100 -->
-
-<!-- ROI_TM <- ROI_TM %>%  -->
-<!--   select(permission, N_percent, Cumulative_Percentage) %>% -->
-<!--   dplyr::rename(`Completion Time` = permission, `N%` = N_percent, -->
-<!--          'Cumulative Percentage' = Cumulative_Percentage) -->
-
-
-<!-- knitr::kable(ROI_TM, #format.args = list(big.mark = ","), -->
-<!--              caption = 'Table 9.8. 2025 ROI Pref Completion Time from Start to Submit \n Among Eligible Participants That Submitted the Survey',  -->
-<!--              booktabs=T, linesep = "", row.names=FALSE, align=c("l", "c", "c")) %>%  -->
-<!--   add_indent(c(1:(nrow(ROI_TM)-1))) %>%   -->
-<!--   kable_styling(latex_options = "scale_down") #c("scale_down","hold_position")) -->
-
-<!-- ``` -->
-
-
-<!-- ```{r ROI_trigger, echo=FALSE, warning=FALSE, message=FALSE} -->
-
-<!-- ## Time from ROI trigger to submission of ROI survey -->
-<!-- # category= 2025 Return of Results Preference Survey Reminders attempt= 1st contact- group 1 and 1st contact- group 2 -->
-<!-- # notification_time  -->
-<!-- #  -->
-<!-- #  -->
-<!-- # SELECT DISTINCT token, notification_time -->
-<!-- # FROM `nih-nci-dceg-connect-dev.FlatConnect.notifications` -->
-<!-- # WHERE category = '2025 Return of Results Preference Survey Reminders' -->
-<!-- #   AND attempt IN ('1st contact- group 1', '1st contact- group 2'); -->
-
-<!-- trig_roi <- bq_project_query(project, -->
-<!-- query="SELECT distinct(token), notification_time FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` -->
-<!-- where category='2025 Return of Results Preference Survey Reminders' AND attempt IN ('1st contact- group 1', '1st contact- group 2')") -->
-<!-- trigger <- bigrquery::bq_table_download(trig_roi,bigint = "integer64") -->
-
-
-
-<!-- trigger_time <- left_join(all_data, trigger, by="token") -->
-
-
-<!-- # For submitted cases, compute days from trigger to submission. -->
-
-<!-- # this is currently showing nothing in stage because none of the submitted test surveys had a notification time  -->
-
-<!-- trig_time <- trigger_time %>% -->
-<!--   filter(roicomplt == "Submitted") %>% -->
-<!--   mutate( -->
-<!--     trigTM_roi = as.numeric( -->
-<!--       difftime(ymd_hms(d_543379310), notification_time, units = "days") -->
-<!--     ) -->
-<!--   ) -->
-
-<!-- Trig_table = trig_time %>% -->
-<!--   dplyr::summarize('N'=n(), -->
-<!--                    Min = round(min(trigTM_roi, na.rm = TRUE), digits=2), -->
-<!--                    Q1 = round(quantile(trigTM_roi, 0.25, na.rm = TRUE), digits=2), -->
-<!--                    Median = round(median(trigTM_roi, na.rm = TRUE), digits=2), -->
-<!--                    Mean = round(mean(trigTM_roi, na.rm = TRUE),  digits=2), -->
-<!--                    SD= round(sd(trigTM_roi, na.rm = TRUE), digits=2), -->
-<!--                    Q3 = round(quantile(trigTM_roi, 0.75, na.rm = TRUE), digits=2), -->
-<!--                    'Perc.90' = round(quantile(trigTM_roi, 0.90, na.rm = TRUE), digits=2), -->
-<!--                    Max = round(max(trigTM_roi, na.rm = TRUE), digits=2)) -->
-
-<!-- knitr::kable(Trig_table,  -->
-<!--              caption = 'Table 9.9. 2025 ROI Pref Completion from Trigger to Submit for \n Verified Participants, in Days',  -->
-<!--              row.names=FALSE, format.args = list(big.mark = ","), linesep = "",  -->
-<!--              booktabs = T, align=c("l", "c", "c", "c", "c", "c", "c", "c", "c")) %>%  -->
-<!--   kable_styling(latex_options = c("scale_down","hold_position"))  -->
-
-<!-- ``` -->
-
-
-<!-- ```{r ROI_ver_time, echo=FALSE, warning=FALSE, message=FALSE} -->
-
-<!-- # using release date as October 29 2025:  -->
-
-<!-- roi_ver <- all_data %>%   -->
-<!--   filter(roicomplt != "Not Eligible") %>%  -->
-<!--   mutate( -->
-<!--     roi_ver_surv = case_when( -->
-<!--       as.Date(d_914594314) < as.Date("2024-10-29") ~ "More than 1 Year", -->
-<!--       as.Date(d_914594314) < as.Date("2025-04-29") ~ "6 Months - 1 Year", -->
-<!--       as.Date(d_914594314) < as.Date("2025-07-29") ~ "3 Months - 6 Months", -->
-<!--       as.Date(d_914594314) >= as.Date("2025-07-29") ~ "At 3 Months" -->
-<!--     ), -->
-<!--     roi_ver_surv = factor( -->
-<!--       roi_ver_surv, -->
-<!--       levels = c("More than 1 Year", "6 Months - 1 Year", "3 Months - 6 Months", "At 3 Months") -->
-<!--     ) -->
-<!--   ) -->
-
-
-<!-- roi_ver_df <- create_tbl_cross2(roi_ver, "roi_ver_surv", "roicomplt", "row", "Time from Verification to ROI Survey Release", "Survey Completion",  -->
-<!--                                 "Total ROI Eligible Participants") -->
-
-<!-- colnames(roi_ver_df)[5] <- "Total ROI Eligible \n Participants" -->
-<!-- knitr::kable(roi_ver_df,  -->
-<!--              caption='Table 9.10. 2025 ROI Pref Completion By Time from Verification to ROI Survey Release', -->
-<!--              row.names=FALSE, align=c("l","c","c","c","c"), booktabs = TRUE) %>% -->
-<!--     kable_styling(latex_options = "scale_down") %>%   -->
-<!--     add_indent(seq(1, nrow(roi_ver_df) - 1)) %>%  landscape() -->
-
-
-
-<!-- ``` -->
-
-
-
-<!-- ```{r BL_ROI_timeframe, echo=FALSE, warning=FALSE, message=FALSE} -->
-
-
-
-<!-- # these exist earlier  -->
-<!-- #  -->
-<!-- # #BU -->
-<!-- # trig_BU <- bq_project_query(project, -->
-<!-- # query="SELECT distinct(token), min(notification_time) as BU_time #distinct token to account for duplicate notifications -->
-<!-- # FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` -->
-<!-- # where (category='Baseline Clinical Blood and Urine Sample Survey Reminders' and attempt='1st contact') OR -->
-<!-- # (category='Baseline Clinical Biospecimen Survey Reminder' and attempt='1st contact') -->
-<!-- # group by token") -->
-<!-- # trigger_BU <- bigrquery::bq_table_download(trig_BU,bigint = "integer64") -->
-<!-- #  -->
-<!-- #  -->
-<!-- # #BUM -->
-<!-- # trig_BUM <- bq_project_query(project, -->
-<!-- # query="SELECT distinct(token), min(notification_time) as BUM_time #distinct token to account for duplicate notifications -->
-<!-- # FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` -->
-<!-- # where category='Baseline Research Biospecimen Survey Reminders' and attempt='1st contact' OR  -->
-<!-- # category='Biospecimen Survey Reminder' and attempt='1st contact' -->
-<!-- # group by token") -->
-<!-- # trigger_BUM <- bigrquery::bq_table_download(trig_BUM,bigint = "integer64") -->
-<!-- #  -->
-<!-- #  -->
-<!-- # trigger_time <- left_join(trigger_time, trigger_BU, by="token") %>%  left_join(trigger_BUM) -->
-<!-- #  -->
-
-<!-- ################   Numerator  ############## -->
-
-<!-- #Completed ROI before or on the same day as BL survey-- now within 30 days -->
-<!-- BL_ROI <- trigger_time %>% -->
-<!--   filter(roicomplt == "Submitted") %>% -->
-<!--     mutate(BOH = as.Date(d_543379310) <= as.Date(d_517311251) & difftime(as.Date(d_517311251), as.Date(d_543379310), units="days") <31, -->
-<!--          MRE = as.Date(d_543379310) <= as.Date(d_832139544) & difftime( as.Date(d_832139544), as.Date(d_543379310), units="days") <31, -->
-<!--          SAS = as.Date(d_543379310) <= as.Date(d_770257102) & difftime( as.Date(d_770257102), as.Date(d_543379310), units="days") <31, -->
-<!--          LAW = as.Date(d_543379310) <= as.Date(d_264644252) & difftime( as.Date(d_264644252), as.Date(d_543379310), units="days") <31, -->
-<!--          BUM = (as.Date(BUM_time) < as.Date(trig) ) & (as.Date(d_543379310) <= as.Date(d_222161762)) & difftime( as.Date(d_222161762), as.Date(d_543379310), units="days") <31,   -->
-<!--          BU = (as.Date(BU_time) < as.Date(trig) ) & (as.Date(d_543379310) <= as.Date(d_764863765)) & difftime( as.Date(d_764863765), as.Date(d_543379310), units="days") <31, -->
-<!--          MW = (as.Date(d_173836415_d_266600170_d_319972665_d_661940160) < as.Date(trig)) &  -->
-<!--            (as.Date(d_543379310) <= as.Date(d_195145666)) & difftime( as.Date(d_195145666), as.Date(d_543379310), units="days") <31, -->
-<!--          COVID = (as.Date(d_556788178) < as.Date(trig)) & (as.Date(d_556788178) >= as.Date("2023-07-05")) &  -->
-<!--            (as.Date(d_543379310) <= as.Date(d_784810139)) & difftime( as.Date(d_784810139),as.Date(d_543379310),units="days") <31) %>% -->
-<!--   pivot_longer( -->
-<!--     cols = c(BOH, MRE, SAS, LAW, BUM, BU, MW, COVID), -->
-<!--     names_to = "roi_timeframe", -->
-<!--     values_to = "is_in_timeframe" -->
-<!--   ) %>% -->
-<!--   filter(is_in_timeframe) %>%  # Keep only TRUE rows -->
-<!--   group_by(roi_timeframe) %>% -->
-<!--   tally() -->
-
-
-<!-- #############    Denominator ################# -->
-
-<!-- ## Determine when a person was QOL eligible -->
-<!-- # trigger_time <- trigger_time %>% -->
-<!-- #   mutate(trig = case_when(d_914594314 < as.Date("2023-12-01") ~ ymd_hms(notification_time), -->
-<!-- #                           TRUE ~ ymd_hms(d_914594314) + days(90))) -->
-
-<!-- ## Determine when a participant was BL survey eligible -->
-<!-- #MRE/SAS/LAW- once BOH completed ----   d_517311251 -->
-<!-- #BUM/BU- when notified by email  -->
-<!-- #MW- when notified the MW kit was shipped -->
-<!-- #COVID- pushed to prod on 7/5/2023 and requires biospecimen donation  -->
-
-
-
-
-
-<!-- ## Those that are eligible for ROI, and eligible for whichever BL module, but hadn't completed that BL module upon ROI eligibility activation -->
-<!-- ROI_BL_time_eligible <- trigger_time %>% -->
-<!--   filter(!is.na(roicomplt) & roicomplt != "Not Eligible") %>% -->
-<!--   mutate( BOH = is.na(d_517311251) | (as.Date(trig) <= as.Date(d_517311251)), -->
-<!--           MRE = !is.na(d_517311251) & (is.na(d_832139544) | as.Date(trig) <= as.Date(d_832139544)), -->
-<!--           SAS = !is.na(d_517311251) & (is.na(d_770257102) | as.Date(trig) <= as.Date(d_770257102)), -->
-<!--           LAW = !is.na(d_517311251) & (is.na(d_264644252) | as.Date(trig) <= as.Date(d_264644252)), -->
-<!--           BUM = (as.Date(BUM_time) < as.Date(trig))  & (is.na(d_222161762) | as.Date(trig) <= as.Date(d_222161762)), -->
-<!--           BU = (as.Date(BU_time) < as.Date(trig))  & (is.na(d_764863765) | as.Date(trig) <= as.Date(d_764863765)), -->
-<!--           MW = (as.Date(d_173836415_d_266600170_d_319972665_d_661940160) < as.Date(trig)) & -->
-<!--             (is.na(d_195145666) | as.Date(trig) <= as.Date(d_195145666)), -->
-<!--           COVID = as.Date(d_556788178) < as.Date(trig) & -->
-<!--             as.Date(d_556788178) >= as.Date("2023-07-05") & -->
-<!--             (is.na(d_784810139) | as.Date(trig) <= as.Date(d_784810139))) %>% -->
-<!--   pivot_longer( -->
-<!--     cols = c(BOH, MRE, SAS, LAW, BUM, BU, MW, COVID), -->
-<!--     names_to = "roi_timeframe", -->
-<!--     values_to = "is_in_timeframe" -->
-<!--   ) %>% -->
-<!--   filter(is_in_timeframe) %>%  # Keep only rows where the condition is TRUE -->
-<!--   group_by(roi_timeframe) %>% -->
-<!--   tally() -->
-
-
-
-<!-- ############################################################################### -->
-
-<!-- after_ROI <- cbind(BL_ROI, ROI_BL_time_eligible) -->
-<!-- after_ROI <- after_ROI[c(1,6,8,5,3,2,7,4), c(1,2,4)] # row order BOH, MRE, SAS, LAW, BUM, BU, MW, COVID, and remove repeated column -->
-<!-- colnames(after_ROI) <- c("Survey", "n", "eligible") -->
-
-<!-- after_ROI_table <- after_ROI %>% -->
-<!--   mutate(Percentage = (n / eligible) * 100, -->
-<!--          N_percent = paste0(formatC(n, big.mark = ",", format = "d"),  -->
-<!--                             " (", round(Percentage, digits = 2), "%)")) %>%  -->
-<!--   dplyr::rename('Eligible for Survey' = eligible, -->
-<!--          'N%' = N_percent) %>%  -->
-<!--     select('Survey', 'N%', 'Eligible for Survey') -->
-
-
-<!-- knitr::kable(after_ROI_table, -->
-<!--              caption = 'Table 9.11. Baseline Survey Completion Within 30 days of 2025 ROI Pref Completion ',  -->
-<!--              booktabs=T, linesep = "", row.names=FALSE, align=c("l", "c", "c")) %>%  -->
-<!--   kable_styling(latex_options = "scale_down") %>%  -->
-<!--   footnote(general = "Note: Percentages calculated among those who were eligible but had not yet completed the survey at the time of ROI invitation.",  -->
-<!--            general_title = "", -->
-<!--          footnote_as_chunk = TRUE,  -->
-<!--          escape = FALSE,  -->
-<!--          threeparttable = TRUE) -->
-
-
-
-<!-- ``` -->
 
 
 
