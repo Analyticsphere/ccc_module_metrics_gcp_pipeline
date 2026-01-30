@@ -3,18 +3,18 @@ title: "Recruitment Derived Variable QC"
 author: "Kelsey Sanchez"
 date: "`r Sys.Date()`"
 header-includes:  
-    \usepackage{placeins}
+  \usepackage{placeins}
 
 
 output:
   pdf_document:
-    extra_dependencies: ["float"]
-    toc: false
-    keep_tex: yes
-    fig_caption: true
+  extra_dependencies: ["float"]
+toc: false
+keep_tex: yes
+fig_caption: true
 ---
-
-
+  
+  
 ```{r note, include=FALSE}
 
 ############# Note: Participants with errors whose data we will not correct will be excluded from the rule. Github contains records of these exclusions as well.
@@ -77,9 +77,9 @@ dbListTables(con)
 chunk1 <- tbl(con, "participants", page_size = 1000) %>%
   filter(d_831041022=='104430631') %>%
   dplyr::select(Connect_ID, token, d_512820379, d_471593703, state_d_934298480, d_230663853, state_d_697256759, state_d_158291096,
-d_335767902, d_982402227, d_919254129, d_699625233, d_827220437, d_371067537, d_544150384, d_564964481, d_795827569, d_685002411_d_994064239, d_912301837, 
-d_685002411_d_194410742,d_685002411_d_949501163,d_685002411_d_277479354,d_685002411_d_867203506,d_685002411_d_352996056,d_685002411_d_217367618,d_747006172,
-d_906417725,d_773707518,d_831041022,d_987563196, d_659990606, d_100767870, state_studyId, state_d_521025370) %>%
+                d_335767902, d_982402227, d_919254129, d_699625233, d_827220437, d_371067537, d_544150384, d_564964481, d_795827569, d_685002411_d_994064239, d_912301837, 
+                d_685002411_d_194410742,d_685002411_d_949501163,d_685002411_d_277479354,d_685002411_d_867203506,d_685002411_d_352996056,d_685002411_d_217367618,d_747006172,
+                d_906417725,d_773707518,d_831041022,d_987563196, d_659990606, d_100767870, state_studyId, state_d_521025370) %>%
   as_tibble() %>% 
   distinct(token, .keep_all = TRUE) #somehow pulling duplicsate rows
 
@@ -87,9 +87,9 @@ d_906417725,d_773707518,d_831041022,d_987563196, d_659990606, d_100767870, state
 chunk2 <- tbl(con, "participants", page_size = 1000) %>%
   filter(d_831041022=='104430631') %>%
   dplyr::select(Connect_ID, token,  d_430551721, d_821247024, d_914594314,  state_d_725929722, d_126331570, d_536735468, d_130371375_d_266600170_d_945795905, d_130371375_d_266600170_d_320023644, state_d_538553381, state_d_527823810, state_d_849518448, state_d_119643471, state_d_253532712, state_d_684926335, 
-d_663265240, d_878865966, d_684635302, d_167958071, d_130371375_d_266600170_d_731498909, d_130371375_d_266600170_d_222373868, d_130371375_d_266600170_d_787567527,
-d_949302066 , d_517311251, d_205553981, d_117249500, d_976570371, d_914639140, d_311580100, d_454445267,d_255077064, d_832139544, 
-d_263355177, d_199471989, d_222161762, d_822499427, d_764863765, d_534669573, d_195145666, d_286191859, d_541836531, d_770257102, d_386488297, d_264644252, d_452942800, state_d_706256705, state_d_435027713, state_d_477091792, state_d_667474224, state_d_749475364) %>%
+                d_663265240, d_878865966, d_684635302, d_167958071, d_130371375_d_266600170_d_731498909, d_130371375_d_266600170_d_222373868, d_130371375_d_266600170_d_787567527,
+                d_949302066 , d_517311251, d_205553981, d_117249500, d_976570371, d_914639140, d_311580100, d_454445267,d_255077064, d_832139544, 
+                d_263355177, d_199471989, d_222161762, d_822499427, d_764863765, d_534669573, d_195145666, d_286191859, d_541836531, d_770257102, d_386488297, d_264644252, d_452942800, state_d_706256705, state_d_435027713, state_d_477091792, state_d_667474224, state_d_749475364) %>%
   as_tibble() %>% 
   distinct(token, .keep_all = TRUE) #somehow pulling duplicsate rows
 
@@ -97,12 +97,12 @@ d_263355177, d_199471989, d_222161762, d_822499427, d_764863765, d_534669573, d_
 chunk3 <- tbl(con, "participants", page_size = 1000) %>%
   filter(d_831041022=='104430631') %>%
   dplyr::select(Connect_ID, token, d_217640691, d_844088537, d_784810139, d_268176409, d_843688458, d_870643066, d_315032037, d_943232079, d_692560814, 
-d_956490759,d_265193023,d_253883960,d_547363263,d_459098666,d_220186468,d_320303124, d_609630315, d_389890053, d_176068627, d_439351436, d_280021666,
-d_610227793, d_109610692, d_148184166, d_808755658, d_196723965, d_501613780, d_130371375_d_266600170_d_648936790,
-state_d_444699761, state_d_188797763, state_d_953614051, state_d_793822265, state_d_147176963, state_d_557461333,  state_d_711794630, 
-state_d_679832994, state_d_559534463, state_d_570452130, state_d_629484663, state_d_547895941,
-d_685002411_d_936015433, d_685002411_d_688142378, d_685002411_d_101763809, d_685002411_d_525277409, d_685002411_d_671903816,
-d_761057722, d_207613315, d_163847117, state_d_956485028) %>%
+                d_956490759,d_265193023,d_253883960,d_547363263,d_459098666,d_220186468,d_320303124, d_609630315, d_389890053, d_176068627, d_439351436, d_280021666,
+                d_610227793, d_109610692, d_148184166, d_808755658, d_196723965, d_501613780, d_130371375_d_266600170_d_648936790,
+                state_d_444699761, state_d_188797763, state_d_953614051, state_d_793822265, state_d_147176963, state_d_557461333,  state_d_711794630, 
+                state_d_679832994, state_d_559534463, state_d_570452130, state_d_629484663, state_d_547895941,
+                d_685002411_d_936015433, d_685002411_d_688142378, d_685002411_d_101763809, d_685002411_d_525277409, d_685002411_d_671903816,
+                d_761057722, d_207613315, d_163847117, state_d_956485028) %>%
   as_tibble() %>% 
   distinct(token, .keep_all = TRUE) #somehow pulling duplicate rows
 
@@ -171,7 +171,7 @@ incentive2 <- base_vars %>%  filter(d_949302066 == '231311385' & d_536735468 == 
                                          (d_454453939_d_593843561==353358909 & d_454453939_d_883732523 != 681745422) |
                                          (d_652357376_d_593843561==353358909 & d_652357376_d_883732523 != 681745422) |
                                          (d_505347689_d_593843561==353358909 & d_505347689_d_883732523 != 681745422)) &
-  (d_130371375_d_266600170_d_731498909!=353358909 | d_130371375_d_266600170_d_222373868!=353358909 | is.na(d_130371375_d_266600170_d_787567527)))
+                                      (d_130371375_d_266600170_d_731498909!=353358909 | d_130371375_d_266600170_d_222373868!=353358909 | is.na(d_130371375_d_266600170_d_787567527)))
 
 
 
@@ -241,7 +241,7 @@ can_no_longer_contact <- list("6673328645", "1156167603", "5950274173", "1674063
 
 mens_elg <- mens %>%  filter(is.na(d_289750687) & (d_764863765>=as.Date("2022-12-09") | d_222161762>=as.Date("2022-12-09")) & 
                                !(Connect_ID %in% can_no_longer_contact)) 
- 
+
 
 
 if (nrow(mens_elg) == 0) {
@@ -327,9 +327,9 @@ if (nrow(cash_NORC) == 0) {
   cat("No errors\n")
 } else {
   cash_NORC <- cash_NORC %>%  select(Site, Connect_ID, d_130371375_d_266600170_d_945795905, d_130371375_d_266600170_d_320023644) %>%  safe_arrange(Site)
-
+  
   colnames(cash_NORC) <- c("Site", "Connect ID", "HDPaym_PaymChosenBL", "HDPaym_CaseNumberBL")
-
+  
   knitr::kable(cash_NORC) %>%
     kable_styling(latex_options = "scale_down")
 }
@@ -346,17 +346,17 @@ if (nrow(cash_NORC) == 0) {
 
 
 bday <- partsbq %>%  filter(!is.na(d_371067537) & 
-                                d_371067537 != paste0(d_544150384, d_564964481, d_795827569)) 
+                              d_371067537 != paste0(d_544150384, d_564964481, d_795827569)) 
 
 
 if (nrow(bday) == 0) {
   cat("No errors\n")
 } else {
-
+  
   bday <- bday %>% select(Site, Connect_ID, d_371067537, d_544150384, d_564964481, d_795827569) %>%  safe_arrange(Site)
-
+  
   colnames(bday) <- c("Site", "Connect ID", "RcrtUP_DOB", "RcrtUP_YOB", "RcrtUP_MOB", "RcrtUP_BD")
-
+  
   knitr::kable(bday) %>%
     kable_styling(latex_options = "scale_down")
 }
@@ -382,7 +382,7 @@ colnames(smmet0) <- c("Site", "Connect ID", "SMMet_PartStatus_v1r0")
 if (nrow(smmet0) == 0) {
   cat("No errors\n")
 } else {
-    
+  
   knitr::kable(smmet0) %>%
     kable_styling(latex_options = "scale_down")
 }
@@ -409,7 +409,7 @@ if (nrow(smmet0) == 0) {
 ```{r SMMet_PartStatus2, echo=FALSE, warning=FALSE, message=FALSE}
 
 smmet2 <- partsbq %>%  filter( d_906417725==353358909 & d_773707518==104430631 & d_747006172==104430631 & d_831041022==104430631 & d_987563196==104430631 & d_912301837!=458508122) 
-     
+
 
 
 if (nrow(smmet2) == 0) {
@@ -417,7 +417,7 @@ if (nrow(smmet2) == 0) {
 } else {
   
   smmet2 <- smmet2 %>%  select(Site, Connect_ID, d_912301837) %>% safe_arrange(Site)
-
+  
   colnames(smmet2) <- c("Site", "Connect ID", "SMMet_PartStatus_v1r0")
   
   knitr::kable(smmet2) %>%
@@ -439,7 +439,7 @@ if (nrow(smmet3) == 0) {
 } else {
   
   smmet3 <- smmet3 %>%  select(Site, Connect_ID, d_912301837) %>%  safe_arrange(Site)
-
+  
   colnames(smmet3) <- c("Site", "Connect ID", "SMMet_PartStatus_v1r0")
   
   knitr::kable(smmet3) %>%
@@ -461,7 +461,7 @@ if (nrow(smmet4) == 0) {
 } else {
   
   smmet4 <- smmet4 %>% select(Site, Connect_ID, d_912301837) %>%  safe_arrange(Site)
-
+  
   colnames(smmet4) <- c("Site", "Connect ID", "SMMet_PartStatus_v1r0")
   
   knitr::kable(smmet4) %>%
@@ -476,16 +476,16 @@ if (nrow(smmet4) == 0) {
 ```{r OptOut, echo=FALSE, warning=FALSE, message=FALSE}
 
 opt_out <- partsbq %>%  filter(!is.na(state_d_697256759) & (state_d_158291096==104430631 | is.na(state_d_158291096)))
-      
+
 
 if (nrow(opt_out) == 0) {
   cat("No errors\n")
 } else {
   
   opt_out <- opt_out %>% select(Site, Connect_ID, state_d_158291096) %>%  safe_arrange(Site)
-
+  
   colnames(opt_out) <- c("Site", "Connect ID", "RcrtSI_OptOut_v1r0")
-
+  
   knitr::kable(opt_out) %>%
     kable_styling(latex_options = "scale_down")
 }
@@ -521,14 +521,14 @@ if (nrow(pref_lang) == 0) {
 
 comp_m1 <- partsbq %>%  filter(!is.na(d_517311251) & (d_949302066!=231311385) & 
                                  Connect_ID!='1974006545')  #QC exclusion 
-      
+
 
 if (nrow(comp_m1) == 0) {
   cat("No errors\n")
 } else {
   
   comp_m1 <- comp_m1 %>% select(Site, Connect_ID, d_517311251, d_949302066) %>%  safe_arrange(Site)
-
+  
   colnames(comp_m1) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
   
   knitr::kable(comp_m1) %>%
@@ -548,7 +548,7 @@ if (nrow(comp_m2) == 0) {
 } else {
   
   comp_m2 <- comp_m2 %>%  select(Site, Connect_ID, d_832139544, d_536735468) %>%  safe_arrange(Site)
-
+  
   colnames(comp_m2) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
   
   knitr::kable(comp_m2) %>%
@@ -563,16 +563,16 @@ if (nrow(comp_m2) == 0) {
 ```{r comptime_m3, echo=FALSE, warning=FALSE, message=FALSE}
 
 comp_m3 <- partsbq %>%  filter(!is.na(d_770257102) & (d_976570371!=231311385)) 
-     
+
 
 if (nrow(comp_m3) == 0) {
   cat("No errors\n")
 } else {
   
   comp_m3 <- comp_m3 %>% select(Site, Connect_ID, d_770257102, d_976570371) %>%  safe_arrange(Site)
-
+  
   colnames(comp_m3) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
-
+  
   knitr::kable(comp_m3) %>%
     kable_styling(latex_options = "scale_down")
 }
@@ -592,7 +592,7 @@ if (nrow(comp_m4) == 0) {
 } else {
   
   comp_m4 <- comp_m4 %>% select(Site, Connect_ID, d_264644252, d_663265240) %>%  safe_arrange(Site)
-
+  
   colnames(comp_m4) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
   
   knitr::kable(comp_m4) %>%
@@ -614,7 +614,7 @@ if (nrow(comp_qol) == 0) {
 } else {
   
   comp_qol <- comp_qol %>%  select(Site, Connect_ID, d_843688458, d_320303124) %>%  safe_arrange(Site)
-
+  
   colnames(comp_qol) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
   
   knitr::kable(comp_qol) %>%
@@ -636,9 +636,9 @@ if (nrow(comp_ces) == 0) {
 } else {
   
   comp_ces <- comp_ces %>%  select(Site, Connect_ID, d_199471989, d_956490759) %>%  safe_arrange(Site)
-
+  
   colnames(comp_ces) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
-
+  
   knitr::kable(comp_ces) %>%
     kable_styling(latex_options = "scale_down")
 }
@@ -660,7 +660,7 @@ if (nrow(comp_bum) == 0) {
 } else {
   
   comp_bum <- comp_bum %>%  select(Site, Connect_ID, d_222161762, d_265193023) %>%  safe_arrange(Site)
-
+  
   colnames(comp_bum) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
   
   knitr::kable(comp_bum) %>%
@@ -682,7 +682,7 @@ if (nrow(comp_bu) == 0) {
 } else {
   
   comp_bu <- comp_bu %>% select(Site, Connect_ID, d_764863765, d_253883960) %>%  safe_arrange(Site)
-
+  
   colnames(comp_bu) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
   
   knitr::kable(comp_bu) %>%
@@ -706,7 +706,7 @@ if (nrow(comp_mw) == 0) {
 } else {
   
   comp_mw <- comp_mw %>% select(Site, Connect_ID, d_195145666, d_547363263) %>%  safe_arrange(Site)
-
+  
   colnames(comp_mw) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
   
   knitr::kable(comp_mw) %>%
@@ -730,7 +730,7 @@ if (nrow(comp_cv) == 0) {
 } else {
   
   comp_cv <- comp_cv %>%  select(Site, Connect_ID, d_784810139, d_220186468) %>%  safe_arrange(Site)
-
+  
   colnames(comp_cv) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
   
   knitr::kable(comp_cv) %>%
@@ -753,9 +753,9 @@ if (nrow(comp_mns) == 0) {
 } else {
   
   comp_mns <- comp_mns %>%select(Site, Connect_ID, d_217640691, d_459098666) %>%  safe_arrange(Site)
-
+  
   colnames(comp_mns) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
-
+  
   knitr::kable(comp_mns) %>%
     kable_styling(latex_options = "scale_down")
 }
@@ -777,7 +777,7 @@ if (nrow(comp_ssn) == 0) {
 } else {
   
   comp_ssn <- comp_ssn %>% select(Site, Connect_ID, d_315032037, d_126331570) %>%  safe_arrange(Site)
-
+  
   colnames(comp_ssn) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
   
   knitr::kable(comp_ssn) %>%
@@ -800,7 +800,7 @@ if (nrow(comp_csh) == 0) {
 } else {
   
   comp_csh <- comp_csh %>% select(Site, Connect_ID, d_389890053, d_176068627) %>%  safe_arrange(Site)
-
+  
   colnames(comp_csh) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
   
   knitr::kable(comp_csh) %>%
@@ -824,7 +824,7 @@ if (nrow(start_m1) == 0) {
 } else {
   
   start_m1 <- start_m1 %>% select(Site, Connect_ID, d_205553981, d_949302066) %>%  safe_arrange(Site)
-
+  
   colnames(start_m1) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
   
   knitr::kable(start_m1) %>%
@@ -846,7 +846,7 @@ if (nrow(start_m2) == 0) {
 } else {
   
   start_m2 <- start_m2 %>% select(Site, Connect_ID, d_541836531, d_536735468) %>%  safe_arrange(Site)
-
+  
   colnames(start_m2) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
   
   knitr::kable(start_m2) %>%
@@ -869,7 +869,7 @@ if (nrow(start_m3) == 0) {
 } else {
   
   start_m3 <- start_m2 %>% select(Site, Connect_ID, d_386488297, d_976570371) %>%  safe_arrange(Site)
-
+  
   colnames(start_m3) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
   
   knitr::kable(start_m3) %>%
@@ -893,7 +893,7 @@ if (nrow(start_m4) == 0) {
 } else {
   
   start_m4 <- start_m4 %>% select(Site, Connect_ID, d_452942800, d_663265240) %>%  safe_arrange(Site)
-
+  
   colnames(start_m4) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
   
   knitr::kable(start_m4) %>%
@@ -917,9 +917,9 @@ if (nrow(start_qol) == 0) {
 } else {
   
   start_qol <- start_qol %>% select(Site, Connect_ID, d_870643066, d_320303124) %>%  safe_arrange(Site)
-
+  
   colnames(start_qol) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
-
+  
   knitr::kable(start_qol) %>%
     kable_styling(latex_options = "scale_down")
 }
@@ -941,9 +941,9 @@ if (nrow(start_ces) == 0) {
 } else {
   
   start_ces <- start_ces %>% select(Site, Connect_ID, d_263355177, d_956490759) %>%  safe_arrange(Site)
-
+  
   colnames(start_ces) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
-
+  
   knitr::kable(start_ces) %>%
     kable_styling(latex_options = "scale_down")
 }
@@ -966,9 +966,9 @@ if (nrow(start_bum) == 0) {
 } else {
   
   start_bum <- start_bum %>% select(Site, Connect_ID, d_822499427, d_265193023) %>%  safe_arrange(Site)
-
+  
   colnames(start_bum) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
-
+  
   knitr::kable(start_bum) %>%
     kable_styling(latex_options = "scale_down")
 }
@@ -988,9 +988,9 @@ if (nrow(start_bu) == 0) {
 } else {
   
   start_bu <- start_bu %>% select(Site, Connect_ID, d_534669573, d_253883960) %>%  safe_arrange(Site)
-
+  
   colnames(start_bu) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
-
+  
   knitr::kable(start_bu) %>%
     kable_styling(latex_options = "scale_down")
 }
@@ -1013,9 +1013,9 @@ if (nrow(start_mw) == 0) {
 } else {
   
   start_mw <- start_mw %>% select(Site, Connect_ID, d_286191859, d_547363263) %>%  safe_arrange(Site)
-
+  
   colnames(start_mw) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
-
+  
   knitr::kable(start_mw) %>%
     kable_styling(latex_options = "scale_down")
 }
@@ -1038,9 +1038,9 @@ if (nrow(start_cv) == 0) {
 } else {
   
   start_cv <- start_cv %>% select(Site, Connect_ID, d_268176409, d_220186468) %>%  safe_arrange(Site)
-
+  
   colnames(start_cv) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
-
+  
   knitr::kable(start_cv) %>%
     kable_styling(latex_options = "scale_down")
 }
@@ -1062,9 +1062,9 @@ if (nrow(start_mns) == 0) {
 } else {
   
   start_mns <- start_mns %>% select(Site, Connect_ID, d_844088537, d_459098666) %>%  safe_arrange(Site)
-
+  
   colnames(start_mns) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
-
+  
   knitr::kable(start_mns) %>%
     kable_styling(latex_options = "scale_down")
 }
@@ -1087,9 +1087,9 @@ if (nrow(start_ssn) == 0) {
 } else {
   
   start_ssn <- start_ssn %>% select(Site, Connect_ID, d_943232079, d_126331570) %>%  safe_arrange(Site)
-
+  
   colnames(start_ssn) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
-
+  
   knitr::kable(start_ssn) %>%
     kable_styling(latex_options = "scale_down")
 }
@@ -1111,9 +1111,9 @@ if (nrow(start_csh) == 0) {
 } else {
   
   start_csh <- start_csh %>% select(Site, Connect_ID, d_609630315, d_176068627) %>%  safe_arrange(Site)
-
+  
   colnames(start_csh) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
-
+  
   knitr::kable(start_csh) %>%
     kable_styling(latex_options = "scale_down")
 }
@@ -1130,7 +1130,7 @@ if (nrow(start_csh) == 0) {
 
 
 csh_null_bq <-
-"SELECT Connect_ID,
+  "SELECT Connect_ID,
 CASE
     WHEN d_827220437 = '125001209' THEN 'Kaiser Permanente Colorado'
     WHEN d_827220437 = '472940358' THEN 'Baylor Scott & White Health'
@@ -1175,7 +1175,7 @@ if (nrow(csh_null) == 0) {
 
 
 hipaa_consent_match_pull <-
-"SELECT Connect_ID FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` 
+  "SELECT Connect_ID FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` 
 where 
 FORMAT_DATETIME('%Y-%m-%d %H:%M', TIMESTAMP(d_262613359)) 
   != FORMAT_DATETIME('%Y-%m-%d %H:%M', TIMESTAMP(d_454445267))
@@ -1219,7 +1219,7 @@ bday_base_vars= left_join(partsbq, bdaybq, by="Connect_ID")
 ```{r bday1, echo=FALSE, warning=FALSE, message=FALSE}
 
 bday1 <- bday_base_vars %>%  filter(!is.na(d_768313785) & is.na(d_194486780)) %>%
-      select(Site, Connect_ID, d_768313785, d_194486780) %>%  safe_arrange(Site)
+  select(Site, Connect_ID, d_768313785, d_194486780) %>%  safe_arrange(Site)
 
 colnames(bday1) <- c("Site", "Connect ID", "NORCBC_CardMailingDt", "NORCBC_CardVersion")
 
@@ -1238,7 +1238,7 @@ if (nrow(bday1) == 0) {
 ```{r bday2, echo=FALSE, warning=FALSE, message=FALSE}
 
 bday2 <- bday_base_vars %>%  filter(is.na(d_768313785) & !is.na(d_194486780)) %>%
-      select(Site, Connect_ID, d_768313785, d_194486780) %>%  safe_arrange(Site)
+  select(Site, Connect_ID, d_768313785, d_194486780) %>%  safe_arrange(Site)
 
 colnames(bday2) <- c("Site", "Connect ID", "NORCBC_CardMailingDt", "NORCBC_CardVersion")
 
@@ -1258,7 +1258,7 @@ if (nrow(bday2) == 0) {
 ```{r bday3, echo=FALSE, warning=FALSE, message=FALSE}
 
 bday3 <- bday_base_vars %>%  filter(!is.na(d_768313785) & !(d_916186376 %in% c("01", "02", "06", "07") | is.na(d_916186376))) %>%
-      select(Site, Connect_ID, d_768313785, d_916186376) %>%  safe_arrange(Site)
+  select(Site, Connect_ID, d_768313785, d_916186376) %>%  safe_arrange(Site)
 
 colnames(bday3) <- c("Site", "Connect ID", "NORCBC_CardMailingDt", "NORCBC_CardDispCode")
 
@@ -1277,7 +1277,7 @@ if (nrow(bday3) == 0) {
 ```{r bday4, echo=FALSE, warning=FALSE, message=FALSE}
 
 bday4 <- bday_base_vars %>%  filter(is.na(d_768313785) & !is.na(d_916186376)) %>%
-      select(Site, Connect_ID, d_768313785, d_916186376) %>%  safe_arrange(Site)
+  select(Site, Connect_ID, d_768313785, d_916186376) %>%  safe_arrange(Site)
 
 colnames(bday4) <- c("Site", "Connect ID", "NORCBC_CardMailingDt", "NORCBC_CardDispCode")
 
@@ -1296,7 +1296,7 @@ if (nrow(bday4) == 0) {
 ```{r bday5, echo=FALSE, warning=FALSE, message=FALSE}
 
 bday5 <- bday_base_vars %>%  filter(!is.na(d_768313785) & !(is.na(ymd_hms(d_194486780, quiet = TRUE)) | is.na(d_194486780))) %>%
-      select(Site, Connect_ID, d_768313785, d_902078073) %>%  safe_arrange(Site)
+  select(Site, Connect_ID, d_768313785, d_902078073) %>%  safe_arrange(Site)
 
 colnames(bday5) <- c("Site", "Connect ID", "NORCBC_CardMailingDt", "NORCBC_CardReturnDt")
 
@@ -1315,7 +1315,7 @@ if (nrow(bday5) == 0) {
 ```{r bday6, echo=FALSE, warning=FALSE, message=FALSE}
 
 bday6 <- bday_base_vars %>%  filter(is.na(d_768313785) & !is.na(d_902078073)) %>%
-      select(Site, Connect_ID, d_768313785, d_902078073) %>%  safe_arrange(Site)
+  select(Site, Connect_ID, d_768313785, d_902078073) %>%  safe_arrange(Site)
 
 colnames(bday6) <- c("Site", "Connect ID", "NORCBC_CardMailingDt", "NORCBC_CardReturnDt")
 
@@ -1341,17 +1341,17 @@ reinvite_date_type <- partsbq %>%  filter(!is.na(d_439351436) & is.na(d_28002166
                                   d_821247024==922622075 ~ 'Duplicate',
                                   d_821247024==160161595 ~ 'Outreach timed out')) %>% 
   select(Site, Connect_ID, token, d_454445267, d_430551721, Verif_Status, d_914594314, d_280021666, d_439351436) %>% 
-  dplyr::rename('Date/Time Consented' = d_454445267,
-                'Date/Time Verified' = d_914594314,
+  dplyr::rename('D/T Consented' = d_454445267,
+                'D/T Verified' = d_914594314,
                 'Re-Invitation Campaign Type' = d_280021666, 
-                'Date/Time Re-Invited' = d_439351436,
-                'Date/Time UP Submitted' =  d_430551721)
+                'D/Time Re-Invited' = d_439351436,
+                'Date/T UP Submitted' =  d_430551721)
 
 boxfolder = "194196493018"
 
 if (nrow(reinvite_date_type) < 50) {
   knitr::kable(reinvite_date_type, longtable = TRUE) %>%
-    kable_styling(latex_options = "HOLD_position")
+    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=6)
 } else {
   cat(paste0(
     "There are ", nrow(reinvite_date_type), " rows. This has been made into a separate XLXS file called \n",
@@ -1360,9 +1360,9 @@ if (nrow(reinvite_date_type) < 50) {
   
   ## These are failing in GC bc they're not UTF-8 characters, this converts the columns
   reinvite_date_type[] <- lapply(reinvite_date_type, function(x) {
-  if (is.character(x)) iconv(x, to = "UTF-8", sub = "byte") else x
-})
-
+    if (is.character(x)) iconv(x, to = "UTF-8", sub = "byte") else x
+  })
+  
   openxlsx::write.xlsx(reinvite_date_type,glue("Recruitment_Derived_QC_Rule46_Errors{currentDate}_boxfolder_{boxfolder}.xlsx"),row.names = F,na="")
 }
 
@@ -1380,10 +1380,10 @@ reinvite_start <- base_vars %>%  filter(as.Date(d_439351436) < "2025-02-06")
 if (nrow(reinvite_start) == 0) {
   cat("No errors\n")
 } else {
-
+  
   reinvite_start <- reinvite_start  %>% select(Site, Connect_ID, d_439351436, d_280021666)  %>%  safe_arrange(Site)
   colnames(reinvite_start) <- c("Site", "Connect ID", "RcrtSI_RInvTimeStamp_v1r0", "RcrtSI_RInvCampaignType_v1r0")
-
+  
   knitr::kable(reinvite_start) %>%
     kable_styling(latex_options = "scale_down")
 }
@@ -1399,10 +1399,10 @@ consent_verif <- partsbq %>%  filter((d_919254129=="104430631" | is.na(d_9192541
 if (nrow(consent_verif) == 0) {
   cat("No errors\n")
 } else {
-
+  
   consent_verif <- consent_verif  %>% select(Site, Connect_ID, d_439351436, d_280021666)  %>%  safe_arrange(Site)
   colnames(consent_verif) <- c("Site", "Connect ID", "RcrtSI_RInvTimeStamp_v1r0", "RcrtSI_RInvCampaignType_v1r0")
-
+  
   knitr::kable(consent_verif) %>%
     kable_styling(latex_options = "scale_down")
 }
@@ -1423,9 +1423,9 @@ if (nrow(start_DHQ) == 0) {
 } else {
   
   start_DHQ <- start_DHQ %>% select(Site, Connect_ID, d_109610692, d_692560814) %>%  safe_arrange(Site)
-
+  
   colnames(start_DHQ) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
-
+  
   knitr::kable(start_DHQ) %>%
     kable_styling(latex_options = "scale_down")
 }
@@ -1447,9 +1447,9 @@ if (nrow(comp_DHQ) == 0) {
 } else {
   
   comp_DHQ <- comp_DHQ %>% select(Site, Connect_ID, d_610227793, d_692560814) %>%  safe_arrange(Site)
-
+  
   colnames(comp_DHQ) <- c("Site", "Connect ID", "Survey Timestamp", "Survey Flag")
-
+  
   knitr::kable(comp_DHQ) %>%
     kable_styling(latex_options = "scale_down")
 }
@@ -1466,8 +1466,9 @@ if (nrow(comp_DHQ) == 0) {
 ```{r dhq_qualified, echo=FALSE, warning=FALSE, message=FALSE}
 
 dhq_qualified <- partsbq %>%  filter((d_692560814==615768760 | d_692560814==231311385) & 
-                                  !(d_821247024 == 197316935 & as.Date(d_914594314) >="2024-12-01" & d_747006172==104430631 & 
-                                      difftime(Sys.Date(), as.Date(d_914594314), units="days") >=180)) %>% 
+                                       !(d_821247024 == 197316935 & as.Date(d_914594314) >="2024-12-01" & 
+                                           d_747006172==104430631 & 
+                                           difftime(Sys.Date(), as.Date(d_914594314), units="days") >=180)) %>% 
   mutate(verif_days = difftime(Sys.Date(), as.Date(d_914594314), units="days"))
 
 
@@ -1476,9 +1477,8 @@ if (nrow(dhq_qualified) == 0) {
 } else {
   
   dhq_qualified <- dhq_qualified %>% select(Site, Connect_ID, d_692560814, verif_days, d_747006172) %>%  safe_arrange(Site)
-
   colnames(dhq_qualified) <- c("Site", "Connect ID", "Survey Flag", "verif_days", "WD_Status")
-
+  
   knitr::kable(dhq_qualified) %>%
     kable_styling(latex_options = "scale_down")
 }
@@ -1499,9 +1499,9 @@ if (nrow(dhq_eligible) == 0) {
 } else {
   
   dhq_eligible <- dhq_eligible %>% select(Site, Connect_ID, d_176068627, d_914594314) %>%  safe_arrange(Site)
-
+  
   colnames(dhq_eligible) <- c("Site", "Connect ID", "Survey Flag", "Verif_Date")
-
+  
   knitr::kable(dhq_eligible) %>%
     kable_styling(latex_options = "scale_down")
 }
@@ -1520,11 +1520,11 @@ dhq_null <- partsbq %>%  filter(is.na(d_692560814)  & d_821247024 == 197316935 &
 if (nrow(dhq_null) == 0) {
   cat("No errors\n")
 } else {
-
+  
   dhq_null <- dhq_null %>% select(Site, Connect_ID, d_692560814, d_821247024) %>%  safe_arrange(Site)
-
+  
   colnames(dhq_null) <- c("Site", "Connect ID", "Survey Flag", "Verif_Status")
-
+  
   knitr::kable(dhq_null) %>%
     kable_styling(latex_options = "scale_down")
 }
@@ -1546,9 +1546,9 @@ if (nrow(dhq_external_status) == 0) {
 } else {
   
   dhq_external_status <- dhq_external_status %>% select(Site, Connect_ID, d_176068627, survey_start, d_501613780) %>%  safe_arrange(Site)
-
+  
   colnames(dhq_external_status) <- c("Site", "Connect ID", "Survey Flag", "Start_Hours", "SrvDHQ3_6moPltStatus")
-
+  
   knitr::kable(dhq_external_status) %>%
     kable_styling(latex_options = "scale_down")
 }
@@ -1567,9 +1567,9 @@ if (nrow(dhq_uname_populated) == 0) {
 } else {
   
   dhq_uname_populated <- dhq_uname_populated %>% select(Site, Connect_ID, d_148184166, d_808755658, d_196723965) %>%  safe_arrange(Site)
-
+  
   colnames(dhq_uname_populated) <- c("Site", "Connect ID", "DHQ3 Username", "DHQ3 UUID", "DHQ3 Study ID")
-
+  
   knitr::kable(dhq_uname_populated) %>%
     kable_styling(latex_options = "scale_down")
 }
@@ -1589,9 +1589,9 @@ if (nrow(dhq_uuid_populated) == 0) {
 } else {
   
   dhq_uuid_populated <- dhq_uuid_populated %>% select(Site, Connect_ID, d_148184166, d_808755658, d_196723965) %>%  safe_arrange(Site)
-
+  
   colnames(dhq_uuid_populated) <- c("Site", "Connect ID", "DHQ3 Username", "DHQ3 UUID", "DHQ3 Study ID")
-
+  
   knitr::kable(dhq_uuid_populated) %>%
     kable_styling(latex_options = "scale_down")
 }
@@ -1611,9 +1611,9 @@ if (nrow(dhq_studyID_populated) == 0) {
 } else {
   
   dhq_studyID_populated <- dhq_studyID_populated %>% select(Site, Connect_ID, d_148184166, d_808755658, d_196723965) %>%  safe_arrange(Site)
-
+  
   colnames(dhq_studyID_populated) <- c("Site", "Connect ID", "DHQ3 Username", "DHQ3 UUID", "DHQ3 Study ID")
-
+  
   knitr::kable(dhq_studyID_populated) %>%
     kable_styling(latex_options = "scale_down")
 }
@@ -1634,9 +1634,9 @@ if (nrow(dhq_studyID_populated) == 0) {
 } else {
   
   dhq_studyID_populated <- dhq_studyID_populated %>% select(Site, Connect_ID, d_692560814, d_148184166, d_808755658, d_196723965) %>%  safe_arrange(Site)
-
+  
   colnames(dhq_studyID_populated) <- c("Site", "Connect ID", "Survey Status", "DHQ3 Username", "DHQ3 UUID", "DHQ3 Study ID")
-
+  
   knitr::kable(dhq_studyID_populated) %>%
     kable_styling(latex_options = "scale_down")
 }
@@ -1659,9 +1659,9 @@ if (nrow(smmet) == 0) {
 } else {
   
   smmet <- smmet %>% select(Site, Connect_ID, d_949302066, d_536735468, d_976570371, d_663265240) %>%  safe_arrange(Site)
-
+  
   colnames(smmet) <- c("Site", "Connect ID", "BOH Status", "MRE Status", "SAS Status", "LAW Status")
-
+  
   knitr::kable(smmet) %>%
     kable_styling(latex_options = "scale_down")
 }
@@ -1682,57 +1682,57 @@ boxfolder = "194196493018"
 
 if (nrow(reinv_active) < 50) {
   reinv_active0 <- reinv_active %>% select(Connect_ID, token, d_439351436, d_512820379)
-
+  
   knitr::kable(reinv_active0, longtable = TRUE) %>%
     kable_styling(latex_options = "HOLD_position")
 } else {
   reinv_active1 <- reinv_active %>% 
     select(Site, Connect_ID, token, state_studyId, state_d_521025370,  d_512820379, state_d_793822265, d_821247024, d_919254129,
            d_280021666, d_439351436, state_d_934298480) 
-    colnames(reinv_active1) <- c('Site', 'Connect_ID', 'token', 'StudyID', 'RcrtSI_TimeStamp', 
-                                 'RcrtSI_RecruitType', 'RcrtV_UpdateRecType', 'RcrtV_Verification', 'RcrtCS_Consented',
-                                 'RcrtSI_RInvCampaignType', 'RcrtSI_RInvTimeStamp', 'RcrtSI_Age')
-    
-    #Convert output from cids to English
-    reinv_active1 <- reinv_active1 %>%
-  mutate(across(everything(), ~ case_when(
-    . == 353358909 ~ "Yes",
-    . == 104430631 ~ "No",
-    . == 486306141 ~ "Active",
-    . == 854703046 ~ "Passive",
-    . == 180583933 ~ "Not active",
-    . == 875007964 ~ 'Not yet verified',
-    . == 197316935 ~ 'Verified',
-    . == 219863910 ~ 'Cannot be verified',
-    . == 922622075 ~ 'Duplicate',
-    . == 160161595 ~ 'Outreach timed out',
-    . == 713781738 ~ '30-34',
-    . == 631272782 ~ '35-39',
-    . == 124276120 ~ '40-45',
-    . == 450985724 ~ '46-50',
-    . == 363147933 ~ '51-55',
-    . == 636706443 ~ '56-60',
-    . == 771230670 ~ '61-65',
-    . == 722846087 ~ '66-70',
-    . == 926338735 ~ 'Random',
-    . == 348281054 ~ 'Screening appointment',
-    . == 324692899 ~ 'Non-screening appointment',
-    . == 351257378 ~ 'Demographic Group',
-    . == 647148178 ~ 'Aging out of study',
-    . == 834544960 ~ 'Geographic group',
-    . == 682916147 ~ 'Post-Screening Selection',
-    . == 153365143 ~ 'Technology adapters',
-    . == 663706936 ~ 'Low-income/health professional shortage areas',
-    . == 208952854 ~ 'Research Registry',
-    . == 296312382 ~ 'Pop up',
-    . == 181769837 ~ 'Other',
-    . == 398561594 ~ 'None of these apply',
-    . == 132080040 ~ 'No change needed',
-    . == 604663208 ~ 'Not Active to Passive',
-    . == 854903954 ~ 'Passive to Active',
-    . == 965707001 ~ 'Active to Passive',
-    TRUE ~ as.character(.)
-  )))
+  colnames(reinv_active1) <- c('Site', 'Connect_ID', 'token', 'StudyID', 'RcrtSI_TimeStamp', 
+                               'RcrtSI_RecruitType', 'RcrtV_UpdateRecType', 'RcrtV_Verification', 'RcrtCS_Consented',
+                               'RcrtSI_RInvCampaignType', 'RcrtSI_RInvTimeStamp', 'RcrtSI_Age')
+  
+  #Convert output from cids to English
+  reinv_active1 <- reinv_active1 %>%
+    mutate(across(everything(), ~ case_when(
+      . == 353358909 ~ "Yes",
+      . == 104430631 ~ "No",
+      . == 486306141 ~ "Active",
+      . == 854703046 ~ "Passive",
+      . == 180583933 ~ "Not active",
+      . == 875007964 ~ 'Not yet verified',
+      . == 197316935 ~ 'Verified',
+      . == 219863910 ~ 'Cannot be verified',
+      . == 922622075 ~ 'Duplicate',
+      . == 160161595 ~ 'Outreach timed out',
+      . == 713781738 ~ '30-34',
+      . == 631272782 ~ '35-39',
+      . == 124276120 ~ '40-45',
+      . == 450985724 ~ '46-50',
+      . == 363147933 ~ '51-55',
+      . == 636706443 ~ '56-60',
+      . == 771230670 ~ '61-65',
+      . == 722846087 ~ '66-70',
+      . == 926338735 ~ 'Random',
+      . == 348281054 ~ 'Screening appointment',
+      . == 324692899 ~ 'Non-screening appointment',
+      . == 351257378 ~ 'Demographic Group',
+      . == 647148178 ~ 'Aging out of study',
+      . == 834544960 ~ 'Geographic group',
+      . == 682916147 ~ 'Post-Screening Selection',
+      . == 153365143 ~ 'Technology adapters',
+      . == 663706936 ~ 'Low-income/health professional shortage areas',
+      . == 208952854 ~ 'Research Registry',
+      . == 296312382 ~ 'Pop up',
+      . == 181769837 ~ 'Other',
+      . == 398561594 ~ 'None of these apply',
+      . == 132080040 ~ 'No change needed',
+      . == 604663208 ~ 'Not Active to Passive',
+      . == 854903954 ~ 'Passive to Active',
+      . == 965707001 ~ 'Active to Passive',
+      TRUE ~ as.character(.)
+    )))
   
   cat(paste0(
     "There are ", nrow(reinv_active1), " rows. This has been made into a separate XLXS file called\n",
@@ -1740,10 +1740,10 @@ if (nrow(reinv_active) < 50) {
   ))
   
   ## These are failing in GC bc they're not UTF-8 characters, this converts the columns
-    reinvite_date_type[] <- lapply(reinvite_date_type, function(x) {
-  if (is.character(x)) iconv(x, to = "UTF-8", sub = "byte") else x
-})
-    
+  reinvite_date_type[] <- lapply(reinvite_date_type, function(x) {
+    if (is.character(x)) iconv(x, to = "UTF-8", sub = "byte") else x
+  })
+  
   openxlsx::write.xlsx(reinv_active1,glue("Recruitment_Derived_QC_Rule60_Errors{currentDate}_boxfolder_{boxfolder}.xlsx"),row.names = F,na="")
 }
 
@@ -1751,13 +1751,14 @@ if (nrow(reinv_active) < 50) {
 
 ```
 
+\FloatBarrier
 
 ## 61. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Automated verification, should be 'Method not used' or 'Method used'. Participants must be verified for at least 5 days.
 ```{r auto_ver, echo=FALSE, warning=FALSE, message=FALSE}
 
 auto_ver <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
                                  #as.Date(d_914594314) > (currentDate - days(5)) &
-                                   as.Date(d_914594314) < (currentDate - days(5)) & 
+                                 as.Date(d_914594314) < (currentDate - days(5)) & 
                                  !(state_d_444699761 %in%	c('734437214', '426360242')))
 
 
@@ -1766,22 +1767,24 @@ if (nrow(auto_ver) == 0) {
 } else {
   
   auto_ver <- auto_ver %>% select(Site, Connect_ID, d_512820379, d_914594314, state_d_444699761) %>%  safe_arrange(Site)
-
+  
   colnames(auto_ver) <- c("Site", "Connect ID", 'RcrtSI_RecruitType_v1r0', "RcrtV_VerificationTm_V1R0", "Automated verification")
-
+  
   knitr::kable(auto_ver) %>%
     kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
 }
 
 ```
 
+\FloatBarrier
+
 ## 62. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Outreach required for Verification, should be 'Yes', 'No', or NULL. Participants must be verified for at least 5 days.
 ```{r outreach_ver, echo=FALSE, warning=FALSE, message=FALSE}
 
 outreach_ver <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                 #as.Date(d_914594314) > (currentDate - days(5)) &
-                                   as.Date(d_914594314) < (currentDate - days(5)) & 
-                                 !(state_d_188797763 %in%	c('353358909', '104430631', NA)))
+                                     #as.Date(d_914594314) > (currentDate - days(5)) &
+                                     as.Date(d_914594314) < (currentDate - days(5)) & 
+                                     !(state_d_188797763 %in%	c('353358909', '104430631', NA)))
 
 
 if (nrow(outreach_ver) == 0) {
@@ -1789,22 +1792,24 @@ if (nrow(outreach_ver) == 0) {
 } else {
   
   outreach_ver <- outreach_ver %>% select(Site, Connect_ID, d_512820379,  d_914594314, state_d_188797763) %>%  safe_arrange(Site)
-
+  
   colnames(outreach_ver) <- c("Site", "Connect ID", 'RcrtSI_RecruitType', "RcrtV_VerificationTm_V1R0",  "Outreach required for Verification")
-
+  
   knitr::kable(outreach_ver) %>%
     kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
 }
 
 ```
-	   																	
+
+\FloatBarrier
+
 ## 63. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Manual verification, should be 'Method not used' or 'Method used'. Participants must be verified for at least 5 days.
 ```{r manual_ver, echo=FALSE, warning=FALSE, message=FALSE}
 
 manual_ver <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                 #as.Date(d_914594314) > (currentDate - days(5)) &
+                                   #as.Date(d_914594314) > (currentDate - days(5)) &
                                    as.Date(d_914594314) < (currentDate - days(5)) &
-                                 !(state_d_953614051 %in%	c('734437214', '426360242')))
+                                   !(state_d_953614051 %in%	c('734437214', '426360242')))
 
 
 if (nrow(manual_ver) == 0) {
@@ -1812,17 +1817,17 @@ if (nrow(manual_ver) == 0) {
 } else {
   
   manual_ver <- manual_ver %>% select(Site, Connect_ID, d_512820379, d_914594314, state_d_953614051) %>%  safe_arrange(Site)
-
+  
   colnames(manual_ver) <- c("Site", "Connect ID", 'RcrtSI_RecruitType_v1r0', "RcrtV_VerificationTm_V1R0", "Manual verification")
-
+  
   knitr::kable(manual_ver) %>%
     kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
 }
 
 ```
-	   																			
 
 
+\FloatBarrier
 
 ## 65. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then First Name Match, should be 'Not Matched' or 'Matched'. Participants must be verified for at least 5 days.
 ```{r fname_match, echo=FALSE, warning=FALSE, message=FALSE}
@@ -1831,9 +1836,9 @@ if (nrow(manual_ver) == 0) {
 
 
 fname_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                 #as.Date(d_914594314) > (currentDate - days(5)) &
-                                   as.Date(d_914594314) < (currentDate - days(5)) & 
-                                 !(state_d_147176963 %in%	c('356674370', '219803804')))
+                                    #as.Date(d_914594314) > (currentDate - days(5)) &
+                                    as.Date(d_914594314) < (currentDate - days(5)) & 
+                                    !(state_d_147176963 %in%	c('356674370', '219803804')))
 
 
 if (nrow(fname_match) == 0) {
@@ -1841,22 +1846,24 @@ if (nrow(fname_match) == 0) {
 } else {
   
   fname_match <- fname_match %>% select(Site, Connect_ID, d_512820379, d_914594314, state_d_147176963) %>%  safe_arrange(Site)
-
+  
   colnames(fname_match) <- c("Site", "Connect ID", 'RcrtSI_RecruitType_v1r0', "RcrtV_VerificationTm_V1R0", "First Name Match")
-
+  
   knitr::kable(fname_match) %>%
     kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
 }
 
 ```
-		   																			
+
+\FloatBarrier
+
 ## 66. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Last Name Match, should be 'Not Matched' or 'Matched'. Participants must be verified for at least 5 days.
 ```{r lname_match, echo=FALSE, warning=FALSE, message=FALSE}
 
 lname_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                 #as.Date(d_914594314) > (currentDate - days(5)) &
-                                   as.Date(d_914594314) < (currentDate - days(5)) & 
-                                 !(state_d_557461333 %in%	c('356674370', '219803804')))
+                                    #as.Date(d_914594314) > (currentDate - days(5)) &
+                                    as.Date(d_914594314) < (currentDate - days(5)) & 
+                                    !(state_d_557461333 %in%	c('356674370', '219803804')))
 
 
 if (nrow(lname_match) == 0) {
@@ -1864,22 +1871,24 @@ if (nrow(lname_match) == 0) {
 } else {
   
   lname_match <- lname_match %>% select(Site, Connect_ID, d_512820379, d_914594314, state_d_557461333) %>%  safe_arrange(Site)
-
+  
   colnames(lname_match) <- c("Site", "Connect ID", 'RcrtSI_RecruitType_v1r0', "RcrtV_VerificationTm_V1R0", "Last Name Match")
-
+  
   knitr::kable(lname_match) %>%
     kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
 }
 
 ```
 
+\FloatBarrier
+
 ## 67. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then DOB Match, should be 'Not Matched' or 'Matched'. Participants must be verified for at least 5 days.
 ```{r dob_match, echo=FALSE, warning=FALSE, message=FALSE}
 
 dob_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                 #as.Date(d_914594314) > (currentDate - days(5)) &
-                                   as.Date(d_914594314) < (currentDate - days(5)) & 
-                                 !(state_d_725929722 %in%	c('356674370', '219803804')))
+                                  #as.Date(d_914594314) > (currentDate - days(5)) &
+                                  as.Date(d_914594314) < (currentDate - days(5)) & 
+                                  !(state_d_725929722 %in%	c('356674370', '219803804')))
 
 
 if (nrow(dob_match) == 0) {
@@ -1887,23 +1896,24 @@ if (nrow(dob_match) == 0) {
 } else {
   
   dob_match <- dob_match %>% select(Site, Connect_ID, d_512820379, d_914594314, state_d_725929722) %>%  safe_arrange(Site)
-
+  
   colnames(dob_match) <- c("Site", "Connect ID", 'RcrtSI_RecruitType_v1r0', "RcrtV_VerificationTm_V1R0", "DOB Match")
-
+  
   knitr::kable(dob_match) %>%
     kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
 }
 
 ```
 
-	
+\FloatBarrier
+
 ## 68. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then PIN Match, should be 'Not Matched', 'Matched', or NULL. Participants must be verified for at least 5 days.
 ```{r pin_match, echo=FALSE, warning=FALSE, message=FALSE}
 
 pin_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                 #as.Date(d_914594314) > (currentDate - days(5)) &
-                                   as.Date(d_914594314) < (currentDate - days(5)) & 
-                                 !(state_d_557461333 %in%	c('356674370', '219803804', NA)))
+                                  #as.Date(d_914594314) > (currentDate - days(5)) &
+                                  as.Date(d_914594314) < (currentDate - days(5)) & 
+                                  !(state_d_557461333 %in%	c('356674370', '219803804', NA)))
 
 
 if (nrow(pin_match) == 0) {
@@ -1911,23 +1921,24 @@ if (nrow(pin_match) == 0) {
 } else {
   
   pin_match <- pin_match %>% select(Site, Connect_ID, d_512820379, d_914594314, state_d_557461333) %>%  safe_arrange(Site)
-
+  
   colnames(pin_match) <- c("Site", "Connect ID", 'RcrtSI_RecruitType_v1r0', "RcrtV_VerificationTm_V1R0", "PIN Match")
-
+  
   knitr::kable(pin_match) %>%
     kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
 }
 
 ```
-	
-	
+
+\FloatBarrier
+
 ## 69. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Token Match, should be 'Not Matched', 'Matched', or NULL. Participants must be verified for at least 5 days.
 ```{r token_match, echo=FALSE, warning=FALSE, message=FALSE}
 
 token_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                 #as.Date(d_914594314) > (currentDate - days(5)) &
-                                   as.Date(d_914594314) < (currentDate - days(5)) & 
-                                 !(state_d_679832994 %in%	c('356674370', '219803804', NA)))
+                                    #as.Date(d_914594314) > (currentDate - days(5)) &
+                                    as.Date(d_914594314) < (currentDate - days(5)) & 
+                                    !(state_d_679832994 %in%	c('356674370', '219803804', NA)))
 
 
 if (nrow(token_match) == 0) {
@@ -1935,23 +1946,24 @@ if (nrow(token_match) == 0) {
 } else {
   
   token_match <- token_match %>% select(Site, Connect_ID, d_512820379, d_914594314, state_d_679832994) %>%  safe_arrange(Site)
-
+  
   colnames(token_match) <- c("Site", "Connect ID", 'RcrtSI_RecruitType_v1r0', "RcrtV_VerificationTm_V1R0", "Token Match")
-
+  
   knitr::kable(token_match) %>%
     kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
 }
 
 ```
-	
-	
+
+\FloatBarrier
+
 ## 70. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then ZIP Code Match, should be 'Not Matched', 'Matched', or NULL. Participants must be verified for at least 5 days.
 ```{r zip_match, echo=FALSE, warning=FALSE, message=FALSE}
 
 zip_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                 #as.Date(d_914594314) > (currentDate - days(5)) &
-                                   as.Date(d_914594314) < (currentDate - days(5)) & 
-                                 !(state_d_559534463 %in%	c('356674370', '219803804', NA)))
+                                  #as.Date(d_914594314) > (currentDate - days(5)) &
+                                  as.Date(d_914594314) < (currentDate - days(5)) & 
+                                  !(state_d_559534463 %in%	c('356674370', '219803804', NA)))
 
 
 if (nrow(zip_match) == 0) {
@@ -1959,22 +1971,24 @@ if (nrow(zip_match) == 0) {
 } else {
   
   zip_match <- zip_match %>% select(Site, Connect_ID, d_512820379, d_914594314, state_d_559534463) %>%  safe_arrange(Site)
-
+  
   colnames(zip_match) <- c("Site", "Connect ID", 'RcrtSI_RecruitType_v1r0', "RcrtV_VerificationTm_V1R0", "ZIP Code Match")
-
+  
   knitr::kable(zip_match) %>%
     kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
 }
 
 ```
-   																	
+
+\FloatBarrier
+
 ## 71. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Site Match should be 'Criterium not met' or 'Criterium met'. Participants must be verified for at least 5 days.
 ```{r site_match, echo=FALSE, warning=FALSE, message=FALSE}
 
 site_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                #as.Date(d_914594314) > (currentDate - days(5)) &
+                                   #as.Date(d_914594314) > (currentDate - days(5)) &
                                    as.Date(d_914594314) < (currentDate - days(5)) & 
-                                 !(state_d_570452130 %in%	c('539025306', '427405444', NA)))
+                                   !(state_d_570452130 %in%	c('539025306', '427405444', NA)))
 
 
 if (nrow(site_match) == 0) {
@@ -1982,23 +1996,24 @@ if (nrow(site_match) == 0) {
 } else {
   
   site_match <- site_match %>% select(Site, Connect_ID, d_512820379, d_914594314, state_d_570452130) %>%  safe_arrange(Site)
-
+  
   colnames(site_match) <- c("Site", "Connect ID", 'RcrtSI_RecruitType_v1r0', "RcrtV_VerificationTm_V1R0", "Site Match")
-
+  
   knitr::kable(site_match) %>%
     kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
 }
 
 ```
 
+\FloatBarrier
 
 ## 72. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Age Match should be 'Criterium not met' or 'Criterium met'. Participants must be verified for at least 5 days.
 ```{r age_match, echo=FALSE, warning=FALSE, message=FALSE}
 
 age_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                #as.Date(d_914594314) > (currentDate - days(5)) &
-                                   as.Date(d_914594314) < (currentDate - days(5)) & 
-                                 !(state_d_629484663 %in%	c('539025306', '427405444', NA)))
+                                  #as.Date(d_914594314) > (currentDate - days(5)) &
+                                  as.Date(d_914594314) < (currentDate - days(5)) & 
+                                  !(state_d_629484663 %in%	c('539025306', '427405444', NA)))
 
 
 if (nrow(age_match) == 0) {
@@ -2006,23 +2021,24 @@ if (nrow(age_match) == 0) {
 } else {
   
   age_match <- age_match %>% select(Site, Connect_ID, d_512820379, d_914594314, state_d_629484663) %>%  safe_arrange(Site)
-
+  
   colnames(age_match) <- c("Site", "Connect ID", 'RcrtSI_RecruitType_v1r0', "RcrtV_VerificationTm_V1R0", "Age Match")
-
+  
   knitr::kable(age_match) %>%
     kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
 }
 
 ```
-	   															
+
+\FloatBarrier
 
 ## 73. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Cancer Status Match should be 'Criterium not met' or 'Criterium met'. Participants must be verified for at least 5 days.
 ```{r cancer_match, echo=FALSE, warning=FALSE, message=FALSE}
 
 cancer_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                 #as.Date(d_914594314) > (currentDate - days(5)) &
-                                   as.Date(d_914594314) < (currentDate - days(5)) & 
-                                 !(state_d_547895941 %in%	c('539025306', '427405444', NA)))
+                                     #as.Date(d_914594314) > (currentDate - days(5)) &
+                                     as.Date(d_914594314) < (currentDate - days(5)) & 
+                                     !(state_d_547895941 %in%	c('539025306', '427405444', NA)))
 
 
 if (nrow(cancer_match) == 0) {
@@ -2030,22 +2046,23 @@ if (nrow(cancer_match) == 0) {
 } else {
   
   cancer_match <- cancer_match %>% select(Site, Connect_ID, d_512820379, state_d_547895941) %>%  safe_arrange(Site)
-
+  
   colnames(cancer_match) <- c("Site", "Connect ID", 'RcrtSI_RecruitType_v1r0', "RcrtV_VerificationTm_V1R0", "Cancer Status Match")
-
+  
   knitr::kable(cancer_match) %>%
     kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
 }
 
 ```
-	   																																																					
 
+
+\FloatBarrier
 
 ## 74. If RcrtSI_RecruitType_v1r0='Active' then RcrtSI_Age_v1r0 must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'.
 ```{r act_di_age, echo=FALSE, warning=FALSE, message=FALSE}
 
 act_di_age <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_934298480) & 
-                                     !(d_821247024=="922622075" & state_d_793822265=="854903954"))
+                                   !(d_821247024=="922622075" & state_d_793822265=="854903954"))
 
 
 if (nrow(act_di_age) == 0) {
@@ -2053,22 +2070,23 @@ if (nrow(act_di_age) == 0) {
 } else {
   
   act_di_age <- act_di_age %>% select(Site, Connect_ID, d_821247024, state_d_793822265) %>%  safe_arrange(Site)
-
+  
   colnames(act_di_age) <- c("Site", "Connect ID", 'RcrtV_Verification', "RcrtV_UpdateRecType")
-
+  
   knitr::kable(act_di_age) %>%
     kable_styling(latex_options = "scale_down")
 }
 
 ```
-	   																																																					
+
+\FloatBarrier
 
 ## 75. If RcrtSI_RecruitType_v1r0='Active' and Site is not Sanford Health or Henry Ford Health or Baylor Scott and White Health, then RcrtSI_Race_v1r0 must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'.
 ```{r act_di_race, echo=FALSE, warning=FALSE, message=FALSE}
 
 act_di_race <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_849518448) & 
                                     d_827220437!='657167265' & d_827220437!='548392715' &  d_827220437!='472940358' & 
-                                     !(d_821247024=="922622075" & state_d_793822265=="854903954"))
+                                    !(d_821247024=="922622075" & state_d_793822265=="854903954"))
 
 
 if (nrow(act_di_race) == 0) {
@@ -2076,24 +2094,25 @@ if (nrow(act_di_race) == 0) {
 } else {
   
   act_di_race <- act_di_race %>% select(Site, Connect_ID, d_821247024, state_d_793822265) %>%  safe_arrange(Site)
-
+  
   colnames(act_di_race) <- c("Site", "Connect ID", 'RcrtV_Verification', "RcrtV_UpdateRecType")
-
+  
   knitr::kable(act_di_race) %>%
     kable_styling(latex_options = "scale_down")
 }
 
 ```
-	   																																																					
 
+
+\FloatBarrier
 
 ## 76. If RcrtSI_RecruitType_v1r0='Active' and Site= Sanford Health then RcrtSI_SHRace_v1r0 must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'.
 ```{r act_di_SF_race, echo=FALSE, warning=FALSE, message=FALSE}
 
 act_di_SF_race <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_119643471) &
                                        d_827220437=='657167265' &
-                                     !(d_821247024=="922622075" & state_d_793822265=="854903954"))
- 
+                                       !(d_821247024=="922622075" & state_d_793822265=="854903954"))
+
 # ###  Ad-hoc Request ###
 # act_di_SF_race <- act_di_SF_race %>% select(Site, Connect_ID, token, d_747006172, d_821247024, d_512820379, d_471593703,  state_d_793822265, state_d_119643471, state_d_538553381, state_d_934298480, state_d_706256705)
 # colnames(act_di_SF_race) <- c("Site", "Connect ID", 'token', 'HdWd_WdConsent_v1r0', "RcrtV_Verification_v1r0", "RcrtSI_RecruitType_v1r0", "RcrtSI_TypeTime_v1r0", "RcrtV_UpdateRecType_v1r0", "RcrtSI_SHRace_v1r0", "RcrtSI_SHEthnicity_v1r0", "RcrtSI_Age_v1r0", "RcrtSI_Sex_v1r0")
@@ -2129,23 +2148,23 @@ if (nrow(act_di_SF_race) == 0) {
 } else {
   
   act_di_SF_race <- act_di_SF_race %>% select(Site, token, d_821247024, state_d_793822265) %>%  safe_arrange(Site)
-
+  
   colnames(act_di_SF_race) <- c("Site", "token", 'RcrtV_Verification', "RcrtV_UpdateRecType")
-
+  
   knitr::kable(act_di_SF_race) %>%
     kable_styling(latex_options = "scale_down") #%>% landscape()
 }
 
 ```
-	   																																																					
 
+\FloatBarrier
 
 ## 77. If RcrtSI_RecruitType_v1r0='Active' and Site= Henry Ford Health, then RcrtSI_HFHSRace_v1r0 must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'.
 ```{r act_di_HFH_race, echo=FALSE, warning=FALSE, message=FALSE}
 
 act_di_HFH_race <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_684926335) & 
                                         d_827220437=='548392715' &
-                                     !(d_821247024=="922622075" & state_d_793822265=="854903954"))
+                                        !(d_821247024=="922622075" & state_d_793822265=="854903954"))
 
 
 if (nrow(act_di_HFH_race) == 0) {
@@ -2153,21 +2172,23 @@ if (nrow(act_di_HFH_race) == 0) {
 } else {
   
   act_di_HFH_race <- act_di_HFH_race %>% select(Site, Connect_ID, d_821247024, state_d_793822265) %>%  safe_arrange(Site)
-
+  
   colnames(act_di_HFH_race) <- c("Site", "Connect ID", 'RcrtV_Verification', "RcrtV_UpdateRecType")
-
+  
   knitr::kable(act_di_HFH_race) %>%
     kable_styling(latex_options = "scale_down")
 }
 
 ```
 
+\FloatBarrier
+
 ## 78. If RcrtSI_RecruitType_v1r0='Active' and Site= Baylor Scott and White Health, then RcrtSI_BSWHRaceEth_v1r0 must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'.
 ```{r act_di_BSWH_race, echo=FALSE, warning=FALSE, message=FALSE}
 
 act_di_BSWH_race <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_253532712) & 
-                                        d_827220437=='472940358' &
-                                     !(d_821247024=="922622075" & state_d_793822265=="854903954"))
+                                         d_827220437=='472940358' &
+                                         !(d_821247024=="922622075" & state_d_793822265=="854903954"))
 
 
 if (nrow(act_di_BSWH_race) == 0) {
@@ -2175,23 +2196,23 @@ if (nrow(act_di_BSWH_race) == 0) {
 } else {
   
   act_di_BSWH_race <- act_di_BSWH_race %>% select(Site, Connect_ID, d_821247024, state_d_793822265) %>%  safe_arrange(Site)
-
+  
   colnames(act_di_BSWH_race) <- c("Site", "Connect ID", 'RcrtV_Verification', "RcrtV_UpdateRecType")
-
+  
   knitr::kable(act_di_BSWH_race) %>%
     kable_styling(latex_options = "scale_down")
 }
 
 ```
 
-
+\FloatBarrier
 
 ## 79. If RcrtSI_RecruitType_v1r0='Active' and Site= Sanford Health then RcrtSI_SHEthnicity must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'.
 ```{r act_di_SF_eth, echo=FALSE, warning=FALSE, message=FALSE}
 
 act_di_SF_eth <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_538553381) & 
-                                       d_827220437=='657167265' & 
-                                     !(d_821247024=="922622075" & state_d_793822265=="854903954"))
+                                      d_827220437=='657167265' & 
+                                      !(d_821247024=="922622075" & state_d_793822265=="854903954"))
 
 
 if (nrow(act_di_SF_eth) == 0) {
@@ -2199,23 +2220,24 @@ if (nrow(act_di_SF_eth) == 0) {
 } else {
   
   act_di_SF_eth <- act_di_SF_eth %>% select(Site, Connect_ID, d_821247024, state_d_793822265) %>%  safe_arrange(Site)
-
+  
   colnames(act_di_SF_eth) <- c("Site", "Connect ID", 'RcrtV_Verification', "RcrtV_UpdateRecType")
-
+  
   knitr::kable(act_di_SF_eth) %>%
     kable_styling(latex_options = "scale_down")
 }
 
 ```
-	   																																																					
 
+
+\FloatBarrier
 
 ## 80. If RcrtSI_RecruitType_v1r0='Active' and Site= Henry Ford Health, then RcrtSI_HFHSEthnicity_v1r0 must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'.
 ```{r act_di_HFH_eth, echo=FALSE, warning=FALSE, message=FALSE}
 
 act_di_HFH_eth <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_527823810) & 
-                                        d_827220437=='548392715' &
-                                     !(d_821247024=="922622075" & state_d_793822265=="854903954"))
+                                       d_827220437=='548392715' &
+                                       !(d_821247024=="922622075" & state_d_793822265=="854903954"))
 
 
 if (nrow(act_di_HFH_eth) == 0) {
@@ -2223,22 +2245,22 @@ if (nrow(act_di_HFH_eth) == 0) {
 } else {
   
   act_di_HFH_eth <- act_di_HFH_eth %>% select(Site, Connect_ID, d_821247024, state_d_793822265) %>%  safe_arrange(Site)
-
+  
   colnames(act_di_HFH_eth) <- c("Site", "Connect ID", 'RcrtV_Verification', "RcrtV_UpdateRecType")
-
+  
   knitr::kable(act_di_HFH_eth) %>%
     kable_styling(latex_options = "scale_down")
 }
 
 ```
-	   																																																					
 
+\FloatBarrier
 
 ## 81. If RcrtSI_RecruitType_v1r0='Active' then RcrtSI_MemberStat_v1r0 must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'.
 ```{r act_di_member, echo=FALSE, warning=FALSE, message=FALSE}
 
 act_di_member <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_477091792) & 
-                                     !(d_821247024=="922622075" & state_d_793822265=="854903954"))
+                                      !(d_821247024=="922622075" & state_d_793822265=="854903954"))
 
 # ###  Ad-hoc Request ###
 # act_di_member <- act_di_member %>% filter(Site=="University of Chicago Medicine") %>% 
@@ -2265,22 +2287,22 @@ if (nrow(act_di_member) == 0) {
 } else {
   
   act_di_member <- act_di_member %>% select(Site, token, d_821247024, state_d_793822265) %>%  safe_arrange(Site)
-
+  
   colnames(act_di_member) <- c("Site", "token", 'RcrtV_Verification', "RcrtV_UpdateRecType")
-
+  
   knitr::kable(act_di_member) %>%
     kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
 }
 
 ```
-	   																																																					
 
+\FloatBarrier
 
 ## 82. If RcrtSI_RecruitType_v1r0='Active' then RcrtSI_CampaignType_v1r0 must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'.
 ```{r act_di_cmpn, echo=FALSE, warning=FALSE, message=FALSE}
 
 act_di_cmpn <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_667474224) & 
-                                     !(d_821247024=="922622075" & state_d_793822265=="854903954"))
+                                    !(d_821247024=="922622075" & state_d_793822265=="854903954"))
 
 
 if (nrow(act_di_cmpn) == 0) {
@@ -2288,22 +2310,22 @@ if (nrow(act_di_cmpn) == 0) {
 } else {
   
   act_di_cmpn <- act_di_cmpn %>% select(Site, Connect_ID, d_821247024, state_d_793822265) %>%  safe_arrange(Site)
-
+  
   colnames(act_di_cmpn) <- c("Site", "Connect ID", 'RcrtV_Verification', "RcrtV_UpdateRecType")
-
+  
   knitr::kable(act_di_cmpn) %>%
     kable_styling(latex_options = "scale_down")
 }
 
 ```
-	   																																																					
 
+\FloatBarrier
 
 ## 83. If RcrtSI_RecruitType_v1r0='Active' then RcrtSI_EligibilityVer_v1r0 must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'.
 ```{r act_di_elg, echo=FALSE, warning=FALSE, message=FALSE}
 
 act_di_elg <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_749475364) & 
-                                     !(d_821247024=="922622075" & state_d_793822265=="854903954"))
+                                   !(d_821247024=="922622075" & state_d_793822265=="854903954"))
 
 # ###  Ad-hoc Request ###
 # act_di_elg <- act_di_elg %>% filter(Site=="University of Chicago Medicine") %>% 
@@ -2329,24 +2351,24 @@ if (nrow(act_di_elg) == 0) {
 } else {
   
   act_di_elg <- act_di_elg %>% select(Site, token, d_821247024, state_d_793822265) %>%  safe_arrange(Site)
-
+  
   colnames(act_di_elg) <- c("Site", "token", 'RcrtV_Verification', "RcrtV_UpdateRecType")
-
+  
   knitr::kable(act_di_elg) %>%
     kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
 }
 
 ```
-	   																																																					
 
 
+\FloatBarrier
 
 ## 84. If RcrtSI_RecruitType_v1r0='Active' and Site is not Henry Ford Health, then RcrtSI_Sex_v1r0 must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'.
 ```{r act_di_sex, echo=FALSE, warning=FALSE, message=FALSE}
 
 act_di_sex <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_706256705) & 
-                                        d_827220437!='548392715' &
-                                     !(d_821247024=="922622075" & state_d_793822265=="854903954"))
+                                   d_827220437!='548392715' &
+                                   !(d_821247024=="922622075" & state_d_793822265=="854903954"))
 
 
 if (nrow(act_di_sex) == 0) {
@@ -2354,23 +2376,23 @@ if (nrow(act_di_sex) == 0) {
 } else {
   
   act_di_sex <- act_di_sex %>% select(Site, Connect_ID, d_821247024, state_d_793822265) %>%  safe_arrange(Site)
-
+  
   colnames(act_di_sex) <- c("Site", "Connect ID", 'RcrtV_Verification', "RcrtV_UpdateRecType")
-
+  
   knitr::kable(act_di_sex) %>%
     kable_styling(latex_options = "scale_down")
 }
 
 ```
 
-
+\FloatBarrier
 
 ## 85. If RcrtSI_RecruitType_v1r0='Active' and Site= Henry Ford Health, then RcrtSI_HFHS_Sex_v1r0 must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'.
 ```{r act_di_HF_sex, echo=FALSE, warning=FALSE, message=FALSE}
 
 act_di_HF_sex <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_435027713) & 
-                                        d_827220437=='548392715' &
-                                     !(d_821247024=="922622075" & state_d_793822265=="854903954"))
+                                      d_827220437=='548392715' &
+                                      !(d_821247024=="922622075" & state_d_793822265=="854903954"))
 
 
 if (nrow(act_di_HF_sex) == 0) {
@@ -2378,15 +2400,16 @@ if (nrow(act_di_HF_sex) == 0) {
 } else {
   
   act_di_HF_sex <- act_di_HF_sex %>% select(Site, Connect_ID, d_821247024, state_d_793822265) %>%  safe_arrange(Site)
-
+  
   colnames(act_di_HF_sex) <- c("Site", "Connect ID", 'RcrtV_Verification', "RcrtV_UpdateRecType")
-
+  
   knitr::kable(act_di_HF_sex) %>%
     kable_styling(latex_options = "scale_down")
 }
 
 ```
 
+\FloatBarrier
 
 ### 86. If the COVID-19 Survey was started on or after 7/5/23, then the COVID-19 Survey Language variable must be populated
 ```{r covid_lang, echo=FALSE, warning=FALSE, message=FALSE}
@@ -2420,29 +2443,30 @@ if (nrow(covid_lang) == 0) {
 } else {
   
   covid_lang <- covid_lang %>% select(Site, Connect_ID) %>%  safe_arrange(Site)
-
+  
   colnames(covid_lang) <- c("Site", "Connect ID")
-
+  
   knitr::kable(covid_lang) %>%
     kable_styling(latex_options = "scale_down")
 }
 
 ```
 
+\FloatBarrier
 
 ## 87. If A/B Testing Message Response is populated, UTM_Campaign parameter for each recruit should match the data we receive for A/B Testing Message Response.
 ```{r AB_1, echo=FALSE, warning=FALSE, message=FALSE}
 
 
 AB1 <- partsbq	%>% mutate(AB_response = case_when(state_d_956485028== '562663942'	~ 'Altruism Personal',
-                                                            state_d_956485028== '686986259'	~ 'Altruism General',
+                                                  state_d_956485028== '686986259'	~ 'Altruism General',
                                                   ##removing 'Connection' in these two so they match 
-                                                            state_d_956485028== '477331464'	~ 'Cancer Personal',
-                                                            state_d_956485028== '935486262'	~ 'Cancer General',
+                                                  state_d_956485028== '477331464'	~ 'Cancer Personal',
+                                                  state_d_956485028== '935486262'	~ 'Cancer General',
                                                   ##
-                                                            state_d_956485028== '518814501'	~ 'Research Personal',
-                                                            state_d_956485028== '307763550'	~ 'Research General'),
-                                    UTM_camp = gsub("-", " ", d_163847117)) %>%
+                                                  state_d_956485028== '518814501'	~ 'Research Personal',
+                                                  state_d_956485028== '307763550'	~ 'Research General'),
+                          UTM_camp = gsub("-", " ", d_163847117)) %>%
   filter(!is.na(AB_response) & 
            tolower(AB_response) != tolower(UTM_camp))
 
@@ -2450,16 +2474,16 @@ AB1 <- partsbq	%>% mutate(AB_response = case_when(state_d_956485028== '562663942
 if (nrow(AB1) == 0) {
   cat("No errors\n")
 } else {
-
+  
   AB1 <- AB1 %>% select(Site, Connect_ID, token, AB_response, UTM_camp) %>%  safe_arrange(Site)
-
+  
   knitr::kable(AB1) %>%
     kable_styling(latex_options = "scale_down")
 }
 
 ```
 
-
+\FloatBarrier
 
 ## 88. If A/B Testing Message Response is populated and any one or two of the three UTM parameters are populated, all three should be available. (This issue is being looked at by DevOps in October.)
 ```{r AB_2, echo=FALSE, warning=FALSE, message=FALSE}
@@ -2467,17 +2491,17 @@ if (nrow(AB1) == 0) {
 
 AB2 <- partsbq	%>% filter( !is.na(state_d_956485028) &
                              (is.na(d_761057722) | is.na(d_207613315) | is.na(d_163847117)) & #at least one is missing
-                            !(is.na(d_761057722) & is.na(d_207613315) & is.na(d_163847117))) #but not all are missing
+                             !(is.na(d_761057722) & is.na(d_207613315) & is.na(d_163847117))) #but not all are missing
 
 
 if (nrow(AB2) == 0) {
   cat("No errors\n")
 } else {
-
+  
   AB2 <- AB2 %>% select(Site, Connect_ID, token, d_761057722, d_207613315, d_163847117) %>%  safe_arrange(Site)
-
+  
   colnames(AB2) <- c("Site", "Connect ID", 'token', 'UTM_Source', "UTM_Medium", "UTM_Campaign")
-
+  
   knitr::kable(AB2) %>%
     kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
 }
@@ -2485,7 +2509,7 @@ if (nrow(AB2) == 0) {
 ```
 
 
-
+\FloatBarrier
 
 ## 89. If RcrtCS_ConsentSumit_v1r0 does not exist then RcrtCS_Consented_v1r0 must = no or NA
 ```{r Consent_Time, echo=FALSE, warning=FALSE, message=FALSE}
@@ -2497,11 +2521,11 @@ Cnsnt <- partsbq	%>% filter(is.na(d_454445267) & d_919254129=='353358909')
 if (nrow(Cnsnt) == 0) {
   cat("No errors\n")
 } else {
-
+  
   Cnsnt <- Cnsnt %>% select(Site, Connect_ID, token, d_454445267, d_919254129) %>%  safe_arrange(Site)
-
+  
   colnames(Cnsnt) <- c("Site", "Connect ID", 'token', 'RcrtCS_ConsentSumit_v1r0', "RcrtCS_Consented_v1r0")
-
+  
   knitr::kable(Cnsnt) %>%
     kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
 }
@@ -2509,7 +2533,7 @@ if (nrow(Cnsnt) == 0) {
 ```
 
 
-
+\FloatBarrier
 
 ## 90. If RcrtUP_SubmitTime_v1r0 does not exist and HdWd_Destroydata_v1r0 = no, then RcrtUP_Submitted_v1r0 must = no or NA
 ```{r UP_Sub_Time_NA, echo=FALSE, warning=FALSE, message=FALSE}
@@ -2521,18 +2545,18 @@ UP_Sub_Time <- partsbq	%>% filter(is.na(d_430551721) & d_831041022=='104430631' 
 if (nrow(UP_Sub_Time) == 0) {
   cat("No errors\n")
 } else {
-
+  
   UP_Sub_Time <- UP_Sub_Time %>% select(Site, Connect_ID, token, d_430551721, d_699625233) %>%  safe_arrange(Site)
-
+  
   colnames(UP_Sub_Time) <- c("Site", "Connect ID", 'token', 'RcrtUP_SubmitTime_v1r0', "RcrtUP_Submitted_v1r0")
-
+  
   knitr::kable(UP_Sub_Time) %>%
     kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
 }
 
 ```
 
-
+\FloatBarrier
 
 
 ## 91. If RcrtUP_Submitted_v1r0=yes and HdWd_Destroydata_v1r0 = no, then RcrtCS_Consented_v1r0 must be yes.
@@ -2545,11 +2569,11 @@ UP_Sub_Time <- partsbq	%>% filter(d_699625233=='353358909' & d_831041022=='10443
 if (nrow(UP_Sub_Time) == 0) {
   cat("No errors\n")
 } else {
-
+  
   UP_Sub_Time <- UP_Sub_Time %>% select(Site, Connect_ID, token, d_699625233, d_919254129) %>%  safe_arrange(Site)
-
+  
   colnames(UP_Sub_Time) <- c("Site", "Connect ID", 'token', "RcrtUP_Submitted_v1r0", "RcrtCS_Consented_v1r0")
-
+  
   knitr::kable(UP_Sub_Time) %>%
     kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
 }
@@ -2557,7 +2581,7 @@ if (nrow(UP_Sub_Time) == 0) {
 ```
 
 
-
+\FloatBarrier
 
 ## 92. If RcrtSI_SignTime_v1r0 does not exist and HdWd_Destroydata_v1r0 = no, then RcrtSI_SignedIn_v1r0 must = no or NA
 ```{r SignIn_Time_NA, echo=FALSE, warning=FALSE, message=FALSE}
@@ -2569,11 +2593,11 @@ SignIn_Time <- partsbq	%>% filter(is.na(d_335767902) & d_831041022=='104430631' 
 if (nrow(SignIn_Time) == 0) {
   cat("No errors\n")
 } else {
-
+  
   SignIn_Time <- SignIn_Time %>% select(Site, Connect_ID, token, d_335767902, d_230663853) %>%  safe_arrange(Site)
-
+  
   colnames(SignIn_Time) <- c("Site", "Connect ID", 'token', 'RcrtSI_SignTime_v1r0', "RcrtSI_SignedIn_v1r0")
-
+  
   knitr::kable(SignIn_Time) %>%
     kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
 }
@@ -2581,9 +2605,9 @@ if (nrow(SignIn_Time) == 0) {
 ```
 
 
+\FloatBarrier
 
-
-## 92. If RcrtV_VerificationTm_V1R0 does not exist and HdWd_Destroydata_v1r0 = no, then RcrtV_Verification_v1r0 must = not yet verified or NA
+## 93. If RcrtV_VerificationTm_V1R0 does not exist and HdWd_Destroydata_v1r0 = no, then RcrtV_Verification_v1r0 must = not yet verified or NA
 ```{r Verification_Time, echo=FALSE, warning=FALSE, message=FALSE}
 
 
@@ -2593,11 +2617,11 @@ Verification_Time <- partsbq	%>% filter(is.na(d_914594314) & d_831041022=='10443
 if (nrow(Verification_Time) == 0) {
   cat("No errors\n")
 } else {
-
+  
   Verification_Time <- Verification_Time %>% select(Site, Connect_ID, token, d_914594314, d_821247024) %>%  safe_arrange(Site)
-
+  
   colnames(Verification_Time) <- c("Site", "Connect ID", 'token', 'RcrtV_VerificationTm_V1R0', "RcrtV_Verification_v1r0")
-
+  
   knitr::kable(Verification_Time) %>%
     kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
 }
@@ -2605,9 +2629,9 @@ if (nrow(Verification_Time) == 0) {
 ```
 
 
+\FloatBarrier
 
-
-## 93. If RcrtV_Mannual_v1r0 = method not used or NA, then RcrtV_Outreach_v1r0 must be no  or NA
+## 94. If RcrtV_Mannual_v1r0 = method not used or NA, then RcrtV_Outreach_v1r0 must be no  or NA
 ```{r Man_OutRch, echo=FALSE, warning=FALSE, message=FALSE}
 
 
@@ -2617,11 +2641,11 @@ Man_OutRch <- partsbq	%>% filter((is.na(state_d_953614051) | state_d_953614051==
 if (nrow(Man_OutRch) == 0) {
   cat("No errors\n")
 } else {
-
+  
   Man_OutRch <- Man_OutRch %>% select(Site, Connect_ID, token, state_d_953614051, state_d_188797763) %>%  safe_arrange(Site)
-
+  
   colnames(Man_OutRch) <- c("Site", "Connect ID", 'token', 'RcrtV_Mannual_v1r0', "RcrtV_Outreach_v1r0")
-
+  
   knitr::kable(Man_OutRch) %>%
     kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
 }
@@ -2629,13 +2653,13 @@ if (nrow(Man_OutRch) == 0) {
 ```
 
 <!-- \FloatBarrier -->
-<!-- ## 94. If the ROI Pref Survey Status flag is null, there should be no survey data. -->
-
-<!-- ```{r survey_data_m1, echo=FALSE, warning=FALSE, message=FALSE} -->
-
-
-<!-- roi_null_bq <- -->
-<!-- "SELECT Connect_ID, -->
+  <!-- ## 95. If the ROI Pref Survey Status flag is null, there should be no survey data. -->
+  
+  <!-- ```{r survey_data_m1, echo=FALSE, warning=FALSE, message=FALSE} -->
+  
+  
+  <!-- roi_null_bq <- -->
+  <!-- "SELECT Connect_ID, -->
 <!-- CASE -->
 <!--     WHEN d_827220437 = '125001209' THEN 'Kaiser Permanente Colorado' -->
 <!--     WHEN d_827220437 = '472940358' THEN 'Baylor Scott & White Health' -->
@@ -2654,17 +2678,17 @@ if (nrow(Man_OutRch) == 0) {
 <!-- where d_278023676 is null and -->
 <!-- Connect_ID in (select Connect_ID from `nih-nci-dceg-connect-prod-6d04.FlatConnect.preference2025` ) -->
 <!-- order by Site" -->
-
-<!-- roi_null_bq_table <- bq_project_query(project, roi_null_bq) -->
-<!-- roi_null <- bq_table_download(roi_null_bq_table, bigint = "integer64") -->
-
-
-<!-- if (nrow(roi_null) == 0) { -->
-<!--   cat("No errors\n") -->
-<!-- } else { -->
-<!--   knitr::kable(roi_null) %>% -->
-<!--     kable_styling(latex_options = "scale_down") -->
-<!-- } -->
-
-
-<!-- ``` -->
+  
+  <!-- roi_null_bq_table <- bq_project_query(project, roi_null_bq) -->
+  <!-- roi_null <- bq_table_download(roi_null_bq_table, bigint = "integer64") -->
+  
+  
+  <!-- if (nrow(roi_null) == 0) { -->
+      <!--   cat("No errors\n") -->
+      <!-- } else { -->
+          <!--   knitr::kable(roi_null) %>% -->
+          <!--     kable_styling(latex_options = "scale_down") -->
+          <!-- } -->
+  
+  
+  <!-- ``` -->
