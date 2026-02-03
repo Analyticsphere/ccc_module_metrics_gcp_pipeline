@@ -3060,13 +3060,14 @@ ROI_Comp_by_Sex <- all_data %>% filter(roicomplt!="Not Eligible") %>%
 
 ROI_Comp_by_Sex_table <- ROI_Comp_by_Sex %>%
   modify_header(stat_0 = "Total ROI Pref Eligible Participants") %>%
-  modify_caption("Table 8.7. 2026 ROI Pref Completion Rate by Site Defined Sex  \n  Among Eligible Participants") %>%
+  modify_caption("Table 8.7. 2026 ROI Pref Completion Rate by Site Defined Sex Among Eligible Participants") %>%
   as_kable_extra(escape = FALSE, addtl_fmt = TRUE) %>% kable_styling(latex_options = c("scale_down","hold_position"))
 
 
 # leave this?
-add_footnote(ROI_Comp_by_Sex_table, "Note: Sex defined as the de-identified sex data reported by sites at time of invitation.",
+ROI_Comp_by_Sex <- add_footnote(ROI_Comp_by_Sex_table, "Note: Sex defined as the de-identified sex data reported by sites at time of invitation.",
              notation = "none")
+ROI_Comp_by_Sex
 
 
 ROI_Comp_by_Age <- all_data %>% filter(roicomplt!="Not Eligible") %>%
@@ -3088,8 +3089,10 @@ ROI_Comp_by_Age <- ROI_Comp_by_Age %>%
 
 
 # leave this?
-add_footnote(ROI_Comp_by_Age, "Note: Age defined as the de-identified age data reported by sites at time of invitation, not current age at time of survey completion.",
+ROI_Comp_by_Age_table <- add_footnote(ROI_Comp_by_Age, "Note: Age defined as the de-identified age data reported by sites at time of invitation, not current age at time of survey completion.",
              notation="none")
+
+ROI_Comp_by_Age_table
 
 
 ```
