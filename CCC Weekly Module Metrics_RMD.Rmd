@@ -822,7 +822,7 @@ knitr::kable(ssn_surv_table,
 
 \newpage
 # COVID-19 Survey
-The COVID-19 Baseline Survey was available to participants as part of the Biospecimen Survey at time of baseline research biospecimen launch on 06/01/2022. On 07/05/2023 the COVID-related questions were removed from the Biospecimen Survey and split into it's own standalone survey. Participants become eligible for the COVID-19 questions at time of biospecimen donation for participants that are not withdrawn.
+The COVID-19 Baseline Survey was available to participants as part of the Biospecimen Survey at time of baseline research biospecimen launch on 06/01/2022. On 07/05/2023 the COVID-related questions were removed from the Biospecimen Survey and split into its own standalone survey. Participants become eligible for the COVID-19 questions at time of biospecimen donation for participants that are not withdrawn.
 \FloatBarrier
 ```{r COVID_Section, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
@@ -845,7 +845,7 @@ colnames(covid_df)[5] <- "Total Eligible for \n COVID-19 Survey"
 
 knitr::kable(covid_df, 
              caption='Table 3.1 Baseline COVID Response Rate',
-             row.names=FALSE, align=c("l","c","c","c","c","c"), booktabs = TRUE, escape = FALSE) %>%
+             row.names=FALSE, align=c("l","c","c","c","c","c"), booktabs = TRUE) %>% #, escape = FALSE) %>%
     kable_styling(latex_options = "scale_down", full_width = FALSE) %>% 
   footnote( "Note: This table includes all participants who are eligible for the stand alone COVID-19 Survey. Eligibility is defined as having donated a biospecimen collection on or after July 5th, 2023.", 
             general_title = "",
@@ -894,7 +894,7 @@ Covid_time <- Covid_time %>%
 
 knitr::kable(Covid_time, 
              caption='Table 3.2 Baseline COVID Survey Completion Length (in minutes) among Submitted COVID-19 Surveys',
-             row.names=FALSE, align=c("l","c","c"), booktabs = TRUE, escape = FALSE) %>%
+             row.names=FALSE, align=c("l","c","c"), booktabs = TRUE) %>% #, escape = FALSE
   add_indent(c(1:(nrow(Covid_time)-1))) %>% 
     kable_styling(latex_options = "scale_down", full_width = FALSE)  %>% 
   footnote("To determine the length of COVID-19 Survey questions, only those who completed the stand alone COVID-19 Survey were included in this table. Those that completed the COVID-19 survey questions within the baseline biospecimen survey were not included.",
