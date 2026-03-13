@@ -337,7 +337,6 @@ ggplot(rca_date_counts, aes(x = as.Date(occ_date), y=n)) +
   scale_x_date(name = "Month and Year", date_labels = "%m-%y", date_breaks = "4 weeks",
                limits = c(as.Date("2022-05-09"), as.Date(currentDate-7)), expand = c(0,0)) +
   ggtitle(label = "Figure 1: Number of Cancer Occurrences \n by Cancer Diagnosis Month and Year") +
-  labs(color = "Kit Status") +
   theme(panel.background = element_blank(),
         legend.title = element_text(size = 8),
         legend.position = "bottom",
@@ -358,7 +357,6 @@ ggplot(rca_date_counts, aes(x = as.Date(occ_date), y=cumsum(n))) +
   scale_x_date(name = "Month and Year", date_labels = "%m-%y", date_breaks = "4 weeks",
                limits = c(as.Date("2022-05-09"), as.Date(currentDate-7)), expand = c(0,0)) +
   ggtitle(label = "Figure 2: Cumulative Number of Cancer Occurrences \n by Cancer Diagnosis Month and Year") +
-  labs(color = "Kit Status") +
   theme(panel.background = element_blank(),
         legend.title = element_text(size = 8),
         legend.position = "bottom",
@@ -400,11 +398,15 @@ knitr::kable(occ_by_Verif_cross,
 
 occ_by_site <- create_tbl_cross(cancer_loc, "Site", 'd_793981056', "row", "Site", "Number of Cancer Occurences", "ifany", "Missing", "Total Verified Participants")
 
+
+#Number of occurrences header
+header_occ <- ncol(occ_by_site)-2
+
 knitr::kable(occ_by_site, 
              caption='Table 5. Number of Cancer Occurrences Among Verified Participants \n as Identified by RCA', 
              row.names=FALSE,align=c("l", rep("c", 3)), booktabs = TRUE) %>%  
   add_indent(seq(1, nrow(occ_by_site) - 1)) %>% 
-  add_header_above(c(" " = 1, "Number of Cancer Occurrences" = 2,  " "=1)) %>% 
+  add_header_above(c(" " = 1, "Number of Cancer Occurrences" = header_occ,  " "=1)) %>% 
   kable_styling(latex_options = "scale_down")
 
 ```
@@ -418,8 +420,8 @@ knitr::kable(occ_by_site,
 ```{r Diagnosis_vs_Verif_Date, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
 Diag_Verif <- cancer_loc %>%
-  mutate(months_diff =difftime(as.Date(d_345545422), as.Date(d_914594314), units = "weeks")*.25,
-         # assuming 4 weeks per month for consistency
+  mutate(months_diff = difftime(as.Date(d_345545422), as.Date(d_914594314), unit="weeks")/4,
+         # assuming 4 weeks per month for consistency -- time_length in months throws counts off significantly
          # Need difftime to know whether the difference is positive or negative
          time_diff = case_when( months_diff < 0 ~ "Prior to verification",
                                 months_diff < 7 ~ "Within 6 months post-verification",
