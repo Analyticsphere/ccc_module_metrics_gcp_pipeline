@@ -7,6 +7,7 @@ header-includes:
   \usepackage{placeins} 
   \usepackage{booktabs}
   \usepackage{pdflscape}
+  \AtBeginEnvironment{tabular}{\small}
   
 output:
   pdf_document:
@@ -303,6 +304,7 @@ cross__table <- data %>%
     label=list(!!sym(row_var) ~ row_name,
                !!sym(colm_var) ~ column_name),
     missing="ifany",
+     missing_text="0 (0.00%)",
     margin_text="Total") 
 
 #Ops doesn't like the grouped by variables on a different line the column labels
@@ -325,6 +327,8 @@ create_tbl_cross2 <- function(data, row_var, colm_var, row_or_col_pct, row_name,
                    !!sym(colm_var) ~ column_name),
       percent = row_or_col_pct,
       digits = c(0, 2),
+      missing="ifany",
+            missing_text="0 (0.00%)",
       margin_text = margin_text
     )
   
@@ -1295,50 +1299,20 @@ knitr::kable(QOL_by_race_df,
 
 ```{r QOL_By_Race_And_Sex, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
-m1_comp = m1_comp %>%  mutate(sex_race= case_when(sex=="Female" & multi_racial==1 ~ "Female: Multi-Racial",
-                                            sex=="Female" & D_384191091_D_384191091_D_583826374==1 ~ "Female: American Indian or Native American",
-                                            sex=="Female" & D_384191091_D_384191091_D_636411467==1 ~ "Female: Asian/Asian American",
-                                            sex=="Female" & D_384191091_D_384191091_D_458435048==1 ~ "Female: Black, African American, or African",
-                                            sex=="Female" & D_384191091_D_384191091_D_706998638==1 ~ "Female: Hispanic, Latino, or Spanish",
-                                            sex=="Female" & D_384191091_D_384191091_D_973565052==1 ~ "Female: Middle Eastern or North African",
-                                            sex=="Female" & D_384191091_D_384191091_D_586825330==1 ~ "Female: Hawaiian or Pacific Islander",
-                                            sex=="Female" & D_384191091_D_384191091_D_412790539==1 ~ "Female: White",
-                                            sex=="Female" & (D_384191091_D_384191091_D_807835037==1 | !is.na(D_384191091_D_747350323)) ~ "Female: Other",
-                                            sex=="Female" & D_384191091_D_384191091_D_746038746==1 ~ "Female: Prefer Not to Answer",
-                                            
-                                            sex=="Male" & multi_racial==1 ~ "Male: Multi-Racial",
-                                            sex=="Male" & D_384191091_D_384191091_D_583826374==1 ~ "Male: American Indian or Native American",
-                                            sex=="Male" & D_384191091_D_384191091_D_636411467==1 ~ "Male: Asian/Asian American",
-                                            sex=="Male" & D_384191091_D_384191091_D_458435048==1 ~ "Male: Black, African American, or African",
-                                            sex=="Male" & D_384191091_D_384191091_D_706998638==1 ~ "Male: Hispanic, Latino, or Spanish",
-                                            sex=="Male" & D_384191091_D_384191091_D_973565052==1 ~ "Male: Middle Eastern or North African",
-                                            sex=="Male" & D_384191091_D_384191091_D_586825330==1 ~ "Male: Hawaiian or Pacific Islander",
-                                            sex=="Male" & D_384191091_D_384191091_D_412790539==1 ~ "Male: White",
-                                            sex=="Male" & (D_384191091_D_384191091_D_807835037==1 | !is.na(D_384191091_D_747350323)) ~ "Male: Other",
-                                            sex=="Male" & D_384191091_D_384191091_D_746038746==1 ~ "Male: Prefer Not to Answer",
-                                            
-                                            sex=="Unknown" & multi_racial==1 ~ "Unknown: Multi-Racial",
-                                            sex=="Unknown" & D_384191091_D_384191091_D_583826374==1 ~ "Unknown: American Indian or Native American",
-                                            sex=="Unknown" & D_384191091_D_384191091_D_636411467==1 ~ "Unknown: Asian/Asian American",
-                                            sex=="Unknown" & D_384191091_D_384191091_D_458435048==1 ~ "Unknown: Black, African American, or African",
-                                            sex=="Unknown" & D_384191091_D_384191091_D_706998638==1 ~ "Unknown: Hispanic, Latino, or Spanish",
-                                            sex=="Unknown" & D_384191091_D_384191091_D_973565052==1 ~ "Unknown: Middle Eastern or North African",
-                                            sex=="Unknown" & D_384191091_D_384191091_D_586825330==1 ~ "Unknown: Hawaiian or Pacific Islander",
-                                            sex=="Unknown" & D_384191091_D_384191091_D_412790539==1 ~ "Unknown: White",
-                                            sex=="Unknown" & (D_384191091_D_384191091_D_807835037==1 | !is.na(D_384191091_D_747350323)) ~ "Unknown: Other",
-                                            sex=="Unknown" & D_384191091_D_384191091_D_746038746==1 ~ "Unknown: Prefer Not to Answer",
-                                                     TRUE  ~ "Skipped this question"))
 
 Comp_by_sex_race <- m1_comp %>% filter(qolcomplt!="Not Eligible") %>% 
   mutate(qolcomplt = factor(qolcomplt, levels=c("Not Started", "Started", "Submitted"))) %>% 
-  select(sex_race, qolcomplt) %>% dplyr::arrange(sex_race,qolcomplt) %>% 
+  tbl_strata(
+    strata = sex, # stratified by Sex
+    .tbl_fun = ~ .x %>%
   tbl_cross(
-  row = sex_race,
+  row = race,
   col = qolcomplt,
-  label = list(qolcomplt ~ "Survey Completion",sex_race~"Sex and Race"),
+  label = list(qolcomplt ~ "Survey Completion",race~"Sex and Race"),
   percent = "row",
   digits=c(0,2),
   margin_text="Total QOL Eligible Participants") 
+  )
 
 
 Comp_by_sex_race <- Comp_by_sex_race %>%
@@ -1349,7 +1323,11 @@ Comp_by_sex_race <- Comp_by_sex_race %>%
 reduced <- all_data %>% filter(d_949302066 != 231311385 & qolcomplt!="Not Eligible") # Those who are eligible for PROMIS but didn't complete mod1 yet
 
 Comp_by_sex_race %>% kable_styling(latex_options = c("scale_down","hold_position")) %>% 
-  footnote(general = paste0('In order to determine race, Module 1 must first be completed. There are ', dim(reduced)[[1]] , ' QOL eligible participants that have either not started or not finished Module 1.'),general_title = "Note: ", footnote_as_chunk = T)
+  landscape() %>% 
+  footnote(general = paste0('In order to determine race, Module 1 must first be completed. There are ',
+                            dim(reduced)[[1]] , 
+                            ' QOL eligible participants that have either not started or not finished Module 1.'),
+           general_title = "Note: ", footnote_as_chunk = T)
 
 
 ```
@@ -2027,14 +2005,18 @@ knitr::kable(DHQ_by_race_df,
 
 DHQ_Comp_by_sex_race <- m1_comp %>% filter(dhq_status!="Not Eligible") %>% 
   mutate(dhq_status = factor(dhq_status, levels=c("Not Started", "Started", "Submitted"))) %>% 
-  select(sex_race, dhq_status) %>% dplyr::arrange(sex_race,dhq_status) %>% 
+  tbl_strata(
+    strata = sex, # stratified by Sex
+    .tbl_fun = ~ .x %>%
   tbl_cross(
-  row = sex_race,
+  row = race,
   col = dhq_status,
-  label = list(dhq_status ~ "Survey Completion",sex_race~"Sex and Race"),
+  label = list(dhq_status ~ "Survey Completion",race~"Sex and Race"),
   percent = "row",
   digits=c(0,2),
-  margin_text="Total DHQ Eligible Participants") 
+  margin_text="Total DHQ Eligible Participants")
+  )
+
 
 
 DHQ_Comp_by_sex_race <- DHQ_Comp_by_sex_race %>%
@@ -2045,7 +2027,11 @@ DHQ_Comp_by_sex_race <- DHQ_Comp_by_sex_race %>%
 reduced <- all_data %>% filter(d_949302066 != 231311385 & dhq_status!="Not Eligible") # Those who are eligible for PROMIS but didn't complete mod1 yet
 
 DHQ_Comp_by_sex_race %>% kable_styling(latex_options = c("scale_down","hold_position")) %>% 
-  footnote(general = paste0('In order to determine race, Module 1 must first be completed. There are ', dim(reduced)[[1]] , ' DHQ eligible participants that have either not started or not finished Module 1.'),general_title = "Note: ", footnote_as_chunk = T)
+  landscape() %>% 
+  footnote(general = paste0('In order to determine race, Module 1 must first be completed. There are ',
+                            dim(reduced)[[1]] , 
+                            ' DHQ eligible participants that have either not started or not finished Module 1.'),
+           general_title = "Note: ", footnote_as_chunk = T)
 
 
 ```
@@ -2461,14 +2447,17 @@ knitr::kable(CSH_by_race_df,
 
 CSH_Comp_by_sex_race <- m1_comp %>% filter(CSH_status!="Not Eligible") %>% 
   mutate(CSH_status = factor(CSH_status, levels=c("Not Started", "Started", "Submitted"))) %>% 
-  select(sex_race, CSH_status) %>% dplyr::arrange(sex_race,CSH_status) %>% 
+  tbl_strata(
+    strata = sex, # stratified by Sex
+    .tbl_fun = ~ .x %>%
   tbl_cross(
-  row = sex_race,
+  row = race,
   col = CSH_status,
-  label = list(CSH_status ~ "Survey Completion",sex_race~"Sex and Race"),
+  label = list(CSH_status ~ "Survey Completion",race~"Sex and Race"),
   percent = "row",
   digits=c(0,2),
   margin_text="Total CSH Eligible Participants") 
+  )
 
 
 CSH_Comp_by_sex_race <- CSH_Comp_by_sex_race %>%
@@ -2479,7 +2468,11 @@ CSH_Comp_by_sex_race <- CSH_Comp_by_sex_race %>%
 reduced <- all_data %>% filter(d_949302066 != 231311385 & CSH_status!="Not Eligible") # Those who are eligible for PROMIS but didn't complete mod1 yet
 
 CSH_Comp_by_sex_race %>% kable_styling(latex_options = c("scale_down","hold_position")) %>% 
-  footnote(general = paste0('In order to determine race, Module 1 must first be completed. There are ', dim(reduced)[[1]] , ' CSH eligible participants that have either not started or not finished Module 1.'),general_title = "Note: ", footnote_as_chunk = T)
+  landscape() %>% 
+  footnote(general = paste0('In order to determine race, Module 1 must first be completed. There are ',
+                            dim(reduced)[[1]] , 
+                            ' CSH eligible participants that have either not started or not finished Module 1.'),
+           general_title = "Note: ", footnote_as_chunk = T)
 
 
 ```
@@ -3156,14 +3149,17 @@ knitr::kable(ROI_by_race_df,
 
 ROI_Comp_by_sex_race <- m1_comp %>% filter(roicomplt!="Not Eligible") %>%
   mutate(roicomplt = factor(roicomplt, levels=c("Not Started", "Started", "Submitted"))) %>%
-  select(sex_race, roicomplt) %>% dplyr::arrange(sex_race,roicomplt) %>%
+  tbl_strata(
+    strata = sex, # stratified by Sex
+    .tbl_fun = ~ .x %>%
   tbl_cross(
-  row = sex_race,
+  row = race,
   col = roicomplt,
-  label = list(roicomplt ~ "Survey Completion",sex_race~"Sex and Race"),
+  label = list(roicomplt ~ "Survey Completion",race~"Sex and Race"),
   percent = "row",
   digits=c(0,2),
   margin_text="Total ROI Pref Eligible Participants")
+  )
 
 
 ROI_Comp_by_sex_race <- ROI_Comp_by_sex_race %>%
@@ -3174,7 +3170,11 @@ ROI_Comp_by_sex_race <- ROI_Comp_by_sex_race %>%
 reduced <- all_data %>% filter(d_949302066 != 231311385 & roicomplt!="Not Eligible") # Those who are eligible for ROI but didn't complete mod1 yet
 
 ROI_Comp_by_sex_race %>% kable_styling(latex_options = c("scale_down","hold_position")) %>%
-  footnote(general = paste0('In order to determine race, Module 1 must first be completed. There are ', dim(reduced)[[1]] , ' ROI eligible participants that have either not started or not finished Module 1.'),general_title = "Note: ", footnote_as_chunk = T)
+  landscape() %>% 
+  footnote(general = paste0('In order to determine race, Module 1 must first be completed. There are ', 
+                            dim(reduced)[[1]] , 
+                            ' ROI eligible participants that have either not started or not finished Module 1.'),
+           general_title = "Note: ", footnote_as_chunk = T)
 
 
 ```
@@ -3384,8 +3384,8 @@ ROI_lang <- results_list$ROI_lang_c
 ```{r Svy_Lang_Diff, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
 #must match the order for survey_acronyms in the chunk below
-survey_dfs <- list(m1_lang, m2_lang, m3_lang, m4_lang, BUM_lang, BU_lang, CV_lang, Mens_lang, MW_lang, QOL_lang, DHQ_lang, CSH_lang, CES_lang, ROI_lang
-                   ) 
+survey_dfs <- list(m1_lang, m2_lang, m3_lang, m4_lang, BUM_lang, BU_lang, CV_lang, Mens_lang, 
+                   MW_lang, QOL_lang, DHQ_lang, CSH_lang, CES_lang, ROI_lang) 
 
 # Initialize an empty data frame to store results for all participants
 all_scenarios <- data.frame(Connect_ID = character(), Flag = character(), Pref_lang = character(), stringsAsFactors = FALSE)
@@ -3409,16 +3409,31 @@ for (current_df in survey_dfs) {
 # Summarize the scenario for each participant
 final_scenarios <- all_scenarios %>%
   group_by(Connect_ID) %>%
-  summarize(
-    Flag_set = unique(na.omit(Flag)), # Remove NAs from Flags
-    Pref_lang_set = unique(Pref_lang),
-    scenario = case_when(
-      length(Flag_set) == 0 ~ "No survey language preference has been made", 
-      all(Flag_set == Pref_lang_set) ~ "Survey Flags and Preferred Language Consistent",
-      any(Flag_set != Pref_lang_set) ~ "Any Survey Flag Inconsistent with Preferred Language"
-    )
+  reframe(
+    Flag_set       = list(unique(na.omit(Flag))),
+    Pref_lang_set  = list(unique(na.omit(Pref_lang))),
+    scenario = {
+      F <- Flag_set[[1]]       # populated survey languages
+      P <- Pref_lang_set[[1]]  # populated preferred languages
+
+      case_when(
+        # CASE 1: No survey language flags (regardless of preference language)
+        length(F) == 0 ~ 
+          "No Survey Language Preference Indicated",
+
+        # CASE 2: At least one survey lang exists → check consistency based on populated values only
+        # Consistent if the sets match (ignoring NAs)
+        # Some participants finished surveys before there was a language setting 
+        length(F) > 0 & all(F %in% P) & all(P %in% F) ~
+          "Survey Flags and Preferred Language Consistent",
+
+        # CASE 3: At least one mismatch → inconsistent
+        TRUE ~ "Any Survey Flag Inconsistent with Preferred Language"
+      )
+    }
   ) %>%
   ungroup()
+
 
 # Summarize the counts for each scenario
 scenario_counts <- final_scenarios %>%
@@ -3428,7 +3443,8 @@ scenario_counts <- final_scenarios %>%
 
 knitr::kable(scenario_counts,
              caption = "Table 9.2. Consistency of Language Choice in Survey Completion",
-             row.names = FALSE, align = c("l", "c"), digits = 2, booktabs = TRUE) %>%
+             row.names = FALSE, align = c("l", "c"), digits = 2, 
+             format.args = list(big.mark = ","), booktabs = TRUE) %>%
   kable_styling(latex_options = "scale_down")  %>%  #landscape() %>% 
   footnote(general="Those who do not start any surveys will not have survey flags, and thus not be counted in this table. Those that start but do not complete a survey will still choose a survey language.",
            general_title = "",
