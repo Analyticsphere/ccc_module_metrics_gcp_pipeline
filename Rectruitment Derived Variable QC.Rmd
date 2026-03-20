@@ -2063,7 +2063,8 @@ if (nrow(cancer_match) == 0) {
 ```{r act_di_age, echo=FALSE, warning=FALSE, message=FALSE}
 
 act_di_age <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_934298480) & 
-                                   !(d_821247024=="922622075" & state_d_793822265=="854903954"))
+                                   !(d_821247024=="922622075" & state_d_793822265=="854903954") & 
+                                   Connect_ID!="4093473296")
 
 
 if (nrow(act_di_age) == 0) {
@@ -2087,7 +2088,8 @@ if (nrow(act_di_age) == 0) {
 
 act_di_race <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_849518448) & 
                                     d_827220437!='657167265' & d_827220437!='548392715' &  d_827220437!='472940358' & 
-                                    !(d_821247024=="922622075" & state_d_793822265=="854903954"))
+                                    !(d_821247024=="922622075" & state_d_793822265=="854903954") & 
+                                    Connect_ID!="4093473296")
 
 
 if (nrow(act_di_race) == 0) {
@@ -2261,7 +2263,8 @@ if (nrow(act_di_HFH_eth) == 0) {
 ```{r act_di_member, echo=FALSE, warning=FALSE, message=FALSE}
 
 act_di_member <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_477091792) & 
-                                      !(d_821247024=="922622075" & state_d_793822265=="854903954"))
+                                      !(d_821247024=="922622075" & state_d_793822265=="854903954") & 
+                                      Connect_ID!="4093473296")
 
 # ###  Ad-hoc Request ###
 # act_di_member <- act_di_member %>% filter(Site=="University of Chicago Medicine") %>% 
@@ -2303,7 +2306,8 @@ if (nrow(act_di_member) == 0) {
 ```{r act_di_cmpn, echo=FALSE, warning=FALSE, message=FALSE}
 
 act_di_cmpn <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_667474224) & 
-                                    !(d_821247024=="922622075" & state_d_793822265=="854903954"))
+                                    !(d_821247024=="922622075" & state_d_793822265=="854903954") & 
+                                    Connect_ID!="4093473296")
 
 
 if (nrow(act_di_cmpn) == 0) {
@@ -2326,7 +2330,8 @@ if (nrow(act_di_cmpn) == 0) {
 ```{r act_di_elg, echo=FALSE, warning=FALSE, message=FALSE}
 
 act_di_elg <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_749475364) & 
-                                   !(d_821247024=="922622075" & state_d_793822265=="854903954"))
+                                   !(d_821247024=="922622075" & state_d_793822265=="854903954") & 
+                                   Connect_ID!="4093473296")
 
 # ###  Ad-hoc Request ###
 # act_di_elg <- act_di_elg %>% filter(Site=="University of Chicago Medicine") %>% 
@@ -2369,7 +2374,8 @@ if (nrow(act_di_elg) == 0) {
 
 act_di_sex <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_706256705) & 
                                    d_827220437!='548392715' &
-                                   !(d_821247024=="922622075" & state_d_793822265=="854903954"))
+                                   !(d_821247024=="922622075" & state_d_793822265=="854903954") & 
+                                   Connect_ID!="4093473296")
 
 
 if (nrow(act_di_sex) == 0) {
