@@ -102,7 +102,7 @@ chunk3 <- tbl(con, "participants", page_size = 1000) %>%
                 state_d_444699761, state_d_188797763, state_d_953614051, state_d_793822265, state_d_147176963, state_d_557461333,  state_d_711794630, 
                 state_d_679832994, state_d_559534463, state_d_570452130, state_d_629484663, state_d_547895941,
                 d_685002411_d_936015433, d_685002411_d_688142378, d_685002411_d_101763809, d_685002411_d_525277409, d_685002411_d_671903816,
-                d_761057722, d_207613315, d_163847117, state_d_956485028) %>%
+                d_761057722, d_207613315, d_163847117, state_d_956485028, state_d_148197146) %>%
   as_tibble() %>% 
   distinct(token, .keep_all = TRUE) #somehow pulling duplicate rows
 
@@ -137,7 +137,7 @@ partsbq <-
 
 
 
-base_vars= left_join(partsbq, biobq, by="Connect_ID")
+base_vars= left_join(partsbq, biobq, by=c("Connect_ID", "token"))
 
 
 #################
@@ -1343,7 +1343,7 @@ reinvite_date_type <- partsbq %>%  filter(!is.na(d_439351436) & is.na(d_28002166
   select(Site, Connect_ID, token, d_454445267, d_430551721, Verif_Status, d_914594314, d_280021666, d_439351436) %>% 
   dplyr::rename('D/T Consented' = d_454445267,
                 'D/T Verified' = d_914594314,
-                'Re-Invitation Campaign Type' = d_280021666, 
+                'Campaign Type' = d_280021666, 
                 'D/Time Re-Invited' = d_439351436,
                 'Date/T UP Submitted' =  d_430551721)
 
@@ -1355,7 +1355,7 @@ if (nrow(reinvite_date_type) < 50) {
 } else {
   cat(paste0(
     "There are ", nrow(reinvite_date_type), " rows. This has been made into a separate XLXS file called \n",
-    "'Biospecimen_QC_Rule46_Errors", currentDate, "_boxfolder_", boxfolder, ".xlsx' \n"
+    "Recruitment_QC_Rule46_Errors", currentDate, "_boxfolder_", boxfolder, ".xlsx' \n"
   ))
   
   ## These are failing in GC bc they're not UTF-8 characters, this converts the columns
@@ -2513,6 +2513,31 @@ if (nrow(AB2) == 0) {
     kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
 }
 
+if (nrow(AB2) == 0) {
+  cat("No errors\n")
+}
+
+if (nrow(AB2) < 50) {
+    AB2 <- AB2 %>% select(Site, Connect_ID, token, d_761057722, d_207613315, d_163847117) %>%  safe_arrange(Site)
+  
+  colnames(AB2) <- c("Site", "Connect ID", 'token', 'UTM_Source', "UTM_Medium", "UTM_Campaign")
+  
+  knitr::kable(AB2) %>%
+    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
+} else {
+  cat(paste0(
+    "There are ", nrow(AB2), " rows. This has been made into a separate XLXS file called \n",
+    "Recruitment_Derived_QC_Rule88_Errors", currentDate, "_boxfolder_", boxfolder, ".xlsx' \n"
+  ))
+  
+  ## These are failing in GC bc they're not UTF-8 characters, this converts the columns
+  AB2[] <- lapply(AB2, function(x) {
+    if (is.character(x)) iconv(x, to = "UTF-8", sub = "byte") else x
+  })
+  
+  openxlsx::write.xlsx(AB2,glue("Recruitment_Derived_QC_Rule88_Errors{currentDate}_boxfolder_{boxfolder}.xlsx"),row.names = F,na="")
+}
+
 ```
 
 
@@ -2659,43 +2684,97 @@ if (nrow(Man_OutRch) == 0) {
 
 ```
 
-<!-- \FloatBarrier -->
-  <!-- ## 95. If the ROI Pref Survey Status flag is null, there should be no survey data. -->
+## 95.	If verified, update recruit type should be sent. This rule allows for a lag of 5 days post-verification.
+```{r Update_Recr, echo=FALSE, warning=FALSE, message=FALSE}
+
+update_recr <- base_vars %>% filter(d_821247024 == 197316935 & is.na(state_d_793822265) &
+                                    as.numeric(difftime(currentDate, as.Date(d_914594314), units = "days"))>5)
+
+
+if (nrow(update_recr) == 0) {
+  cat("No errors\n")
+} else {
   
-  <!-- ```{r survey_data_m1, echo=FALSE, warning=FALSE, message=FALSE} -->
+  update_recr <- update_recr %>% select(Site, Connect_ID, token, d_914594314, state_d_793822265) %>%  safe_arrange(Site)
   
+  colnames(update_recr) <- c("Site", "Connect ID", 'token', 'RcrtV_VerificationTm', "RcrtV_UpdateRecType")
   
-  <!-- roi_null_bq <- -->
-  <!-- "SELECT Connect_ID, -->
-<!-- CASE -->
-<!--     WHEN d_827220437 = '125001209' THEN 'Kaiser Permanente Colorado' -->
-<!--     WHEN d_827220437 = '472940358' THEN 'Baylor Scott & White Health' -->
-<!--     WHEN d_827220437 = '300267574' THEN 'Kaiser Permanente Hawaii' -->
-<!--     WHEN d_827220437 = '303349821' THEN 'Marshfield Clinic Health System' -->
-<!--     WHEN d_827220437 = '327912200' THEN 'Kaiser Permanente Georgia' -->
-<!--     WHEN d_827220437 = '452412599' THEN 'Kaiser Permanente Northwest' -->
-<!--     WHEN d_827220437 = '517700004' THEN 'National Cancer Institute' -->
-<!--     WHEN d_827220437 = '531629870' THEN 'HealthPartners' -->
-<!--     WHEN d_827220437 = '548392715' THEN 'Henry Ford Health System' -->
-<!--     WHEN d_827220437 = '657167265' THEN 'Sanford Health' -->
-<!--     WHEN d_827220437 = '809703864' THEN 'University of Chicago Medicine' -->
-<!--     ELSE NULL -->
-<!-- END AS Site -->
-<!-- FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` -->
-<!-- where d_278023676 is null and -->
-<!-- Connect_ID in (select Connect_ID from `nih-nci-dceg-connect-prod-6d04.FlatConnect.preference2025` ) -->
-<!-- order by Site" -->
+  knitr::kable(update_recr) %>%
+    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
+}
+
+```
+
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, include=FALSE}
+
+## IF this ends up being a custom rule
+
+## 95. If participants are “not active”, they cannot have verification completed; this excludes those with duplicate type 'Not Active recruit signed in as Passive recruit' and 'Not Active recruit signed in as an Active recruit' 
+
+Non_act_verif <- base_vars %>%  filter(d_512820379 == 180583933 & 
+              #verif 'complete'
+            (d_821247024 %in% c(219863910, 922622075, 197316935) &
+             #exclude those with certain duplicate statuses
+            !(state_d_148197146 %in% c(283434980, 866029623))))
+
+
+if (nrow(Non_act_verif) == 0) {
+  cat("No errors\n")
+} else {
   
-  <!-- roi_null_bq_table <- bq_project_query(project, roi_null_bq) -->
-  <!-- roi_null <- bq_table_download(roi_null_bq_table, bigint = "integer64") -->
+  Non_act_verif <- Non_act_verif  %>% 
+    select(Site, Connect_ID, token, d_821247024, state_d_148197146)  %>%  safe_arrange(Site)
+  colnames(Non_act_verif) <- c("Site", "Connect ID", "token", "Verification", "DuplicateType")
   
-  
-  <!-- if (nrow(roi_null) == 0) { -->
-      <!--   cat("No errors\n") -->
-      <!-- } else { -->
-          <!--   knitr::kable(roi_null) %>% -->
-          <!--     kable_styling(latex_options = "scale_down") -->
-          <!-- } -->
-  
-  
-  <!-- ``` -->
+  knitr::kable(Non_act_verif) %>%
+    kable_styling(latex_options = "scale_down")
+}
+
+```
+
+
+
+
+```{r ROI_Pref, echo=FALSE, warning=FALSE, message=FALSE, include=FALSE}
+
+#When survey becomes available in BQ
+
+
+#\FloatBarrier
+## 96. If the ROI Pref Survey Status flag is null, there should be no survey data.
+
+roi_null_bq <-
+"SELECT Connect_ID,
+CASE
+    WHEN d_827220437 = '125001209' THEN 'Kaiser Permanente Colorado'
+    WHEN d_827220437 = '472940358' THEN 'Baylor Scott & White Health'
+    WHEN d_827220437 = '300267574' THEN 'Kaiser Permanente Hawaii'
+    WHEN d_827220437 = '303349821' THEN 'Marshfield Clinic Health System'
+    WHEN d_827220437 = '327912200' THEN 'Kaiser Permanente Georgia'
+    WHEN d_827220437 = '452412599' THEN 'Kaiser Permanente Northwest'
+    WHEN d_827220437 = '517700004' THEN 'National Cancer Institute'
+    WHEN d_827220437 = '531629870' THEN 'HealthPartners'
+    WHEN d_827220437 = '548392715' THEN 'Henry Ford Health System'
+    WHEN d_827220437 = '657167265' THEN 'Sanford Health'
+    WHEN d_827220437 = '809703864' THEN 'University of Chicago Medicine'
+    ELSE NULL
+END AS Site
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants`
+where d_278023676 is null and
+Connect_ID in (select Connect_ID from `nih-nci-dceg-connect-prod-6d04.FlatConnect.preference2025` )
+order by Site"
+
+# roi_null_bq_table <- bq_project_query(project, roi_null_bq)
+# roi_null <- bq_table_download(roi_null_bq_table, bigint = "integer64")
+# 
+# 
+# if (nrow(roi_null) == 0) {
+#   cat("No errors\n")
+# } else {
+#   knitr::kable(roi_null) %>%
+#     kable_styling(latex_options = "scale_down")
+# }
+
+
+```
