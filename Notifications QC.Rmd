@@ -1975,10 +1975,10 @@ if (nrow(BL_Inct_sms_rem) > 50) {
 
 
 
-
+\FloatBarrier
+# The same participant received multiple Request a mw kit reminders email Reminders on the same day. 
 ```{r Request_MW_Email, echo=FALSE, message=FALSE, warning=FALSE}
-#\FloatBarrier
-## The same participant received multiple Request a mw kit reminders email Reminders on the same day. 
+
 
 Request_MW_Email <- "SELECT DISTINCT p.Connect_ID, 
                 DATE(notification_time) AS repeat_date, 
@@ -2012,10 +2012,10 @@ if (nrow(Request_MW_Email_rem) > 50) {
 
 
 
-
-```{r Request_MW_sms, echo=FALSE, message=FALSE, warning=FALSE}
 # \FloatBarrier
-# # The same participant received multiple Request a mw kit reminders SMS Reminders on the same day. 
+# The same participant received multiple Request a mw kit reminders SMS Reminders on the same day.
+```{r Request_MW_sms, echo=FALSE, message=FALSE, warning=FALSE}
+ 
 
 Request_MW_sms <- "SELECT DISTINCT p.Connect_ID, 
                 DATE(notification_time) AS repeat_date, 
