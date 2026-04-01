@@ -2500,17 +2500,6 @@ AB2 <- partsbq	%>% filter( !is.na(state_d_956485028) &
                              !(is.na(d_761057722) & is.na(d_207613315) & is.na(d_163847117))) #but not all are missing
 
 
-if (nrow(AB2) == 0) {
-  cat("No errors\n")
-} else {
-  
-  AB2 <- AB2 %>% select(Site, Connect_ID, token, d_761057722, d_207613315, d_163847117) %>%  safe_arrange(Site)
-  
-  colnames(AB2) <- c("Site", "Connect ID", 'token', 'UTM_Source', "UTM_Medium", "UTM_Campaign")
-  
-  knitr::kable(AB2) %>%
-    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
-}
 
 if (nrow(AB2) == 0) {
   cat("No errors\n")

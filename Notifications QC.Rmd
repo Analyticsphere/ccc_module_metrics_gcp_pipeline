@@ -1975,6 +1975,78 @@ if (nrow(BL_Inct_sms_rem) > 50) {
 
 
 
+\FloatBarrier
+# The same participant received multiple Request a mw kit reminders email Reminders on the same day. 
+```{r Request_MW_Email, echo=FALSE, message=FALSE, warning=FALSE}
+
+
+Request_MW_Email <- "SELECT DISTINCT p.Connect_ID, 
+                DATE(notification_time) AS repeat_date, 
+                COUNT(*) AS num_same_day_attempts
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+LEFT JOIN `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
+ON p.token = n.token
+WHERE (category = 'Request a mw kit reminders')
+AND DATE(notification_time) >= (CURRENT_DATE() - 7)
+AND notificationType = 'email'
+GROUP BY Connect_ID, repeat_date
+HAVING COUNT(*) > 1"
+
+Request_MW_Email_table <- bq_project_query(project, Request_MW_Email)
+Request_MW_Email_rem <- bq_table_download(Request_MW_Email_table, bigint = "integer64") #currently 4 - all 2
+
+
+if (nrow(Request_MW_Email_rem) > 50) {
+  cat("There are", nrow(Request_MW_Email_rem), "errors. This table has been made a csv and posted to Box, link in the report intro.")
+  write.csv(Request_MW_Email_rem,glue("{local_drive}Multiple_Request_MW_Email_rem_reminders_{currentDate}_boxfolder_{boxfolder}.csv"),row.names = F,na="")
+} else {
+  if(nrow(Request_MW_Email_rem) == 0) {
+  cat("No errors\n")
+} else {
+  knitr::kable(Request_MW_Email_rem) %>% kable_styling(latex_options = "scale_down")
+}
+}
+
+```
+
+
+
+
+# \FloatBarrier
+# The same participant received multiple Request a mw kit reminders SMS Reminders on the same day.
+```{r Request_MW_sms, echo=FALSE, message=FALSE, warning=FALSE}
+ 
+
+Request_MW_sms <- "SELECT DISTINCT p.Connect_ID, 
+                DATE(notification_time) AS repeat_date, 
+                COUNT(*) AS num_same_day_attempts
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` n
+LEFT JOIN `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` p
+ON p.token = n.token
+WHERE (category = 'Request a mw kit reminders')
+AND DATE(notification_time) >= (CURRENT_DATE() - 7)
+AND notificationType = 'sms'
+GROUP BY Connect_ID, repeat_date
+HAVING COUNT(*) > 1"
+
+Request_MW_sms_table <- bq_project_query(project, Request_MW_sms)
+Request_MW_sms_rem <- bq_table_download(Request_MW_sms_table, bigint = "integer64") #currently 4 - all 2
+
+
+if (nrow(Request_MW_sms_rem) > 50) {
+  cat("There are", nrow(Request_MW_sms_rem), "errors. This table has been made a csv and posted to Box, link in the report intro.")
+  write.csv(Request_MW_sms_rem,glue("{local_drive}Multiple_Request_MW_sms_rem_reminders_{currentDate}_boxfolder_{boxfolder}.csv"),row.names = F,na="")
+} else {
+  if(nrow(Request_MW_sms_rem) == 0) {
+  cat("No errors\n")
+} else {
+  knitr::kable(Request_MW_sms_rem) %>% kable_styling(latex_options = "scale_down")
+}
+}
+
+```
+
+
 
 ```{r Request_MW_Email, echo=FALSE, message=FALSE, warning=FALSE}
 #\FloatBarrier
