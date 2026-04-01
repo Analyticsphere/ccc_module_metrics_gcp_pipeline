@@ -121,17 +121,16 @@ biobq$Connect_ID <- as.numeric(biobq$Connect_ID)
 partsbq <-
   partsbq %>%  mutate(
     Site = case_when(
-      d_827220437 == 125001209 ~ "Kaiser Permanente Colorado",
-      d_827220437 == 472940358 ~ "Baylor Scott & White Health",
-      d_827220437 == 300267574 ~ "Kaiser Permanente Hawaii",
-      d_827220437 == 303349821 ~ "Marshfield Clinic Health System",
-      d_827220437 == 327912200 ~ "Kaiser Permanente Georgia",
-      d_827220437 == 452412599 ~ "Kaiser Permanente Northwest",
-      d_827220437 == 517700004 ~ "National Cancer Institute",
-      d_827220437 == 531629870 ~ "HealthPartners",
-      d_827220437 == 548392715 ~ "Henry Ford Health System",
-      d_827220437 == 657167265 ~ "Sanford Health",
-      d_827220437 == 809703864 ~ "University of Chicago Medicine"
+      d_827220437 == 125001209 ~ "KPCO",
+      d_827220437 == 472940358 ~ "BSWH",
+      d_827220437 == 300267574 ~ "KPHI",
+      d_827220437 == 303349821 ~ "MF",
+      d_827220437 == 327912200 ~ "KPGA",
+      d_827220437 == 452412599 ~ "KPNW",
+      d_827220437 == 531629870 ~ "HP",
+      d_827220437 == 548392715 ~ "HFH",
+      d_827220437 == 657167265 ~ "SF",
+      d_827220437 == 809703864 ~ "UC"
     )
   )
 
@@ -1358,7 +1357,7 @@ if (nrow(reinvite_date_type) < 50) {
     "Recruitment_QC_Rule46_Errors", currentDate, "_boxfolder_", boxfolder, ".xlsx' \n"
   ))
   
-  ## These are failing in GC bc they're not UTF-8 characters, this converts the columns
+  ## These are failing in GCP bc they're not UTF-8 characters, this converts the columns
   reinvite_date_type[] <- lapply(reinvite_date_type, function(x) {
     if (is.character(x)) iconv(x, to = "UTF-8", sub = "byte") else x
   })
@@ -1740,7 +1739,7 @@ if (nrow(reinv_active) < 50) {
     "'Biospecimen_QC_Rule60_Errors", currentDate, "_boxfolder_", boxfolder, ".xlsx'\n"
   ))
   
-  ## These are failing in GC bc they're not UTF-8 characters, this converts the columns
+  ## These are failing in GCP bc they're not UTF-8 characters, this converts the columns
   reinvite_date_type[] <- lapply(reinvite_date_type, function(x) {
     if (is.character(x)) iconv(x, to = "UTF-8", sub = "byte") else x
   })
@@ -2524,13 +2523,20 @@ if (nrow(AB2) < 50) {
   
   knitr::kable(AB2) %>%
     kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
+  
 } else {
+  
+  AB2 <- AB2 %>% select(Site, Connect_ID, token, d_761057722, d_207613315, d_163847117) %>%  safe_arrange(Site)
+  
+  colnames(AB2) <- c("Site", "Connect ID", 'token', 'UTM_Source', "UTM_Medium", "UTM_Campaign")
+  
+  
   cat(paste0(
     "There are ", nrow(AB2), " rows. This has been made into a separate XLXS file called \n",
     "Recruitment_Derived_QC_Rule88_Errors", currentDate, "_boxfolder_", boxfolder, ".xlsx' \n"
   ))
   
-  ## These are failing in GC bc they're not UTF-8 characters, this converts the columns
+  ## These are failing in GC they're not UTF-8 characters, this converts the columns
   AB2[] <- lapply(AB2, function(x) {
     if (is.character(x)) iconv(x, to = "UTF-8", sub = "byte") else x
   })
@@ -2706,11 +2712,9 @@ if (nrow(update_recr) == 0) {
 ```
 
 
-```{r, echo=FALSE, warning=FALSE, message=FALSE, include=FALSE}
-
-## IF this ends up being a custom rule
-
 ## 95. If participants are “not active”, they cannot have verification completed; this excludes those with duplicate type 'Not Active recruit signed in as Passive recruit' and 'Not Active recruit signed in as an Active recruit' 
+
+```{r Non_act_verif, echo=FALSE, warning=FALSE, message=FALSE}
 
 Non_act_verif <- base_vars %>%  filter(d_512820379 == 180583933 & 
               #verif 'complete'
@@ -2719,17 +2723,57 @@ Non_act_verif <- base_vars %>%  filter(d_512820379 == 180583933 &
             !(state_d_148197146 %in% c(283434980, 866029623))))
 
 
+
 if (nrow(Non_act_verif) == 0) {
   cat("No errors\n")
+}
+
+if (nrow(Non_act_verif) < 50) {
+
+    Non_act_verif <- Non_act_verif  %>% 
+    select(Site, Connect_ID, token, d_821247024, state_d_148197146)  %>%  safe_arrange(Site)
+  colnames(Non_act_verif) <- c("Site", "Connect ID", "token", "Verification", "DuplicateType")
+  
+  knitr::kable(Non_act_verif) %>%
+    kable_styling(latex_options = "scale_down")
+  
 } else {
   
   Non_act_verif <- Non_act_verif  %>% 
     select(Site, Connect_ID, token, d_821247024, state_d_148197146)  %>%  safe_arrange(Site)
   colnames(Non_act_verif) <- c("Site", "Connect ID", "token", "Verification", "DuplicateType")
   
-  knitr::kable(Non_act_verif) %>%
-    kable_styling(latex_options = "scale_down")
+    #Convert output from cids to English
+  Non_act_verif <- Non_act_verif %>%
+    mutate(across(everything(), ~ case_when(
+      . == 875007964 ~ "Not yet verified",
+      . == 197316935 ~ "Verified",
+      . == 219863910 ~ "Cannot be verified",
+      . == 922622075 ~ "Duplicate",
+      . == 160161595 ~ "Outreach timed out",
+      . == 290379732 ~ "No Longer Enrolling",
+      . == 638335430 ~ "Active recruit signed in as Passive recruit",
+      . == 283434980 ~ "Not Active recruit signed in as Passive recruit",
+      . == 866029623 ~ "Not Active recruit signed in as an Active recruit",
+      . == 654558118 ~ "Participant already enrolled",
+      . == 979256174 ~ "Passive recruit signed in as Active recruit",
+      . == 696650324 ~ "Change in Eligibility Status",
+      TRUE ~ as.character(.)
+    )))
+  
+  cat(paste0(
+    "There are ", nrow(Non_act_verif), " rows. This has been made into a separate XLXS file called \n",
+    "Recruitment_Derived_QC_Rule95_Errors", currentDate, "_boxfolder_", boxfolder, ".xlsx' \n"
+  ))
+  
+  ## These are failing in GC they're not UTF-8 characters, this converts the columns
+  Non_act_verif[] <- lapply(Non_act_verif, function(x) {
+    if (is.character(x)) iconv(x, to = "UTF-8", sub = "byte") else x
+  })
+  
+  openxlsx::write.xlsx(Non_act_verif,glue("Recruitment_Derived_QC_Rule95_Errors{currentDate}_boxfolder_{boxfolder}.xlsx"),row.names = F,na="")
 }
+
 
 ```
 
