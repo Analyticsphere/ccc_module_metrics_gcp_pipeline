@@ -6,7 +6,7 @@ FROM rocker/tidyverse:4.4.3
 ENV PATH="$PATH:/root/bin:/usr/local/lib"
 
 # Install TinyTeX and necessary LaTeX packages
-RUN Rscript -e 'tinytex::install_tinytex(bundle = "TinyTeX-1")' && \
+RUN Rscript -e 'tinytex::install_tinytex(bundle = "TinyTeX-1-linux-x86_64")' && \
     Rscript -e 'tinytex::tlmgr_install(c( \
       "multirow", "ulem", "environ", "colortbl", "wrapfig", "pdflscape", \
       "tabu", "threeparttable", "threeparttablex", "makecell", "caption", \
