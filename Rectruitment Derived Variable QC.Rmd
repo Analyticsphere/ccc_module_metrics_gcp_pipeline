@@ -2767,15 +2767,11 @@ if (nrow(Non_act_verif) < 50) {
 ```
 
 
+\FloatBarrier
+# 96. If the ROI Pref Survey Status flag is null, there should be no survey data.
 
+```{r ROI_Pref, echo=FALSE, warning=FALSE, message=FALSE}
 
-```{r ROI_Pref, echo=FALSE, warning=FALSE, message=FALSE, include=FALSE}
-
-#When survey becomes available in BQ
-
-
-#\FloatBarrier
-## 96. If the ROI Pref Survey Status flag is null, there should be no survey data.
 
 roi_null_bq <-
 "SELECT Connect_ID,
@@ -2795,19 +2791,26 @@ CASE
 END AS Site
 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants`
 where d_278023676 is null and
-Connect_ID in (select Connect_ID from `nih-nci-dceg-connect-prod-6d04.FlatConnect.preference2025` )
+Connect_ID in (select Connect_ID from `nih-nci-dceg-connect-prod-6d04.FlatConnect.preference2026` )
 order by Site"
 
-# roi_null_bq_table <- bq_project_query(project, roi_null_bq)
-# roi_null <- bq_table_download(roi_null_bq_table, bigint = "integer64")
-# 
-# 
-# if (nrow(roi_null) == 0) {
-#   cat("No errors\n")
-# } else {
-#   knitr::kable(roi_null) %>%
-#     kable_styling(latex_options = "scale_down")
-# }
+roi_null_bq_table <- bq_project_query(project, roi_null_bq)
+roi_null <- bq_table_download(roi_null_bq_table, bigint = "integer64")
+
+
+if (nrow(roi_null) == 0) {
+  cat("No errors\n")
+} else {
+  knitr::kable(roi_null) %>%
+    kable_styling(latex_options = "scale_down")
+}
 
 
 ```
+
+
+
+
+
+
+
