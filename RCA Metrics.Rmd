@@ -591,5 +591,40 @@ ggplot(sub_month, aes(x = as.Date(sub_date), y=n, color=Site)) +
   labs(caption = "Note: This variable was implemented in August 2025, after the start of the RCA data transfers. \n The total number of cases in this graph will not match the total number of cases in the other tables of this report.") +
   theme(plot.caption = element_text(hjust = 0))
 
+
+
+
+
+### Second version of the plot to remove UC Oct 2025 week
+UC_excl <- sub_month %>% filter(n!='174')
+
+#By Count
+ggplot(UC_excl, aes(x = as.Date(sub_date), y=n, color=Site)) +
+  geom_line() + 
+  scale_y_continuous(name = "Number of Occurrences",
+                     limits = c(0, NA),  expand = c(0, 0),            #start at (0,0)
+                     breaks = scales::pretty_breaks(),                # nice spacing
+                     labels = scales::number_format(accuracy = 1)) +  # force integers
+  scale_x_date(name = "Month and Year", date_labels = "%b-%y", date_breaks = "1 month",
+               limits = c(as.Date("2025-07-01"), as.Date(currentDate-7)), expand = c(0,0)) +
+  scale_color_manual(values=c("Baylor Scott and White Health"="#B1C7D9", "KP Colorado"="#164C71", "KP Northwest"="#FDBE19", 
+                              "KP Hawaii"="#565C65", "KP Georgia"= "#3C989E", "Henry Ford"="#2973A5", 
+                              "HealthPartners"="#CC7D15","Marshfield Health Clinic"="#309EBD",
+                              "Sanford Health"="#74B0C7", "University of Chicago Medicine" = "#FBE5B5"),
+                     guide = guide_legend(nrow = 3, byrow = TRUE)) + 
+  labs(color = "Site") +
+  ggtitle(label = "Figure 3.1: Number of Cases Submitted Each Month by Site (Excluding UC 10/2025)") +
+  theme(panel.background = element_blank(),
+        legend.title = element_text(size = 8),
+        legend.position = "bottom",
+        axis.line = element_line(size = 0.2),
+        axis.text.x = element_text(angle = 60, hjust = 1),
+        axis.title.x = element_text(size = 14, face = "bold"),
+        axis.title.y = element_text(size = 14, face = "bold", color = "black"),
+        plot.title = element_text(hjust = 0.5, size = 12, face = "bold")) +
+  guides(fill = guide_legend(nrow = 2, byrow = TRUE)) + 
+  labs(caption = "Note: Cancer cases submitted by UChicago in October 2025 are excluded. See Figure 3 for this information.") +
+  theme(plot.caption = element_text(hjust = 0))
+
 ```
 
