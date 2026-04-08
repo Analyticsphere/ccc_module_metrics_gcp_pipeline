@@ -5,13 +5,13 @@ date: "`r Sys.Date()`"
 header-includes:  
   \usepackage{placeins}
 
-
 output:
   pdf_document:
-  extra_dependencies: ["float"]
-  toc: false
-  keep_tex: yes
-  fig_caption: true
+      extra_dependencies: ["float"]
+      toc: false
+      keep_tex: yes
+      fig_caption: true
+      
 ---
   
   
