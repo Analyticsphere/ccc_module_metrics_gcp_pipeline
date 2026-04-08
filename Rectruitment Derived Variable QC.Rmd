@@ -43,6 +43,7 @@ library(expss)
 library(knitr)
 library(kableExtra)
 library(glue)
+library(openxlsx)
 
 options(tinytex.verbose = TRUE)
 
