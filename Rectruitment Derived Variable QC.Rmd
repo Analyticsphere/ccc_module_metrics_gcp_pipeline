@@ -9,9 +9,9 @@ header-includes:
 output:
   pdf_document:
   extra_dependencies: ["float"]
-toc: false
-keep_tex: yes
-fig_caption: true
+  toc: false
+  keep_tex: yes
+  fig_caption: true
 ---
   
   

@@ -274,10 +274,59 @@ data_tib_all3 <- as_tibble(data_all3)
 
 ```{r cigerette, echo=FALSE, warning=FALSE, message=FALSE}
 
+### Logic:
+# Never a smoker: Ever Smoking = NO OR (Ever Smoking = YES AND # of CIGS [CIG1] <50)
+# Current smoker: Ever Smoking = YES AND # of CIGS [CIG1] >49 AND Smoked in the last month [CIG5] 
+# Former Smoker: Ever Smoking = YES AND  # of CIGS [CIG1] >49 AND Smoked more than a month ago [CIG5]
+# Skipped : Doesnt fall into the other categories
+
+
+# ------------------------------------------------------------------
+# SMOKING - DERIVED (categorical):
+# Logic rules (approved by: M.Gaudet/N.Freedman/C.Abnet - 1/22/26)
+
+# NEVER SMOKER
+# - Ever/Never Smoking = No
+# - OR Ever/Never Smoking = Yes AND Lifetime Cigarettes [CIG1] = 10 or less OR 11–49
+# Rationale: Below threshold for meaningful biological exposure
+
+# CURRENT SMOKER
+# - Ever/Never Smoking = Yes AND Lifetime Cigarettes [CIG1] = 50–99 OR 100+
+#   AND Last Time Smoked [CIG5] = In the past month
+# - OR Ever/Never Smoking = Yes AND Lifetime Cigarettes [CIG1] = 50–99 OR 100+
+#   AND Last Time Smoked [CIG5] = More than a month ago, but within the past year
+# - OR Ever/Never Smoking = Yes AND Lifetime Cigarettes [CIG1] = 50–99 OR 100+
+#   AND CIG5 is missing AND Smoke Now [CIG4] = Yes (rarely / some days / everyday)
+# Rationale: Any smoking within the past year is classified as current smoking
+
+# FORMER SMOKER
+# - Ever/Never Smoking = Yes AND Lifetime Cigarettes [CIG1] = 50–99 OR 100+
+#   AND Last Time Smoked [CIG5] = More than 1 year ago
+# - OR Ever/Never Smoking = Yes AND Lifetime Cigarettes [CIG1] = 50–99 OR 100+
+#   AND CIG5 is missing AND Smoke Now [CIG4] = No, not at all
+# - OR Ever/Never Smoking = Yes AND Lifetime Cigarettes [CIG1] is missing
+#   AND Smoke Now [CIG4] = No, not at all AND Last Time Smoked [CIG5] = More than 1 year ago
+# Rationale: Indicates past smoking without recent use
+
+# MISSING / SKIPPED
+# - Any response pattern not captured by the rules above
+
+# General Recommendations:
+# - Threshold of 50+ lifetime cigarettes used to define meaningful smoking exposure 
+# - Analytic Note: 100+ in lifetime is usually used in other epidemiological studies 
+# - Any smoking within past year should be classified as current smoker
+# - CIG4 (smoke now) is used as fallback when CIG5 (last smoked) is missing
+# ------------------------------------------------------------------
+
 cig_frequency= data_tib_all3  %>% 
-  mutate(often= case_when((D_947205597_D_712653855==0 | (D_947205597_D_712653855==1 & (D_763164658==151488193| D_763164658==805449318)))~"Never a Cigarette Smoker",
-                             (D_947205597_D_712653855==1 & (D_763164658==486319890| D_763164658==132232896) & D_798549704==317567178)~"Currently a Cigarette Smoker",
-                             (D_947205597_D_712653855==1 & (D_763164658==486319890| D_763164658==132232896)  & (D_798549704==484055234 | D_798549704==802197176))~"Formerly a Cigarette Smoker",
+  mutate(often= case_when((D_947205597_D_712653855==0 | 
+                             (D_947205597_D_712653855==1 & (D_763164658==151488193| D_763164658==805449318)))~"Never a Cigarette Smoker",
+                             (D_947205597_D_712653855==1 & 
+                                (D_763164658==486319890| D_763164658==132232896) & 
+                                D_798549704==317567178)~"Currently a Cigarette Smoker",
+                             (D_947205597_D_712653855==1 & 
+                                (D_763164658==486319890| D_763164658==132232896)  & 
+                                (D_798549704==484055234 | D_798549704==802197176))~"Formerly a Cigarette Smoker",
                              TRUE~"Skipped all these questions"))
 
 dt_cig_frequency_summary <- cig_frequency %>% group_by(often) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(often, n, percentage)
