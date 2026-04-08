@@ -2148,14 +2148,35 @@ act_di_SF_race <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_11
 
 if (nrow(act_di_SF_race) == 0) {
   cat("No errors\n")
+} 
+
+if (nrow(act_di_SF_race) < 50) {
+    act_di_SF_race <- act_di_SF_race %>% 
+      select(Site, token, d_821247024, state_d_793822265) %>%
+      safe_arrange(Site)
+  
+   colnames(act_di_SF_race) <- c("Site", "token", 'RcrtV_Verification', "RcrtV_UpdateRecType")
+  
+  knitr::kable(act_di_SF_race, longtable = TRUE) %>%
+    kable_styling(latex_options = "scale_down") #%>% landscape()
+  
 } else {
   
   act_di_SF_race <- act_di_SF_race %>% select(Site, token, d_821247024, state_d_793822265) %>%  safe_arrange(Site)
   
   colnames(act_di_SF_race) <- c("Site", "token", 'RcrtV_Verification', "RcrtV_UpdateRecType")
   
-  knitr::kable(act_di_SF_race) %>%
-    kable_styling(latex_options = "scale_down") #%>% landscape()
+  cat(paste0(
+    "There are ", nrow(act_di_SF_race), " rows. This has been made into a separate XLXS file called \n",
+    "Recruitment_Derived_QC_Rule76_Errors", currentDate, "_boxfolder_", boxfolder, ".xlsx' \n"
+  ))
+  
+  ## These are failing in GC they're not UTF-8 characters, this converts the columns
+  act_di_SF_race[] <- lapply(act_di_SF_race, function(x) {
+    if (is.character(x)) iconv(x, to = "UTF-8", sub = "byte") else x
+  })
+  
+  openxlsx::write.xlsx(act_di_SF_race,glue("Recruitment_Derived_QC_Rule76_Errors{currentDate}_boxfolder_{boxfolder}.xlsx"),row.names = F,na="")
 }
 
 ```
@@ -2680,28 +2701,9 @@ if (nrow(Man_OutRch) == 0) {
 
 ```
 
-## 95.	If verified, update recruit type should be sent. This rule allows for a lag of 5 days post-verification.
-```{r Update_Recr, echo=FALSE, warning=FALSE, message=FALSE}
-
-update_recr <- base_vars %>% filter(d_821247024 == 197316935 & is.na(state_d_793822265) &
-                                    as.numeric(difftime(currentDate, as.Date(d_914594314), units = "days"))>5)
 
 
-if (nrow(update_recr) == 0) {
-  cat("No errors\n")
-} else {
-  
-  update_recr <- update_recr %>% select(Site, Connect_ID, token, d_914594314, state_d_793822265) %>%  safe_arrange(Site)
-  
-  colnames(update_recr) <- c("Site", "Connect ID", 'token', 'RcrtV_VerificationTm', "RcrtV_UpdateRecType")
-  
-  knitr::kable(update_recr) %>%
-    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
-}
-
-```
-
-
+\FloatBarrier
 ## 95. If participants are “not active”, they cannot have verification completed; this excludes those with duplicate type 'Not Active recruit signed in as Passive recruit' and 'Not Active recruit signed in as an Active recruit' 
 
 ```{r Non_act_verif, echo=FALSE, warning=FALSE, message=FALSE}
@@ -2769,7 +2771,30 @@ if (nrow(Non_act_verif) < 50) {
 
 
 \FloatBarrier
-# 96. If the ROI Pref Survey Status flag is null, there should be no survey data.
+
+## 96.	If verified, update recruit type should be sent. This rule allows for a lag of 5 days post-verification.
+```{r Update_Recr, echo=FALSE, warning=FALSE, message=FALSE}
+
+update_recr <- base_vars %>% filter(d_821247024 == 197316935 & is.na(state_d_793822265) &
+                                    as.numeric(difftime(currentDate, as.Date(d_914594314), units = "days"))>5)
+
+
+if (nrow(update_recr) == 0) {
+  cat("No errors\n")
+} else {
+  
+  update_recr <- update_recr %>% select(Site, Connect_ID, token, d_914594314, state_d_793822265) %>%  safe_arrange(Site)
+  
+  colnames(update_recr) <- c("Site", "Connect ID", 'token', 'RcrtV_VerificationTm', "RcrtV_UpdateRecType")
+  
+  knitr::kable(update_recr) %>%
+    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
+}
+
+```
+
+\FloatBarrier
+# 97. If the ROI Pref Survey Status flag is null, there should be no survey data.
 
 ```{r ROI_Pref, echo=FALSE, warning=FALSE, message=FALSE}
 
