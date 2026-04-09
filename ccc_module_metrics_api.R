@@ -110,7 +110,7 @@ function(report, testing = FALSE) {
   report_fid <- Sys.getenv("REPORT_FID")
 
   # Loop through CSV and PDF files, write them to GCP Cloud Storage, and print their names
-  filelist <- list.files(pattern = "*.csv$|*.pdf$")
+  filelist <- list.files(pattern = "*.csv$|*.pdf$|*.xlsx$")
   uploaded_files <- lapply(filelist, function(x) {
     gcs_upload(x, bucket = bucket, name = x)
     print(paste("Uploaded file:", x))
