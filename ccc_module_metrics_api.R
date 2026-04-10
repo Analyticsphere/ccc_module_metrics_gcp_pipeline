@@ -99,7 +99,7 @@ function(report, testing = FALSE) {
       })
     })
   } else if (is_r_file) {
-      source(r_file_name)
+    source(r_file_name)
   } else {
     stop("The file extension of the R script is invalid. Script did not execute.") 
   }
