@@ -15,7 +15,7 @@ library(glue)
 
 
 
-bq_auth(scopes = "https://www.googleapis.com/auth/bigquery")
+bq_auth()
 
 
 ## Monthly report
