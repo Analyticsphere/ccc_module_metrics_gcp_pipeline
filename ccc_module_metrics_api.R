@@ -78,12 +78,7 @@ function(report, testing = FALSE) {
     if (is.null(output_format)) {
       stop("Report file extension is invalid. Script did not execute.")
     }
-    
-    # Authenticate with Google Storage and write report file to bucket
-    #scope <- c("https://www.googleapis.com/auth/cloud-platform")
-    #token <- token_fetch(scopes = scope)
-    #gcs_auth(token = token)
-    
+
     tryCatch({
       # Render the rmarkdown file
       rmarkdown::render(r_file_name,
@@ -104,9 +99,6 @@ function(report, testing = FALSE) {
       })
     })
   } else if (is_r_file) {
-      #scope <- c("https://www.googleapis.com/auth/cloud-platform")
-      #token <- token_fetch(scopes = scope)
-      #gcs_auth(token = token)
       source(r_file_name)
   } else {
     stop("The file extension of the R script is invalid. Script did not execute.") 
