@@ -14,21 +14,12 @@ library(kableExtra)
 library(glue)
 
 
-print(packageVersion("bigrquery"))
-print(packageVersion("gargle"))
-print(Sys.getenv("GOOGLE_CLOUD_PROJECT"))  # should show your project ID
-print(Sys.getenv("GOOGLE_APPLICATION_CREDENTIALS"))  # any explicit creds set?
-print(interactive())          # should return FALSE in Cloud Build
-print(Sys.getenv("USER"))     # what user is running the script
-print(Sys.getenv("HOME"))     # home directory being used
-print("Starting BigQuery Authentication")
-bq_auth()
-print("BigQuery Authentication Successful")
-print(bq_user())
+
+bq_auth(scopes = "https://www.googleapis.com/auth/bigquery")
+
 
 ## Monthly report
 boxfolder <- 255783409227 # Active Box Folder
-print(boxfolder)
 
 currentDate <- Sys.Date()##### Making sure personal C drives aren't referenced if this code is being used by others
 
@@ -43,7 +34,7 @@ write_to_local_drive = F
 local_drive= ifelse(write_to_local_drive, "C:/Users/dowlingk2/Documents/GitHub/", "")
 
 currentDate <- Sys.Date()
-print(currentDate)
+
 
 #################################################################################################################
 
@@ -56,19 +47,11 @@ d_253883960, d_459098666,  d_265193023, d_126331570, d_878865966, d_167958071, d
 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` where Connect_ID IS NOT NULL and d_831041022='353358909'"  #d_220186468,
 spec_query <- "SELECT Connect_ID, d_820476880 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.biospecimen` where Connect_ID is not null"
 
-print("Running datad query...")
 datad_table_cc <- bq_project_query(project_cc, datad_query)
-print("datad query complete")
-
 datad <- bq_table_download(datad_table_cc, bigint = "integer64")
-print("datad download complete")
 
-print("Running spec query...")
 spec_table_cc <- bq_project_query(project_cc, spec_query)
-print("spec query complete")
-
 spec <- bq_table_download(spec_table_cc, bigint = "integer64")
-print("spec download complete")
 
 spec$Connect_ID <- as.numeric(spec$Connect_ID)
 datad$Connect_ID <- as.numeric(datad$Connect_ID)
