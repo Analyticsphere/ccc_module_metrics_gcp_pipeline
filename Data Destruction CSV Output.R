@@ -14,9 +14,16 @@ library(kableExtra)
 library(glue)
 
 
-
+print(packageVersion("bigrquery"))
+print(packageVersion("gargle"))
+print(Sys.getenv("GOOGLE_CLOUD_PROJECT"))  # should show your project ID
+print(Sys.getenv("GOOGLE_APPLICATION_CREDENTIALS"))  # any explicit creds set?
+print(interactive())          # should return FALSE in Cloud Build
+print(Sys.getenv("USER"))     # what user is running the script
+print(Sys.getenv("HOME"))     # home directory being used
+print("Starting BigQuery Authentication")
 bq_auth()
-
+print("BigQuery Authentication Successful")
 
 ## Monthly report
 boxfolder <- 255783409227 # Active Box Folder
