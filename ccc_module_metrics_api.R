@@ -99,7 +99,10 @@ function(report, testing = FALSE) {
       })
     })
   } else if (is_r_file) {
-    source(r_file_name)
+      scope <- c("https://www.googleapis.com/auth/cloud-platform")
+      token <- token_fetch(scopes = scope)
+      gcs_auth(token = token)
+      source(r_file_name)
   } else {
     stop("The file extension of the R script is invalid. Script did not execute.") 
   }
