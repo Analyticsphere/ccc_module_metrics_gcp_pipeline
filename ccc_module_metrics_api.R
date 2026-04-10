@@ -56,6 +56,11 @@ function(report, testing = FALSE) {
   is_rmd_file <- grepl("\\.rmd$", r_file_name
                      , ignore.case = TRUE) # TRUE if ends in ".rmd"
 
+  # Authenticate with Google Storage
+  scope <- c("https://www.googleapis.com/auth/cloud-platform")
+  token <- token_fetch(scopes = scope)
+  gcs_auth(token = token)
+
   if (is_rmd_file) {
     # Add time stamp and box folder tag to to report name
     report_fid <- paste0(
@@ -75,9 +80,9 @@ function(report, testing = FALSE) {
     }
     
     # Authenticate with Google Storage and write report file to bucket
-    scope <- c("https://www.googleapis.com/auth/cloud-platform")
-    token <- token_fetch(scopes = scope)
-    gcs_auth(token = token)
+    #scope <- c("https://www.googleapis.com/auth/cloud-platform")
+    #token <- token_fetch(scopes = scope)
+    #gcs_auth(token = token)
     
     tryCatch({
       # Render the rmarkdown file
@@ -99,9 +104,9 @@ function(report, testing = FALSE) {
       })
     })
   } else if (is_r_file) {
-      scope <- c("https://www.googleapis.com/auth/cloud-platform")
-      token <- token_fetch(scopes = scope)
-      gcs_auth(token = token)
+      #scope <- c("https://www.googleapis.com/auth/cloud-platform")
+      #token <- token_fetch(scopes = scope)
+      #gcs_auth(token = token)
       source(r_file_name)
   } else {
     stop("The file extension of the R script is invalid. Script did not execute.") 
