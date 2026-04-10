@@ -16,7 +16,7 @@ library(glue)
 
 
 bq_auth()
-2
+
 
 ## Monthly report
 boxfolder <- 255783409227 # Active Box Folder
