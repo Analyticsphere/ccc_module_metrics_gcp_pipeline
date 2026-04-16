@@ -2012,7 +2012,7 @@ if (nrow(Request_MW_Email_rem) > 50) {
 
 
 
-# \FloatBarrier
+\FloatBarrier
 # The same participant received multiple Request a mw kit reminders SMS Reminders on the same day.
 ```{r Request_MW_sms, echo=FALSE, message=FALSE, warning=FALSE}
  
