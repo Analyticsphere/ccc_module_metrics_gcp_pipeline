@@ -77,14 +77,14 @@ sql_M1_1 <- bq_project_query(project,
                              query = "SELECT D_276353712, D_659784914, D_607773106_1_1, D_607773106_2_2, D_607773106_3_3, D_607773106_4_4, D_607773106_5_5, D_607773106_6_6, 
                              D_607773106_7_7,  D_607773106_8_8, D_607773106_9_9,  D_607773106_10_10, D_607773106_11_11, D_607773106_12_12, D_607773106_13_13, D_718867914_1_1, 
                              D_718867914_2_2, D_718867914_3_3, D_718867914_4_4, D_718867914_5_5,D_718867914_6_6, D_718867914_7_7, D_718867914_8_8, D_718867914_9_9, 
-                             D_718867914_10_10, D_114314839_D_340854069, D_114314839_D_600462977, D_746012894, Connect_ID
+                             D_718867914_10_10, D_114314839_D_340854069, D_114314839_D_600462977, D_746012894, D_694265648, D_446999144, Connect_ID
                              FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v1` WHERE Connect_ID IS NOT NULL")
 
 sql_M1_2 <- bq_project_query(project, 
                              query = "SELECT D_276353712, D_659784914, D_607773106_1_1, D_607773106_2_2, D_607773106_3_3, D_607773106_4_4, D_607773106_5_5, D_607773106_6_6, 
                              D_607773106_7_7,  D_607773106_8_8, D_607773106_9_9,  D_607773106_10_10, D_607773106_11_11, D_607773106_12_12, D_607773106_13_13, D_718867914_1_1, 
                              D_718867914_2_2, D_718867914_3_3, D_718867914_4_4, D_718867914_5_5,D_718867914_6_6, D_718867914_7_7, D_718867914_8_8, D_718867914_9_9, 
-                             D_718867914_10_10, D_114314839_D_340854069, D_114314839_D_600462977, D_746012894, Connect_ID
+                             D_718867914_10_10, D_114314839_D_340854069, D_114314839_D_600462977, D_746012894, D_694265648, D_446999144, Connect_ID
                              FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module1_v2` WHERE Connect_ID IS NOT NULL")
 
 M1_V1 <- bq_table_download(sql_M1_1, bigint = "integer64")
@@ -199,51 +199,205 @@ bmi_box
 
 
 
-```{r PrimRelCancer, echo=FALSE, warning=FALSE, message=FALSE}
+```{r By_PrimRelCancer, echo=FALSE, warning=FALSE, message=FALSE}
 
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(gt)
 
+#-------------------------- FAMILY HX LOGIC -----------------------------------------------
 
-family= data_tib_base  %>%  mutate(status= case_when((D_276353712==353358909 | D_659784914==353358909 | D_607773106_1_1==353358909 | D_607773106_2_2==353358909 | 
-                                      D_607773106_3_3==353358909 | D_607773106_4_4==353358909 | D_607773106_5_5==353358909 | D_607773106_6_6==353358909 |
-                                      D_607773106_7_7==353358909| D_607773106_8_8==353358909 | D_607773106_9_9==353358909| D_607773106_10_10==353358909 |
-                                      D_607773106_11_11==353358909 | D_607773106_12_12==353358909 | D_607773106_13_13==353358909 | D_718867914_1_1==353358909 | 
-                                      D_718867914_2_2==353358909 | D_718867914_3_3==353358909 | D_718867914_4_4==353358909 | D_718867914_5_5==353358909 |
-                                      D_718867914_6_6==353358909 | D_718867914_7_7==353358909 | D_718867914_8_8==353358909 | D_718867914_9_9==353358909 |
-                                      D_718867914_10_10==353358909) ~ "Yes", 
-                                                    TRUE ~ "No"))
+# Helper: get loop columns in numeric order
+get_loop_cols <- function(data, prefix) {
+  cols <- names(data)[grepl(paste0("^", prefix, "\\d+_\\d+$"), names(data))]
+  loop_num <- as.integer(sub(paste0("^", prefix, "(\\d+)_\\1$"), "\\1", cols))
+  cols[order(loop_num)]
+}
 
+# Overall loop logic: original behavior
+eval_loop_status <- function(x) {
+  x <- x[!is.na(x)]
+  
+  if (length(x) == 0) return(NA_character_)
+  if (any(x == 353358909)) return("Yes")
+  if (any(x == 178420302)) return("Don't Know")
+  if (all(x == 104430631)) return("No")
+  
+  "Skipped this Question"
+}
 
-dt_fam_canc_summary <- family %>% group_by(status) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(status, n, percentage)
+# Per-relative loop logic: if any asked loop is missing, count as skipped
+eval_loop_status_by_n <- function(x, n) {
+  if (is.na(n) || n <= 0) return(NA_character_)  # not asked
+  
+  x <- x[seq_len(min(n, length(x)))]
+  
+  if (length(x) == 0) return(NA_character_)
+  if (any(is.na(x))) return("Skipped this Question")
+  if (any(x == 353358909)) return("Yes")
+  if (any(x == 178420302)) return("Don't Know")
+  if (all(x == 104430631)) return("No")
+  
+  "Skipped this Question"
+}
 
-#gt_total_func(dt_fam_canc_summary, "status", "Primary Relative(s) Diagnosed With Cancer")
+# Single non-loop item
+eval_single_status <- function(x) {
+  if (is.na(x)) return("Skipped this Question")
+  if (x == 353358909) return("Yes")
+  if (x == 178420302) return("Don't Know")
+  if (x == 104430631) return("No")
+  "Error"
+}
 
-dt_fam_canc_summary %>%  gt::gt() %>%  
-  fmt_number(columns = "percentage", decimals = 2) %>% 
-  fmt_number(columns = "n", decimals=0, use_seps = TRUE) %>% 
-  tab_header(title = md("Primary Relative(s) Diagnosed With Cancer")) %>% 
-  cols_label(n= md("**N**"), status = md("**Answer**"), percentage = md("**%**")) %>% 
-  grand_summary_rows(columns=c(n, percentage),fns = ~sum(.,na.rm = T))|>
-  tab_options(
-    stub.font.weight = "bold"
-  ) %>%
-  tab_style(
-    style = list(
-      cell_text(weight = "bold")
-    ),
-    locations = cells_body(
-      columns = status,
+# Loop variables
+sib_cols   <- get_loop_cols(data_tib_base, "D_607773106_")
+child_cols <- get_loop_cols(data_tib_base, "D_718867914_")
+
+# Family Hx Status
+family <- data_tib_base %>%
+  rowwise() %>%
+  mutate(
+    mom_status = eval_single_status(D_276353712),
+    dad_status = eval_single_status(D_659784914),
+    
+    sib_status = {
+      n_sib <- as.integer(D_694265648)
+      sib_vals <- if (is.na(n_sib) || n_sib <= 0) {
+        numeric(0)
+      } else {
+        c_across(all_of(sib_cols))[seq_len(min(n_sib, length(sib_cols)))]
+      }
+      eval_loop_status_by_n(sib_vals, n_sib)
+    },
+    
+    child_status = {
+      n_child <- as.integer(D_446999144)
+      child_vals <- if (is.na(n_child) || n_child <= 0) {
+        numeric(0)
+      } else {
+        c_across(all_of(child_cols))[seq_len(min(n_child, length(child_cols)))]
+      }
+      eval_loop_status_by_n(child_vals, n_child)
+    },
+    
+    # Keep the original overall logic
+    loop_status = {
+      n_sib <- as.integer(D_694265648)
+      n_child <- as.integer(D_446999144)
+      
+      sib_vals <- if (is.na(n_sib) || n_sib <= 0) {
+        numeric(0)
+      } else {
+        c_across(all_of(sib_cols))[seq_len(min(n_sib, length(sib_cols)))]
+      }
+      
+      child_vals <- if (is.na(n_child) || n_child <= 0) {
+        numeric(0)
+      } else {
+        c_across(all_of(child_cols))[seq_len(min(n_child, length(child_cols)))]
+      }
+      
+      eval_loop_status(c(sib_vals, child_vals))
+    },
+    
+    status = case_when(
+      D_276353712 == 353358909 |
+        D_659784914 == 353358909 |
+        loop_status == "Yes" ~ "Yes",
+      
+      is.na(D_276353712) |
+        is.na(D_659784914) |
+        is.na(loop_status) ~ "Skipped this Question",
+      
+      D_276353712 == 178420302 |
+        D_659784914 == 178420302 |
+        loop_status == "Don't Know" ~ "Don't Know",
+      
+      D_276353712 == 104430631 &
+        D_659784914 == 104430631 &
+        loop_status == "No" ~ "No",
+      
+      TRUE ~ "Error"
     )
-  ) %>% 
-  tab_footnote(footnote="Primary relatives consist of parents, siblings, and children.",
-               placement = "left")
+  ) %>%
+  ungroup() %>%
+  select(-loop_status)
+
+#-------------------------- TABLE 1: OVERALL -----------------------------------------------
+
+dt_fam_canc_summary <- family %>%
+  mutate(status = factor(status, levels = c("Yes", "No", "Don't Know", "Skipped this Question"))) %>%
+  group_by(status, .drop = FALSE) %>%
+  summarise(n = n(), .groups = "drop") %>%
+  mutate(percentage = 100 * n / sum(n))
+
+dt_fam_canc_summary %>%
+  gt() %>%
+  fmt_number(columns = "percentage", decimals = 2) %>%
+  fmt_number(columns = "n", decimals = 0, use_seps = TRUE) %>%
+  tab_header(title = md("Primary Relative(s) Diagnosed With Cancer")) %>%
+  cols_label(n = md("**N**"), status = md("**Answer**"), percentage = md("**%**")) %>%
+  grand_summary_rows(columns = c(n, percentage), fns = ~ sum(., na.rm = TRUE)) %>%
+  tab_options(stub.font.weight = "bold") %>%
+  tab_style(
+    style = list(cell_text(weight = "bold")),
+    locations = cells_body(columns = status)
+  ) %>%
+  tab_footnote(
+    footnote = "Primary relatives consist of parents, siblings, and children.",
+    placement = "left"
+  )
+
+#-------------------------- TABLE 2: BY RELATIVE --------------------------------------------
+
+dt_fam_canc_by_relative <- family %>%
+  select(mom_status, dad_status, sib_status, child_status) %>%
+  pivot_longer(
+    cols = everything(),
+    names_to = "relative",
+    values_to = "status"
+  ) %>%
+  filter(!is.na(status)) %>%   # drops not-asked siblings/children
+  mutate(
+    relative = factor(
+      recode(relative,
+             mom_status = "Mom",
+             dad_status = "Dad",
+             sib_status = "Sibling",
+             child_status = "Child"),
+      levels = c("Mom", "Dad", "Sibling", "Child")
+    ),
+    status = factor(status, levels = c("Yes", "No", "Don't Know", "Skipped this Question"))
+  ) %>%
+  group_by(relative, status, .drop = FALSE) %>%
+  summarise(n = n(), .groups = "drop") %>%
+  complete(relative, status, fill = list(n = 0)) %>%
+  group_by(relative) %>%
+  mutate(percentage = 100 * n / sum(n)) %>%
+  ungroup() %>%
+  mutate(cell = paste0(n, " (", round(percentage, 2), "%)")) %>%
+  select(relative, status, cell) %>%
+  pivot_wider(names_from = relative, values_from = cell)
+
+dt_fam_canc_by_relative %>%
+  gt() %>%
+  tab_header(title = md("Primary Relative(s) Diagnosed With Cancer")) %>%
+  cols_label(
+    status = md("**Answer**"),
+    Mom = md("**Mom**"),
+    Dad = md("**Dad**"),
+    Sibling = md("**Sibling**"),
+    Child = md("**Child**")
+  ) %>%
+  tab_options(stub.font.weight = "bold") %>%
+  tab_footnote(
+    footnote = "Note: Not all participants have siblings and/or children. The denominator for these columns will differ accordingly.",
+    locations = cells_column_labels(columns = c(Sibling, Child))
+  )
 
 ```
-
-
-
-
-
-
 
 
 
@@ -253,7 +407,7 @@ dt_fam_canc_summary %>%  gt::gt() %>%
 ```{r query3, include=FALSE}
 
 
-querymod3 <- "SELECT Connect_ID, D_947205597_D_712653855, D_798549704, D_763164658, D_947205597_D_198133418, D_182431332, D_798549704, D_789271762, D_947205597_D_706254326, D_624111331, D_238422161
+querymod3 <- "SELECT Connect_ID, D_947205597_D_712653855, D_798549704, D_763164658, D_947205597_D_198133418, D_182431332, D_789271762, D_947205597_D_706254326, D_624111331, D_238422161, D_639684251, D_789271762, D_751046675, D_564438246
 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.module3_v1` where Connect_ID IS NOT NULL"
 mod3_table <- bq_project_query(project, querymod3)
 mod3_data <- bq_table_download(mod3_table, bigint = "integer64")
@@ -273,13 +427,6 @@ data_tib_all3 <- as_tibble(data_all3)
 
 
 ```{r cigerette, echo=FALSE, warning=FALSE, message=FALSE}
-
-### Logic:
-# Never a smoker: Ever Smoking = NO OR (Ever Smoking = YES AND # of CIGS [CIG1] <50)
-# Current smoker: Ever Smoking = YES AND # of CIGS [CIG1] >49 AND Smoked in the last month [CIG5] 
-# Former Smoker: Ever Smoking = YES AND  # of CIGS [CIG1] >49 AND Smoked more than a month ago [CIG5]
-# Skipped : Doesnt fall into the other categories
-
 
 # ------------------------------------------------------------------
 # SMOKING - DERIVED (categorical):
@@ -319,14 +466,29 @@ data_tib_all3 <- as_tibble(data_all3)
 # ------------------------------------------------------------------
 
 cig_frequency= data_tib_all3  %>% 
-  mutate(often= case_when((D_947205597_D_712653855==0 | 
-                             (D_947205597_D_712653855==1 & (D_763164658==151488193| D_763164658==805449318)))~"Never a Cigarette Smoker",
-                             (D_947205597_D_712653855==1 & 
-                                (D_763164658==486319890| D_763164658==132232896) & 
-                                D_798549704==317567178)~"Currently a Cigarette Smoker",
-                             (D_947205597_D_712653855==1 & 
-                                (D_763164658==486319890| D_763164658==132232896)  & 
-                                (D_798549704==484055234 | D_798549704==802197176))~"Formerly a Cigarette Smoker",
+  dplyr::rename("Ever_Never" = "D_947205597_D_712653855",
+                "CIG1" = "D_763164658",
+                "CIG4" = "D_639684251",
+                "CIG5" = "D_798549704") %>% 
+  mutate(often= case_when((Ever_Never==0 | 
+                             (Ever_Never==1 & (CIG1==151488193 | CIG1==805449318)))~"Never a Cigarette Smoker",
+                          
+                             (Ever_Never==1 & 
+                                (CIG1==486319890 | CIG1==132232896) & 
+                                (CIG5==317567178 | CIG5==484055234 |
+                                   (is.na(CIG5) & 
+                                      (!is.na(CIG4) & CIG4!=419415087)) 
+                                 ) 
+                              )~"Currently a Cigarette Smoker",
+                          
+                             (Ever_Never==1 & 
+                                (
+                                  ((CIG1==486319890 | CIG1==132232896) &
+                                   (CIG5==802197176 |
+                                      (is.na(CIG5) & CIG4==419415087)) 
+                                  ) |
+                                (is.na(CIG1) & CIG4==419415087 & CIG5==802197176)) )~"Formerly a Cigarette Smoker",
+                          
                              TRUE~"Skipped all these questions"))
 
 dt_cig_frequency_summary <- cig_frequency %>% group_by(often) %>%  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(often, n, percentage)
@@ -358,12 +520,31 @@ dt_cig_frequency_summary %>%  gt::gt() %>%
 
 ```{r cigar, echo=FALSE, warning=FALSE, message=FALSE}
 
-
 cigar_frequency= data_tib_all3  %>% 
-  mutate(often= case_when(D_947205597_D_198133418==0 | (D_947205597_D_198133418==1 & (D_182431332==151488193| D_182431332==805449318))~"Never a Cigar Smoker",
-                             D_947205597_D_198133418==1 & (D_182431332==486319890| D_182431332==132232896) & D_798549704==317567178~"Currently a Cigar Smoker",
-                             D_947205597_D_198133418==1 & (D_182431332==486319890| D_182431332==132232896)  & (D_789271762==484055234 | D_789271762==802197176)~"Formerly a Cigar Smoker",
-                             TRUE~"Skipped all These Questions"))
+  dplyr::rename("Ever_Never" = "D_947205597_D_198133418",
+                "CIGAR1" = "D_182431332",
+                "CIGAR4" = "D_564438246",
+                "CIGAR5" = "D_789271762") %>% 
+  mutate(often= case_when((Ever_Never==0 | 
+                             (Ever_Never==1 & (CIGAR1==151488193 | CIGAR1==805449318)))~"Never a Cigar Smoker",
+                          
+                             (Ever_Never==1 & 
+                                (CIGAR1==486319890 | CIGAR1==132232896) & 
+                                (CIGAR5==317567178 | CIGAR5==484055234 |
+                                   (is.na(CIGAR5) & 
+                                      (!is.na(CIGAR4) & CIGAR4!=419415087)) 
+                                 ) 
+                              )~"Currently a Cigar Smoker",
+                          
+                             (Ever_Never==1 & 
+                                (
+                                  ((CIGAR1==486319890 | CIGAR1==132232896) &
+                                   (CIGAR5==802197176 |
+                                      (is.na(CIGAR5) & CIGAR4==419415087)) 
+                                  ) |
+                                (is.na(CIGAR1) & CIGAR4==419415087 & CIGAR5==802197176)) )~"Formerly a Cigar Smoker",
+                          
+                             TRUE~"Skipped all these questions"))
 
 
 
@@ -398,10 +579,30 @@ dt_cigar_frequency_summary %>%  gt::gt() %>%
 
 
 e_cig_frequency= data_tib_all3  %>% 
-  mutate(often= case_when(D_947205597_D_706254326==0 | (D_947205597_D_706254326==1 & (D_624111331==151488193| D_624111331==805449318))~"Never a E-cigarette Smoker",
-                             D_947205597_D_706254326==1 & (D_624111331==486319890| D_624111331==132232896) & D_238422161==317567178~"Currently a E-cigarette Smoker",
-                             D_947205597_D_706254326==1 & (D_624111331==486319890| D_624111331==132232896)  & (D_238422161==484055234 | D_238422161==802197176)~"Formerly a E-cigarette Smoker",
-                             TRUE~"Skipped all These Questions"))
+  dplyr::rename("Ever_Never" = "D_947205597_D_706254326",
+                "ECIG1" = "D_624111331",
+                "ECIG4" = "D_751046675",
+                "ECIG5" = "D_238422161") %>% 
+  mutate(often= case_when((Ever_Never==0 | 
+                             (Ever_Never==1 & (ECIG1==151488193 | ECIG1==805449318)))~"Never a Cigarette Smoker",
+                          
+                             (Ever_Never==1 & 
+                                (ECIG1==486319890 | ECIG1==132232896) & 
+                                (ECIG5==317567178 | ECIG5==484055234 |
+                                   (is.na(ECIG5) & 
+                                      (!is.na(ECIG4) & ECIG4!=419415087)) 
+                                 ) 
+                              )~"Currently a Cigarette Smoker",
+                          
+                             (Ever_Never==1 & 
+                                (
+                                  ((ECIG1==486319890 | ECIG1==132232896) &
+                                   (ECIG5==802197176 |
+                                      (is.na(ECIG5) & ECIG4==419415087)) 
+                                  ) |
+                                (is.na(ECIG1) & ECIG4==419415087 & ECIG5==802197176)) )~"Formerly a Cigarette Smoker",
+                          
+                             TRUE~"Skipped all these questions"))
 
 
 

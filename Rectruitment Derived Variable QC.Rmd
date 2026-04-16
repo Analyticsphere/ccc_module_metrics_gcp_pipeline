@@ -2775,6 +2775,8 @@ if (nrow(Non_act_verif) < 50) {
 ## 96.	If verified, update recruit type should be sent. This rule allows for a lag of 5 days post-verification.
 ```{r Update_Recr, echo=FALSE, warning=FALSE, message=FALSE}
 
+## Used to be rule 262 in the automated report, but 5 day lag needed
+
 update_recr <- base_vars %>% filter(d_821247024 == 197316935 & is.na(state_d_793822265) &
                                     as.numeric(difftime(currentDate, as.Date(d_914594314), units = "days"))>5)
 
@@ -2836,7 +2838,148 @@ if (nrow(roi_null) == 0) {
 
 
 
+\FloatBarrier
+
+## 98.	If verification != duplicate, but instead equal to either "not yet verif", "verif", "cannot be verified", "outreach timed out", or "no longer enrolled", then "Duplicate type" should be NA. This rule allows for a lag of 5 days post-verification.
+```{r Update_Recr_RecruitType, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+## Used to be rule 127 in the automated report, but 5 day lag needed
+
+update_recr_by_type <- base_vars %>% filter(d_821247024!="922622075" & 
+                                              !is.na(state_d_148197146) &
+                                    as.numeric(difftime(currentDate, as.Date(d_914594314), units = "days"))>5)
+
+
+if (nrow(update_recr_by_type) == 0) {
+  cat("No errors\n")
+} else {
+  
+  update_recr_by_type <- update_recr_by_type %>% select(Site, Connect_ID, token, d_821247024, state_d_148197146) %>%  safe_arrange(Site)
+  
+  colnames(update_recr_by_type) <- c("Site", "Connect ID", 'token', 'RcrtV_Verification', "RcrtV_DuplicateType")
+  
+  knitr::kable(update_recr_by_type) %>%
+    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
+}
+
+```
 
 
 
 
+\FloatBarrier
+
+## 99.	If RcrtV_Outreach = yes then RcrtV_Mannual has to = method used. This rule allows for a lag of 5 days post-verification.
+```{r Outreach_manual, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+## Used to be rule 128 in the automated report, but 5 day lag needed
+
+Outreach_manual <- base_vars %>% filter(state_d_188797763==353358909 &
+                                            (state_d_953614051==734437214 | is.na(state_d_953614051)) &
+                                    as.numeric(difftime(currentDate, as.Date(d_914594314), units = "days"))>5)
+
+
+if (nrow(Outreach_manual) == 0) {
+  cat("No errors\n")
+} else {
+  
+  Outreach_manual <- Outreach_manual %>% select(Site, Connect_ID, token, state_d_953614051) %>%  safe_arrange(Site)
+  
+  colnames(Outreach_manual) <- c("Site", "Connect ID", 'token', 'RcrtV_Mannual')
+  
+  knitr::kable(Outreach_manual) %>%
+    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
+}
+
+```
+
+
+
+
+\FloatBarrier
+
+## 100.	If verif status = verified and Manual Verif= method not used, then Auto Verif must be 'method used. This rule allows for a lag of 5 days post-verification.
+```{r Auto_verif, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+## Used to be rule 155 in the automated report, but 5 day lag needed
+
+Auto_verif <- base_vars %>% filter(d_821247024==197316935 & state_d_953614051==734437214 &
+                                            (state_d_444699761==734437214 | is.na(state_d_444699761)) &
+                                    as.numeric(difftime(currentDate, as.Date(d_914594314), units = "days"))>5)
+
+
+if (nrow(Auto_verif) == 0) {
+  cat("No errors\n")
+} else {
+  
+  Auto_verif <- Auto_verif %>% select(Site, Connect_ID, token, state_d_444699761) %>%  safe_arrange(Site)
+  
+  colnames(Auto_verif) <- c("Site", "Connect ID", 'token', 'RcrtV_Automated')
+  
+  knitr::kable(Auto_verif) %>%
+    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
+}
+
+```
+
+
+
+
+\FloatBarrier
+
+## 101.	If verif status = verified and Auto Verif=method not used, then Manual Verif must be method used. This rule allows for a lag of 5 days post-verification.
+```{r Man_Auto_verif, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+## Used to be rule 156 in the automated report, but 5 day lag needed
+
+Man_Auto_verif <- base_vars %>% filter(d_821247024==197316935 & state_d_444699761==734437214 &
+                                            (state_d_953614051==104430631 | is.na(state_d_953614051)) &
+                                    as.numeric(difftime(currentDate, as.Date(d_914594314), units = "days"))>5)
+
+
+if (nrow(Man_Auto_verif) == 0) {
+  cat("No errors\n")
+} else {
+  
+  Man_Auto_verif <- Man_Auto_verif %>% select(Site, Connect_ID, token, state_d_953614051) %>%  safe_arrange(Site)
+  
+  colnames(Man_Auto_verif) <- c("Site", "Connect ID", 'token', 'RcrtV_Manual')
+  
+  knitr::kable(Man_Auto_verif) %>%
+    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
+}
+
+```
+
+
+
+
+\FloatBarrier
+
+## 102.	If verifcation status = duplicate, there should be a duplicate type. This rule allows for a lag of 5 days post-verification.
+```{r Dupl_type, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+## Used to be rule 194 in the automated report, but 5 day lag needed
+
+Dupl_type <- base_vars %>% filter(d_821247024==922622075 & is.na(state_d_148197146) &
+                                    as.numeric(difftime(currentDate, as.Date(d_914594314), units = "days"))>5)
+
+
+if (nrow(Dupl_type) == 0) {
+  cat("No errors\n")
+} else {
+  
+  Dupl_type <- Dupl_type %>% select(Site, Connect_ID, token, state_d_148197146) %>%  safe_arrange(Site)
+  
+  colnames(Dupl_type) <- c("Site", "Connect ID", 'token', 'RcrtV_DuplicateType')
+  
+  knitr::kable(Dupl_type) %>%
+    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
+}
+
+```
