@@ -119,10 +119,14 @@ AllPossibleNotifications AS (
             '2024 Connect Experience Survey',
             'UC Baseline Biospecimen Scheduling Invitation',
             'newsletter',
-            'eNewsletter'
+            'eNewsletter',
+            'Sample Update Message'
         ) and 
-        category NOT LIKE '% PI Change' and category NOT LIKE 'Prev. Blocked %' and 
+        category NOT LIKE '% PI Change' and 
+        category NOT LIKE 'Prev. Blocked %' and 
         category NOT LIKE '% Year-end Thank-you Letter' and
+        category NOT LIKE '2026 Return%' and
+        category NOT LIKE 'UC Verified, BL%' and
         NOT (category = 'Verified, BL Survey Reminders' AND attempt = '2nd contact')
     UNION ALL
     SELECT 
