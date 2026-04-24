@@ -1,0 +1,276 @@
+---
+title: "2025 ROI Preference Survey Summary Statistics"
+author: "Kelsey Sanchez"
+date: "`r Sys.Date()`"
+header-includes: 
+  \usepackage[labelformat=empty]{caption} 
+  \usepackage{float}
+  
+output:
+  pdf_document:
+    latex_engine: xelatex
+    toc: no
+    keep_tex: yes
+    fig_width: 7
+    fig_height: 5
+    fig_caption: yes
+    df_print: paged
+---
+
+
+This report gives the distribution of all responses for those that completed this survey. The Qx for this questionaire may be found here: https://nih.app.box.com/file/1955714291165
+
+The analytic data set for this report is created from the “nih-nci-dceg-connect-prod-6d04.FlatConnect.preference2026” table in BQ which is updated daily. All variables are stored as CIDs which can be found in the master dictionary: https://github.com/Analyticsphere/ConnectMasterAndSurveyCombinedDataDictionary/blob/main/MasterSurveyComb_20220317.xlsx .
+
+\extrafloats{100}
+```{r libraries, include=FALSE}
+
+library(bigrquery)
+#library(foreach)
+library(knitr)
+library(kableExtra)
+library(tinytex)
+library(data.table) ###to write or read and data management 
+library(tidyverse) ###for data management
+library(dplyr) ###data management
+library(stringr)
+
+
+bq_auth()
+
+```
+
+
+```{r BQ Pull, include=FALSE}
+
+project <- "nih-nci-dceg-connect-prod-6d04"
+
+
+pt_pull <- "SELECT Connect_ID,  D_827220437, D_987563196, D_821247024, 
+D_609630315, D_278023676, D_993557295, D_543379310
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` 
+where Connect_ID IS NOT NULL and 
+-- passive or active, no non-active or data destruction
+(D_512820379='486306141' OR D_512820379='854703046') and 
+-- verified
+D_821247024='197316935' and 
+-- consented and user profile submitted
+(D_919254129='353358909') and (D_699625233='353358909') and 
+-- completed preference survey
+(D_278023676='231311385')"  
+
+ROI_Pref_pull <- "SELECT * FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.preference2026` 
+where Connect_ID is not null" 
+
+
+pt_pull_table <- bq_project_query(project, pt_pull)
+data_pt <- bq_table_download(pt_pull_table, bigint = "integer64")
+
+ROI_Pref_pull_table <- bq_project_query(project, ROI_Pref_pull)
+data_ROI_Pref <- bq_table_download(ROI_Pref_pull_table, bigint = "integer64")
+
+pref2026 <- left_join(data_pt, data_ROI_Pref, by="Connect_ID")
+
+
+pref_26= as_tibble(pref2026)
+
+```
+
+
+
+
+```{r functions, include=FALSE}
+
+
+#Kable table for questions asked to all (no skip logic)
+simple_tally_funct <- function(CID, Title){  
+  
+  CID <- rlang::ensym(CID)
+  
+  #Count
+  tally_table <- pref_26 %>%  group_by(!!CID) %>%  
+    mutate(Response = case_when(!!CID == "525453860"	~ "Not interested",
+                           !!CID == "389550600"	~ "Slightly interested",
+                           !!CID == "233944056"	~ "Somewhat interested",
+                           !!CID == "567539823"	~ "Fairly interested",
+                           !!CID == "135672398"	~ "Very Interested",
+                           TRUE ~ "Skipped this Question"),
+           Response = factor(Response, levels=c("Very Interested", "Fairly interested",
+                                                "Somewhat interested","Slightly interested",
+                                                "Not interested","Skipped this Question"))) %>% 
+    group_by(Response) %>% 
+    tally() %>% 
+  mutate("N (%)" = paste0(format(n, big.mark = ","), " (", round(100 * n / sum(n), 2), " %)"))
+  
+  
+  #Add total row
+  total_row <- tally_table %>% 
+    summarize(Response= "Total",
+              n = sum(n),
+              `N (%)` = paste0(format(sum(n), big.mark = ","), 
+                               " (", 100, " %)"))
+  
+  #Include table row
+  tally_all <- rbind(tally_table, total_row)
+  
+  tally_all <- tally_all %>% select(-n)
+  
+  #Put into a kable table
+  knitr::kable(tally_all,
+               caption = Title) %>% 
+    add_indent(seq(1, nrow(tally_all) - 1)) %>%
+    kable_styling(latex_options = "scale_down")
+  
+  
+
+}
+
+
+
+```
+\newpage
+# Neighborhood Information
+## Interest in...
+```{r Questions_1_4, warning=FALSE, echo=FALSE, message=FALSE}
+
+ 
+simple_tally_funct(D_144761753_D_258232940,  "Outdoor spaces and transportation?")
+simple_tally_funct(D_144761753_D_829592217,  "Retail Spaces?")
+simple_tally_funct(D_144761753_D_958757635,  "The people and events?")
+simple_tally_funct(D_144761753_D_121884258,  "Possible environmental pollutants?")
+```
+
+```{r Questions_5, warning=FALSE, echo=FALSE, message=FALSE}
+
+neighborhood_topics <- pref_26  %>%
+    pivot_longer(cols = starts_with("D_769359476_D_"),
+                 names_to = "variable",
+                 values_to = "Topic") %>%
+    mutate(Topic = case_when(
+        Topic == '1' ~ case_when(
+            variable == 'D_769359476_D_362882148' ~ 'Community Spaces',
+            variable == 'D_769359476_D_478235149' ~ 'Number of tobacco Spots',
+            variable == 'D_769359476_D_713190902' ~ 'Access to healthy food options',
+            variable == 'D_769359476_D_460968021' ~ 'Rates of traffic incidents',
+            variable == 'D_769359476_D_148692319' ~ 'Access to public transit',
+            variable == 'D_769359476_D_526672486' ~ 'Community snapshot',
+            variable == 'D_769359476_D_390426962' ~ 'Walkability and bikeability',
+            variable == 'D_769359476_D_735210186' ~ 'IHCS Environmental pollutants'
+        )))  %>%
+  select(Topic,  Connect_ID) 
+
+
+## Need to find out how many participants selected NONE of these options
+## But table must remain a response count NOT a participant count
+no_response_ids_neighborhood_topics <- neighborhood_topics %>%
+  group_by(Connect_ID) %>%
+  dplyr::summarise(has_response = any(!is.na(Topic)), .groups = "drop") %>%
+  filter(!has_response) %>%
+  dplyr::pull(Connect_ID)
+
+neighborhood_topics_all <- neighborhood_topics %>%
+  filter(!is.na(Topic)) %>%   # keep actual responses only
+  select(Connect_ID, Topic) %>%
+  bind_rows(
+    neighborhood_topics %>%
+      filter(Connect_ID %in% no_response_ids_neighborhood_topics) %>%
+      distinct(Connect_ID) %>%
+      mutate(Topic = "Skipped this Question")
+  )
+
+
+
+nbh_tp <- neighborhood_topics_all %>%  group_by(Topic) %>% 
+  tally() %>% 
+  mutate("N (%)" = paste0(format(n, big.mark = ","), " (", round(100 * n / sum(n), 2), " %)")) %>% 
+  arrange(desc(n))
+
+  
+  #Add total row
+  total_row <- nbh_tp %>% 
+    summarize(Topic= "Total",
+              n = sum(n),
+              `N (%)` = paste0(format(sum(n), big.mark = ","), 
+                               " (", 100, " %)"))
+  
+  #Include table row
+  nbh_tp_all <- rbind(nbh_tp, total_row)
+  
+  nbh_tp_all <- nbh_tp_all %>% select(-n)
+  
+  #Put into a kable table
+  knitr::kable(nbh_tp_all,
+               caption = "Top 5 Iopic Interests") %>% 
+    add_indent(seq(1, nrow(nbh_tp_all) - 1)) %>%
+    kable_styling(latex_options = "scale_down")
+
+```
+
+\newpage
+# Known Personal Cancer Risks and Those Still Under Study
+## Interest in...
+```{r Questions_6_10, warning=FALSE, echo=FALSE, message=FALSE}
+
+ 
+simple_tally_funct(D_863590289_D_992466690,  "Vaping?")
+simple_tally_funct(D_863590289_D_441711468,  "Alcohol use?")
+simple_tally_funct(D_863590289_D_543037789,  "Ingredients in hair products?")
+simple_tally_funct(D_863590289_D_206053854,  "Ingredients in scented air fresheners?")
+simple_tally_funct(D_863590289_D_690766963 ,  "Tattoos?")
+```
+
+\newpage
+# Genetic Traits
+## Interest in...
+```{r Questions_11, warning=FALSE, echo=FALSE, message=FALSE}
+simple_tally_funct(D_136941196,  "Receiving genetic information like this \n that is not directly related to your health?")
+```
+
+\newpage
+# Learning about Research
+## Interest in...
+```{r Questions_12_13, warning=FALSE, echo=FALSE, message=FALSE}
+simple_tally_funct(D_913318697_D_214194963,  "Connect’s future goals?")
+simple_tally_funct(D_913318697_D_179827949,  "Educational topics on cancer?")
+```
+
+\newpage
+# Research Discoveries in Connect
+## How interested are you in receiving news about research discoveries even if the study findings are not yet conclusive?
+```{r Questions_14, warning=FALSE, echo=FALSE, message=FALSE}
+simple_tally_funct(D_486040313 ,  "Interest Level")
+```
+
+\newpage
+# Multi-Cancer Early Detection 
+
+```{r Questions_15, warning=FALSE, echo=FALSE, message=FALSE}
+simple_tally_funct(D_151535519,  "Interest level")
+
+```
+
+\newpage
+# Is there anything else you want to tell us about your preferences for receiving personal results from Connect and other study information?
+```{r Questions_16, warning=FALSE, echo=FALSE, message=FALSE, results='asis'}
+
+
+open_text <- pref_26  %>% filter(!is.na(D_395168461)) %>%  select(D_395168461)
+
+count_no <- open_text %>%
+  filter(str_detect(
+    tolower(D_395168461),
+    paste0("\\b(", paste(tolower(c("No", "N", "Nope", "Nothing", "None", "na", "N/A", "Not at this time", "Nyet", "All good")), collapse = "|"), ")\\b")
+  ))
+
+
+open_text_answ <- open_text %>% anti_join(count_no, by="D_395168461")
+
+boxfolder <- 249010618955
+currentDate <- Sys.Date()
+
+
+openxlsx::write.xlsx(open_text_answ,paste0("Preference_Survey_Question_16__04_01_2026.xlsx"),row.names = F,na="")
+  
+cat(paste0("There are ", dim(count_no)[[1]], " responses like No/N/Nope/Nothing/None/NA, ect. \n Of those that gave a different answer, those have been put into Box here:\n https://nih.app.box.com/folder/249010618955"))
+
+```
