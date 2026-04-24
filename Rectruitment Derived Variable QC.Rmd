@@ -1353,17 +1353,18 @@ if (nrow(reinvite_date_type) < 50) {
   knitr::kable(reinvite_date_type, longtable = TRUE) %>%
     kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=6)
 } else {
-  cat(paste0(
-    "There are ", nrow(reinvite_date_type), " rows. This has been made into a separate XLXS file called \n",
-    "Recruitment_QC_Rule46_Errors", currentDate, "_boxfolder_", boxfolder, ".xlsx' \n"
-  ))
   
-  ## These are failing in GCP bc they're not UTF-8 characters, this converts the columns
-  reinvite_date_type[] <- lapply(reinvite_date_type, function(x) {
-    if (is.character(x)) iconv(x, to = "UTF-8", sub = "byte") else x
-  })
+cat(paste0(
+    "There are ", nrow(reinvite_date_type), " rows. These can be found in the Excel file version of this report, \n",
+    "'Recruitment_Custom_QC_Output_", currentDate, "_boxfolder_", boxfolder, ".xlsx'\n"
+))
   
-  openxlsx::write.xlsx(reinvite_date_type,glue("Recruitment_Derived_QC_Rule46_Errors{currentDate}_boxfolder_{boxfolder}.xlsx"),row.names = F,na="")
+  # ## These are failing in GCP bc they're not UTF-8 characters, this converts the columns
+  # reinvite_date_type[] <- lapply(reinvite_date_type, function(x) {
+  #   if (is.character(x)) iconv(x, to = "UTF-8", sub = "byte") else x
+  # })
+  # 
+  # openxlsx::write.xlsx(reinvite_date_type,glue("Recruitment_Derived_QC_Rule46_Errors{currentDate}_boxfolder_{boxfolder}.xlsx"),row.names = F,na="")
 }
 
 ```
@@ -1736,16 +1737,16 @@ if (nrow(reinv_active) < 50) {
     )))
   
   cat(paste0(
-    "There are ", nrow(reinv_active1), " rows. This has been made into a separate XLXS file called\n",
-    "'Biospecimen_QC_Rule60_Errors", currentDate, "_boxfolder_", boxfolder, ".xlsx'\n"
+    "There are ", nrow(reinv_active1), " rows. These can be found in the Excel file version of this report, \n",
+    "'Recruitment_Custom_QC_Output_", currentDate, "_boxfolder_", boxfolder, ".xlsx'\n"
   ))
   
-  ## These are failing in GCP bc they're not UTF-8 characters, this converts the columns
-  reinvite_date_type[] <- lapply(reinvite_date_type, function(x) {
-    if (is.character(x)) iconv(x, to = "UTF-8", sub = "byte") else x
-  })
-  
-  openxlsx::write.xlsx(reinv_active1,glue("Recruitment_Derived_QC_Rule60_Errors{currentDate}_boxfolder_{boxfolder}.xlsx"),row.names = F,na="")
+  # ## These are failing in GCP bc they're not UTF-8 characters, this converts the columns
+  # reinvite_date_type[] <- lapply(reinvite_date_type, function(x) {
+  #   if (is.character(x)) iconv(x, to = "UTF-8", sub = "byte") else x
+  # })
+  # 
+  # openxlsx::write.xlsx(reinv_active1,glue("Recruitment_Derived_QC_Rule60_Errors{currentDate}_boxfolder_{boxfolder}.xlsx"),row.names = F,na="")
 }
 
 
@@ -1785,7 +1786,7 @@ if (nrow(auto_ver) == 0) {
 outreach_ver <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
                                      #as.Date(d_914594314) > (currentDate - days(5)) &
                                      as.Date(d_914594314) < (currentDate - days(5)) & 
-                                     !(state_d_188797763 %in%	c('353358909', '104430631', NA)))
+                                     !(state_d_188797763 %in%	c('353358909', '104430631')))
 
 
 if (nrow(outreach_ver) == 0) {
@@ -1908,20 +1909,20 @@ if (nrow(dob_match) == 0) {
 
 \FloatBarrier
 
-## 68. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then PIN Match, should be 'Not Matched', 'Matched', or NULL. Participants must be verified for at least 5 days.
+## 68. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then PIN Match, should be 'Not Matched' or 'Matched'. Participants must be verified for at least 5 days.
 ```{r pin_match, echo=FALSE, warning=FALSE, message=FALSE}
 
 pin_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
                                   #as.Date(d_914594314) > (currentDate - days(5)) &
                                   as.Date(d_914594314) < (currentDate - days(5)) & 
-                                  !(state_d_557461333 %in%	c('356674370', '219803804', NA)))
+                                  !(state_d_711794630 %in%	c('356674370', '219803804')))
 
 
 if (nrow(pin_match) == 0) {
   cat("No errors\n")
 } else {
   
-  pin_match <- pin_match %>% select(Site, Connect_ID, d_512820379, d_914594314, state_d_557461333) %>%  safe_arrange(Site)
+  pin_match <- pin_match %>% select(Site, Connect_ID, d_512820379, d_914594314, state_d_711794630) %>%  safe_arrange(Site)
   
   colnames(pin_match) <- c("Site", "Connect ID", 'RcrtSI_RecruitType_v1r0', "RcrtV_VerificationTm_V1R0", "PIN Match")
   
@@ -1933,13 +1934,13 @@ if (nrow(pin_match) == 0) {
 
 \FloatBarrier
 
-## 69. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Token Match, should be 'Not Matched', 'Matched', or NULL. Participants must be verified for at least 5 days.
+## 69. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Token Match, should be 'Not Matched' or 'Matched'. Participants must be verified for at least 5 days.
 ```{r token_match, echo=FALSE, warning=FALSE, message=FALSE}
 
 token_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
                                     #as.Date(d_914594314) > (currentDate - days(5)) &
                                     as.Date(d_914594314) < (currentDate - days(5)) & 
-                                    !(state_d_679832994 %in%	c('356674370', '219803804', NA)))
+                                    !(state_d_679832994 %in%	c('356674370', '219803804')))
 
 
 if (nrow(token_match) == 0) {
@@ -1958,13 +1959,13 @@ if (nrow(token_match) == 0) {
 
 \FloatBarrier
 
-## 70. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then ZIP Code Match, should be 'Not Matched', 'Matched', or NULL. Participants must be verified for at least 5 days.
+## 70. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then ZIP Code Match, should be 'Not Matched' or 'Matched'. Participants must be verified for at least 5 days.
 ```{r zip_match, echo=FALSE, warning=FALSE, message=FALSE}
 
 zip_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
                                   #as.Date(d_914594314) > (currentDate - days(5)) &
                                   as.Date(d_914594314) < (currentDate - days(5)) & 
-                                  !(state_d_559534463 %in%	c('356674370', '219803804', NA)))
+                                  !(state_d_559534463 %in%	c('356674370', '219803804')))
 
 
 if (nrow(zip_match) == 0) {
@@ -1989,7 +1990,7 @@ if (nrow(zip_match) == 0) {
 site_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
                                    #as.Date(d_914594314) > (currentDate - days(5)) &
                                    as.Date(d_914594314) < (currentDate - days(5)) & 
-                                   !(state_d_570452130 %in%	c('539025306', '427405444', NA)))
+                                   !(state_d_570452130 %in%	c('539025306', '427405444')))
 
 
 if (nrow(site_match) == 0) {
@@ -2014,7 +2015,7 @@ if (nrow(site_match) == 0) {
 age_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
                                   #as.Date(d_914594314) > (currentDate - days(5)) &
                                   as.Date(d_914594314) < (currentDate - days(5)) & 
-                                  !(state_d_629484663 %in%	c('539025306', '427405444', NA)))
+                                  !(state_d_629484663 %in%	c('539025306', '427405444')))
 
 
 if (nrow(age_match) == 0) {
@@ -2039,7 +2040,7 @@ if (nrow(age_match) == 0) {
 cancer_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
                                      #as.Date(d_914594314) > (currentDate - days(5)) &
                                      as.Date(d_914594314) < (currentDate - days(5)) & 
-                                     !(state_d_547895941 %in%	c('539025306', '427405444', NA)))
+                                     !(state_d_547895941 %in%	c('539025306', '427405444')))
 
 
 if (nrow(cancer_match) == 0) {
@@ -2166,17 +2167,17 @@ if (nrow(act_di_SF_race) < 50) {
   
   colnames(act_di_SF_race) <- c("Site", "token", 'RcrtV_Verification', "RcrtV_UpdateRecType")
   
-  cat(paste0(
-    "There are ", nrow(act_di_SF_race), " rows. This has been made into a separate XLXS file called \n",
-    "Recruitment_Derived_QC_Rule76_Errors", currentDate, "_boxfolder_", boxfolder, ".xlsx' \n"
-  ))
+cat(paste0(
+    "There are ", nrow(act_di_SF_race), " rows. These can be found in the Excel file version of this report, \n",
+    "'Recruitment_Custom_QC_Output_", currentDate, "_boxfolder_", boxfolder, ".xlsx'\n"
+))
   
-  ## These are failing in GC they're not UTF-8 characters, this converts the columns
-  act_di_SF_race[] <- lapply(act_di_SF_race, function(x) {
-    if (is.character(x)) iconv(x, to = "UTF-8", sub = "byte") else x
-  })
-  
-  openxlsx::write.xlsx(act_di_SF_race,glue("Recruitment_Derived_QC_Rule76_Errors{currentDate}_boxfolder_{boxfolder}.xlsx"),row.names = F,na="")
+  # ## These are failing in GC they're not UTF-8 characters, this converts the columns
+  # act_di_SF_race[] <- lapply(act_di_SF_race, function(x) {
+  #   if (is.character(x)) iconv(x, to = "UTF-8", sub = "byte") else x
+  # })
+  # 
+  # openxlsx::write.xlsx(act_di_SF_race,glue("Recruitment_Derived_QC_Rule76_Errors{currentDate}_boxfolder_{boxfolder}.xlsx"),row.names = F,na="")
 }
 
 ```
@@ -2542,17 +2543,17 @@ if (nrow(AB2) < 50) {
   colnames(AB2) <- c("Site", "Connect ID", 'token', 'UTM_Source', "UTM_Medium", "UTM_Campaign")
   
   
-  cat(paste0(
-    "There are ", nrow(AB2), " rows. This has been made into a separate XLXS file called \n",
-    "Recruitment_Derived_QC_Rule88_Errors", currentDate, "_boxfolder_", boxfolder, ".xlsx' \n"
-  ))
+cat(paste0(
+    "There are ", nrow(AB2), " rows. These can be found in the Excel file version of this report, \n",
+    "'Recruitment_Custom_QC_Output_", currentDate, "_boxfolder_", boxfolder, ".xlsx'\n"
+))
   
-  ## These are failing in GC they're not UTF-8 characters, this converts the columns
-  AB2[] <- lapply(AB2, function(x) {
-    if (is.character(x)) iconv(x, to = "UTF-8", sub = "byte") else x
-  })
-  
-  openxlsx::write.xlsx(AB2,glue("Recruitment_Derived_QC_Rule88_Errors{currentDate}_boxfolder_{boxfolder}.xlsx"),row.names = F,na="")
+  # ## These are failing in GC they're not UTF-8 characters, this converts the columns
+  # AB2[] <- lapply(AB2, function(x) {
+  #   if (is.character(x)) iconv(x, to = "UTF-8", sub = "byte") else x
+  # })
+  # 
+  # openxlsx::write.xlsx(AB2,glue("Recruitment_Derived_QC_Rule88_Errors{currentDate}_boxfolder_{boxfolder}.xlsx"),row.names = F,na="")
 }
 
 ```
@@ -2753,17 +2754,17 @@ if (nrow(Non_act_verif) < 50) {
       TRUE ~ as.character(.)
     )))
   
-  cat(paste0(
-    "There are ", nrow(Non_act_verif), " rows. This has been made into a separate XLXS file called \n",
-    "Recruitment_Derived_QC_Rule95_Errors", currentDate, "_boxfolder_", boxfolder, ".xlsx' \n"
-  ))
+cat(paste0(
+    "There are ", nrow(Non_act_verif), " rows. These can be found in the Excel file version of this report, \n",
+    "'Recruitment_Custom_QC_Output_", currentDate, "_boxfolder_", boxfolder, ".xlsx'\n"
+))
   
-  ## These are failing in GC they're not UTF-8 characters, this converts the columns
-  Non_act_verif[] <- lapply(Non_act_verif, function(x) {
-    if (is.character(x)) iconv(x, to = "UTF-8", sub = "byte") else x
-  })
-  
-  openxlsx::write.xlsx(Non_act_verif,glue("Recruitment_Derived_QC_Rule95_Errors{currentDate}_boxfolder_{boxfolder}.xlsx"),row.names = F,na="")
+  # ## These are failing in GC they're not UTF-8 characters, this converts the columns
+  # Non_act_verif[] <- lapply(Non_act_verif, function(x) {
+  #   if (is.character(x)) iconv(x, to = "UTF-8", sub = "byte") else x
+  # })
+  # 
+  # openxlsx::write.xlsx(Non_act_verif,glue("Recruitment_Derived_QC_Rule95_Errors{currentDate}_boxfolder_{boxfolder}.xlsx"),row.names = F,na="")
 }
 
 
@@ -2979,6 +2980,34 @@ if (nrow(Dupl_type) == 0) {
   colnames(Dupl_type) <- c("Site", "Connect ID", 'token', 'RcrtV_DuplicateType')
   
   knitr::kable(Dupl_type) %>%
+    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
+}
+
+```
+
+
+
+\FloatBarrier
+
+## 103.	If there's a duplicate type, verifcation status must = 'duplicate'. This rule allows for a lag of 5 days post-verification.
+```{r Dupl_type_reverse, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+## Used to be rule 195 in the automated report, but 5 day lag needed
+
+Dupl_type_reverse <- base_vars %>% filter(d_821247024!=922622075 & !is.na(state_d_148197146) &
+                                    as.numeric(difftime(currentDate, as.Date(d_914594314), units = "days"))>5)
+
+
+if (nrow(Dupl_type_reverse) == 0) {
+  cat("No errors\n")
+} else {
+  
+  Dupl_type_reverse <- Dupl_type_reverse %>% select(Site, Connect_ID, token, state_d_148197146, d_821247024) %>%  safe_arrange(Site)
+  
+  colnames(Dupl_type_reverse) <- c("Site", "Connect ID", 'token', 'RcrtV_DuplicateType', 'RcrtV_Verification')
+  
+  knitr::kable(Dupl_type_reverse) %>%
     kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
 }
 
