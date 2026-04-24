@@ -53,6 +53,7 @@ COPY ["./Module_2_Custom_QC.Rmd", "Module_2_Custom_QC.Rmd"]
 COPY ["./Module_3_Custom_QC.Rmd", "Module_3_Custom_QC.Rmd"]
 COPY ["./Cancer Screening Summary Statistics.Rmd", "Cancer Screening Summary Statistics.Rmd"]
 COPY ["./Monthly Derived Survey Variables.Rmd", "Monthly Derived Survey Variables.Rmd"]
+COPY ["./2025_ROI_Pref_Survey_Metrics.Rmd", "2025_ROI_Pref_Survey_Metrics.Rmd"]
 COPY ["./entrypoint.R", "entrypoint.R"]
 
 ENV GCS_SERVICE_ACCOUNT_EMAIL="qa-qc-prod@nih-nci-dceg-connect-prod-6d04.iam.gserviceaccount.com"
