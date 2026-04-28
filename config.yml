@@ -161,3 +161,13 @@ csh_metrics:
   gcp_info:
     cloud_scheduler: ccc-cancer-screening-history-metrics
     frequency: "30 14 * * 1"
+    
+        
+pref_26_metrics:
+  r_file_name: "2025_ROI_Pref_Survey_Metrics.Rmd"
+  report_file_name: "2025_ROI_Pref_Survey_Metrics.pdf"
+  box_folders:
+    - "251314285484"
+  gcp_info:
+    cloud_scheduler: ccc-2025-preference-metrics
+    frequency: "45 14 1 * *" # first of the month at 2:45 PM
