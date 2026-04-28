@@ -556,6 +556,19 @@ if (nrow(start_m4) > 0) {
   all_errors <- bind_rows(all_errors, temp)
 }
 
+# Rule 29
+start_qol <- partsbq %>% filter(!is.na(d_870643066) & (d_320303124 == 972455046 | is.na(d_320303124)))
+
+if (nrow(start_qol) > 0) {
+  temp <- start_qol %>%
+    select(Connect_ID, token, Site) %>%
+    mutate(
+      rule_id = 29,
+      rule_label = "If the PROMIS survey start timestamp is populated, then the PROMIS survey flag must be 'completed' or 'started'"
+    )
+  all_errors <- bind_rows(all_errors, temp)
+}
+
 # Rule 30
 start_ces <- partsbq %>%  filter(!is.na(d_263355177) & (d_956490759==972455046 | is.na(d_956490759)))
 
@@ -658,6 +671,7 @@ if (nrow(start_csh) > 0) {
 
 # Rule 38
 csh_null_bq <-
+
   "SELECT Connect_ID,
 CASE
     WHEN d_827220437 = '125001209' THEN 'Kaiser Permanente Colorado'
@@ -716,6 +730,7 @@ bdaybq <- bq_table_download(bdaybq_table, bigint = "integer64")
 
 bdaybq$Connect_ID <- as.numeric(bdaybq$Connect_ID)
 bday_base_vars= left_join(partsbq, bdaybq, by="Connect_ID")
+
 
 
 
@@ -844,6 +859,7 @@ if (nrow(start_DHQ) > 0) {
 ## Clearing up space in GCP memory
 rm(list = setdiff(ls(), c('currentDate', 'boxfolder', 'project', "partsbq", "biobq", "base_vars", "safe_arrange")))
 gc()
+
 
 
 
@@ -1157,6 +1173,7 @@ if (nrow(cancer_match) > 0) {
 # Rule 74
 act_di_age <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_934298480) & 
                                    !(d_821247024=="922622075" & state_d_793822265=="854903954") & 
+
                                    !(Connect_ID %in% c("4093473296", "2701575745")))
 
 if (nrow(act_di_age) > 0) {
@@ -1167,6 +1184,7 @@ if (nrow(act_di_age) > 0) {
     )
   all_errors <- bind_rows(all_errors, temp)
 }
+
 
 
 
@@ -1222,9 +1240,9 @@ if (nrow(act_di_HFH_race) > 0) {
 # Rule 78
 act_di_BSWH_race <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_253532712) & 
                                          d_827220437=='472940358' &
+
                                          !(d_821247024=="922622075" & state_d_793822265=="854903954")  & 
                                          !(Connect_ID %in% c("2701575745")))
-
 if (nrow(act_di_BSWH_race) > 0) {
   temp <- act_di_BSWH_race %>% select(Connect_ID, token, Site) %>%
     mutate(
@@ -1265,6 +1283,7 @@ if (nrow(act_di_HFH_eth) > 0) {
 # Rule 81
 act_di_member <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_477091792) & 
                                       !(d_821247024=="922622075" & state_d_793822265=="854903954") & 
+
                                       !(Connect_ID %in% c("4093473296", "2701575745")))
 
 if (nrow(act_di_member) > 0) {
@@ -1279,6 +1298,7 @@ if (nrow(act_di_member) > 0) {
 # Rule 82
 act_di_cmpn <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_667474224) & 
                                     !(d_821247024=="922622075" & state_d_793822265=="854903954") & 
+
                                     !(Connect_ID %in% c("4093473296", "2701575745")))
 
 if (nrow(act_di_cmpn) > 0) {
@@ -1293,6 +1313,7 @@ if (nrow(act_di_cmpn) > 0) {
 # Rule 83
 act_di_elg <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_749475364) & 
                                    !(d_821247024=="922622075" & state_d_793822265=="854903954") & 
+
                                    !(Connect_ID %in% c("4093473296", "2701575745")))
 
 if (nrow(act_di_elg) > 0) {
@@ -1308,6 +1329,7 @@ if (nrow(act_di_elg) > 0) {
 act_di_sex <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_706256705) & 
                                    d_827220437!='548392715' &
                                    !(d_821247024=="922622075" & state_d_793822265=="854903954") & 
+
                                    !(Connect_ID %in% c("4093473296", "2701575745")))
 
 if (nrow(act_di_sex) > 0) {
@@ -1471,6 +1493,7 @@ if (nrow(Man_OutRch) > 0) {
 
 # Rule 95
 Non_act_verif <- base_vars %>%  filter(d_512820379 == 180583933 & 
+
                                          (d_821247024 %in% c(219863910, 922622075, 197316935) &
                                             !(state_d_148197146 %in% c(283434980, 866029623))))
 
@@ -1485,6 +1508,7 @@ if (nrow(Non_act_verif) > 0) {
 
 # Rule 96
 update_recr <- base_vars %>% filter(d_821247024 == 197316935 & is.na(state_d_793822265) &
+
                                       as.numeric(difftime(currentDate, as.Date(d_914594314), units = "days"))>5)
 
 if (nrow(update_recr) > 0) {
@@ -1498,6 +1522,7 @@ if (nrow(update_recr) > 0) {
 
 # Rule 97
 roi_null_bq <-
+
   "SELECT Connect_ID,
 CASE
     WHEN d_827220437 = '125001209' THEN 'Kaiser Permanente Colorado'
@@ -1523,9 +1548,13 @@ roi_null <- bq_table_download(roi_null_bq_table, bigint = "integer64")
 roi_null$Connect_ID <- as.numeric(roi_null$Connect_ID)
 
 if (nrow(roi_null) > 0) {
-  temp <- roi_null %>% select(Connect_ID, Site) %>% mutate(token = NA, rule_id = 97, rule_label = "If the ROI Pref Survey Status flag is null, there should be no survey data.")
+  temp <- roi_null %>% select(Connect_ID, Site) %>% 
+    mutate(token = NA, 
+           rule_id = 97, 
+           rule_label = "If the ROI Pref Survey Status flag is null, there should be no survey data.")
   all_errors <- bind_rows(all_errors, temp)
 }
+
 
 
 
@@ -1535,6 +1564,7 @@ update_recr_by_type <- base_vars %>% filter(d_821247024!="922622075" &
                                               as.numeric(difftime(currentDate, as.Date(d_914594314), units = "days"))>5)
 
 if (nrow(update_recr_by_type) > 0) {
+
   temp <- update_recr_by_type %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 98,
@@ -1600,6 +1630,7 @@ if (nrow(Man_Auto_verif) > 0) {
 # Rule 102
 Dupl_type <- base_vars %>% filter(d_821247024==922622075 & is.na(state_d_148197146) &
                                     as.numeric(difftime(currentDate, as.Date(d_914594314), units = "days"))>5)
+
 if (nrow(Man_Auto_verif) > 0) {
   temp <- Man_Auto_verif %>% select(Connect_ID, token, Site) %>%
     mutate(
@@ -1622,6 +1653,7 @@ if (nrow(Dupl_type_reverse) > 0) {
     )
   all_errors <- bind_rows(all_errors, temp)
 }
+
 
 
 
