@@ -130,17 +130,10 @@ incentive2 <- base_vars %>%  filter(d_949302066 == '231311385' & d_536735468 == 
                                       (d_130371375_d_266600170_d_731498909!=353358909 | d_130371375_d_266600170_d_222373868!=353358909 | is.na(d_130371375_d_266600170_d_787567527)))
 
 if (nrow(incentive2) > 0) {
-  temp <- incentive2 %>%
-    select(Site, Connect_ID, d_130371375_d_266600170_d_731498909, d_130371375_d_266600170_d_222373868, d_130371375_d_266600170_d_787567527) %>%
+  temp <- incentive2 %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 1,
-      rule_label = "If all BL Modules are completed and the participant has a baseline research collection where the tube is collected and the reason tube wasn't collected wasn't refusal, then SMPaym_TmPaymEligBL_v1r0 must be populated.",
-      rule_variable1 = "SMPaym_PaymEligBL",
-      variable_output1 = d_130371375_d_266600170_d_731498909,
-      rule_variable2 = "SMPaym_NORCPaymEligBL",
-      variable_output2 = d_130371375_d_266600170_d_222373868,
-      rule_variable3 = "SMPaym_TmPaymEligBL",
-      variable_output3 = d_130371375_d_266600170_d_787567527
+      rule_label = "If all BL Modules are completed and the participant has a baseline research collection where the tube is collected and the reason tube wasn't collected wasn't refusal, then SMPaym_TmPaymEligBL_v1r0 must be populated."
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -194,13 +187,10 @@ mens_elg <- mens %>%  filter(is.na(d_289750687) & (d_764863765>=as.Date("2022-12
                                !(Connect_ID %in% can_no_longer_contact))
 
 if (nrow(mens_elg) > 0) {
-  temp <- mens_elg %>%
-    select(Site, Connect_ID, d_289750687) %>%
+  temp <- mens_elg %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 2,
-      rule_label = "If either the BUM Survey or the BU Survey was completed with SrvBlU_MENST60_v2r0 answered yes, then SrvMC_MenstSrvElig_v1r0 must be yes.",
-      rule_variable1 = "SrvMC_MenstSrvElig_v1r0",
-      variable_output1 = d_289750687
+      rule_label = "If either the BUM Survey or the BU Survey was completed with SrvBlU_MENST60_v2r0 answered yes, then SrvMC_MenstSrvElig_v1r0 must be yes."
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -240,8 +230,7 @@ MC_not_elg <- bq_table_download(MC_ccc_NE_table, bigint = "integer64")
 MC_not_elg$Connect_ID <- as.numeric(MC_not_elg$Connect_ID)
 
 if (nrow(MC_not_elg) > 0) {
-  temp <- MC_not_elg %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- MC_not_elg %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 3,
       rule_label = "If SrvMC_MenstSrvElig_v1r0, then SrvMC_BaseComplete_v1r0 cannot be 'Started' or 'Submitted'. Note, this excludes those who started the survey prior to December 10th, 2022 as the eligibility has since been corrected."
@@ -253,15 +242,10 @@ if (nrow(MC_not_elg) > 0) {
 cash_NORC <- base_vars %>%  filter(d_130371375_d_266600170_d_731498909==353358909 & d_130371375_d_266600170_d_945795905=="cash" & !is.na(d_130371375_d_266600170_d_320023644))
 
 if (nrow(cash_NORC) > 0) {
-  temp <- cash_NORC %>%
-    select(Site, Connect_ID, d_130371375_d_266600170_d_945795905, d_130371375_d_266600170_d_320023644) %>%
+  temp <- cash_NORC %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 4,
-      rule_label = "If HDPaym_PaymChosenBL_v2r0 = \"cash\" and SMPaym_PaymEligBL_v1r0=yes, then HDPaym_CaseNumberBL_v1r0 should not be populated. Or conversely, if SMPaym_PaymEligBL_v1r0=yes\"and HDPaym_CaseNumberBL_v1r0 is populated, then HDPaym_PaymChosenBL_v2r0 should not be \"cash\".",
-      rule_variable1 = "HDPaym_PaymChosenBL",
-      variable_output1 = d_130371375_d_266600170_d_945795905,
-      rule_variable2 = "HDPaym_CaseNumberBL",
-      variable_output2 = d_130371375_d_266600170_d_320023644
+      rule_label = "If HDPaym_PaymChosenBL_v2r0 = \"cash\" and SMPaym_PaymEligBL_v1r0=yes, then HDPaym_CaseNumberBL_v1r0 should not be populated. Or conversely, if SMPaym_PaymEligBL_v1r0=yes\"and HDPaym_CaseNumberBL_v1r0 is populated, then HDPaym_PaymChosenBL_v2r0 should not be \"cash\"."
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -271,19 +255,10 @@ bday <- partsbq %>%  filter(!is.na(d_371067537) &
                               d_371067537 != paste0(d_544150384, d_564964481, d_795827569))
 
 if (nrow(bday) > 0) {
-  temp <- bday %>%
-    select(Site, Connect_ID, d_371067537, d_544150384, d_564964481, d_795827569) %>%
+  temp <- bday %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 5,
-      rule_label = "RcrtUP_DOB must equal the concatenation of RcrtUP_YOB, RcrtUP_MOB, and RcrtUP_BD. This excludes those with a null concatenated DOB as it was implements after Module 1 was in production.",
-      rule_variable1 = "RcrtUP_DOB",
-      variable_output1 = d_371067537,
-      rule_variable2 = "RcrtUP_YOB",
-      variable_output2 = d_544150384,
-      rule_variable3 = "RcrtUP_MOB",
-      variable_output3 = d_564964481,
-      rule_variable4 = "RcrtUP_BD",
-      variable_output4 = d_795827569
+      rule_label = "RcrtUP_DOB must equal the concatenation of RcrtUP_YOB, RcrtUP_MOB, and RcrtUP_BD. This excludes those with a null concatenated DOB as it was implements after Module 1 was in production."
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -297,13 +272,10 @@ smmet0 <- partsbq %>%  filter(d_685002411_d_994064239==104430631 & d_685002411_d
                                 d_912301837!=208325815)
 
 if (nrow(smmet0) > 0) {
-  temp <- smmet0 %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- smmet0 %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 6,
-      rule_label = "If HdRef_Basesrv_v1r0 = \"no\" AND HdRef_Baseblood_v1r0 = \"no\" AND HdRef_Baseurine_v1r0 and HdRef_Basesaliva_v1r0 = \"no\" AND HdRef_Allsrv_v1r0 = \"no\" AND HdRef_Allsample_v1r0 = \"no\" AND HdRef_BlSpecSrv_v1r0 = \"no\" AND HdWd_WdConsent_v1r0 = \"no\" AND HdWd_Activepart_v1r0 = \"no\" AND HdWd_HIPAArevoked_v1r0 = \"no\" AND HdWd_Destroydata_v1r0 = \"no\" AND HdWd_Deceased_v1r0 = \"no\" AND HdRef_3moQOLsurv_v1r0 = 'no' AND HdRef_AllQOLsurv_v1r0='no' and HdRef_2024ConExpSrv_v1r0='no' AND HdRef_AllFutConExpSrv_v1r0='no' nad HdRef_CancHistScrnSrv_v1r0='no', then SMMet_PartStatus_v1r0= \"No Refusal\"",
-      rule_variable1 = "d_912301837",
-      variable_output1 = "SMMet_PartStatus_v1r0"
+      rule_label = "If HdRef_Basesrv_v1r0 = \"no\" AND HdRef_Baseblood_v1r0 = \"no\" AND HdRef_Baseurine_v1r0 and HdRef_Basesaliva_v1r0 = \"no\" AND HdRef_Allsrv_v1r0 = \"no\" AND HdRef_Allsample_v1r0 = \"no\" AND HdRef_BlSpecSrv_v1r0 = \"no\" AND HdWd_WdConsent_v1r0 = \"no\" AND HdWd_Activepart_v1r0 = \"no\" AND HdWd_HIPAArevoked_v1r0 = \"no\" AND HdWd_Destroydata_v1r0 = \"no\" AND HdWd_Deceased_v1r0 = \"no\" AND HdRef_3moQOLsurv_v1r0 = 'no' AND HdRef_AllQOLsurv_v1r0='no' and HdRef_2024ConExpSrv_v1r0='no' AND HdRef_AllFutConExpSrv_v1r0='no' nad HdRef_CancHistScrnSrv_v1r0='no', then SMMet_PartStatus_v1r0= \"No Refusal\""
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -312,13 +284,10 @@ if (nrow(smmet0) > 0) {
 smmet2 <- partsbq %>%  filter( d_906417725==353358909 & d_773707518==104430631 & d_747006172==104430631 & d_831041022==104430631 & d_987563196==104430631 & d_912301837!=458508122)
 
 if (nrow(smmet2) > 0) {
-  temp <- smmet2 %>%
-    select(Site, Connect_ID, d_912301837) %>%
+  temp <- smmet2 %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 7,
-      rule_label = "If HdWd_Activepart_v1r0 = yes\" AND HdWd_HIPAArevoked_v1r0 = \"no\" And HdWd_WdConsent_v1r0 = \"no\" AND HdWd_Deceased_v1r0 = \"no\" AND HdWd_Destroydata_v1r0 = \"no\", then SMMet_PartStatus_v1r0= \"Refused All Future Activities\"",
-      rule_variable1 = "SMMet_PartStatus_v1r0",
-      variable_output1 = d_912301837
+      rule_label = "If HdWd_Activepart_v1r0 = yes\" AND HdWd_HIPAArevoked_v1r0 = \"no\" And HdWd_WdConsent_v1r0 = \"no\" AND HdWd_Deceased_v1r0 = \"no\" AND HdWd_Destroydata_v1r0 = \"no\", then SMMet_PartStatus_v1r0= \"Refused All Future Activities\""
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -327,13 +296,10 @@ if (nrow(smmet2) > 0) {
 smmet3 <- partsbq %>%  filter(d_773707518==353358909 & d_747006172==104430631 & d_831041022==104430631 & d_987563196==104430631 & d_912301837!=872012139)
 
 if (nrow(smmet3) > 0) {
-  temp <- smmet3 %>%
-    select(Site, Connect_ID, d_912301837) %>%
+  temp <- smmet3 %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 8,
-      rule_label = "If HdWd_HIPAArevoked_v1r0 = yes\" And HdWd_WdConsent_v1r0 = \"no\" And HdWd_Deceased_v1r0 = \"no\" AND HdWd_Destroydata_v1r0 = \"no\", then SMMet_PartStatus_v1r0= \"Revoked HIPAA Only\"",
-      rule_variable1 = "SMMet_PartStatus_v1r0",
-      variable_output1 = d_912301837
+      rule_label = "If HdWd_HIPAArevoked_v1r0 = yes\" And HdWd_WdConsent_v1r0 = \"no\" And HdWd_Deceased_v1r0 = \"no\" AND HdWd_Destroydata_v1r0 = \"no\", then SMMet_PartStatus_v1r0= \"Revoked HIPAA Only\""
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -342,13 +308,10 @@ if (nrow(smmet3) > 0) {
 smmet4 <- partsbq %>%  filter(d_773707518==353358909 &  d_747006172==353358909 & d_831041022==104430631 & d_987563196==104430631 & d_912301837!=854021266)
 
 if (nrow(smmet4) > 0) {
-  temp <- smmet4 %>%
-    select(Site, Connect_ID, d_912301837) %>%
+  temp <- smmet4 %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 9,
-      rule_label = "If HdWd_HIPAArevoked_v1r0 = yes\" AND HdWd_WdConsent_v1r0 = \"yes\" AND HdWd_Deceased_v1r0 = \"no\" AND HdWd_Destroydata_v1r0 = \"no\", then SMMet_PartStatus_v1r0= \"Withdrew Consent\"",
-      rule_variable1 = "SMMet_PartStatus_v1r0",
-      variable_output1 = d_912301837
+      rule_label = "If HdWd_HIPAArevoked_v1r0 = yes\" AND HdWd_WdConsent_v1r0 = \"yes\" AND HdWd_Deceased_v1r0 = \"no\" AND HdWd_Destroydata_v1r0 = \"no\", then SMMet_PartStatus_v1r0= \"Withdrew Consent\""
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -357,13 +320,10 @@ if (nrow(smmet4) > 0) {
 opt_out <- partsbq %>%  filter(!is.na(state_d_697256759) & (state_d_158291096==104430631 | is.na(state_d_158291096)))
 
 if (nrow(opt_out) > 0) {
-  temp <- opt_out %>%
-    select(Site, Connect_ID, state_d_158291096) %>%
+  temp <- opt_out %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 10,
-      rule_label = "If RcrtSI_OptOutTm_v1r0 is a valid date, then RcrtSI_OptOut_v1r0 must be \"yes\"",
-      rule_variable1 = "RcrtSI_OptOut_v1r0",
-      variable_output1 = state_d_158291096
+      rule_label = "If RcrtSI_OptOutTm_v1r0 is a valid date, then RcrtSI_OptOut_v1r0 must be \"yes\""
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -372,15 +332,10 @@ if (nrow(opt_out) > 0) {
 pref_lang <- partsbq %>%  filter(is.na(d_255077064) & as.Date(d_454445267) > "2024-07-31")
 
 if (nrow(pref_lang) > 0) {
-  temp <- pref_lang %>%
-    select(Site, Connect_ID, d_255077064, d_454445267) %>%
+  temp <- pref_lang %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 11,
-      rule_label = "If RcrtCS_ConsentSumit_v1r0 was on or after August 1, 2024 then RcrtCS_PrefLang_v1r0 must be populated.",
-      rule_variable1 = "RcrtCS_PrefLang_v1r0",
-      variable_output1 = d_255077064,
-      rule_variable2 = "RcrtCS_ConsentSumit_v1r0",
-      variable_output2 = d_454445267
+      rule_label = "If RcrtCS_ConsentSumit_v1r0 was on or after August 1, 2024 then RcrtCS_PrefLang_v1r0 must be populated."
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -390,15 +345,10 @@ comp_m1 <- partsbq %>%  filter(!is.na(d_517311251) & (d_949302066!=231311385) &
                                  Connect_ID!='1974006545')
 
 if (nrow(comp_m1) > 0) {
-  temp <- comp_m1 %>%
-    select(Site, Connect_ID, d_517311251, d_949302066) %>%
+  temp <- comp_m1 %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 12,
-      rule_label = "If the Mod1 survey completion timestamp is populated, then the Mod1 survey flag must be 'completed'",
-      rule_variable1 = "Survey Timestamp",
-      variable_output1 = d_517311251,
-      rule_variable2 = "Survey Flag",
-      variable_output2 = d_949302066
+      rule_label = "If the Mod1 survey completion timestamp is populated, then the Mod1 survey flag must be 'completed'"
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -407,15 +357,10 @@ if (nrow(comp_m1) > 0) {
 comp_m2 <- partsbq %>%  filter(!is.na(d_832139544) & (d_536735468!=231311385))
 
 if (nrow(comp_m2) > 0) {
-  temp <- comp_m2 %>%
-    select(Site, Connect_ID, d_832139544, d_536735468) %>%
+  temp <- comp_m2 %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 13,
-      rule_label = "If the Mod2 survey completion timestamp is populated, then the Mod2 survey flag must be 'completed'",
-      rule_variable1 = "Survey Timestamp",
-      variable_output1 = d_832139544,
-      rule_variable2 = "Survey Flag",
-      variable_output2 = d_536735468
+      rule_label = "If the Mod2 survey completion timestamp is populated, then the Mod2 survey flag must be 'completed'"
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -424,15 +369,10 @@ if (nrow(comp_m2) > 0) {
 comp_m3 <- partsbq %>%  filter(!is.na(d_770257102) & (d_976570371!=231311385))
 
 if (nrow(comp_m3) > 0) {
-  temp <- comp_m3 %>%
-    select(Site, Connect_ID, d_770257102, d_976570371) %>%
+  temp <- comp_m3 %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 14,
-      rule_label = "If the Mod3 survey completion timestamp is populated, then the Mod3 survey flag must be 'completed'",
-      rule_variable1 = "Survey Timestamp",
-      variable_output1 = d_770257102,
-      rule_variable2 = "Survey Flag",
-      variable_output2 = d_976570371
+      rule_label = "If the Mod3 survey completion timestamp is populated, then the Mod3 survey flag must be 'completed'"
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -441,15 +381,10 @@ if (nrow(comp_m3) > 0) {
 comp_m4 <- partsbq %>%  filter(!is.na(d_264644252) & (d_663265240!=231311385))
 
 if (nrow(comp_m4) > 0) {
-  temp <- comp_m4 %>%
-    select(Site, Connect_ID, d_264644252, d_663265240) %>%
+  temp <- comp_m4 %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 15,
-      rule_label = "If the Mod4 survey completion timestamp is populated, then the Mod4 survey flag must be 'completed'",
-      rule_variable1 = "Survey Timestamp",
-      variable_output1 = d_264644252,
-      rule_variable2 = "Survey Flag",
-      variable_output2 = d_663265240
+      rule_label = "If the Mod4 survey completion timestamp is populated, then the Mod4 survey flag must be 'completed'"
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -458,15 +393,10 @@ if (nrow(comp_m4) > 0) {
 comp_qol <- partsbq %>%  filter(!is.na(d_843688458) & (d_320303124!=231311385))
 
 if (nrow(comp_qol) > 0) {
-  temp <- comp_qol %>%
-    select(Site, Connect_ID, d_843688458, d_320303124) %>%
+  temp <- comp_qol %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 16,
-      rule_label = "If the PROMIS survey completion timestamp is populated, then the PROMIS survey flag must be 'completed'",
-      rule_variable1 = "Survey Timestamp",
-      variable_output1 = d_843688458,
-      rule_variable2 = "Survey Flag",
-      variable_output2 = d_320303124
+      rule_label = "If the PROMIS survey completion timestamp is populated, then the PROMIS survey flag must be 'completed'"
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -475,15 +405,10 @@ if (nrow(comp_qol) > 0) {
 comp_ces <- partsbq %>%  filter(!is.na(d_199471989) & (d_956490759!=231311385))
 
 if (nrow(comp_ces) > 0) {
-  temp <- comp_ces %>%
-    select(Site, Connect_ID, d_199471989, d_956490759) %>%
+  temp <- comp_ces %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 17,
-      rule_label = "If the CES survey completion timestamp is populated, then the CES survey flag must be 'completed'",
-      rule_variable1 = "Survey Timestamp",
-      variable_output1 = d_199471989,
-      rule_variable2 = "Survey Flag",
-      variable_output2 = d_956490759
+      rule_label = "If the CES survey completion timestamp is populated, then the CES survey flag must be 'completed'"
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -493,15 +418,10 @@ comp_bum <- partsbq %>%  filter(!is.na(d_222161762) & (d_265193023!=231311385) &
                                   !(Connect_ID %in% c("7568162154", "7659966139")))
 
 if (nrow(comp_bum) > 0) {
-  temp <- comp_bum %>%
-    select(Site, Connect_ID, d_222161762, d_265193023) %>%
+  temp <- comp_bum %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 18,
-      rule_label = "If the BUM survey completion timestamp is populated, then the BUM survey flag must be 'completed'",
-      rule_variable1 = "Survey Timestamp",
-      variable_output1 = d_222161762,
-      rule_variable2 = "Survey Flag",
-      variable_output2 = d_265193023
+      rule_label = "If the BUM survey completion timestamp is populated, then the BUM survey flag must be 'completed'"
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -510,15 +430,10 @@ if (nrow(comp_bum) > 0) {
 comp_bu <- partsbq %>%  filter(!is.na(d_764863765) & (d_253883960!=231311385))
 
 if (nrow(comp_bu) > 0) {
-  temp <- comp_bu %>%
-    select(Site, Connect_ID, d_764863765, d_253883960) %>%
+  temp <- comp_bu %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 19,
-      rule_label = "If the BU survey completion timestamp is populated, then the BU survey flag must be 'completed'",
-      rule_variable1 = "Survey Timestamp",
-      variable_output1 = d_764863765,
-      rule_variable2 = "Survey Flag",
-      variable_output2 = d_253883960
+      rule_label = "If the BU survey completion timestamp is populated, then the BU survey flag must be 'completed'"
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -528,15 +443,10 @@ comp_mw <- partsbq %>%  filter(!is.na(d_195145666) & (d_547363263!=231311385) &
                                  Connect_ID!="1981842976")
 
 if (nrow(comp_mw) > 0) {
-  temp <- comp_mw %>%
-    select(Site, Connect_ID, d_195145666, d_547363263) %>%
+  temp <- comp_mw %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 20,
-      rule_label = "If the MW survey completion timestamp is populated, then the MW survey flag must be 'completed'",
-      rule_variable1 = "Survey Timestamp",
-      variable_output1 = d_195145666,
-      rule_variable2 = "Survey Flag",
-      variable_output2 = d_547363263
+      rule_label = "If the MW survey completion timestamp is populated, then the MW survey flag must be 'completed'"
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -546,15 +456,10 @@ comp_cv <- partsbq %>%  filter(!is.na(d_784810139) & (d_220186468!=231311385) &
                                  Connect_ID!="7568162154")
 
 if (nrow(comp_cv) > 0) {
-  temp <- comp_cv %>%
-    select(Site, Connect_ID, d_784810139, d_220186468) %>%
+  temp <- comp_cv %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 21,
-      rule_label = "If the COVID survey completion timestamp is populated, then the COVID survey flag must be 'completed'",
-      rule_variable1 = "Survey Timestamp",
-      variable_output1 = d_784810139,
-      rule_variable2 = "Survey Flag",
-      variable_output2 = d_220186468
+      rule_label = "If the COVID survey completion timestamp is populated, then the COVID survey flag must be 'completed'"
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -563,15 +468,10 @@ if (nrow(comp_cv) > 0) {
 comp_mns <- partsbq %>%  filter(!is.na(d_217640691) & (d_459098666!=231311385))
 
 if (nrow(comp_mns) > 0) {
-  temp <- comp_mns %>%
-    select(Site, Connect_ID, d_217640691, d_459098666) %>%
+  temp <- comp_mns %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 22,
-      rule_label = "If the Menstrual History survey completion timestamp is populated, then the Menstrual History survey flag must be 'completed'",
-      rule_variable1 = "Survey Timestamp",
-      variable_output1 = d_217640691,
-      rule_variable2 = "Survey Flag",
-      variable_output2 = d_459098666
+      rule_label = "If the Menstrual History survey completion timestamp is populated, then the Menstrual History survey flag must be 'completed'"
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -581,15 +481,10 @@ comp_ssn <- partsbq %>%  filter(!is.na(d_315032037) & (d_126331570!=231311385) &
                                   !(Connect_ID %in% c("2325948009", "4465969971", "8564038285")))
 
 if (nrow(comp_ssn) > 0) {
-  temp <- comp_ssn %>%
-    select(Site, Connect_ID, d_315032037, d_126331570) %>%
+  temp <- comp_ssn %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 23,
-      rule_label = "If the SSN survey completion timestamp is populated, then the SSN survey flag must be 'completed'",
-      rule_variable1 = "Survey Timestamp",
-      variable_output1 = d_315032037,
-      rule_variable2 = "Survey Flag",
-      variable_output2 = d_126331570
+      rule_label = "If the SSN survey completion timestamp is populated, then the SSN survey flag must be 'completed'"
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -598,32 +493,28 @@ if (nrow(comp_ssn) > 0) {
 comp_csh <- partsbq %>%  filter(!is.na(d_389890053) & (d_176068627!=231311385))
 
 if (nrow(comp_csh) > 0) {
-  temp <- comp_csh %>%
-    select(Site, Connect_ID, d_389890053, d_176068627) %>%
+  temp <- comp_csh %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 24,
-      rule_label = "If the CSH survey completion timestamp is populated, then the CHS History survey flag must be 'completed'",
-      rule_variable1 = "Survey Timestamp",
-      variable_output1 = d_389890053,
-      rule_variable2 = "Survey Flag",
-      variable_output2 = d_176068627
+      rule_label = "If the CSH survey completion timestamp is populated, then the CHS History survey flag must be 'completed'"
     )
   all_errors <- bind_rows(all_errors, temp)
 }
+
+
+## Clearing up space in GCP memory
+rm(list = setdiff(ls(), c('currentDate', 'boxfolder', 'project', "partsbq", "biobq", "base_vars", "safe_arrange")))
+gc()
+
 
 # Rule 25
 start_m1 <- partsbq %>%  filter(!is.na(d_205553981) & (d_949302066==972455046 | is.na(d_949302066)))
 
 if (nrow(start_m1) > 0) {
-  temp <- start_m1 %>%
-    select(Site, Connect_ID, d_205553981, d_949302066) %>%
+  temp <- start_m1 %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 25,
-      rule_label = "If the Mod1 survey start timestamp is populated, then the Mod1 survey flag must be 'completed' or 'started'",
-      rule_variable1 = "Survey Timestamp",
-      variable_output1 = d_205553981,
-      rule_variable2 = "Survey Flag",
-      variable_output2 = d_949302066
+      rule_label = "If the Mod1 survey start timestamp is populated, then the Mod1 survey flag must be 'completed' or 'started'"
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -632,15 +523,10 @@ if (nrow(start_m1) > 0) {
 start_m2 <- partsbq %>%  filter(!is.na(d_541836531) & (d_536735468==972455046 | is.na(d_536735468)))
 
 if (nrow(start_m2) > 0) {
-  temp <- start_m2 %>%
-    select(Site, Connect_ID, d_541836531, d_536735468) %>%
+  temp <- start_m2 %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 26,
-      rule_label = "If the Mod2 survey start timestamp is populated, then the Mod2 survey flag must be 'completed' or 'started'",
-      rule_variable1 = "Survey Timestamp",
-      variable_output1 = d_541836531,
-      rule_variable2 = "Survey Flag",
-      variable_output2 = d_536735468
+      rule_label = "If the Mod2 survey start timestamp is populated, then the Mod2 survey flag must be 'completed' or 'started'"
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -649,15 +535,10 @@ if (nrow(start_m2) > 0) {
 start_m3 <- partsbq %>%  filter(!is.na(d_386488297) & (d_976570371==972455046 | is.na(d_976570371)))
 
 if (nrow(start_m3) > 0) {
-  temp <- start_m3 %>%
-    select(Site, Connect_ID, d_386488297, d_976570371) %>%
+  temp <- start_m3 %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 27,
-      rule_label = "If the Mod3 survey start timestamp is populated, then the Mod3 survey flag must be 'completed' or 'started'",
-      rule_variable1 = "Survey Timestamp",
-      variable_output1 = d_386488297,
-      rule_variable2 = "Survey Flag",
-      variable_output2 = d_976570371
+      rule_label = "If the Mod3 survey start timestamp is populated, then the Mod3 survey flag must be 'completed' or 'started'"
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -667,32 +548,10 @@ start_m4 <- partsbq %>%  filter(!is.na(d_452942800) & (d_663265240==972455046 | 
                                   !(Connect_ID %in% c("7568162154", "7659966139")))
 
 if (nrow(start_m4) > 0) {
-  temp <- start_m4 %>%
-    select(Site, Connect_ID, d_452942800, d_663265240) %>%
+  temp <- start_m4 %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 28,
-      rule_label = "If the Mod4 survey start timestamp is populated, then the Mod4 survey flag must be 'completed' or 'started'",
-      rule_variable1 = "Survey Timestamp",
-      variable_output1 = d_452942800,
-      rule_variable2 = "Survey Flag",
-      variable_output2 = d_663265240
-    )
-  all_errors <- bind_rows(all_errors, temp)
-}
-
-# Rule 29
-start_qol <- partsbq %>% filter(!is.na(d_870643066) & (d_320303124 == 972455046 | is.na(d_320303124)))
-
-if (nrow(start_qol) > 0) {
-  temp <- start_qol %>%
-    select(Site, Connect_ID, d_870643066, d_320303124) %>%
-    mutate(
-      rule_id = 29,
-      rule_label = "If the PROMIS survey start timestamp is populated, then the PROMIS survey flag must be 'completed' or 'started'",
-      rule_variable1 = "Survey Timestamp",
-      variable_output1 = d_870643066,
-      rule_variable2 = "Survey Flag",
-      variable_output2 = d_320303124
+      rule_label = "If the Mod4 survey start timestamp is populated, then the Mod4 survey flag must be 'completed' or 'started'"
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -701,15 +560,10 @@ if (nrow(start_qol) > 0) {
 start_ces <- partsbq %>%  filter(!is.na(d_263355177) & (d_956490759==972455046 | is.na(d_956490759)))
 
 if (nrow(start_ces) > 0) {
-  temp <- start_ces %>%
-    select(Site, Connect_ID, d_263355177, d_956490759) %>%
+  temp <- start_ces %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 30,
-      rule_label = "If the CES survey start timestamp is populated, then the CES survey flag must be 'completed' or 'started'",
-      rule_variable1 = "Survey Timestamp",
-      variable_output1 = d_263355177,
-      rule_variable2 = "Survey Flag",
-      variable_output2 = d_956490759
+      rule_label = "If the CES survey start timestamp is populated, then the CES survey flag must be 'completed' or 'started'"
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -719,15 +573,10 @@ start_bum <- partsbq %>%  filter(!is.na(d_822499427) & (d_265193023==972455046 |
                                    !(Connect_ID %in% c('7568162154', "7659966139")))
 
 if (nrow(start_bum) > 0) {
-  temp <- start_bum %>%
-    select(Site, Connect_ID, d_822499427, d_265193023) %>%
+  temp <- start_bum %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 31,
-      rule_label = "If the BUM survey start timestamp is populated, then the BUM survey flag must be 'completed' or 'started'",
-      rule_variable1 = "Survey Timestamp",
-      variable_output1 = d_822499427,
-      rule_variable2 = "Survey Flag",
-      variable_output2 = d_265193023
+      rule_label = "If the BUM survey start timestamp is populated, then the BUM survey flag must be 'completed' or 'started'"
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -736,15 +585,10 @@ if (nrow(start_bum) > 0) {
 start_bu <- partsbq %>%  filter(!is.na(d_534669573) & (d_253883960==972455046 | is.na(d_253883960)))
 
 if (nrow(start_bu) > 0) {
-  temp <- start_bu %>%
-    select(Site, Connect_ID, d_534669573, d_253883960) %>%
+  temp <- start_bu %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 32,
-      rule_label = "If the BU survey start timestamp is populated, then the BU survey flag must be 'completed' or 'started'",
-      rule_variable1 = "Survey Timestamp",
-      variable_output1 = d_534669573,
-      rule_variable2 = "Survey Flag",
-      variable_output2 = d_253883960
+      rule_label = "If the BU survey start timestamp is populated, then the BU survey flag must be 'completed' or 'started'"
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -754,15 +598,10 @@ start_mw <- partsbq %>%  filter(!is.na(d_286191859) & (d_547363263==972455046 | 
                                   Connect_ID!="1981842976")
 
 if (nrow(start_mw) > 0) {
-  temp <- start_mw %>%
-    select(Site, Connect_ID, d_286191859, d_547363263) %>%
+  temp <- start_mw %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 33,
-      rule_label = "If the MW survey start timestamp is populated, then the MW survey flag must be 'completed' or 'started'",
-      rule_variable1 = "Survey Timestamp",
-      variable_output1 = d_286191859,
-      rule_variable2 = "Survey Flag",
-      variable_output2 = d_547363263
+      rule_label = "If the MW survey start timestamp is populated, then the MW survey flag must be 'completed' or 'started'"
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -772,15 +611,10 @@ start_cv <- partsbq %>%  filter(!is.na(d_268176409) & (d_220186468==972455046 | 
                                   Connect_ID!="7568162154")
 
 if (nrow(start_cv) > 0) {
-  temp <- start_cv %>%
-    select(Site, Connect_ID, d_268176409, d_220186468) %>%
+  temp <- start_cv %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 34,
-      rule_label = "If the COVID survey start timestamp is populated, then the COVID survey flag must be 'completed' or 'started'",
-      rule_variable1 = "Survey Timestamp",
-      variable_output1 = d_268176409,
-      rule_variable2 = "Survey Flag",
-      variable_output2 = d_220186468
+      rule_label = "If the COVID survey start timestamp is populated, then the COVID survey flag must be 'completed' or 'started'"
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -789,15 +623,10 @@ if (nrow(start_cv) > 0) {
 start_mns <- partsbq %>%  filter(!is.na(d_844088537) & (d_459098666==972455046 | is.na(d_459098666)))
 
 if (nrow(start_mns) > 0) {
-  temp <- start_mns %>%
-    select(Site, Connect_ID, d_844088537, d_459098666) %>%
+  temp <- start_mns %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 35,
-      rule_label = "If the Menstrual History survey start timestamp is populated, then the Menstrual History survey flag must be 'completed' or 'started'",
-      rule_variable1 = "Survey Timestamp",
-      variable_output1 = d_844088537,
-      rule_variable2 = "Survey Flag",
-      variable_output2 = d_459098666
+      rule_label = "If the Menstrual History survey start timestamp is populated, then the Menstrual History survey flag must be 'completed' or 'started'"
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -807,15 +636,10 @@ start_ssn <- partsbq %>%  filter(!is.na(d_943232079) & (d_126331570==972455046 |
                                    !(Connect_ID %in% c("3307719002", "4465969971")))
 
 if (nrow(start_ssn) > 0) {
-  temp <- start_ssn %>%
-    select(Site, Connect_ID, d_943232079, d_126331570) %>%
+  temp <- start_ssn %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 36,
-      rule_label = "If the SSN survey start timestamp is populated, then the SSN survey flag must be 'completed' or 'started'",
-      rule_variable1 = "Survey Timestamp",
-      variable_output1 = d_943232079,
-      rule_variable2 = "Survey Flag",
-      variable_output2 = d_126331570
+      rule_label = "If the SSN survey start timestamp is populated, then the SSN survey flag must be 'completed' or 'started'"
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -824,22 +648,17 @@ if (nrow(start_ssn) > 0) {
 start_csh <- partsbq %>%  filter(!is.na(d_609630315) & (d_176068627==972455046 | is.na(d_176068627)))
 
 if (nrow(start_csh) > 0) {
-  temp <- start_csh %>%
-    select(Site, Connect_ID, d_609630315, d_176068627) %>%
+  temp <- start_csh %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 37,
-      rule_label = "If the CSH survey start timestamp is populated, then the CSH History survey flag must be 'completed' or 'started'",
-      rule_variable1 = "Survey Timestamp",
-      variable_output1 = d_609630315,
-      rule_variable2 = "Survey Flag",
-      variable_output2 = d_176068627
+      rule_label = "If the CSH survey start timestamp is populated, then the CSH History survey flag must be 'completed' or 'started'"
     )
   all_errors <- bind_rows(all_errors, temp)
 }
 
 # Rule 38
 csh_null_bq <-
-"SELECT Connect_ID,
+  "SELECT Connect_ID,
 CASE
     WHEN d_827220437 = '125001209' THEN 'Kaiser Permanente Colorado'
     WHEN d_827220437 = '472940358' THEN 'Baylor Scott & White Health'
@@ -864,13 +683,7 @@ csh_null <- bq_table_download(csh_null_bq_table, bigint = "integer64")
 csh_null$Connect_ID <- as.numeric(csh_null$Connect_ID)
 
 if (nrow(csh_null) > 0) {
-  temp <- csh_null %>%
-    select(Connect_ID, Site) %>%
-    mutate(
-      token = NA,
-      rule_id = 38,
-      rule_label = "If the Cancer Screening History flag is null, there should be no survey data."
-    )
+  temp <- csh_null %>% select(Connect_ID, Site) %>% mutate(token = NA, rule_id = 38, rule_label = "If the Cancer Screening History flag is null, there should be no survey data.")
   all_errors <- bind_rows(all_errors, temp)
 }
 
@@ -887,8 +700,7 @@ hipaa_consent_match <- bq_table_download(hipaa_consent_match_table, bigint = "in
 hipaa_consent_match$Connect_ID <- as.numeric(hipaa_consent_match$Connect_ID)
 
 if (nrow(hipaa_consent_match) > 0) {
-  temp <- hipaa_consent_match %>%
-    left_join(partsbq %>% select(Connect_ID, token, Site), by = "Connect_ID") %>%
+  temp <- hipaa_consent_match %>% left_join(partsbq %>% select(Connect_ID, token, Site), by = "Connect_ID") %>%
     mutate(
       rule_id = 39,
       rule_label = "The Autogenerated date/time stamp for HIPAA Authorization and Time consent submitted should match down to the minute (after 12/1/2023)."
@@ -906,19 +718,15 @@ bdaybq$Connect_ID <- as.numeric(bdaybq$Connect_ID)
 bday_base_vars= left_join(partsbq, bdaybq, by="Connect_ID")
 
 
+
 # Rule 40
 bday1 <- bday_base_vars %>%  filter(!is.na(d_768313785) & is.na(d_194486780))
 
 if (nrow(bday1) > 0) {
-  temp <- bday1 %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- bday1 %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 40,
-      rule_label = "If maildate is populated then cardVersion should be populated.",
-      rule_variable1 = "d_768313785",
-      variable_output1 = "NORCBC_CardMailingDt",
-      rule_variable2 = "d_194486780",
-      variable_output2 = "NORCBC_CardVersion"
+      rule_label = "If maildate is populated then cardVersion should be populated."
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -927,15 +735,10 @@ if (nrow(bday1) > 0) {
 bday2 <- bday_base_vars %>%  filter(is.na(d_768313785) & !is.na(d_194486780))
 
 if (nrow(bday2) > 0) {
-  temp <- bday2 %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- bday2 %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 41,
-      rule_label = "If cardVersion d_194486780 is populated then maildate d_768313785 should be populated",
-      rule_variable1 = "d_768313785",
-      variable_output1 = "NORCBC_CardMailingDt",
-      rule_variable2 = "d_194486780",
-      variable_output2 = "NORCBC_CardVersion"
+      rule_label = "If cardVersion d_194486780 is populated then maildate d_768313785 should be populated"
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -944,15 +747,10 @@ if (nrow(bday2) > 0) {
 bday3 <- bday_base_vars %>%  filter(!is.na(d_768313785) & !(d_916186376 %in% c("01", "02", "06", "07") | is.na(d_916186376)))
 
 if (nrow(bday3) > 0) {
-  temp <- bday3 %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- bday3 %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 42,
-      rule_label = "If maildate d_768313785 is populated then dispCode d_916186376 should be values 01, 02, 06, 07, or N/A",
-      rule_variable1 = "d_768313785",
-      variable_output1 = "NORCBC_CardMailingDt",
-      rule_variable2 = "d_916186376",
-      variable_output2 = "NORCBC_CardDispCode"
+      rule_label = "If maildate d_768313785 is populated then dispCode d_916186376 should be values 01, 02, 06, 07, or N/A"
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -961,15 +759,10 @@ if (nrow(bday3) > 0) {
 bday4 <- bday_base_vars %>%  filter(is.na(d_768313785) & !is.na(d_916186376))
 
 if (nrow(bday4) > 0) {
-  temp <- bday4 %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- bday4 %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 43,
-      rule_label = "If dispCode d_916186376 is populated then maildate d_768313785 should be populated",
-      rule_variable1 = "d_768313785",
-      variable_output1 = "NORCBC_CardMailingDt",
-      rule_variable2 = "d_916186376",
-      variable_output2 = "NORCBC_CardDispCode"
+      rule_label = "If dispCode d_916186376 is populated then maildate d_768313785 should be populated"
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -978,15 +771,10 @@ if (nrow(bday4) > 0) {
 bday5 <- bday_base_vars %>%  filter(!is.na(d_768313785) & !(is.na(ymd_hms(d_194486780, quiet = TRUE)) | is.na(d_194486780)))
 
 if (nrow(bday5) > 0) {
-  temp <- bday5 %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- bday5 %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 44,
-      rule_label = "If maildate d_768313785 is populated then returnDate d_902078073 should be submitted as an ISO 8601 timestamp or be N/A",
-      rule_variable1 = "d_768313785",
-      variable_output1 = "NORCBC_CardMailingDt",
-      rule_variable2 = "d_902078073",
-      variable_output2 = "NORCBC_CardReturnDt"
+      rule_label = "If maildate d_768313785 is populated then returnDate d_902078073 should be submitted as an ISO 8601 timestamp or be N/A"
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -995,15 +783,10 @@ if (nrow(bday5) > 0) {
 bday6 <- bday_base_vars %>%  filter(is.na(d_768313785) & !is.na(d_902078073))
 
 if (nrow(bday6) > 0) {
-  temp <- bday6 %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- bday6 %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 45,
-      rule_label = "If returnDate d_902078073 is populated then maildate d_768313785 should be populated",
-      rule_variable1 = "d_768313785",
-      variable_output1 = "NORCBC_CardMailingDt",
-      rule_variable2 = "d_902078073",
-      variable_output2 = "NORCBC_CardReturnDt"
+      rule_label = "If returnDate d_902078073 is populated then maildate d_768313785 should be populated"
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -1012,8 +795,7 @@ if (nrow(bday6) > 0) {
 reinvite_date_type <- partsbq %>%  filter(!is.na(d_439351436) & is.na(d_280021666))
 
 if (nrow(reinvite_date_type) > 0) {
-  temp <- reinvite_date_type %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- reinvite_date_type %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 46,
       rule_label = "If re-invitation date set, then re-invitation campaign type data should be sent"
@@ -1025,8 +807,7 @@ if (nrow(reinvite_date_type) > 0) {
 reinvite_start <- base_vars %>%  filter(as.Date(d_439351436) < "2025-02-06")
 
 if (nrow(reinvite_start) > 0) {
-  temp <- reinvite_start %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- reinvite_start %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 47,
       rule_label = "There should not be any re-invitation data sent before 2/6/2025"
@@ -1038,8 +819,7 @@ if (nrow(reinvite_start) > 0) {
 consent_verif <- partsbq %>%  filter((d_919254129=="104430631" | is.na(d_919254129)) & d_821247024=="197316935")
 
 if (nrow(consent_verif) > 0) {
-  temp <- consent_verif %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- consent_verif %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 48,
       rule_label = "If RcrtCS_Consented_v1r0=no, RcrtV_Verification_v1r0 cannot be 'verified'. If RcrtV_Verification_v1r0 is 'verified', then RcrtCS_Consented_v1r0 must be yes."
@@ -1051,8 +831,7 @@ if (nrow(consent_verif) > 0) {
 start_DHQ <- partsbq %>%  filter(!is.na(d_109610692) & (d_692560814==972455046 | d_692560814==789467219 | is.na(d_692560814)))
 
 if (nrow(start_DHQ) > 0) {
-  temp <- start_DHQ %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- start_DHQ %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 49,
       rule_label = "If the DHQ survey start timestamp is populated, then the DHQ History survey flag must be 'completed' or 'started'"
@@ -1060,12 +839,19 @@ if (nrow(start_DHQ) > 0) {
   all_errors <- bind_rows(all_errors, temp)
 }
 
+
+
+## Clearing up space in GCP memory
+rm(list = setdiff(ls(), c('currentDate', 'boxfolder', 'project', "partsbq", "biobq", "base_vars", "safe_arrange")))
+gc()
+
+
+
 # Rule 50
 comp_DHQ <- partsbq %>%  filter(!is.na(d_610227793) & (d_692560814==972455046 | d_692560814==789467219 | is.na(d_692560814)))
 
 if (nrow(comp_DHQ) > 0) {
-  temp <- comp_DHQ %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- comp_DHQ %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 50,
       rule_label = "If the DHQ survey completion timestamp is populated, then the DHQ History survey flag must be 'completed'"
@@ -1080,8 +866,7 @@ dhq_qualified <- partsbq %>%  filter((d_692560814==615768760 | d_692560814==2313
                                            difftime(Sys.Date(), as.Date(d_914594314), units="days") >=180))
 
 if (nrow(dhq_qualified) > 0) {
-  temp <- dhq_qualified %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- dhq_qualified %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 51,
       rule_label = "If a participant survey status (SrvDHQ3_6moStatus_v1r0) is started or submitted, they must be verified, verified on or after 12/1/24, are not withdrawn, AND have reached 180 days post verification."
@@ -1093,8 +878,7 @@ if (nrow(dhq_qualified) > 0) {
 dhq_eligible <- partsbq %>%  filter(d_692560814==789467219  & !(as.Date(d_914594314) <"2024-12-01"))
 
 if (nrow(dhq_eligible) > 0) {
-  temp <- dhq_eligible %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- dhq_eligible %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 52,
       rule_label = "If a participant has a survey status (SrvDHQ3_6moStatus_v1r0) of not eligible, they must be verified and have been verified before 12/1/24"
@@ -1107,8 +891,7 @@ dhq_null <- partsbq %>%  filter(is.na(d_692560814)  & d_821247024 == 197316935 &
                                   !(as.Date(d_659990606) < "2025-05-30"))
 
 if (nrow(dhq_null) > 0) {
-  temp <- dhq_null %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- dhq_null %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 53,
       rule_label = "If a participant has a null survey status (SrvDHQ3_6moStatus_v1r0), their verification status must not equal verified"
@@ -1122,8 +905,7 @@ dhq_external_status <- partsbq %>%  filter((d_692560814==615768760 | d_692560814
                                              is.na(d_501613780))
 
 if (nrow(dhq_external_status) > 0) {
-  temp <- dhq_external_status %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- dhq_external_status %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 54,
       rule_label = "If a participant has an internal survey status (SrvDHQ3_6moStatus_v1r0) of 'started' or 'submitted' and the time the survey started was more then 24 hours ago then external status (SrvDHQ3_6moPltStatus_v1r0) must be populated."
@@ -1135,8 +917,7 @@ if (nrow(dhq_external_status) > 0) {
 dhq_uname_populated <- partsbq %>%  filter(!is.na(d_148184166) & (is.na(d_808755658) | is.na(d_196723965)))
 
 if (nrow(dhq_uname_populated) > 0) {
-  temp <- dhq_uname_populated %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- dhq_uname_populated %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 55,
       rule_label = "If 6-mo DHQ3 Username – (CID:148184166) is populated, then 6-mo DHQ3 UUID – (CID: 808755658) and 6-mo DHQ3 Study ID – (CID: 196723965) must be populated."
@@ -1148,8 +929,7 @@ if (nrow(dhq_uname_populated) > 0) {
 dhq_uuid_populated <- partsbq %>%  filter(!is.na(d_808755658) & (is.na(d_148184166) | is.na(d_196723965)))
 
 if (nrow(dhq_uuid_populated) > 0) {
-  temp <- dhq_uuid_populated %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- dhq_uuid_populated %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 56,
       rule_label = "If 6-mo DHQ3 UUID – (CID: 808755658) is populated, then 6-mo DHQ3 Username – (CID:148184166) and 6-mo DHQ3 Study ID – (CID: 196723965) must be populated."
@@ -1161,8 +941,7 @@ if (nrow(dhq_uuid_populated) > 0) {
 dhq_studyID_populated <- partsbq %>%  filter(!is.na(d_196723965) & (is.na(d_148184166) | is.na(d_808755658)))
 
 if (nrow(dhq_studyID_populated) > 0) {
-  temp <- dhq_studyID_populated %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- dhq_studyID_populated %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 57,
       rule_label = "If 6-mo DHQ3 Study ID – (CID: 196723965) is populated, then 6-mo DHQ3 Username – (CID:148184166) and 6-mo DHQ3 UUID – (CID: 808755658) must be populated."
@@ -1174,8 +953,7 @@ if (nrow(dhq_studyID_populated) > 0) {
 dhq_system_null <- partsbq %>%  filter((is.na(d_692560814) | d_692560814==789467219) & !(is.na(d_148184166) & is.na(d_808755658) & is.na(d_196723965)))
 
 if (nrow(dhq_system_null) > 0) {
-  temp <- dhq_system_null %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- dhq_system_null %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 58,
       rule_label = "If survey status (SrvDHQ3_6moStatus_v1r0) is 'not yet eligible' or null, then 6-mo DHQ3 Username – (CID:148184166), 6-mo DHQ3 UUID – (CID: 808755658) and 6-mo DHQ3 Study ID – (CID: 196723965) must all be null"
@@ -1188,21 +966,10 @@ smmet <- partsbq %>%  filter(d_100767870==353358909 & (d_949302066!=231311385 | 
                                !(Connect_ID %in% c(6213377542, 6891536539, 1514220001, 8583917079)))
 
 if (nrow(smmet) > 0) {
-  temp <- smmet %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- smmet %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 59,
-      rule_label = "If SMMet_BaseSrvCompl_v1r0 = yes, then SrvBOH_BaseStatus_v1r0, SrvMRE_BaseStatus_v1r0, SrvSAS_BaseStatus_v1r0, and SrvLAW_BaseStatus_v1r0 must all be 'submitted'.",
-      rule_variable1 = "d_100767870",
-      variable_output1 = "SMMet_BaseSrvCompl_v1r0",
-      rule_variable2 = "d_949302066",
-      variable_output2 = "SrvBOH_BaseStatus_v1r0",
-      rule_variable3 = "d_536735468",
-      variable_output3 = "SrvMRE_BaseStatus_v1r0",
-      rule_variable4 = "d_976570371",
-      variable_output4 = "SrvSAS_BaseStatus_v1r0",
-      rule_variable5 = "d_663265240",
-      variable_output5 = "SrvLAW_BaseStatus_v1r0"
+      rule_label = "If SMMet_BaseSrvCompl_v1r0 = yes, then SrvBOH_BaseStatus_v1r0, SrvMRE_BaseStatus_v1r0, SrvSAS_BaseStatus_v1r0, and SrvLAW_BaseStatus_v1r0 must all be 'submitted'."
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -1211,8 +978,7 @@ if (nrow(smmet) > 0) {
 reinv_active <- partsbq %>%  filter(!is.na(d_439351436) & d_512820379!='486306141')
 
 if (nrow(reinv_active) > 0) {
-  temp <- reinv_active %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- reinv_active %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 60,
       rule_label = "If RcrtSI_RInvTimeStamp_v1r0 is populated, then RcrtSI_RecruitType_v1r0 must be 'active'."
@@ -1226,17 +992,10 @@ auto_ver <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('4
                                  !(state_d_444699761 %in%	c('734437214', '426360242')))
 
 if (nrow(auto_ver) > 0) {
-  temp <- auto_ver %>%
-    select(Site, Connect_ID, d_512820379, d_914594314, state_d_444699761) %>%
+  temp <- auto_ver %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 61,
-      rule_label = "If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Automated verification, should be 'Method not used' or 'Method used'. Participants must be verified for at least 5 days.",
-      rule_variable1 = "RcrtSI_RecruitType_v1r0",
-      variable_output1 = d_512820379,
-      rule_variable2 = "RcrtV_VerificationTm_V1R0",
-      variable_output2 = d_914594314,
-      rule_variable3 = "Automated verification",
-      variable_output3 = state_d_444699761
+      rule_label = "If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Automated verification, should be 'Method not used' or 'Method used'. Participants must be verified for at least 5 days."
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -1247,17 +1006,10 @@ outreach_ver <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  
                                      !(state_d_188797763 %in%	c('353358909', '104430631')))
 
 if (nrow(outreach_ver) > 0) {
-  temp <- outreach_ver %>%
-    select(Site, Connect_ID, d_512820379, d_914594314, state_d_188797763) %>%
+  temp <- outreach_ver %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 62,
-      rule_label = "If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Outreach required for Verification, should be 'Yes', 'No', or NULL. Participants must be verified for at least 5 days.",
-      rule_variable1 = "RcrtSI_RecruitType",
-      variable_output1 = d_512820379,
-      rule_variable2 = "RcrtV_VerificationTm_V1R0",
-      variable_output2 = d_914594314,
-      rule_variable3 = "Outreach required for Verification",
-      variable_output3 = state_d_188797763
+      rule_label = "If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Outreach required for Verification, should be 'Yes' or 'No'. Participants must be verified for at least 5 days."
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -1268,17 +1020,10 @@ manual_ver <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c(
                                    !(state_d_953614051 %in%	c('734437214', '426360242')))
 
 if (nrow(manual_ver) > 0) {
-  temp <- manual_ver %>%
-    select(Site, Connect_ID, d_512820379, d_914594314, state_d_953614051) %>%
+  temp <- manual_ver %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 63,
-      rule_label = "If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Manual verification, should be 'Method not used' or 'Method used'. Participants must be verified for at least 5 days.",
-      rule_variable1 = "RcrtSI_RecruitType_v1r0",
-      variable_output1 = d_512820379,
-      rule_variable2 = "RcrtV_VerificationTm_V1R0",
-      variable_output2 = d_914594314,
-      rule_variable3 = "Manual verification",
-      variable_output3 = state_d_953614051
+      rule_label = "If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Manual verification, should be 'Method not used' or 'Method used'. Participants must be verified for at least 5 days."
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -1289,17 +1034,10 @@ fname_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c
                                     !(state_d_147176963 %in%	c('356674370', '219803804')))
 
 if (nrow(fname_match) > 0) {
-  temp <- fname_match %>%
-    select(Site, Connect_ID, d_512820379, d_914594314, state_d_147176963) %>%
+  temp <- fname_match %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 65,
-      rule_label = "If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then First Name Match, should be 'Not Matched' or 'Matched'. Participants must be verified for at least 5 days.",
-      rule_variable1 = "RcrtSI_RecruitType_v1r0",
-      variable_output1 = d_512820379,
-      rule_variable2 = "RcrtV_VerificationTm_V1R0",
-      variable_output2 = d_914594314,
-      rule_variable3 = "First Name Match",
-      variable_output3 = state_d_147176963
+      rule_label = "If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then First Name Match, should be 'Not Matched' or 'Matched'. Participants must be verified for at least 5 days."
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -1310,17 +1048,10 @@ lname_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c
                                     !(state_d_557461333 %in%	c('356674370', '219803804')))
 
 if (nrow(lname_match) > 0) {
-  temp <- lname_match %>%
-    select(Site, Connect_ID, d_512820379, d_914594314, state_d_557461333) %>%
+  temp <- lname_match %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 66,
-      rule_label = "If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Last Name Match, should be 'Not Matched' or 'Matched'. Participants must be verified for at least 5 days.",
-      rule_variable1 = "RcrtSI_RecruitType_v1r0",
-      variable_output1 = d_512820379,
-      rule_variable2 = "RcrtV_VerificationTm_V1R0",
-      variable_output2 = d_914594314,
-      rule_variable3 = "Last Name Match",
-      variable_output3 = state_d_557461333
+      rule_label = "If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Last Name Match, should be 'Not Matched' or 'Matched'. Participants must be verified for at least 5 days."
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -1331,8 +1062,7 @@ dob_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('
                                   !(state_d_725929722 %in%	c('356674370', '219803804')))
 
 if (nrow(dob_match) > 0) {
-  temp <- dob_match %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- dob_match %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 67,
       rule_label = "If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then DOB Match, should be 'Not Matched' or 'Matched'. Participants must be verified for at least 5 days."
@@ -1343,11 +1073,10 @@ if (nrow(dob_match) > 0) {
 # Rule 68
 pin_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
                                   as.Date(d_914594314) < (currentDate - days(5)) & 
-                                  !(state_d_557461333 %in%	c('356674370', '219803804')))
+                                  !(state_d_711794630 %in%	c('356674370', '219803804')))
 
 if (nrow(pin_match) > 0) {
-  temp <- pin_match %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- pin_match %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 68,
       rule_label = "If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then PIN Match, should be 'Not Matched' or 'Matched'. Participants must be verified for at least 5 days."
@@ -1361,8 +1090,7 @@ token_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c
                                     !(state_d_679832994 %in%	c('356674370', '219803804')))
 
 if (nrow(token_match) > 0) {
-  temp <- token_match %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- token_match %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 69,
       rule_label = "If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Token Match, should be 'Not Matched' or 'Matched'. Participants must be verified for at least 5 days."
@@ -1376,8 +1104,7 @@ zip_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('
                                   !(state_d_559534463 %in%	c('356674370', '219803804')))
 
 if (nrow(zip_match) > 0) {
-  temp <- zip_match %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- zip_match %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 70,
       rule_label = "If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then ZIP Code Match, should be 'Not Matched' or 'Matched'. Participants must be verified for at least 5 days."
@@ -1391,8 +1118,7 @@ site_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c(
                                    !(state_d_570452130 %in%	c('539025306', '427405444')))
 
 if (nrow(site_match) > 0) {
-  temp <- site_match %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- site_match %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 71,
       rule_label = "If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Site Match should be 'Criterium not met' or 'Criterium met'. Participants must be verified for at least 5 days."
@@ -1406,8 +1132,7 @@ age_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('
                                   !(state_d_629484663 %in%	c('539025306', '427405444')))
 
 if (nrow(age_match) > 0) {
-  temp <- age_match %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- age_match %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 72,
       rule_label = "If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Age Match should be 'Criterium not met' or 'Criterium met'. Participants must be verified for at least 5 days."
@@ -1421,8 +1146,7 @@ cancer_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  
                                      !(state_d_547895941 %in%	c('539025306', '427405444')))
 
 if (nrow(cancer_match) > 0) {
-  temp <- cancer_match %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- cancer_match %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 73,
       rule_label = "If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Cancer Status Match should be 'Criterium not met' or 'Criterium met'. Participants must be verified for at least 5 days."
@@ -1433,17 +1157,24 @@ if (nrow(cancer_match) > 0) {
 # Rule 74
 act_di_age <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_934298480) & 
                                    !(d_821247024=="922622075" & state_d_793822265=="854903954") & 
-                                   Connect_ID!="4093473296")
+                                   !(Connect_ID %in% c("4093473296", "2701575745")))
 
 if (nrow(act_di_age) > 0) {
-  temp <- act_di_age %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- act_di_age %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 74,
       rule_label = "If RcrtSI_RecruitType_v1r0='Active' then RcrtSI_Age_v1r0 must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'."
     )
   all_errors <- bind_rows(all_errors, temp)
 }
+
+
+
+## Clearing up space in GCP memory
+rm(list = setdiff(ls(), c('currentDate', 'boxfolder', 'project', "partsbq", "biobq", "base_vars", "safe_arrange")))
+gc()
+
+
 
 # Rule 75
 act_di_race <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_849518448) & 
@@ -1452,8 +1183,7 @@ act_di_race <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_84951
                                     Connect_ID!="4093473296")
 
 if (nrow(act_di_race) > 0) {
-  temp <- act_di_race %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- act_di_race %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 75,
       rule_label = "If RcrtSI_RecruitType_v1r0='Active' and Site is not Sanford Health or Henry Ford Health or Baylor Scott and White Health, then RcrtSI_Race_v1r0 must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'."
@@ -1467,8 +1197,7 @@ act_di_SF_race <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_11
                                        !(d_821247024=="922622075" & state_d_793822265=="854903954"))
 
 if (nrow(act_di_SF_race) > 0) {
-  temp <- act_di_SF_race %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- act_di_SF_race %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 76,
       rule_label = "If RcrtSI_RecruitType_v1r0='Active' and Site= Sanford Health then RcrtSI_SHRace_v1r0 must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'."
@@ -1482,8 +1211,7 @@ act_di_HFH_race <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_6
                                         !(d_821247024=="922622075" & state_d_793822265=="854903954"))
 
 if (nrow(act_di_HFH_race) > 0) {
-  temp <- act_di_HFH_race %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- act_di_HFH_race %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 77,
       rule_label = "If RcrtSI_RecruitType_v1r0='Active' and Site= Henry Ford Health, then RcrtSI_HFHSRace_v1r0 must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'."
@@ -1494,11 +1222,11 @@ if (nrow(act_di_HFH_race) > 0) {
 # Rule 78
 act_di_BSWH_race <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_253532712) & 
                                          d_827220437=='472940358' &
-                                         !(d_821247024=="922622075" & state_d_793822265=="854903954"))
+                                         !(d_821247024=="922622075" & state_d_793822265=="854903954")  & 
+                                         !(Connect_ID %in% c("2701575745")))
 
 if (nrow(act_di_BSWH_race) > 0) {
-  temp <- act_di_BSWH_race %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- act_di_BSWH_race %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 78,
       rule_label = "If RcrtSI_RecruitType_v1r0='Active' and Site= Baylor Scott and White Health, then RcrtSI_BSWHRaceEth_v1r0 must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'."
@@ -1512,8 +1240,7 @@ act_di_SF_eth <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_538
                                       !(d_821247024=="922622075" & state_d_793822265=="854903954"))
 
 if (nrow(act_di_SF_eth) > 0) {
-  temp <- act_di_SF_eth %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- act_di_SF_eth %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 79,
       rule_label = "If RcrtSI_RecruitType_v1r0='Active' and Site= Sanford Health then RcrtSI_SHEthnicity must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'."
@@ -1527,8 +1254,7 @@ act_di_HFH_eth <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_52
                                        !(d_821247024=="922622075" & state_d_793822265=="854903954"))
 
 if (nrow(act_di_HFH_eth) > 0) {
-  temp <- act_di_HFH_eth %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- act_di_HFH_eth %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 80,
       rule_label = "If RcrtSI_RecruitType_v1r0='Active' and Site= Henry Ford Health, then RcrtSI_HFHSEthnicity_v1r0 must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'."
@@ -1539,11 +1265,10 @@ if (nrow(act_di_HFH_eth) > 0) {
 # Rule 81
 act_di_member <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_477091792) & 
                                       !(d_821247024=="922622075" & state_d_793822265=="854903954") & 
-                                      Connect_ID!="4093473296")
+                                      !(Connect_ID %in% c("4093473296", "2701575745")))
 
 if (nrow(act_di_member) > 0) {
-  temp <- act_di_member %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- act_di_member %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 81,
       rule_label = "If RcrtSI_RecruitType_v1r0='Active' then RcrtSI_MemberStat_v1r0 must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'."
@@ -1554,11 +1279,10 @@ if (nrow(act_di_member) > 0) {
 # Rule 82
 act_di_cmpn <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_667474224) & 
                                     !(d_821247024=="922622075" & state_d_793822265=="854903954") & 
-                                    Connect_ID!="4093473296")
+                                    !(Connect_ID %in% c("4093473296", "2701575745")))
 
 if (nrow(act_di_cmpn) > 0) {
-  temp <- act_di_cmpn %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- act_di_cmpn %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 82,
       rule_label = "If RcrtSI_RecruitType_v1r0='Active' then RcrtSI_CampaignType_v1r0 must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'."
@@ -1569,11 +1293,10 @@ if (nrow(act_di_cmpn) > 0) {
 # Rule 83
 act_di_elg <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_749475364) & 
                                    !(d_821247024=="922622075" & state_d_793822265=="854903954") & 
-                                   Connect_ID!="4093473296")
+                                   !(Connect_ID %in% c("4093473296", "2701575745")))
 
 if (nrow(act_di_elg) > 0) {
-  temp <- act_di_elg %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- act_di_elg %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 83,
       rule_label = "If RcrtSI_RecruitType_v1r0='Active' then RcrtSI_EligibilityVer_v1r0 must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'."
@@ -1585,11 +1308,10 @@ if (nrow(act_di_elg) > 0) {
 act_di_sex <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_706256705) & 
                                    d_827220437!='548392715' &
                                    !(d_821247024=="922622075" & state_d_793822265=="854903954") & 
-                                   Connect_ID!="4093473296")
+                                   !(Connect_ID %in% c("4093473296", "2701575745")))
 
 if (nrow(act_di_sex) > 0) {
-  temp <- act_di_sex %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- act_di_sex %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 84,
       rule_label = "If RcrtSI_RecruitType_v1r0='Active' and Site is not Henry Ford Health, then RcrtSI_Sex_v1r0 must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'."
@@ -1603,8 +1325,7 @@ act_di_HF_sex <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_435
                                       !(d_821247024=="922622075" & state_d_793822265=="854903954"))
 
 if (nrow(act_di_HF_sex) > 0) {
-  temp <- act_di_HF_sex %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- act_di_HF_sex %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 85,
       rule_label = "If RcrtSI_RecruitType_v1r0='Active' and Site= Henry Ford Health, then RcrtSI_HFHS_Sex_v1r0 must be populated. This excludes those with RcrtV_Verification_v1r0='duplicate' and RcrtV_UpdateRecType_v1r0='passive to active'."
@@ -1638,13 +1359,7 @@ covid_lang <-  bq_table_download(covid_tbl, bigint = "integer64")
 covid_lang$Connect_ID <- as.numeric(covid_lang$Connect_ID)
 
 if (nrow(covid_lang) > 0) {
-  temp <- covid_lang %>%
-    select(Connect_ID, Site) %>%
-    mutate(
-      token = NA,
-      rule_id = 86,
-      rule_label = "If the COVID-19 Survey was started on or after 7/5/23, then the COVID-19 Survey Language variable must be populated"
-    )
+  temp <- covid_lang %>% select(Connect_ID, Site) %>% mutate(token = NA, rule_id = 86, rule_label = "If the COVID-19 Survey was started on or after 7/5/23, then the COVID-19 Survey Language variable must be populated")
   all_errors <- bind_rows(all_errors, temp)
 }
 
@@ -1660,8 +1375,7 @@ AB1 <- partsbq	%>% mutate(AB_response = case_when(state_d_956485028== '562663942
            tolower(AB_response) != tolower(UTM_camp))
 
 if (nrow(AB1) > 0) {
-  temp <- AB1 %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- AB1 %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 87,
       rule_label = "If A/B Testing Message Response is populated, UTM_Campaign parameter for each recruit should match the data we receive for A/B Testing Message Response."
@@ -1675,8 +1389,7 @@ AB2 <- partsbq	%>% filter( !is.na(state_d_956485028) &
                              !(is.na(d_761057722) & is.na(d_207613315) & is.na(d_163847117))) #but not all are missing
 
 if (nrow(AB2) > 0) {
-  temp <- AB2 %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- AB2 %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 88,
       rule_label = "If A/B Testing Message Response is populated and any one or two of the three UTM parameters are populated, all three should be available. (This issue is being looked at by DevOps in October.)"
@@ -1688,8 +1401,7 @@ if (nrow(AB2) > 0) {
 Cnsnt <- partsbq	%>% filter(is.na(d_454445267) & d_919254129=='353358909')
 
 if (nrow(Cnsnt) > 0) {
-  temp <- Cnsnt %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- Cnsnt %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 89,
       rule_label = "If RcrtCS_ConsentSumit_v1r0 does not exist then RcrtCS_Consented_v1r0 must = no or NA"
@@ -1701,8 +1413,7 @@ if (nrow(Cnsnt) > 0) {
 UP_Sub_Time <- partsbq	%>% filter(is.na(d_430551721) & d_831041022=='104430631' & d_699625233=='353358909')
 
 if (nrow(UP_Sub_Time) > 0) {
-  temp <- UP_Sub_Time %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- UP_Sub_Time %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 90,
       rule_label = "If RcrtUP_SubmitTime_v1r0 does not exist and HdWd_Destroydata_v1r0 = no, then RcrtUP_Submitted_v1r0 must = no or NA"
@@ -1714,8 +1425,7 @@ if (nrow(UP_Sub_Time) > 0) {
 UP_Sub_Time <- partsbq	%>% filter(d_699625233=='353358909' & d_831041022=='104430631' & (d_919254129=='104430631' | is.na(d_919254129)))
 
 if (nrow(UP_Sub_Time) > 0) {
-  temp <- UP_Sub_Time %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- UP_Sub_Time %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 91,
       rule_label = "If RcrtUP_Submitted_v1r0=yes and HdWd_Destroydata_v1r0 = no, then RcrtCS_Consented_v1r0 must be yes."
@@ -1727,8 +1437,7 @@ if (nrow(UP_Sub_Time) > 0) {
 SignIn_Time <- partsbq	%>% filter(is.na(d_335767902) & d_831041022=='104430631' & d_230663853=='353358909')
 
 if (nrow(SignIn_Time) > 0) {
-  temp <- SignIn_Time %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- SignIn_Time %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 92,
       rule_label = "If RcrtSI_SignTime_v1r0 does not exist and HdWd_Destroydata_v1r0 = no, then RcrtSI_SignedIn_v1r0 must = no or NA"
@@ -1740,8 +1449,7 @@ if (nrow(SignIn_Time) > 0) {
 Verification_Time <- partsbq	%>% filter(is.na(d_914594314) & d_831041022=='104430631' & d_821247024!='875007964')
 
 if (nrow(Verification_Time) > 0) {
-  temp <- Verification_Time %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- Verification_Time %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 93,
       rule_label = "If RcrtV_VerificationTm_V1R0 does not exist and HdWd_Destroydata_v1r0 = no, then RcrtV_Verification_v1r0 must = not yet verified or NA"
@@ -1753,8 +1461,7 @@ if (nrow(Verification_Time) > 0) {
 Man_OutRch <- partsbq	%>% filter((is.na(state_d_953614051) | state_d_953614051=='734437214') & state_d_188797763=='353358909')
 
 if (nrow(Man_OutRch) > 0) {
-  temp <- Man_OutRch %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- Man_OutRch %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 94,
       rule_label = "If RcrtV_Mannual_v1r0 = method not used or NA, then RcrtV_Outreach_v1r0 must be no  or NA"
@@ -1764,12 +1471,11 @@ if (nrow(Man_OutRch) > 0) {
 
 # Rule 95
 Non_act_verif <- base_vars %>%  filter(d_512820379 == 180583933 & 
-              (d_821247024 %in% c(219863910, 922622075, 197316935) &
-             !(state_d_148197146 %in% c(283434980, 866029623))))
+                                         (d_821247024 %in% c(219863910, 922622075, 197316935) &
+                                            !(state_d_148197146 %in% c(283434980, 866029623))))
 
 if (nrow(Non_act_verif) > 0) {
-  temp <- Non_act_verif %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- Non_act_verif %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 95,
       rule_label = "If participants are \"not active\", they cannot have verification completed; this excludes those with duplicate type 'Not Active recruit signed in as Passive recruit' and 'Not Active recruit signed in as an Active recruit'"
@@ -1779,11 +1485,10 @@ if (nrow(Non_act_verif) > 0) {
 
 # Rule 96
 update_recr <- base_vars %>% filter(d_821247024 == 197316935 & is.na(state_d_793822265) &
-                                    as.numeric(difftime(currentDate, as.Date(d_914594314), units = "days"))>5)
+                                      as.numeric(difftime(currentDate, as.Date(d_914594314), units = "days"))>5)
 
 if (nrow(update_recr) > 0) {
-  temp <- update_recr %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- update_recr %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 96,
       rule_label = "If verified, update recruit type should be sent. This rule allows for a lag of 5 days post-verification."
@@ -1793,7 +1498,7 @@ if (nrow(update_recr) > 0) {
 
 # Rule 97
 roi_null_bq <-
-"SELECT Connect_ID,
+  "SELECT Connect_ID,
 CASE
     WHEN d_827220437 = '125001209' THEN 'Kaiser Permanente Colorado'
     WHEN d_827220437 = '472940358' THEN 'Baylor Scott & White Health'
@@ -1818,15 +1523,10 @@ roi_null <- bq_table_download(roi_null_bq_table, bigint = "integer64")
 roi_null$Connect_ID <- as.numeric(roi_null$Connect_ID)
 
 if (nrow(roi_null) > 0) {
-  temp <- roi_null %>%
-    select(Connect_ID, Site) %>%
-    mutate(
-      token = NA,
-      rule_id = 97,
-      rule_label = "If the ROI Pref Survey Status flag is null, there should be no survey data."
-    )
+  temp <- roi_null %>% select(Connect_ID, Site) %>% mutate(token = NA, rule_id = 97, rule_label = "If the ROI Pref Survey Status flag is null, there should be no survey data.")
   all_errors <- bind_rows(all_errors, temp)
 }
+
 
 
 # Rule 98
@@ -1835,8 +1535,7 @@ update_recr_by_type <- base_vars %>% filter(d_821247024!="922622075" &
                                               as.numeric(difftime(currentDate, as.Date(d_914594314), units = "days"))>5)
 
 if (nrow(update_recr_by_type) > 0) {
-  temp <- update_recr_by_type %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- update_recr_by_type %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 98,
       rule_label = "If verification != duplicate, but instead equal to either 'not yet verif', 'verif', 'cannot be verified', 'outreach timed out', or 'no longer enrolled', then 'Duplicate type' should be NA. This rule allows for a lag of 5 days post-verification."
@@ -1852,8 +1551,7 @@ Outreach_manual <- base_vars %>% filter(state_d_188797763==353358909 &
                                           (state_d_953614051==734437214 | is.na(state_d_953614051)) &
                                           as.numeric(difftime(currentDate, as.Date(d_914594314), units = "days"))>5)
 if (nrow(Outreach_manual) > 0) {
-  temp <- Outreach_manual %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- Outreach_manual %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 99,
       rule_label = "If RcrtV_Outreach = yes then RcrtV_Mannual has to = method used. This rule allows for a lag of 5 days post-verification."
@@ -1863,14 +1561,18 @@ if (nrow(Outreach_manual) > 0) {
 
 
 
+## Clearing up space in GCP memory
+rm(list = setdiff(ls(), c('currentDate', 'boxfolder', 'project', "partsbq", "biobq", "base_vars", "safe_arrange")))
+gc()
+
+
 
 # Rule 100
 Auto_verif <- base_vars %>% filter(d_821247024==197316935 & state_d_953614051==734437214 &
                                      (state_d_444699761==734437214 | is.na(state_d_444699761)) &
                                      as.numeric(difftime(currentDate, as.Date(d_914594314), units = "days"))>5)
 if (nrow(Auto_verif) > 0) {
-  temp <- Auto_verif %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- Auto_verif %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 100,
       rule_label = "If verif status = verified and Manual Verif= method not used, then Auto Verif must be 'method used. This rule allows for a lag of 5 days post-verification."
@@ -1885,8 +1587,7 @@ Man_Auto_verif <- base_vars %>% filter(d_821247024==197316935 & state_d_44469976
                                          (state_d_953614051==104430631 | is.na(state_d_953614051)) &
                                          as.numeric(difftime(currentDate, as.Date(d_914594314), units = "days"))>5)
 if (nrow(Man_Auto_verif) > 0) {
-  temp <- Man_Auto_verif %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- Man_Auto_verif %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 101,
       rule_label = "If verif status = verified and Auto Verif=method not used, then Manual Verif must be method used. This rule allows for a lag of 5 days post-verification."
@@ -1899,9 +1600,8 @@ if (nrow(Man_Auto_verif) > 0) {
 # Rule 102
 Dupl_type <- base_vars %>% filter(d_821247024==922622075 & is.na(state_d_148197146) &
                                     as.numeric(difftime(currentDate, as.Date(d_914594314), units = "days"))>5)
-if (nrow(Dupl_type) > 0) {
-  temp <- Dupl_type %>%
-    select(Connect_ID, token, Site) %>%
+if (nrow(Man_Auto_verif) > 0) {
+  temp <- Man_Auto_verif %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 102,
       rule_label = "If verifcation status = duplicate, there should be a duplicate type. This rule allows for a lag of 5 days post-verification."
@@ -1915,14 +1615,14 @@ if (nrow(Dupl_type) > 0) {
 Dupl_type_reverse <- base_vars %>% filter(d_821247024!=922622075 & !is.na(state_d_148197146) &
                                             as.numeric(difftime(currentDate, as.Date(d_914594314), units = "days"))>5)
 if (nrow(Dupl_type_reverse) > 0) {
-  temp <- Dupl_type_reverse %>%
-    select(Connect_ID, token, Site) %>%
+  temp <- Dupl_type_reverse %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 103,
       rule_label = "If there's a duplicate type, verifcation status must = 'duplicate'. This rule allows for a lag of 5 days post-verification."
     )
   all_errors <- bind_rows(all_errors, temp)
 }
+
 
 
 ## -------  SECOND TAB IN THE OUTPUT FILE TO LIST ALL RULES FROM THIS FILE ---------------
@@ -1939,9 +1639,9 @@ if (!file.exists(script_file)) {
 
 rule_definitions <- tibble(rule_id = integer(), rule_label = character())
 if (file.exists(script_file)) {
-  script_content <- paste(readLines(script_file, warn = FALSE), collapse = "\n")
-  rule_pattern <- 'rule_id\\s*=\\s*(\\d+)[\\s\\S]*?rule_label\\s*=\\s*"((?:[^"\\\\]|\\\\.)*?)"'
-  rule_matches <- stringr::str_match_all(script_content, rule_pattern)[[1]]
+  rule_lines <- readLines(script_file, warn = FALSE)
+  rule_pattern <- 'rule_id\\s*=\\s*(\\d+)\\s*,\\s*rule_label\\s*=\\s*"((?:[^"\\\\]|\\\\.)*?)"'
+  rule_matches <- stringr::str_match(rule_lines, rule_pattern)
   rule_matches <- rule_matches[!is.na(rule_matches[, 1]), , drop = FALSE]
   if (nrow(rule_matches) > 0) {
     rule_definitions <- tibble(

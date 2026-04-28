@@ -811,6 +811,13 @@ if (nrow(comp_csh) == 0) {
 ```
 
 
+```{r Memory_Clear, include=FALSE}
+
+## Clearing up space in GCP memory
+rm(list = setdiff(ls(), c('currentDate', 'boxfolder', 'project', "partsbq", "biobq", "base_vars", "safe_arrange")))
+gc()
+```
+
 
 \FloatBarrier
 ## 25. If the Mod1 survey start timestamp is populated, then the Mod1 survey flag must be 'completed' or 'started'
@@ -1436,6 +1443,14 @@ if (nrow(start_DHQ) == 0) {
 ```
 
 
+```{r Memory_Clear1, include=FALSE}
+
+## Clearing up space in GCP memory
+rm(list = setdiff(ls(), c('currentDate', 'boxfolder', 'project', "partsbq", "biobq", "base_vars", "safe_arrange")))
+gc()
+```
+
+
 \FloatBarrier
 ## 50. If the DHQ survey completion timestamp is populated, then the DHQ History survey flag must be 'completed' 
 ```{r comptime_dhq, echo=FALSE, warning=FALSE, message=FALSE}
@@ -1759,7 +1774,7 @@ if (nrow(reinv_active) < 50) {
 ```{r auto_ver, echo=FALSE, warning=FALSE, message=FALSE}
 
 auto_ver <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                 #as.Date(d_914594314) > (currentDate - days(5)) &
+                                 
                                  as.Date(d_914594314) < (currentDate - days(5)) & 
                                  !(state_d_444699761 %in%	c('734437214', '426360242')))
 
@@ -1780,11 +1795,11 @@ if (nrow(auto_ver) == 0) {
 
 \FloatBarrier
 
-## 62. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Outreach required for Verification, should be 'Yes', 'No', or NULL. Participants must be verified for at least 5 days.
+## 62. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Outreach required for Verification, should be 'Yes', or 'No'. Participants must be verified for at least 5 days.
 ```{r outreach_ver, echo=FALSE, warning=FALSE, message=FALSE}
 
 outreach_ver <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                     #as.Date(d_914594314) > (currentDate - days(5)) &
+                                     
                                      as.Date(d_914594314) < (currentDate - days(5)) & 
                                      !(state_d_188797763 %in%	c('353358909', '104430631')))
 
@@ -1805,11 +1820,11 @@ if (nrow(outreach_ver) == 0) {
 
 \FloatBarrier
 
-## 63. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Manual verification, should be 'Method not used' or 'Method used'. Participants must be verified for at least 5 days.
+## 63. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Manual verification should be 'Method not used' or 'Method used'. Participants must be verified for at least 5 days.
 ```{r manual_ver, echo=FALSE, warning=FALSE, message=FALSE}
 
-manual_ver <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                   #as.Date(d_914594314) > (currentDate - days(5)) &
+manual_ver <- partsbq	%>% filter(d_821247024=='197316935' & 
+                                   d_512820379 %in%  c('486306141', '854703046') & 
                                    as.Date(d_914594314) < (currentDate - days(5)) &
                                    !(state_d_953614051 %in%	c('734437214', '426360242')))
 
@@ -1837,8 +1852,8 @@ if (nrow(manual_ver) == 0) {
 ### Rule 64 was deleted as it matched a rule already in the automated QC. NOT renumbering all the other rules.
 
 
-fname_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                    #as.Date(d_914594314) > (currentDate - days(5)) &
+fname_match <- partsbq	%>% filter(d_821247024=='197316935' & 
+                                    d_512820379 %in%  c('486306141', '854703046') & 
                                     as.Date(d_914594314) < (currentDate - days(5)) & 
                                     !(state_d_147176963 %in%	c('356674370', '219803804')))
 
@@ -1863,7 +1878,7 @@ if (nrow(fname_match) == 0) {
 ```{r lname_match, echo=FALSE, warning=FALSE, message=FALSE}
 
 lname_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                    #as.Date(d_914594314) > (currentDate - days(5)) &
+                                    
                                     as.Date(d_914594314) < (currentDate - days(5)) & 
                                     !(state_d_557461333 %in%	c('356674370', '219803804')))
 
@@ -1888,7 +1903,7 @@ if (nrow(lname_match) == 0) {
 ```{r dob_match, echo=FALSE, warning=FALSE, message=FALSE}
 
 dob_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                  #as.Date(d_914594314) > (currentDate - days(5)) &
+                                  
                                   as.Date(d_914594314) < (currentDate - days(5)) & 
                                   !(state_d_725929722 %in%	c('356674370', '219803804')))
 
@@ -1913,7 +1928,7 @@ if (nrow(dob_match) == 0) {
 ```{r pin_match, echo=FALSE, warning=FALSE, message=FALSE}
 
 pin_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                  #as.Date(d_914594314) > (currentDate - days(5)) &
+                                  
                                   as.Date(d_914594314) < (currentDate - days(5)) & 
                                   !(state_d_711794630 %in%	c('356674370', '219803804')))
 
@@ -1938,7 +1953,7 @@ if (nrow(pin_match) == 0) {
 ```{r token_match, echo=FALSE, warning=FALSE, message=FALSE}
 
 token_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                    #as.Date(d_914594314) > (currentDate - days(5)) &
+                                    
                                     as.Date(d_914594314) < (currentDate - days(5)) & 
                                     !(state_d_679832994 %in%	c('356674370', '219803804')))
 
@@ -1963,7 +1978,7 @@ if (nrow(token_match) == 0) {
 ```{r zip_match, echo=FALSE, warning=FALSE, message=FALSE}
 
 zip_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                  #as.Date(d_914594314) > (currentDate - days(5)) &
+                                  
                                   as.Date(d_914594314) < (currentDate - days(5)) & 
                                   !(state_d_559534463 %in%	c('356674370', '219803804')))
 
@@ -1988,7 +2003,7 @@ if (nrow(zip_match) == 0) {
 ```{r site_match, echo=FALSE, warning=FALSE, message=FALSE}
 
 site_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                   #as.Date(d_914594314) > (currentDate - days(5)) &
+                                   
                                    as.Date(d_914594314) < (currentDate - days(5)) & 
                                    !(state_d_570452130 %in%	c('539025306', '427405444')))
 
@@ -2013,7 +2028,7 @@ if (nrow(site_match) == 0) {
 ```{r age_match, echo=FALSE, warning=FALSE, message=FALSE}
 
 age_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                  #as.Date(d_914594314) > (currentDate - days(5)) &
+                                  
                                   as.Date(d_914594314) < (currentDate - days(5)) & 
                                   !(state_d_629484663 %in%	c('539025306', '427405444')))
 
@@ -2038,7 +2053,7 @@ if (nrow(age_match) == 0) {
 ```{r cancer_match, echo=FALSE, warning=FALSE, message=FALSE}
 
 cancer_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                     #as.Date(d_914594314) > (currentDate - days(5)) &
+                                     
                                      as.Date(d_914594314) < (currentDate - days(5)) & 
                                      !(state_d_547895941 %in%	c('539025306', '427405444')))
 
@@ -2065,7 +2080,7 @@ if (nrow(cancer_match) == 0) {
 
 act_di_age <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_934298480) & 
                                    !(d_821247024=="922622075" & state_d_793822265=="854903954") & 
-                                   Connect_ID!="4093473296")
+                                   !(Connect_ID %in% c("4093473296", "2701575745")))
 
 
 if (nrow(act_di_age) == 0) {
@@ -2080,6 +2095,14 @@ if (nrow(act_di_age) == 0) {
     kable_styling(latex_options = "scale_down")
 }
 
+```
+
+
+```{r Memory_Clear2, include=FALSE}
+
+## Clearing up space in GCP memory
+rm(list = setdiff(ls(), c('currentDate', 'boxfolder', 'project', "partsbq", "biobq", "base_vars", "safe_arrange")))
+gc()
 ```
 
 \FloatBarrier
@@ -2213,7 +2236,7 @@ if (nrow(act_di_HFH_race) == 0) {
 
 act_di_BSWH_race <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_253532712) & 
                                          d_827220437=='472940358' &
-                                         !(d_821247024=="922622075" & state_d_793822265=="854903954"))
+                                         !(d_821247024=="922622075" & state_d_793822265=="854903954") & !(Connect_ID %in% c("2701575745")))
 
 
 if (nrow(act_di_BSWH_race) == 0) {
@@ -2286,7 +2309,7 @@ if (nrow(act_di_HFH_eth) == 0) {
 
 act_di_member <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_477091792) & 
                                       !(d_821247024=="922622075" & state_d_793822265=="854903954") & 
-                                      Connect_ID!="4093473296")
+                                      !(Connect_ID %in% c("4093473296", "2701575745")))
 
 # ###  Ad-hoc Request ###
 # act_di_member <- act_di_member %>% filter(Site=="University of Chicago Medicine") %>% 
@@ -2329,7 +2352,7 @@ if (nrow(act_di_member) == 0) {
 
 act_di_cmpn <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_667474224) & 
                                     !(d_821247024=="922622075" & state_d_793822265=="854903954") & 
-                                    Connect_ID!="4093473296")
+                                    !(Connect_ID %in% c("4093473296", "2701575745")))
 
 
 if (nrow(act_di_cmpn) == 0) {
@@ -2353,7 +2376,7 @@ if (nrow(act_di_cmpn) == 0) {
 
 act_di_elg <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_749475364) & 
                                    !(d_821247024=="922622075" & state_d_793822265=="854903954") & 
-                                   Connect_ID!="4093473296")
+                                   !(Connect_ID %in% c("4093473296", "2701575745")))
 
 # ###  Ad-hoc Request ###
 # act_di_elg <- act_di_elg %>% filter(Site=="University of Chicago Medicine") %>% 
@@ -2397,7 +2420,7 @@ if (nrow(act_di_elg) == 0) {
 act_di_sex <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_706256705) & 
                                    d_827220437!='548392715' &
                                    !(d_821247024=="922622075" & state_d_793822265=="854903954") & 
-                                   Connect_ID!="4093473296")
+                                   !(Connect_ID %in% c("4093473296", "2701575745")))
 
 
 if (nrow(act_di_sex) == 0) {
@@ -2897,6 +2920,12 @@ if (nrow(Outreach_manual) == 0) {
 ```
 
 
+```{r Memory_Clear3, include=FALSE}
+
+## Clearing up space in GCP memory
+rm(list = setdiff(ls(), c('currentDate', 'boxfolder', 'project', "partsbq", "biobq", "base_vars", "safe_arrange")))
+gc()
+```
 
 
 \FloatBarrier
