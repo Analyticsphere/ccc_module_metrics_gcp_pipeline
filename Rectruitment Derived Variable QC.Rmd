@@ -1932,30 +1932,6 @@ if (nrow(token_match) == 0) {
 
 ```
 
-\FloatBarrier
-
-## 70. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then ZIP Code Match, should be 'Not Matched' or 'Matched'. Participants must be verified for at least 5 days. 
-```{r zip_match, echo=FALSE, warning=FALSE, message=FALSE}
-
-zip_match <- partsbq	%>% filter(d_821247024=='197316935' & 
-                                  d_512820379 %in%  c('486306141', '854703046') &
-                                  as.Date(d_914594314) < (currentDate - days(5)) & 
-                                  !(state_d_559534463 %in%	c('356674370', '219803804')))
-
-
-if (nrow(zip_match) == 0) {
-  cat("No errors\n")
-} else {
-  
-  zip_match <- zip_match %>% select(Site, Connect_ID, d_512820379, d_914594314, state_d_559534463) %>%  safe_arrange(Site)
-  
-  colnames(zip_match) <- c("Site", "Connect ID", 'RcrtSI_RecruitType_v1r0', "RcrtV_VerificationTm_V1R0", "ZIP Code Match")
-  
-  knitr::kable(zip_match) %>%
-    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
-}
-
-```
 
 \FloatBarrier
 
