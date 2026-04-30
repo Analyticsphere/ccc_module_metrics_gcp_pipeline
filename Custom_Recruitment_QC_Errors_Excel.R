@@ -1002,22 +1002,9 @@ if (nrow(reinv_active) > 0) {
   all_errors <- bind_rows(all_errors, temp)
 }
 
-# Rule 61
-auto_ver <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                 as.Date(d_914594314) < (currentDate - days(5)) & 
-                                 !(state_d_444699761 %in%	c('734437214', '426360242')))
-
-if (nrow(auto_ver) > 0) {
-  temp <- auto_ver %>% select(Connect_ID, token, Site) %>%
-    mutate(
-      rule_id = 61,
-      rule_label = "If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Automated verification, should be 'Method not used' or 'Method used'. Participants must be verified for at least 5 days."
-    )
-  all_errors <- bind_rows(all_errors, temp)
-}
-
 # Rule 62
 outreach_ver <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
+                                     Site!="HFH" &
                                      as.Date(d_914594314) < (currentDate - days(5)) & 
                                      !(state_d_188797763 %in%	c('353358909', '104430631')))
 
@@ -1030,19 +1017,6 @@ if (nrow(outreach_ver) > 0) {
   all_errors <- bind_rows(all_errors, temp)
 }
 
-# Rule 63
-manual_ver <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                   as.Date(d_914594314) < (currentDate - days(5)) &
-                                   !(state_d_953614051 %in%	c('734437214', '426360242')))
-
-if (nrow(manual_ver) > 0) {
-  temp <- manual_ver %>% select(Connect_ID, token, Site) %>%
-    mutate(
-      rule_id = 63,
-      rule_label = "If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Manual verification, should be 'Method not used' or 'Method used'. Participants must be verified for at least 5 days."
-    )
-  all_errors <- bind_rows(all_errors, temp)
-}
 
 # Rule 65
 fname_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
@@ -1087,7 +1061,11 @@ if (nrow(dob_match) > 0) {
 }
 
 # Rule 68
-pin_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
+pin_match <- partsbq	%>% filter(d_821247024=='197316935' & 
+                                  !(Site %in% c("HP", "MF")) &
+                                  ## BSWH is not sending 'not matched', only 'matched' or nothing
+                                  !(Site=="BSWH" & is.na(state_d_711794630)) &
+                                  d_512820379 %in%  c('486306141', '854703046') & 
                                   as.Date(d_914594314) < (currentDate - days(5)) & 
                                   !(state_d_711794630 %in%	c('356674370', '219803804')))
 
@@ -1095,13 +1073,15 @@ if (nrow(pin_match) > 0) {
   temp <- pin_match %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 68,
-      rule_label = "If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then PIN Match, should be 'Not Matched' or 'Matched'. Participants must be verified for at least 5 days."
+      rule_label = "If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then PIN Match, should be 'Not Matched' or 'Matched'. Participants must be verified for at least 5 days.  This excludes HealthPartners and Marshfeild."
     )
   all_errors <- bind_rows(all_errors, temp)
 }
 
 # Rule 69
-token_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
+token_match <- partsbq	%>% filter(d_821247024=='197316935' & 
+                                    d_512820379 %in%  c('486306141', '854703046') & 
+                                    !(Site %in% c("SF", "MF")) &
                                     as.Date(d_914594314) < (currentDate - days(5)) & 
                                     !(state_d_679832994 %in%	c('356674370', '219803804')))
 
@@ -1109,7 +1089,7 @@ if (nrow(token_match) > 0) {
   temp <- token_match %>% select(Connect_ID, token, Site) %>%
     mutate(
       rule_id = 69,
-      rule_label = "If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Token Match, should be 'Not Matched' or 'Matched'. Participants must be verified for at least 5 days."
+      rule_label = "If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Token Match, should be 'Not Matched' or 'Matched'. Participants must be verified for at least 5 days. This excludes Marshfield and Sanford."
     )
   all_errors <- bind_rows(all_errors, temp)
 }
@@ -1509,7 +1489,7 @@ if (nrow(Non_act_verif) > 0) {
 # Rule 96
 update_recr <- base_vars %>% filter(d_821247024 == 197316935 & is.na(state_d_793822265) &
 
-                                      as.numeric(difftime(currentDate, as.Date(d_914594314), units = "days"))>5)
+                                      as.Date(d_914594314) < (currentDate - days(5)))
 
 if (nrow(update_recr) > 0) {
   temp <- update_recr %>% select(Connect_ID, token, Site) %>%
@@ -1561,7 +1541,7 @@ if (nrow(roi_null) > 0) {
 # Rule 98
 update_recr_by_type <- base_vars %>% filter(d_821247024!="922622075" & 
                                               !is.na(state_d_148197146) &
-                                              as.numeric(difftime(currentDate, as.Date(d_914594314), units = "days"))>5)
+                                              as.Date(d_914594314) < (currentDate - days(5)))
 
 if (nrow(update_recr_by_type) > 0) {
 
@@ -1579,7 +1559,7 @@ if (nrow(update_recr_by_type) > 0) {
 # Rule 99
 Outreach_manual <- base_vars %>% filter(state_d_188797763==353358909 &
                                           (state_d_953614051==734437214 | is.na(state_d_953614051)) &
-                                          as.numeric(difftime(currentDate, as.Date(d_914594314), units = "days"))>5)
+                                          as.Date(d_914594314) < (currentDate - days(5)))
 if (nrow(Outreach_manual) > 0) {
   temp <- Outreach_manual %>% select(Connect_ID, token, Site) %>%
     mutate(
@@ -1600,7 +1580,7 @@ gc()
 # Rule 100
 Auto_verif <- base_vars %>% filter(d_821247024==197316935 & state_d_953614051==734437214 &
                                      (state_d_444699761==734437214 | is.na(state_d_444699761)) &
-                                     as.numeric(difftime(currentDate, as.Date(d_914594314), units = "days"))>5)
+                                     as.Date(d_914594314) < (currentDate - days(5)))
 if (nrow(Auto_verif) > 0) {
   temp <- Auto_verif %>% select(Connect_ID, token, Site) %>%
     mutate(
@@ -1615,7 +1595,7 @@ if (nrow(Auto_verif) > 0) {
 # Rule 101
 Man_Auto_verif <- base_vars %>% filter(d_821247024==197316935 & state_d_444699761==734437214 &
                                          (state_d_953614051==104430631 | is.na(state_d_953614051)) &
-                                         as.numeric(difftime(currentDate, as.Date(d_914594314), units = "days"))>5)
+                                         as.Date(d_914594314) < (currentDate - days(5)))
 if (nrow(Man_Auto_verif) > 0) {
   temp <- Man_Auto_verif %>% select(Connect_ID, token, Site) %>%
     mutate(
@@ -1629,7 +1609,7 @@ if (nrow(Man_Auto_verif) > 0) {
 
 # Rule 102
 Dupl_type <- base_vars %>% filter(d_821247024==922622075 & is.na(state_d_148197146) &
-                                    as.numeric(difftime(currentDate, as.Date(d_914594314), units = "days"))>5)
+                                    as.Date(d_914594314) < (currentDate - days(5)))
 
 if (nrow(Man_Auto_verif) > 0) {
   temp <- Man_Auto_verif %>% select(Connect_ID, token, Site) %>%
@@ -1644,7 +1624,7 @@ if (nrow(Man_Auto_verif) > 0) {
 
 # Rule 103
 Dupl_type_reverse <- base_vars %>% filter(d_821247024!=922622075 & !is.na(state_d_148197146) &
-                                            as.numeric(difftime(currentDate, as.Date(d_914594314), units = "days"))>5)
+                                            as.Date(d_914594314) < (currentDate - days(5)))
 if (nrow(Dupl_type_reverse) > 0) {
   temp <- Dupl_type_reverse %>% select(Connect_ID, token, Site) %>%
     mutate(
@@ -1653,6 +1633,154 @@ if (nrow(Dupl_type_reverse) > 0) {
     )
   all_errors <- bind_rows(all_errors, temp)
 }
+
+
+
+# Rule 104
+KP_ver3 <- base_vars %>% filter(d_821247024==197316935 & grepl("KP", Site) &
+                                  as.Date(d_914594314) < (currentDate - days(7)) & 
+                                  (is.na(state_d_444699761) | is.na(state_d_188797763) | 
+                                     is.na(state_d_953614051) ) )
+if (nrow(KP_ver3) > 0) {
+  temp <- KP_ver3 %>% select(Connect_ID, token, Site) %>%
+    mutate(
+      rule_id = 104,
+      rule_label = "If site = KP and verification status = verified and verification date is more than one week ago, then the three verification modes should all be populated (not missing)."
+    )
+  all_errors <- bind_rows(all_errors, temp)
+}
+
+
+
+# Rule 105
+HP_UC_BSWH3 <- base_vars %>% filter((d_821247024==197316935 | d_821247024==219863910) & 
+                                      Site %in% c("HP", "UC", "BSWH") &
+                                      as.Date(d_914594314) < (currentDate - days(5)) & 
+                                      (is.na(state_d_444699761) | is.na(state_d_188797763) | 
+                                         is.na(state_d_953614051) ) )
+if (nrow(HP_UC_BSWH3) > 0) {
+  temp <- HP_UC_BSWH3 %>% select(Connect_ID, token, Site) %>%
+    mutate(
+      rule_id = 105,
+      rule_label = "If site = HP or UC or BSWH and verification status = verified or cannot be verified and verification date is more than five days ago (to allow for lag in sending data), then the three verification modes should all be populated (not missing)."
+    )
+  all_errors <- bind_rows(all_errors, temp)
+}
+
+
+
+
+# Rule 106
+HFH_ver2 <- base_vars %>% filter(d_821247024==197316935 &
+                                   Site=="HFH" &
+                                   as.Date(d_914594314) < (currentDate - days(5)) & 
+                                   (is.na(state_d_444699761) | 
+                                      is.na(state_d_953614051) ) )
+if (nrow(HFH_ver2) > 0) {
+  temp <- HFH_ver2 %>% select(Connect_ID, token, Site) %>%
+    mutate(
+      rule_id = 106,
+      rule_label = "If site = HF and verification status = verified, automated verification and manual verification should be populated (not missing). This rule allows for a lag of 5 days post-verification."
+    )
+  all_errors <- bind_rows(all_errors, temp)
+}
+
+
+
+
+
+
+# Rule 107
+HFH_ver_OR <- base_vars %>% filter(d_821247024==197316935 & 
+                                     Site=="HFH" &
+                                     as.Date(d_914594314) < (currentDate - days(5)) & 
+                                     state_d_444699761=="426360242" &
+                                     state_d_953614051=="734437214" &
+                                     !is.na(state_d_188797763))
+
+if (nrow(HFH_ver_OR) > 0) {
+  temp <- HFH_ver_OR %>% select(Connect_ID, token, Site) %>%
+    mutate(
+      rule_id = 107,
+      rule_label = "If site = HF and verification status = verified and automated verification = method used and manual verification = method not used, then outreach required should be missing. This rule allows for a lag of 5 days post-verification."
+    )
+  all_errors <- bind_rows(all_errors, temp)
+}
+
+
+
+
+
+
+# Rule 108
+HFH_not_ver3 <- base_vars %>% filter(d_821247024==219863910 & 
+                                       Site=="HFH" &
+                                       as.Date(d_914594314) < (currentDate - days(5)) & 
+                                       (is.na(state_d_444699761) | is.na(state_d_188797763) | 
+                                          is.na(state_d_953614051) ) )
+
+if (nrow(HFH_not_ver3) > 0) {
+  temp <- HFH_not_ver3 %>% select(Connect_ID, token, Site) %>%
+    mutate(
+      rule_id = 108,
+      rule_label = "If site = HF and verification status = cannot be verified, then the three verification modes should all be populated (not missing). This rule allows for a lag of 5 days post-verification."
+    )
+  all_errors <- bind_rows(all_errors, temp)
+}
+
+
+
+
+
+
+# Rule 109
+SF_MF_ver_act <- base_vars %>% filter((d_821247024==197316935 | d_821247024==219863910) & 
+                                        Site %in% c("SF", "MF") &
+                                        d_512820379=="486306141" &
+                                        state_d_793822265=="132080040" &
+                                        as.Date(d_914594314) < (currentDate - days(5)) & 
+                                        as.Date(d_914594314) > "2026-05-01" &
+                                        !(state_d_444699761=="426360242" &
+                                            !is.na(state_d_188797763) & 
+                                            !is.na(state_d_953614051) ) )
+
+if (nrow(SF_MF_ver_act) > 0) {
+  temp <- SF_MF_ver_act %>% select(Connect_ID, token, Site) %>%
+    mutate(
+      rule_id = 109,
+      rule_label = "If site = SF or MF and verification status = verified or cannot be verified and recruit type = active and Update Recruit Type = No Change Needed, automated should be method used and manual and outreach should be populated. This rule allows for a lag of 5 days post-verification and includes only participants verified on or after May 1, 2026."
+    )
+  all_errors <- bind_rows(all_errors, temp)
+}
+
+
+
+
+
+
+# Rule 110
+SF_MF_ver_pass <- base_vars %>% filter((d_821247024==197316935 | d_821247024==219863910) & 
+                                         Site %in% c("SF", "MF") &
+                                         d_512820379=="854703046" &
+                                         state_d_793822265=="132080040" &
+                                         as.Date(d_914594314) < (currentDate - days(5)) &
+                                         as.Date(d_914594314) > "2026-05-01" &
+                                         !(state_d_444699761=="734437214" &
+                                             !is.na(state_d_188797763) & 
+                                             !is.na(state_d_953614051) ) )
+
+if (nrow(SF_MF_ver_pass) > 0) {
+  temp <- SF_MF_ver_pass %>% select(Connect_ID, token, Site) %>%
+    mutate(
+      rule_id = 110,
+      rule_label = "If site = SF or MF and verification status= verified or cannot be verified and recruit type = passive and Update Recruit Type = No Change Needed, automated should be method not used, and manual and outreach should be populated. This rule allows for a lag of 5 days post-verification and includes only participants verified on or after May 1, 2026."
+    )
+  all_errors <- bind_rows(all_errors, temp)
+}
+
+
+
+
 
 
 
