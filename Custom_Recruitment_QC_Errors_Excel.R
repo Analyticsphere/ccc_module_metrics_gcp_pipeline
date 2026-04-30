@@ -11,6 +11,7 @@ library(knitr)
 library(kableExtra)
 library(glue)
 library(openxlsx)
+library(logger)
 
 options(tinytex.verbose = TRUE)
 
@@ -47,6 +48,8 @@ chunk1 <- tbl(con, "participants", page_size = 1000) %>%
   distinct(token, .keep_all = TRUE) #somehow pulling duplicsate rows
 chunk1$Connect_ID <- as.numeric(chunk1$Connect_ID)
 
+log_info("First participants table variable set pulled")
+
 chunk2 <- tbl(con, "participants", page_size = 1000) %>%
   filter(d_831041022=='104430631') %>%
   dplyr::select(Connect_ID, token,  d_430551721, d_821247024, d_914594314,  state_d_725929722, d_126331570, d_536735468, d_130371375_d_266600170_d_945795905, d_130371375_d_266600170_d_320023644, state_d_538553381, state_d_527823810, state_d_849518448, state_d_119643471, state_d_253532712, state_d_684926335, 
@@ -56,6 +59,9 @@ chunk2 <- tbl(con, "participants", page_size = 1000) %>%
   as_tibble() %>% 
   distinct(token, .keep_all = TRUE) #somehow pulling duplicsate rows
 chunk2$Connect_ID <- as.numeric(chunk2$Connect_ID)
+
+
+log_info("Second participants table variable set pulled")
 
 chunk3 <- tbl(con, "participants", page_size = 1000) %>%
   filter(d_831041022=='104430631') %>%
@@ -69,6 +75,9 @@ chunk3 <- tbl(con, "participants", page_size = 1000) %>%
   as_tibble() %>% 
   distinct(token, .keep_all = TRUE) #somehow pulling duplicate rows
 chunk3$Connect_ID <- as.numeric(chunk3$Connect_ID)
+
+
+log_info("Third participants table variable set pulled")
 
 parts_bq_partial <- full_join(chunk1, chunk2, by=c("token", "Connect_ID"))
 partsbq <- full_join(parts_bq_partial, chunk3, by=c("token", "Connect_ID"))
@@ -99,6 +108,9 @@ partsbq <-
 
 base_vars= left_join(partsbq, biobq, by=c("Connect_ID", "token"))
 
+
+log_info("All data pulled and merged")
+
 #################
 
 ## Sorting by Site causes an error message when there are no rows. This function eliminates that problem
@@ -117,7 +129,7 @@ all_errors <- data.frame(Connect_ID = numeric(), token = character(), Site = cha
 
 ## ---------------  RULES   -------------------------------------------------------------------
 
-
+log_info("Starting to run the rules")
 
 # Rule 1
 incentive2 <- base_vars %>%  filter(d_949302066 == '231311385' & d_536735468 == '231311385' & d_976570371 == '231311385' & d_663265240 == '231311385' & 
@@ -502,8 +514,10 @@ if (nrow(comp_csh) > 0) {
 }
 
 
+log_info("First 25 rules ran")
+
 ## Clearing up space in GCP memory
-rm(list = setdiff(ls(), c('currentDate', 'boxfolder', 'project', "partsbq", "biobq", "base_vars", "safe_arrange")))
+rm(list = setdiff(ls(), c('currentDate', 'boxfolder', 'project', "partsbq", "biobq", "base_vars", "safe_arrange", "all_errors")))
 gc()
 
 
@@ -857,7 +871,7 @@ if (nrow(start_DHQ) > 0) {
 
 
 ## Clearing up space in GCP memory
-rm(list = setdiff(ls(), c('currentDate', 'boxfolder', 'project', "partsbq", "biobq", "base_vars", "safe_arrange")))
+rm(list = setdiff(ls(), c('currentDate', 'boxfolder', 'project', "partsbq", "biobq", "base_vars", "safe_arrange", "all_errors")))
 gc()
 
 
@@ -875,6 +889,8 @@ if (nrow(comp_DHQ) > 0) {
   all_errors <- bind_rows(all_errors, temp)
 }
 
+log_info("First 50 rules ran")
+
 # Rule 51
 dhq_qualified <- partsbq %>%  filter((d_692560814==615768760 | d_692560814==231311385) & 
                                        !(d_821247024 == 197316935 & as.Date(d_914594314) >="2024-12-01" & 
@@ -891,7 +907,8 @@ if (nrow(dhq_qualified) > 0) {
 }
 
 # Rule 52
-dhq_eligible <- partsbq %>%  filter(d_692560814==789467219  & !(as.Date(d_914594314) <"2024-12-01"))
+dhq_eligible <- partsbq %>%  filter(d_692560814==789467219  & 
+                                      !(as.Date(d_914594314) <"2024-12-01"))
 
 if (nrow(dhq_eligible) > 0) {
   temp <- dhq_eligible %>% select(Connect_ID, token, Site) %>%
@@ -1157,7 +1174,7 @@ if (nrow(act_di_age) > 0) {
 
 
 ## Clearing up space in GCP memory
-rm(list = setdiff(ls(), c('currentDate', 'boxfolder', 'project', "partsbq", "biobq", "base_vars", "safe_arrange")))
+rm(list = setdiff(ls(), c('currentDate', 'boxfolder', 'project', "partsbq", "biobq", "base_vars", "safe_arrange", "all_errors")))
 gc()
 
 
@@ -1176,6 +1193,9 @@ if (nrow(act_di_race) > 0) {
     )
   all_errors <- bind_rows(all_errors, temp)
 }
+
+
+log_info("First 75 rules ran")
 
 # Rule 76
 act_di_SF_race <- partsbq	%>% filter(d_512820379=='486306141' & is.na(state_d_119643471) &
@@ -1559,7 +1579,7 @@ if (nrow(Outreach_manual) > 0) {
 
 
 ## Clearing up space in GCP memory
-rm(list = setdiff(ls(), c('currentDate', 'boxfolder', 'project', "partsbq", "biobq", "base_vars", "safe_arrange")))
+rm(list = setdiff(ls(), c('currentDate', 'boxfolder', 'project', "partsbq", "biobq", "base_vars", "safe_arrange", "all_errors")))
 gc()
 
 
@@ -1768,7 +1788,7 @@ if (nrow(SF_MF_ver_pass) > 0) {
 
 
 
-
+log_info("All rules ran")
 
 
 
@@ -1814,3 +1834,6 @@ openxlsx::write.xlsx(
 )
 
 cat("Excel file 'Recruitment_Custom_QC_Output.xlsx' has been created.\n")
+
+
+log_info("Code finished!")
