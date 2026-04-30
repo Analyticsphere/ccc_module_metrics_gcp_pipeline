@@ -1768,38 +1768,16 @@ if (nrow(reinv_active) < 50) {
 
 ```
 
-\FloatBarrier
 
-## 61. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Automated verification, should be 'Method not used' or 'Method used'. Participants must be verified for at least 5 days.
-```{r auto_ver, echo=FALSE, warning=FALSE, message=FALSE}
-
-auto_ver <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                 
-                                 as.Date(d_914594314) < (currentDate - days(5)) & 
-                                 !(state_d_444699761 %in%	c('734437214', '426360242')))
-
-
-if (nrow(auto_ver) == 0) {
-  cat("No errors\n")
-} else {
-  
-  auto_ver <- auto_ver %>% select(Site, Connect_ID, d_512820379, d_914594314, state_d_444699761) %>%  safe_arrange(Site)
-  
-  colnames(auto_ver) <- c("Site", "Connect ID", 'RcrtSI_RecruitType_v1r0', "RcrtV_VerificationTm_V1R0", "Automated verification")
-  
-  knitr::kable(auto_ver) %>%
-    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
-}
-
-```
 
 \FloatBarrier
 
-## 62. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Outreach required for Verification, should be 'Yes', or 'No'. Participants must be verified for at least 5 days.
+## 62. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Outreach required for Verification, should be 'Yes', or 'No'. Participants must be verified for at least 5 days. This rule excludes HFH.
 ```{r outreach_ver, echo=FALSE, warning=FALSE, message=FALSE}
 
-outreach_ver <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                     
+outreach_ver <- partsbq	%>% filter(d_821247024=='197316935' & 
+                                     d_512820379 %in%  c('486306141', '854703046') & 
+                                     Site!="HFH" &
                                      as.Date(d_914594314) < (currentDate - days(5)) & 
                                      !(state_d_188797763 %in%	c('353358909', '104430631')))
 
@@ -1818,30 +1796,7 @@ if (nrow(outreach_ver) == 0) {
 
 ```
 
-\FloatBarrier
 
-## 63. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Manual verification should be 'Method not used' or 'Method used'. Participants must be verified for at least 5 days.
-```{r manual_ver, echo=FALSE, warning=FALSE, message=FALSE}
-
-manual_ver <- partsbq	%>% filter(d_821247024=='197316935' & 
-                                   d_512820379 %in%  c('486306141', '854703046') & 
-                                   as.Date(d_914594314) < (currentDate - days(5)) &
-                                   !(state_d_953614051 %in%	c('734437214', '426360242')))
-
-
-if (nrow(manual_ver) == 0) {
-  cat("No errors\n")
-} else {
-  
-  manual_ver <- manual_ver %>% select(Site, Connect_ID, d_512820379, d_914594314, state_d_953614051) %>%  safe_arrange(Site)
-  
-  colnames(manual_ver) <- c("Site", "Connect ID", 'RcrtSI_RecruitType_v1r0', "RcrtV_VerificationTm_V1R0", "Manual verification")
-  
-  knitr::kable(manual_ver) %>%
-    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
-}
-
-```
 
 
 \FloatBarrier
@@ -1924,13 +1879,17 @@ if (nrow(dob_match) == 0) {
 
 \FloatBarrier
 
-## 68. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then PIN Match, should be 'Not Matched' or 'Matched'. Participants must be verified for at least 5 days.
+## 68. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then PIN Match, should be 'Not Matched' or 'Matched'. Participants must be verified for at least 5 days. This excludes HealthPartners and Marshfeild.
 ```{r pin_match, echo=FALSE, warning=FALSE, message=FALSE}
 
-pin_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                  
+pin_match <- partsbq	%>% filter(d_821247024=='197316935' & 
+                                  d_512820379 %in%  c('486306141', '854703046') & 
+                                  !(Site %in% c("HP", "MF")) &
                                   as.Date(d_914594314) < (currentDate - days(5)) & 
                                   !(state_d_711794630 %in%	c('356674370', '219803804')))
+
+## BSWH is not sending 'not matched', only 'matched' or nothing
+pin_match <- pin_match %>% filter(!(Site=="BSWH" & is.na(state_d_711794630)))
 
 
 if (nrow(pin_match) == 0) {
@@ -1949,11 +1908,12 @@ if (nrow(pin_match) == 0) {
 
 \FloatBarrier
 
-## 69. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Token Match, should be 'Not Matched' or 'Matched'. Participants must be verified for at least 5 days.
+## 69. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Token Match, should be 'Not Matched' or 'Matched'. Participants must be verified for at least 5 days. This excludes Marshfield and Sanford.
 ```{r token_match, echo=FALSE, warning=FALSE, message=FALSE}
 
-token_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                    
+token_match <- partsbq	%>% filter(d_821247024=='197316935' & 
+                                    d_512820379 %in%  c('486306141', '854703046') & 
+                                    !(Site %in% c("SF", "MF")) &
                                     as.Date(d_914594314) < (currentDate - days(5)) & 
                                     !(state_d_679832994 %in%	c('356674370', '219803804')))
 
@@ -1972,30 +1932,6 @@ if (nrow(token_match) == 0) {
 
 ```
 
-\FloatBarrier
-
-## 70. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then ZIP Code Match, should be 'Not Matched' or 'Matched'. Participants must be verified for at least 5 days.
-```{r zip_match, echo=FALSE, warning=FALSE, message=FALSE}
-
-zip_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                  
-                                  as.Date(d_914594314) < (currentDate - days(5)) & 
-                                  !(state_d_559534463 %in%	c('356674370', '219803804')))
-
-
-if (nrow(zip_match) == 0) {
-  cat("No errors\n")
-} else {
-  
-  zip_match <- zip_match %>% select(Site, Connect_ID, d_512820379, d_914594314, state_d_559534463) %>%  safe_arrange(Site)
-  
-  colnames(zip_match) <- c("Site", "Connect ID", 'RcrtSI_RecruitType_v1r0', "RcrtV_VerificationTm_V1R0", "ZIP Code Match")
-  
-  knitr::kable(zip_match) %>%
-    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
-}
-
-```
 
 \FloatBarrier
 
@@ -2802,7 +2738,7 @@ cat(paste0(
 ## Used to be rule 262 in the automated report, but 5 day lag needed
 
 update_recr <- base_vars %>% filter(d_821247024 == 197316935 & is.na(state_d_793822265) &
-                                    as.numeric(difftime(currentDate, as.Date(d_914594314), units = "days"))>5)
+                                    as.Date(d_914594314) < (currentDate - days(5)))
 
 
 if (nrow(update_recr) == 0) {
@@ -2872,7 +2808,7 @@ if (nrow(roi_null) == 0) {
 
 update_recr_by_type <- base_vars %>% filter(d_821247024!="922622075" & 
                                               !is.na(state_d_148197146) &
-                                    as.numeric(difftime(currentDate, as.Date(d_914594314), units = "days"))>5)
+                                    as.Date(d_914594314) < (currentDate - days(5)))
 
 
 if (nrow(update_recr_by_type) == 0) {
@@ -2902,7 +2838,7 @@ if (nrow(update_recr_by_type) == 0) {
 
 Outreach_manual <- base_vars %>% filter(state_d_188797763==353358909 &
                                             (state_d_953614051==734437214 | is.na(state_d_953614051)) &
-                                    as.numeric(difftime(currentDate, as.Date(d_914594314), units = "days"))>5)
+                                    as.Date(d_914594314) < (currentDate - days(5)))
 
 
 if (nrow(Outreach_manual) == 0) {
@@ -2938,7 +2874,7 @@ gc()
 
 Auto_verif <- base_vars %>% filter(d_821247024==197316935 & state_d_953614051==734437214 &
                                             (state_d_444699761==734437214 | is.na(state_d_444699761)) &
-                                    as.numeric(difftime(currentDate, as.Date(d_914594314), units = "days"))>5)
+                                    as.Date(d_914594314) < (currentDate - days(5)))
 
 
 if (nrow(Auto_verif) == 0) {
@@ -2968,7 +2904,7 @@ if (nrow(Auto_verif) == 0) {
 
 Man_Auto_verif <- base_vars %>% filter(d_821247024==197316935 & state_d_444699761==734437214 &
                                             (state_d_953614051==104430631 | is.na(state_d_953614051)) &
-                                    as.numeric(difftime(currentDate, as.Date(d_914594314), units = "days"))>5)
+                                    as.Date(d_914594314) < (currentDate - days(5)))
 
 
 if (nrow(Man_Auto_verif) == 0) {
@@ -2997,7 +2933,7 @@ if (nrow(Man_Auto_verif) == 0) {
 ## Used to be rule 194 in the automated report, but 5 day lag needed
 
 Dupl_type <- base_vars %>% filter(d_821247024==922622075 & is.na(state_d_148197146) &
-                                    as.numeric(difftime(currentDate, as.Date(d_914594314), units = "days"))>5)
+                                    as.Date(d_914594314) < (currentDate - days(5)))
 
 
 if (nrow(Dupl_type) == 0) {
@@ -3025,7 +2961,7 @@ if (nrow(Dupl_type) == 0) {
 ## Used to be rule 195 in the automated report, but 5 day lag needed
 
 Dupl_type_reverse <- base_vars %>% filter(d_821247024!=922622075 & !is.na(state_d_148197146) &
-                                    as.numeric(difftime(currentDate, as.Date(d_914594314), units = "days"))>5)
+                                    as.Date(d_914594314) < (currentDate - days(5)))
 
 
 if (nrow(Dupl_type_reverse) == 0) {
@@ -3037,6 +2973,211 @@ if (nrow(Dupl_type_reverse) == 0) {
   colnames(Dupl_type_reverse) <- c("Site", "Connect ID", 'token', 'RcrtV_DuplicateType', 'RcrtV_Verification')
   
   knitr::kable(Dupl_type_reverse) %>%
+    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
+}
+
+```
+
+
+
+\FloatBarrier
+
+## 104.	If site = KP and verification status = verified and verification date is more than one week ago, then the three verification modes should all be populated (not missing). 
+```{r KP_ver3, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+KP_ver3 <- base_vars %>% filter(d_821247024==197316935 & grepl("KP", Site) &
+                                  as.Date(d_914594314) < (currentDate - days(7)) & 
+                                  (is.na(state_d_444699761) | is.na(state_d_188797763) | 
+                                     is.na(state_d_953614051) ) )
+
+
+if (nrow(KP_ver3) == 0) {
+  cat("No errors\n")
+} else {
+  
+  KP_ver3 <- KP_ver3 %>% select(Site, Connect_ID, token, state_d_444699761, state_d_188797763, state_d_953614051) %>%  safe_arrange(Site)
+  
+  colnames(KP_ver3) <- c("Site", "Connect ID", 'token', 'RcrtV_Automated', 'RcrtV_Outreach', 'RcrtV_Manual')
+  
+  knitr::kable(KP_ver3) %>%
+    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
+}
+
+```
+
+
+\FloatBarrier
+
+## 105. If site = HP or UC or BSWH and verification status = verified or cannot be verified and verification date is more than five days ago (to allow for lag in sending data), then the three verification modes should all be populated (not missing).
+```{r HP_UC_BSWH3, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+HP_UC_BSWH3 <- base_vars %>% filter((d_821247024==197316935 | d_821247024==219863910) & 
+                                  Site %in% c("HP", "UC", "BSWH") &
+                                    as.Date(d_914594314) < (currentDate - days(5)) & 
+                                    (is.na(state_d_444699761) | is.na(state_d_188797763) | 
+                                       is.na(state_d_953614051) ) )
+
+
+if (nrow(HP_UC_BSWH3) == 0) {
+  cat("No errors\n")
+} else {
+  
+  HP_UC_BSWH3 <- HP_UC_BSWH3 %>% select(Site, Connect_ID, token, state_d_444699761, state_d_188797763, state_d_953614051) %>%  safe_arrange(Site)
+  
+  colnames(HP_UC_BSWH3) <- c("Site", "Connect ID", 'token', 'RcrtV_Automated', 'RcrtV_Outreach', 'RcrtV_Manual')
+  
+  knitr::kable(HP_UC_BSWH3) %>%
+    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
+}
+
+```
+
+
+\FloatBarrier
+
+## 106. If site = HF and verification status = verified, automated verification and manual verification should be populated (not missing). This rule allows for a lag of 5 days post-verification.
+```{r HFH_ver2, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+HFH_ver2 <- base_vars %>% filter(d_821247024==197316935 &
+                                  Site=="HFH" &
+                                  as.Date(d_914594314) < (currentDate - days(5)) & 
+                                  (is.na(state_d_444699761) | 
+                                     is.na(state_d_953614051) ) )
+
+
+if (nrow(HFH_ver2) == 0) {
+  cat("No errors\n")
+} else {
+  
+  HFH_ver2 <- HFH_ver2 %>% select(Site, Connect_ID, token, state_d_444699761, state_d_953614051) %>%  safe_arrange(Site)
+  
+  colnames(HFH_ver2) <- c("Site", "Connect ID", 'token', 'RcrtV_Automated', 'RcrtV_Manual')
+  
+  knitr::kable(HFH_ver2) %>%
+    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
+}
+
+```
+
+
+\FloatBarrier
+
+## 107. If site = HF and verification status = verified and automated verification = method used and manual verification = method not used, then outreach required should be missing. This rule allows for a lag of 5 days post-verification.
+```{r HFH_ver_OR, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+HFH_ver_OR <- base_vars %>% filter(d_821247024==197316935 & 
+                                  Site=="HFH" &
+                                  as.Date(d_914594314) < (currentDate - days(5)) & 
+                                  state_d_444699761=="426360242" &
+                                  state_d_953614051=="734437214" &
+                                  !is.na(state_d_188797763))
+
+
+if (nrow(HFH_ver_OR) == 0) {
+  cat("No errors\n")
+} else {
+  
+  HFH_ver_OR <- HFH_ver_OR %>% select(Site, Connect_ID, token, state_d_444699761, state_d_188797763, state_d_953614051) %>%  safe_arrange(Site)
+  
+  colnames(HFH_ver_OR) <- c("Site", "Connect ID", 'token', 'RcrtV_Automated', 'RcrtV_Outreach', 'RcrtV_Manual')
+  
+  knitr::kable(HFH_ver_OR) %>%
+    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
+}
+
+```
+
+
+\FloatBarrier
+
+## 108.	If site = HF and verification status = cannot be verified, then the three verification modes should all be populated (not missing). This rule allows for a lag of 5 days post-verification.
+```{r HFH_not_ver3, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+HFH_not_ver3 <- base_vars %>% filter(d_821247024==219863910 & 
+                                  Site=="HFH" &
+                                  as.Date(d_914594314) < (currentDate - days(5)) & 
+                                  (is.na(state_d_444699761) | is.na(state_d_188797763) | 
+                                     is.na(state_d_953614051) ) )
+
+
+if (nrow(HFH_not_ver3) == 0) {
+  cat("No errors\n")
+} else {
+  
+  HFH_not_ver3 <- HFH_not_ver3 %>% select(Site, Connect_ID, token, state_d_444699761, state_d_188797763, state_d_953614051) %>%  safe_arrange(Site)
+  
+  colnames(HFH_not_ver3) <- c("Site", "Connect ID", 'token', 'RcrtV_Automated', 'RcrtV_Outreach', 'RcrtV_Manual')
+  
+  knitr::kable(HFH_not_ver3) %>%
+    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
+}
+
+```
+
+
+\FloatBarrier
+
+## 109.	If site = SF or MF and verification status = verified or cannot be verified and recruit type = active and Update Recruit Type = No Change Needed, automated should be method used and manual and outreach should be populated. This rule allows for a lag of 5 days post-verification and includes only participants verified on or after May 1, 2026.
+```{r SF_MF_ver_act, echo=FALSE, warning=FALSE, message=FALSE, include=FALSE}
+
+
+SF_MF_ver_act <- base_vars %>% filter((d_821247024==197316935 | d_821247024==219863910) & 
+                                        Site %in% c("SF", "MF") &
+                                        d_512820379=="486306141" &
+                                        state_d_793822265=="132080040" &
+                                        as.Date(d_914594314) < (currentDate - days(5)) & 
+                                        as.Date(d_914594314) > "2026-05-01" &
+                                        !(state_d_444699761=="426360242" &
+                                            !is.na(state_d_188797763) & 
+                                            !is.na(state_d_953614051) ) )
+
+
+if (nrow(SF_MF_ver_act) == 0) {
+  cat("No errors\n")
+} else {
+  
+  SF_MF_ver_act <- SF_MF_ver_act %>% select(Site, Connect_ID, token, state_d_444699761, state_d_188797763, state_d_953614051) %>%  safe_arrange(Site)
+  
+  colnames(SF_MF_ver_act) <- c("Site", "Connect ID", 'token', 'RcrtV_Automated', 'RcrtV_Outreach', 'RcrtV_Manual')
+  
+  knitr::kable(SF_MF_ver_act) %>%
+    kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
+}
+
+```
+
+
+\FloatBarrier
+
+## 110.	If site = SF or MF and verification status= verified or cannot be verified and recruit type = passive and Update Recruit Type = No Change Needed, automated should be method not used, and manual and outreach should be populated. This rule allows for a lag of 5 days post-verification and includes only participants verified on or after May 1, 2026.
+```{r SF_MF_ver_pass, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+SF_MF_ver_pass <- base_vars %>% filter((d_821247024==197316935 | d_821247024==219863910) & 
+                                         Site %in% c("SF", "MF") &
+                                         d_512820379=="854703046" &
+                                         state_d_793822265=="132080040" &
+                                         as.Date(d_914594314) < (currentDate - days(5)) &
+                                         as.Date(d_914594314) > "2026-05-01" &
+                                         !(state_d_444699761=="734437214" &
+                                             !is.na(state_d_188797763) & 
+                                             !is.na(state_d_953614051) ) )
+
+
+if (nrow(SF_MF_ver_pass) == 0) {
+  cat("No errors\n")
+} else {
+  
+  SF_MF_ver_pass <- SF_MF_ver_pass %>% select(Site, Connect_ID, token, state_d_444699761, state_d_188797763, state_d_953614051) %>%  safe_arrange(Site)
+  
+  colnames(SF_MF_ver_pass) <- c("Site", "Connect ID", 'token', 'RcrtV_Automated', 'RcrtV_Outreach', 'RcrtV_Manual')
+  
+  knitr::kable(SF_MF_ver_pass) %>%
     kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8)
 }
 

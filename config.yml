@@ -106,7 +106,7 @@ recruitment_qc_metrics:
     - "194196493018" # internal
   gcp_info:
     cloud_scheduler: ccc-recruitment-qc-metrics
-    frequency: "30 13 * * 1" # every Monday at 1:30 PM"
+    frequency: "15 11 * * 1" # every Monday at 11:15 AM"
 
 notifications_qc_metrics:
   r_file_name: "Notifications QC.Rmd"
@@ -163,11 +163,11 @@ csh_metrics:
     frequency: "30 14 * * 1"
     
         
-pref_26_metrics:
-  r_file_name: "2025_ROI_Pref_Survey_Metrics.Rmd"
-  report_file_name: "2025_ROI_Pref_Survey_Metrics.pdf"
+recruitment_qc_metrics_excel:
+  r_file_name: "Custom_Recruitment_QC_Errors_Excel.R"
+  report_file_name: ""
   box_folders:
-    - "251314285484"
+    - "194196493018"
   gcp_info:
-    cloud_scheduler: ccc-2025-preference-metrics
-    frequency: "45 14 1 * *" # first of the month at 2:45 PM
+    cloud_scheduler: ccc-custom-recruitment_qc_metrics_excel
+    frequency: "00 12 * * 1" # every Monday at 12:00 PM"
