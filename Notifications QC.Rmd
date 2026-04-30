@@ -127,7 +127,9 @@ AllPossibleNotifications AS (
         category NOT LIKE '% Year-end Thank-you Letter' and
         category NOT LIKE '2026 Return%' and
         category NOT LIKE 'UC Verified, BL%' and
-        NOT (category = 'Verified, BL Survey Reminders' AND attempt = '2nd contact')
+        NOT (category = 'Verified, BL Survey Reminders' AND attempt = '2nd contact') and
+        NOT (category = 'post-consent user profile reminders' AND 
+        attempt IN ('8th contact', '9th contact', '10th contact'))
     UNION ALL
     SELECT 
         'Data Destruction Reminders' AS category,
