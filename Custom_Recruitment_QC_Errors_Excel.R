@@ -1094,19 +1094,7 @@ if (nrow(token_match) > 0) {
   all_errors <- bind_rows(all_errors, temp)
 }
 
-# Rule 70
-zip_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
-                                  as.Date(d_914594314) < (currentDate - days(5)) & 
-                                  !(state_d_559534463 %in%	c('356674370', '219803804')))
 
-if (nrow(zip_match) > 0) {
-  temp <- zip_match %>% select(Connect_ID, token, Site) %>%
-    mutate(
-      rule_id = 70,
-      rule_label = "If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then ZIP Code Match, should be 'Not Matched' or 'Matched'. Participants must be verified for at least 5 days."
-    )
-  all_errors <- bind_rows(all_errors, temp)
-}
 
 # Rule 71
 site_match <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
