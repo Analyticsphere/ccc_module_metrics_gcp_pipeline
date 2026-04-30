@@ -1488,7 +1488,6 @@ if (nrow(Non_act_verif) > 0) {
 
 # Rule 96
 update_recr <- base_vars %>% filter(d_821247024 == 197316935 & is.na(state_d_793822265) &
-
                                       as.Date(d_914594314) < (currentDate - days(5)))
 
 if (nrow(update_recr) > 0) {

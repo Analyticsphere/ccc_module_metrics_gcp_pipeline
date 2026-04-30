@@ -1775,7 +1775,8 @@ if (nrow(reinv_active) < 50) {
 ## 62. If RcrtV_Verification_v1r0 is 'Verified' and RcrtSI_RecruitType_v1r0 is 'Active or 'Passive', then Outreach required for Verification, should be 'Yes', or 'No'. Participants must be verified for at least 5 days. This rule excludes HFH.
 ```{r outreach_ver, echo=FALSE, warning=FALSE, message=FALSE}
 
-outreach_ver <- partsbq	%>% filter(d_821247024=='197316935' & d_512820379 %in%  c('486306141', '854703046') & 
+outreach_ver <- partsbq	%>% filter(d_821247024=='197316935' & 
+                                     d_512820379 %in%  c('486306141', '854703046') & 
                                      Site!="HFH" &
                                      as.Date(d_914594314) < (currentDate - days(5)) & 
                                      !(state_d_188797763 %in%	c('353358909', '104430631')))
