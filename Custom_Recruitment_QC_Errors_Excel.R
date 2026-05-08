@@ -11,6 +11,7 @@ library(knitr)
 library(kableExtra)
 library(glue)
 library(openxlsx)
+library(logger)
 
 options(tinytex.verbose = TRUE)
 
@@ -39,6 +40,8 @@ chunk1 <- tbl(con, "participants", page_size = 1000) %>%
   distinct(token, .keep_all = TRUE)
 chunk1$Connect_ID <- as.numeric(chunk1$Connect_ID)
 
+log_info("First participants table variable set pulled")
+
 chunk2 <- tbl(con, "participants", page_size = 1000) %>%
   filter(d_831041022=='104430631') %>%
   dplyr::select(Connect_ID, token, d_430551721, d_821247024, d_914594314, state_d_725929722, d_126331570, d_536735468, d_130371375_d_266600170_d_945795905, d_130371375_d_266600170_d_320023644, state_d_538553381, state_d_527823810, state_d_849518448, state_d_119643471, state_d_253532712, state_d_684926335,
@@ -48,6 +51,9 @@ chunk2 <- tbl(con, "participants", page_size = 1000) %>%
   as_tibble() %>%
   distinct(token, .keep_all = TRUE)
 chunk2$Connect_ID <- as.numeric(chunk2$Connect_ID)
+
+
+log_info("Second participants table variable set pulled")
 
 chunk3 <- tbl(con, "participants", page_size = 1000) %>%
   filter(d_831041022=='104430631') %>%
@@ -61,6 +67,9 @@ chunk3 <- tbl(con, "participants", page_size = 1000) %>%
   as_tibble() %>%
   distinct(token, .keep_all = TRUE)
 chunk3$Connect_ID <- as.numeric(chunk3$Connect_ID)
+
+
+log_info("Third participants table variable set pulled")
 
 parts_bq_partial <- full_join(chunk1, chunk2, by=c("token", "Connect_ID"))
 partsbq <- full_join(parts_bq_partial, chunk3, by=c("token", "Connect_ID"))
@@ -89,6 +98,7 @@ partsbq <- partsbq %>% mutate(
 )
 
 base_vars <- left_join(partsbq, biobq, by=c("Connect_ID", "token"))
+
 
 safe_arrange <- function(df, ...) {
   if (nrow(df) > 0) df %>% arrange(...) else df
@@ -121,6 +131,7 @@ all_errors <- data.frame(stringsAsFactors = FALSE)
 
 
 ## ---- RULES ---------------------------------------------------------------
+log_info("Starting to run the rules")
 
 # Rule 1
 incentive2 <- base_vars %>%
@@ -315,6 +326,11 @@ pref_lang <- partsbq %>%
 all_errors <- bind_rows(all_errors, pref_lang)
 
 
+log_info("First 25 rules ran")
+
+## Clearing up space in GCP memory
+rm(list = setdiff(ls(), c('currentDate', 'boxfolder', 'project', "partsbq", "biobq", "base_vars", "safe_arrange", "all_errors")))
+gc()
 
 # Rule 39 — BigQuery pull
 hipaa_match_sql <- "SELECT Connect_ID FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants`
@@ -431,6 +447,13 @@ start_DHQ <- partsbq %>%
 all_errors <- bind_rows(all_errors, start_DHQ)
 
 
+## Clearing up space in GCP memory
+rm(list = setdiff(ls(), c('currentDate', 'boxfolder', 'project', "partsbq", "biobq", "base_vars", "safe_arrange", "all_errors")))
+gc()
+
+
+
+
 # Rule 50
 comp_DHQ <- partsbq %>%
   filter(!is.na(d_610227793) & (d_692560814==972455046 | d_692560814==789467219 | is.na(d_692560814))) %>%
@@ -440,6 +463,8 @@ comp_DHQ <- partsbq %>%
                 "SrvDHQ3_6moStatus_v1r0"     = .$d_692560814))
 all_errors <- bind_rows(all_errors, comp_DHQ)
 
+
+log_info("First 50 rules ran")
 
 # Rule 51
 dhq_qualified <- partsbq %>%
@@ -983,6 +1008,13 @@ Outreach_manual <- base_vars %>%
 all_errors <- bind_rows(all_errors, Outreach_manual)
 
 
+
+## Clearing up space in GCP memory
+rm(list = setdiff(ls(), c('currentDate', 'boxfolder', 'project', "partsbq", "biobq", "base_vars", "safe_arrange", "all_errors")))
+gc()
+
+
+
 # Rule 100
 Auto_verif <- base_vars %>%
   filter(d_821247024==197316935 & state_d_953614051==734437214 &
@@ -1221,3 +1253,4 @@ openxlsx::write.xlsx(
 
 cat(glue("Total error rows: {nrow(all_errors)}\n"))
 cat(glue("Rules with errors: {paste(sort(unique(all_errors$rule_id)), collapse=', ')}\n"))
+log_info("Code finished!")
