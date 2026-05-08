@@ -329,7 +329,7 @@ all_errors <- bind_rows(all_errors, pref_lang)
 log_info("First 25 rules ran")
 
 ## Clearing up space in GCP memory
-rm(list = setdiff(ls(), c('currentDate', 'boxfolder', 'project', "partsbq", "biobq", "base_vars", "safe_arrange", "all_errors")))
+rm(list = setdiff(ls(), c('currentDate', 'boxfolder', 'project', "partsbq", "biobq", "base_vars", "safe_arrange", "all_errors", "tag_rule")))
 gc()
 
 # Rule 39 — BigQuery pull
@@ -448,7 +448,7 @@ all_errors <- bind_rows(all_errors, start_DHQ)
 
 
 ## Clearing up space in GCP memory
-rm(list = setdiff(ls(), c('currentDate', 'boxfolder', 'project', "partsbq", "biobq", "base_vars", "safe_arrange", "all_errors")))
+rm(list = setdiff(ls(), c('currentDate', 'boxfolder', 'project', "partsbq", "biobq", "base_vars", "safe_arrange", "all_errors", "tag_rule")))
 gc()
 
 
@@ -1010,7 +1010,7 @@ all_errors <- bind_rows(all_errors, Outreach_manual)
 
 
 ## Clearing up space in GCP memory
-rm(list = setdiff(ls(), c('currentDate', 'boxfolder', 'project', "partsbq", "biobq", "base_vars", "safe_arrange", "all_errors")))
+rm(list = setdiff(ls(), c('currentDate', 'boxfolder', 'project', "partsbq", "biobq", "base_vars", "safe_arrange", "all_errors", "tag_rule")))
 gc()
 
 
