@@ -120,7 +120,8 @@ AllPossibleNotifications AS (
             'UC Baseline Biospecimen Scheduling Invitation',
             'newsletter',
             'eNewsletter',
-            'Sample Update Message'
+            'Sample Update Message',
+            'SF PAB invitation'
         ) and 
         category NOT LIKE '% PI Change' and 
         category NOT LIKE 'Prev. Blocked %' and 
