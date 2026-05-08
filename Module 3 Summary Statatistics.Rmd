@@ -1792,6 +1792,17 @@ simple_funct3(D_252017075_D_106272739, "SECSMD: Number of People in the Househol
 
 ```
 
+
+
+```{r Clear_Memory1, include=FALSE}
+#Clearing up some memory -- removing all but the main dataframe and functions
+rm(list = setdiff(ls(), c("data_tib_all3", 'module3', "dict", 'hist_funct', 'boxp_funct', 'simple_funct3', 'simple_age_funct3', 'one_logic_funct3', 'alclife2_funct', 'funct_2_3_4', 'funct_5', 'funct_8c', 'funct_9b', 'funct_10_11', 'create_kable_table', 'create_kable_table_w_footnote')))
+invisible(gc())
+
+########################
+```
+
+
 \newpage
 
 # Section 2: Marijuana
@@ -2641,6 +2652,14 @@ grid.arrange(thmlfF, thmlfG, nrow=2)
 
 ```
 
+```{r Clear_Memory2, include=FALSE}
+#Clearing up some memory -- removing all but the main dataframe and functions
+rm(list = setdiff(ls(), c("data_tib_all3", 'module3', "dict", 'hist_funct', 'boxp_funct', 'simple_funct3', 'simple_age_funct3', 'one_logic_funct3', 'alclife2_funct', 'funct_2_3_4', 'funct_5', 'funct_8c', 'funct_9b', 'funct_10_11', 'create_kable_table', 'create_kable_table_w_footnote')))
+invisible(gc())
+
+########################
+```
+
 \newpage
 
 # Section 3: Alcohol 
@@ -3052,7 +3071,7 @@ create_kable_table(alcl, oth_age, "ALCLIFE2H: Frequency of Drinking: Ages 70+")
     ##ALCLLIFE2 variables won't go into tibble for some reason so can't turn into a function 
 
 #ALCLIFE4A 
-alcl4= dt_alclA  %>%  mutate(oth_age= case_when(D_470862706_D_912659087_D_789689151=="1"~"Drank Beer",
+alcl4= dt_alclA  %>%  mutate(oth_age= case_when(#D_470862706_D_912659087_D_789689151=="1"~"Drank Beer",
                                               D_470862706_D_912659087_D_663253668=="1"~"Drank Liquor",
                                               D_470862706_D_912659087_D_104676242=="1"~"Drank Wine",
                                               D_470862706_D_912659087_D_137733407=="1"~"Drank Other Beverages",
@@ -3165,6 +3184,14 @@ create_kable_table(alcl4H, oth_age, "ALCLIFE4H: Beverages Drank from Ages 70-79"
 
 ```
 
+
+```{r Clear_Memory3, include=FALSE}
+#Clearing up some memory -- removing all but the main dataframe and functions
+rm(list = setdiff(ls(), c("data_tib_all3", 'module3', "dict", 'hist_funct', 'boxp_funct', 'simple_funct3', 'simple_age_funct3', 'one_logic_funct3', 'alclife2_funct', 'funct_2_3_4', 'funct_5', 'funct_8c', 'funct_9b', 'funct_10_11', 'create_kable_table', 'create_kable_table_w_footnote')))
+invisible(gc())
+
+########################
+```
 
 \newpage
 
