@@ -1167,7 +1167,7 @@ cat("Number of White, Straight, Married, Female Participants", round(((dim(WMF)[
 rm(list = setdiff(ls(), c("data_tib_m1", 'module1', 'module1', "dict", 'hist_funct', 'boxp_funct', 'simple_funct', 'one_logic_funct', 
                           'sib_logic_funct', 'child_logic_funct',
                           'create_kable_table','create_kable_table_w_footnote', 'create_kable_table_w_ethnicity_footnote')))
-gc()
+invisible(gc())
 
 ########################
 
@@ -1835,7 +1835,7 @@ grid.arrange(panc_ad_dg, panc_a_dg, panc_y_dg, nrow = 3)
 rm(list = setdiff(ls(), c("data_tib_m1", 'module1', 'module1', "dict", 'hist_funct', 'boxp_funct', 'simple_funct', 'one_logic_funct', 
                           'sib_logic_funct', 'child_logic_funct',
                           'create_kable_table','create_kable_table_w_footnote', 'create_kable_table_w_ethnicity_footnote')))
-gc()
+invisible(gc())
 
 ########################
 
@@ -2740,7 +2740,7 @@ cat("Proportion of DCIS Cases Confirmed with Biopsy:", ductal, "%")
 rm(list = setdiff(ls(), c("data_tib_m1", 'module1', 'module1', "dict", 'hist_funct', 'boxp_funct', 'simple_funct', 'one_logic_funct', 
                           'sib_logic_funct', 'child_logic_funct',
                           'create_kable_table','create_kable_table_w_footnote', 'create_kable_table_w_ethnicity_footnote')))
-gc()
+invisible(gc())
 
 ########################
 
@@ -3616,7 +3616,7 @@ grid.arrange(trans_last_ad, trans_a_last, trans_y_last, nrow = 3)
 rm(list = setdiff(ls(), c("data_tib_m1", 'module1', "dict", 'hist_funct', 'boxp_funct', 'simple_funct', 'one_logic_funct', 
                           'sib_logic_funct', 'child_logic_funct',
                           'create_kable_table', 'create_kable_table_w_footnote', 'create_kable_table_w_ethnicity_footnote')))
-gc()
+invisible(gc())
 
 ########################
 
@@ -4093,7 +4093,7 @@ grid.arrange(acne1, acne0, nrow=2)
 rm(list = setdiff(ls(), c("data_tib_m1", 'module1', "dict", 'hist_funct', 'boxp_funct', 'simple_funct', 'one_logic_funct', 
                           'sib_logic_funct', 'child_logic_funct',
                           'create_kable_table', 'create_kable_table_w_footnote', 'create_kable_table_w_ethnicity_footnote')))
-gc()
+invisible(gc())
 
 ########################
 
@@ -4365,7 +4365,7 @@ grid.arrange(ukn_a_mdg, ukn_y_mdg, nrow=2)
 rm(list = setdiff(ls(), c("data_tib_m1", 'module1', 'module1', "dict", 'hist_funct', 'boxp_funct', 'simple_funct', 'one_logic_funct', 
                           'sib_logic_funct', 'child_logic_funct',
                           'create_kable_table','create_kable_table_w_footnote', 'create_kable_table_w_ethnicity_footnote')))
-gc()
+invisible(gc())
 
 ########################
 
@@ -5362,7 +5362,7 @@ grid.arrange(sib6_c33, sib6_c34, nrow=2)
 rm(list = setdiff(ls(), c("data_tib_m1", 'module1', 'module1', "dict", 'hist_funct', 'boxp_funct', 'simple_funct', 'one_logic_funct', 
                           'sib_logic_funct', 'child_logic_funct',
                           'create_kable_table','create_kable_table_w_footnote', 'create_kable_table_w_ethnicity_footnote')))
-gc()
+invisible(gc())
 
 ########################
 
@@ -5906,7 +5906,7 @@ grid.arrange(ch4_c5, ch4_c6, ch4_c7, ch4_c8, nrow=4)
 rm(list = setdiff(ls(), c("data_tib_m1", 'module1', "dict", 'hist_funct', 'boxp_funct', 'simple_funct', 'one_logic_funct', 
                           'sib_logic_funct', 'child_logic_funct',
                           'create_kable_table','create_kable_table_w_footnote', 'create_kable_table_w_ethnicity_footnote')))
-gc()
+invisible(gc())
 
 ########################
 
