@@ -121,7 +121,8 @@ AllPossibleNotifications AS (
             'newsletter',
             'eNewsletter',
             'Sample Update Message',
-            'SF PAB invitation'
+            'SF PAB invitation',
+            'UC PAB invitation'
         ) and 
         category NOT LIKE '% PI Change' and 
         category NOT LIKE 'Prev. Blocked %' and 
