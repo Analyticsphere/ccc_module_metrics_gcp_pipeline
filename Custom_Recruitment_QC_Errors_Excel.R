@@ -329,7 +329,10 @@ all_errors <- bind_rows(all_errors, pref_lang)
 log_info("First 25 rules ran")
 
 ## Clearing up space in GCP memory
-rm(list = setdiff(ls(), c('currentDate', 'boxfolder', 'project', "partsbq", "biobq", "base_vars", "safe_arrange", "all_errors", "tag_rule")))
+rm(list = setdiff(ls(), 
+                  c('currentDate', 'boxfolder', 'project', "partsbq", "biobq", 
+                    "base_vars", "safe_arrange", "all_errors", "tag_rule",
+                    "make_explanation_cols")))
 gc()
 
 # Rule 39 — BigQuery pull
@@ -448,7 +451,10 @@ all_errors <- bind_rows(all_errors, start_DHQ)
 
 
 ## Clearing up space in GCP memory
-rm(list = setdiff(ls(), c('currentDate', 'boxfolder', 'project', "partsbq", "biobq", "base_vars", "safe_arrange", "all_errors", "tag_rule")))
+rm(list = setdiff(ls(), 
+                  c('currentDate', 'boxfolder', 'project', "partsbq", "biobq", 
+                    "base_vars", "safe_arrange", "all_errors", "tag_rule",
+                    "make_explanation_cols")))
 gc()
 
 
@@ -1010,7 +1016,9 @@ all_errors <- bind_rows(all_errors, Outreach_manual)
 
 
 ## Clearing up space in GCP memory
-rm(list = setdiff(ls(), c('currentDate', 'boxfolder', 'project', "partsbq", "biobq", "base_vars", "safe_arrange", "all_errors", "tag_rule")))
+rm(list = setdiff(ls(), c('currentDate', 'boxfolder', 'project', "partsbq", "biobq", 
+                          "base_vars", "safe_arrange", "all_errors", "tag_rule",
+                          "make_explanation_cols")))
 gc()
 
 
@@ -1221,7 +1229,7 @@ fixed_cols <- c("Connect_ID", "token", "Site", "rule_id", "rule_label")
 
 
 # Add any missing fixed cols as NA (e.g. token missing from some BQ-only rules)
-for (col in col_order) {
+for (col in fixed_cols) {
   if (!col %in% names(all_errors)) all_errors[[col]] <- NA
 }
 
