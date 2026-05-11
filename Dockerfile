@@ -7,7 +7,7 @@ ENV PATH="$PATH:/root/bin:/usr/local/lib"
 
 # Install TinyTeX and necessary LaTeX packages
 RUN Rscript -e 'devtools::install_version("tinytex", version="0.59", repos="https://cloud.r-project.org")' && \
-    Rscript -e 'tinytex::install_tinytex(version = "2026.04", bundle = "TinyTeX-1")' && \
+    Rscript -e 'tinytex::install_tinytex(version = "2026.04", bundle = "TinyTeX-1", repository = "https://mirror.math.princeton.edu/pub/CTAN")' && \
     Rscript -e 'tinytex::tlmgr_install(c( \
       "multirow", "ulem", "environ", "colortbl", "wrapfig", "pdflscape", \
       "tabu", "threeparttable", "threeparttablex", "makecell", "caption", \
