@@ -196,8 +196,12 @@ data_tib_all3 <- as_tibble(module3)
 ```
 
 ```{r functions, warning=FALSE, message=FALSE, include=FALSE}
+
+
 #Created Functions for this code
 
+
+# -----------------  PLOTS -----------------------------------------------------
 #Histogram 
 hist_funct <- function(CID,Title, Xlab, Ylab) {
   CID_SYM <- rlang::ensym(CID)
@@ -226,6 +230,9 @@ boxp_funct <- function(CID,Title, Xlab) {
 
 
 
+# --------------------------- Tables ------------------------------------------------------------------
+
+
 dict <- list("104430631"="No", "353358909"="Yes", "265550580"="Didn't Drink", "950039557"="A few times per Year","402048066"="A few times per Month","522395860"="Once per Week","756073829"="A few times per Week","858624942"="Once per day","424768954"="2-3 times per Day","687445652"="4-5 times per Day","333682419"="6+ times per Day",  "595249233"="Less Than once per Month", "637900673"="Once a month","207952166"="2-3 times per month","198347104"="1-2 times per week","471294296"="3-4 times per week", "594557208"="5-6 times per Week","647504893"="Every Day", "428999623"="0-15 minutes", "248303092"="16-30 min.", "998679771"="31-59 min.","638092100"="1 hr","127455035"="2+ hrs", "419415087"="No, not at all", "299561721"="Yes, but rarely","716761013"="Yes, but some days","804785430"="Yes, every day", "151488193"="10 or less", "805449318"="11-49","486319890"="50-99","132232896"="100+", "317567178"="In the past month", "484055234"="In the past year", "802197176"="More than a year", "169225725"="Within 5 minutes", "967681778"="6-30 min.", "122802180"="Almost All the Time", "950591599"="Most of the Time","167208049"="Half the Time", "793320798"="Sometimes","216450786"="Almost Never",  "417208949"="Most Days of the Week","797736697"="A Few Days per week","480609810"="One Day per Week", "667010122"="A Few days per Year","648960871"="Never", "174968750"="Less Than One Hour", "738454194"="1-2 Hours","229540444"="3-5 Hours",  "838981994"="6-9 Hours",  "464169461"="10-15 Hours", "683466918"="15+ Hours", "162693263"="Everyday, at least 2 hrs","924926068"="Everday, 0-2 Hours",   "485011582"="A Few Days per Month", "865134801"="One Day per Month",  "503218834"="0",   "759356722"="1",  "668407984"="2", "448069154"="3",  "485163252"="4", "160036380"="5+", "648665281"="1",   "420091116"="2", "412554346"="3", "475454159"="4", "312200270"="5","411022152"="6+", "249485680"="Blistering Sunburn",  "646918928"="Sunburn w/o Blisters", "692155653"="Mild Sunburn, Eventual Tan",  "899670578"="A Tan Without Sunburn", "455468743"="No Skin Color Change",   "961021302"="1-2", "953684708"="3-4", "922737557"="5-9", "945387130"="10+", "178420302"="Unknown",     "235613392"="Rarely",  "132099255"="Sometimes", "211590917"="Often",  "907579123"="Always", "905073380"="All exposed areas",  "223461539"="Some exposed areas", "901521065"="Face or Head Only", "445549128"="Less than 15","995736452"="15-20",  "120045322"="21-35", "190125431"="36-50",  "133730190"="51+", "102445389"="1-9 Times", "388196732"="10-49 Times", "649327523"="50-99 Times","587052987"="100-249", "838336013"="250+",  "511873578"="A few Days per Week",  "756470750"="A few Days per Month", "402335383"="Less than 12x per Year", "317312221"="Blue",  "858866416"="Green","696181630"="Hazel", "248624772"="Light Brown",  "777809207"="Dark Brown", "181769837"="Other", "230748315"="Blond",  "379848047"="Red", "224120697"="Reddish Brown", "270559240"="Medium Brown",  "469115418"="Black", "300633065"="Very Light", "834817071"="Light", "385246065"="Medium", "189414295"="Dark", "482157734"="Very dark", "259218831"="No Freckles",  "519761171"="A few", "800179850"="Some", "455684772"="A lot", "425604618"="1",  "914302382"="2", "835682347"="3", "562508684"="4", "180306463"="5", "413495952"="6+", "332226274"="1",  "549638643"="2", "939235325"="3", "473673527"="4", "290010251"="5","355205294"="6+", "968093023"="1",   "545630587"="2","526602834"="3", "905402667"="4", "900343645"="5","554549266"="6+", "437269318"="Recreation", "838317013"="As Medicine", "585672584"="Both", "807835037"="Other", "746038746"="Prefer Not to Answer", "351028096" = "1 to 5 times per year","690077051" = "6 to 11 times per year", "418361985" = "Twice per week","676516297" = "20-31 days per month")
 
 
@@ -246,97 +253,75 @@ dict <- list("104430631"="No", "353358909"="Yes", "265550580"="Didn't Drink", "9
 # # ! Can't convert from `replace$answer` <character> to `data$answer` <factor<8b6c5>> due to loss of generality.
 
 
+#### HELPER FUNCTIONS
 
-
-
-#GT table for questions asked to all (no skip logic)
-simple_funct3 <- function(CID, Title){  
-  CID_SYM <- rlang::ensym(CID)
-  
-  gt_yn <- data_tib_all3 %>%
-    group_by(!!CID_SYM) %>%
-    summarize(n = n(), percentage = 100 * n / nrow(.)) %>%
-    ungroup() %>%
-    mutate(answer = dplyr::recode(!!CID_SYM, !!!dict)) %>%
-    replace_na(list(answer = "Skipped this Question")) %>%
-    select(answer, n, percentage)
-  
-    gt_yn_kable <- gt_yn %>%
+# Helper1: Summarizes variable responses in 'N (Pct%)' fashion
+build_summary <- function(df, cid_sym) {
+  df %>%
+    group_by(!!cid_sym) %>%
+    summarize(n = n(), .groups = "drop") %>%
     mutate(
-      percentage = round(percentage, 1),
-      N = comma(n)
+      answer  = dplyr::recode(!!cid_sym, !!!dict),
+      answer  = replace_na(answer, "Skipped this Question"),
+      pct     = 100 * n / sum(n),
+      `N (Pct%)` = sprintf("%s (%.1f%%)", comma(n), pct)
     ) %>%
-    select(answer, N, percentage) %>%
-    dplyr::rename(
-      "Answer" = answer,
-      "Pct" = percentage
-    ) %>%
+    select(Answer = answer, `N (Pct%)`) %>%
     bind_rows(
-      tibble(
-        Answer = "Total",
-        N = comma(sum(gt_yn$n, na.rm = TRUE)),
-        "Pct" = round(sum(gt_yn$Pct, na.rm = TRUE), 1)
-      )
+      summarize(df, `N (Pct%)` = sprintf("%s (100.0%%)", comma(n()))) %>%
+        mutate(Answer = "Total")
     )
+}
 
-  
-  kable(gt_yn_kable, 
-        caption = Title, align = "lrr",
-        booktabs = TRUE, longtable = TRUE, escape = TRUE) %>%
-    add_indent(seq(1, nrow(gt_yn_kable) - 1)) %>% 
-    kable_styling(latex_options = c("scale_down")) 
+# Helper2: Creates kable tables from helper1
+render_kable <- function(summary_df, Title, footnote = NULL) {
+  k <- kable(summary_df,
+    caption = Title, align = "lr",
+    booktabs = TRUE, longtable = TRUE, escape = TRUE
+  ) %>%
+    add_indent(seq_len(nrow(summary_df) - 1)) %>%
+    kable_styling(latex_options = "scale_down")
+
+  if (!is.null(footnote))
+    k <- k %>% footnote(general = footnote, general_title = "")
+  k
+}
+
+
+
+
+
+
+#### MAIN FUNCTIONS
+
+
+#1. GT table for questions asked to all (no skip logic)
+simple_funct3 <- function(CID, Title){  
+  cid_sym <- rlang::ensym(CID)
+  render_kable(build_summary(data_tib_all3, cid_sym), Title) 
 
 }
 
 
 
 
+#2. GT table for questions asked to all 
+  ## But age check required, ex: ages 50-59 or 60-69 may not apply to all
  
 #Age- all participants that completed Module 3 have the derived age variable calculated
-data_tib_all3$DOB <- paste0(str_sub(data_tib_all3$d_371067537,1,4), "-", str_sub(data_tib_all3$d_371067537,5,6), "-", str_sub(data_tib_all3$d_371067537,7,8)) 
+data_tib_all3$DOB <- paste0(str_sub(data_tib_all3$d_371067537,1,4), "-",
+                            str_sub(data_tib_all3$d_371067537,5,6), "-",
+                            str_sub(data_tib_all3$d_371067537,7,8)) 
 data_tib_all3$DOB <- as.Date(data_tib_all3$DOB) #, format='%y-%m-%d')
 currentDate <- as.Date(Sys.Date(), format='%y/%m/%d')
 
 data_tib_all3$AGEGRID <- time_length(difftime(currentDate, data_tib_all3$DOB), "years")
 
-#GT table for questions asked to all --- but age check required, ex: ages 50-59 or 60-69 may not apply to all
+
 simple_age_funct3 <- function(CID, Age, Title){  
-  CID_SYM <- rlang::ensym(CID)
-  Age_now <- as.numeric(Age)
-  
-  gt_yn <- data_tib_all3 %>%
-       filter(AGEGRID > Age_now) %>% 
-    group_by(!!CID_SYM) %>%
-    summarize(n = n(), percentage = 100 * n / nrow(.)) %>%
-    ungroup() %>%
-    mutate(answer = dplyr::recode(!!CID_SYM, !!!dict)) %>%
-    replace_na(list(answer = "Skipped this Question")) %>%
-    select(answer, n, percentage)
-  
-    gt_yn_kable <- gt_yn %>%
-    mutate(
-      percentage = round(percentage, 1),
-      N = comma(n)
-    ) %>%
-    select(answer, N, percentage) %>%
-    dplyr::rename(
-      "Answer" = answer,
-      "Pct" = percentage
-    ) %>%
-    bind_rows(
-      tibble(
-        Answer = "Total",
-        N = comma(sum(gt_yn$n, na.rm = TRUE)),
-        "Pct" = round(sum(gt_yn$Pct, na.rm = TRUE), 1)
-      )
-    )
-
-  
-  kable(gt_yn_kable, 
-        caption = Title, align = "lrr",
-        booktabs = TRUE, longtable = TRUE, escape = TRUE) %>%
-    add_indent(seq(1, nrow(gt_yn_kable) - 1)) %>% 
-    kable_styling(latex_options = c("scale_down")) 
+  cid_sym <- rlang::ensym(CID)
+  df <- filter(data_tib_all3, AGEGRID > as.numeric(Age))
+  render_kable(build_summary(df, cid_sym), Title)
 }
 
 
@@ -346,405 +331,205 @@ simple_age_funct3 <- function(CID, Age, Title){
 
 
 
-#GT table with one filter/skip logic
+#3: GT table with one filter/skip logic
 one_logic_funct3 <- function(CID, CID_prev, Prev_Answer, Title){  
-  CID_SYM <- rlang::ensym(CID)
-  CID_SYM_P <- rlang::ensym(CID_prev)
-  
-  gt_yn <- data_tib_all3 %>%
-    filter(!!CID_SYM_P == Prev_Answer) %>% 
-    group_by(!!CID_SYM) %>%
-    summarize(n = n(), percentage = 100 * n / nrow(.)) %>%
-    ungroup() %>%
-    mutate(answer = dplyr::recode(!!CID_SYM, !!!dict)) %>%
-    replace_na(list(answer = "Skipped this Question")) %>%
-    select(answer, n, percentage)
-  
-    gt_yn_kable <- gt_yn %>%
-    mutate(
-      percentage = round(percentage, 1),
-      N = comma(n)
-    ) %>%
-    select(answer, N, percentage) %>%
-    dplyr::rename(
-      "Answer" = answer,
-      "Pct" = percentage
-    ) %>%
-    bind_rows(
-      tibble(
-        Answer = "Total",
-        N = comma(sum(gt_yn$n, na.rm = TRUE)),
-        "Pct" = round(sum(gt_yn$Pct, na.rm = TRUE), 1)
-      )
-    )
-
-  
-  kable(gt_yn_kable, 
-        caption = Title, align = "lrr",
-        booktabs = TRUE, longtable = TRUE, escape = TRUE) %>%
-    add_indent(seq(1, nrow(gt_yn_kable) - 1)) %>% 
-    kable_styling(latex_options = c("scale_down")) 
+  cid_sym   <- rlang::ensym(CID)
+  cid_sym_p <- rlang::ensym(CID_prev)
+  df <- filter(data_tib_all3, !!cid_sym_p == Prev_Answer)
+  render_kable(build_summary(df, cid_sym), Title)
 }
 
 
-# ALCLLIFE functions
-alclife2_funct <- function(CID, Title){  
-CID_SYM <- rlang::ensym(CID)
 
-dt_alcl= data_tib_all3  %>%   filter(D_429228540==132232896 & !is.na(D_556837046_D_141874857) & 
-                                       (D_338467033==353358909 | (D_338467033==104430631 & !is.na(D_480426504)))) %>% 
-  mutate(answer= case_when(!!CID_SYM==265550580 ~"Didn't Drink", 
-                                                !!CID_SYM==950039557 ~"A few times per Year",
-                                                !!CID_SYM==402048066 ~"A few times per Month",
-                                                !!CID_SYM==522395860 ~"Once per Week",
-                                                !!CID_SYM==756073829 ~"A few times per Week",
-                                                !!CID_SYM==858624942 ~"Once per day",
-                                                !!CID_SYM==424768954 ~"2-3 times per Day",
-                                                !!CID_SYM==687445652 ~"4-5 times per Day",
-                                                !!CID_SYM==333682419 ~"6+ times per Day",
-                                              TRUE ~ "Skipped this question"),
-         answer = factor(answer,levels=c("Didn't Drink","A few times per Year","A few times per Month","Once per Week", 
-                                           "A few times per Week","Once per day","2-3 times per Day","4-5 times per Day",
-                                           "6+ times per Day","Skipped this question")))
 
-gt_yn <- dt_alcl %>% 
+#4: ALCLLIFE function -----------------------------------------
+
+# Internal lookup: maps age band start to its CID and end age
+  # age_start — the lower bound of the age band
+alclife_bands <- list(
+  "0"  = list(cid = "D_633553324_D_294629316", end = 17),
+  "18" = list(cid = "D_633553324_D_164707243", end = 24),
+  "25" = list(cid = "D_633553324_D_771426895", end = 29),
+  "30" = list(cid = "D_633553324_D_818310825", end = 39),
+  "40" = list(cid = "D_633553324_D_843593800", end = 49),
+  "50" = list(cid = "D_633553324_D_175385712", end = 59),
+  "60" = list(cid = "D_633553324_D_772143730", end = 69),
+  "70" = list(cid = "D_633553324_D_602102163", end = 79)
+)
+
+
+# Levels to all ALCLIFE responses
+alclife_levels <- c(
+  "Didn't Drink", "A few times per Year", "A few times per Month",
+  "Once per Week", "A few times per Week", "Once per day",
+  "2-3 times per Day", "4-5 times per Day", "6+ times per Day",
+  "Skipped this question"
+)
+
+
+# Filtering logic applied:
+#   1. Base skip logic: ALCOHOL2==3 (100+ drinks lifetime), ALCOHOL4 is not NA,
+#      and currently drinking (ALCOHOL5=Yes) OR stopped but have a stop age (ALCOHOL5=No & ALCOHOL6 not NA)
+#   2. Age band eligibility:
+#      - Participant's current age (AGEGRID) must be >= band start
+#        (can't ask about a decade they haven't reached yet)
+#      - Age first drank regularly (ALCOHOL4) must be <= band end
+#        (must have been drinking at some point in this period)
+#      - If they stopped (ALCOHOL5=No): stop age (ALCOHOL6) must be >= band start
+#        (stopped at or after the band began, so they drank during at least part of this period)
+#      - If still drinking (ALCOHOL5=Yes): no stop-age restriction needed
+#        (already have the restriction of their current age with band)
+
+alclife2_funct <- function(age_start, Title) {
+  band <- alclife_bands[[as.character(age_start)]]
+  if (is.null(band)) stop("age_start must be one of: 0, 18, 25, 30, 40, 50, 60, 70")
+
+  age_end <- band$end
+  cid     <- band$cid
+
+  
+  df <- data_tib_all3 %>%
+    dplyr::rename(
+      ALCOHOL2 = D_429228540,
+      ALCOHOL4 = D_556837046_D_141874857,
+      ALCOHOL5 = D_338467033,
+      ALCOHOL6 = D_480426504
+    ) %>%
+    mutate(
+      ALCOHOL4 = as.numeric(ALCOHOL4),
+      ALCOHOL6 = as.numeric(ALCOHOL6)
+    ) %>%
+    # Overall ALCLIFE skip logic
+    filter(
+      ALCOHOL2 == 132232896,
+      !is.na(ALCOHOL4),
+      ALCOHOL5 == 353358909 | (ALCOHOL5 == 104430631 & !is.na(ALCOHOL6))
+    ) %>%
+    # Age band eligibility filter
+    filter(
+      AGEGRID  >= age_start,          # participant has lived through this period (covers both current and past drinkers)
+      ALCOHOL4 <= age_end,          # started drinking at or before band end (drank during this time band)
+      ALCOHOL5 == 353358909 |         # still drinking, OR...
+        (ALCOHOL5 == 104430631 & ALCOHOL6 >= age_start)  # stopped at or after band start (i.e. drank during this period)
+    ) %>%
+    mutate(
+      answer = case_when(
+        .data[[cid]] == 265550580 ~ "Didn't Drink",
+        .data[[cid]] == 950039557 ~ "A few times per Year",
+        .data[[cid]] == 402048066 ~ "A few times per Month",
+        .data[[cid]] == 522395860 ~ "Once per Week",
+        .data[[cid]] == 756073829 ~ "A few times per Week",
+        .data[[cid]] == 858624942 ~ "Once per day",
+        .data[[cid]] == 424768954 ~ "2-3 times per Day",
+        .data[[cid]] == 687445652 ~ "4-5 times per Day",
+        .data[[cid]] == 333682419 ~ "6+ times per Day",
+        TRUE                      ~ "Skipped this question"
+      ),
+      answer = factor(answer, levels = alclife_levels)
+    )
+
+  summary_df <- df %>%
     group_by(answer) %>%
-    summarize(n = n(), percentage = 100 * n / nrow(.)) %>%
-    ungroup() %>%
-    #mutate(answer = dplyr::recode(!!CID_SYM, !!!dict)) %>%
-    #replace_na(list(answer = "Skipped this Question")) %>%
-    select(answer, n, percentage)
-  
-    gt_yn_kable <- gt_yn %>%
-    mutate(
-      percentage = round(percentage, 1),
-      N = comma(n)
-    ) %>%
-    select(answer, N, percentage) %>%
-    dplyr::rename(
-      "Answer" = answer,
-      "Pct" = percentage
-    ) %>%
-    bind_rows(
-      tibble(
-        Answer = "Total",
-        N = comma(sum(gt_yn$n, na.rm = TRUE)),
-        "Pct" = round(sum(gt_yn$Pct, na.rm = TRUE), 1)
-      )
-    )
+    summarize(n = n(), .groups = "drop") %>%
+    mutate(`N (Pct%)` = sprintf("%s (%.1f%%)", comma(n), 100 * n / sum(n))) %>%
+    select(Answer = answer, `N (Pct%)`) %>%
+    bind_rows(tibble(Answer = "Total", `N (Pct%)` = sprintf("%s (100.0%%)", comma(nrow(df)))))
 
-  
-  kable(gt_yn_kable, 
-        caption = Title, align = "lrr",
-        booktabs = TRUE, longtable = TRUE, escape = TRUE) %>%
-    add_indent(seq(1, nrow(gt_yn_kable) - 1)) %>% 
-    kable_styling(latex_options = c("scale_down")) 
-
+  render_kable(summary_df, Title)
 }
 
 
 
-# Pattern logic for PRODUCT2-4----this one is having issues
+#5: Pattern logic for PRODUCT2-4
 funct_2_3_4 <- function(CID, CID_prev, Title){
-  CID_SYM <- rlang::ensym(CID)
-  CID_SYM_P <- rlang::ensym(CID_prev)
-
-  gt_yn <- data_tib_all3 %>%
-       filter((!!CID_SYM_P == 486319890) | (!!CID_SYM_P == 132232896)) %>% 
-    group_by(!!CID_SYM) %>%
-    summarize(n = n(), percentage = 100 * n / nrow(.)) %>%
-    ungroup() %>%
-    mutate(answer = dplyr::recode(!!CID_SYM, !!!dict)) %>%
-    replace_na(list(answer = "Skipped this Question")) %>%
-    select(answer, n, percentage)
-  
-    gt_yn_kable <- gt_yn %>%
-    mutate(
-      percentage = round(percentage, 1),
-      N = comma(n)
-    ) %>%
-    select(answer, N, percentage) %>%
-    dplyr::rename(
-      "Answer" = answer,
-      "Pct" = percentage
-    ) %>%
-    bind_rows(
-      tibble(
-        Answer = "Total",
-        N = comma(sum(gt_yn$n, na.rm = TRUE)),
-        "Pct" = round(sum(gt_yn$Pct, na.rm = TRUE), 1)
-      )
-    )
-
-  
-  kable(gt_yn_kable, 
-        caption = Title, align = "lrr",
-        booktabs = TRUE, longtable = TRUE, escape = TRUE) %>%
-    add_indent(seq(1, nrow(gt_yn_kable) - 1)) %>% 
-    kable_styling(latex_options = c("scale_down")) 
+  cid_sym   <- rlang::ensym(CID)
+  cid_sym_p <- rlang::ensym(CID_prev)
+  df <- filter(data_tib_all3, !!cid_sym_p %in% c(486319890, 132232896))
+  render_kable(build_summary(df, cid_sym), Title)
 }
 
 
 
 
-# Pattern logic for PRODUCT5
+#6: Pattern logic for PRODUCT5
 funct_5 <- function(CID, CID_1, CID_4, Title){  
-  CID_SYM <- rlang::ensym(CID)
-  CID_SYM_P1 <- rlang::ensym(CID_1)
-  CID_SYM_P4 <- rlang::ensym(CID_4)
-
-  gt_yn <- data_tib_all3 %>%
-       filter(!!CID_SYM_P4 != 804785430 & (!!CID_SYM_P1==486319890 | !!CID_SYM_P1==132232896)) %>% 
-    group_by(!!CID_SYM) %>%
-    summarize(n = n(), percentage = 100 * n / nrow(.)) %>%
-    ungroup() %>%
-    mutate(answer = dplyr::recode(!!CID_SYM, !!!dict)) %>%
-    replace_na(list(answer = "Skipped this Question")) %>%
-    select(answer, n, percentage)
-  
-    gt_yn_kable <- gt_yn %>%
-    mutate(
-      percentage = round(percentage, 1),
-      N = comma(n)
-    ) %>%
-    select(answer, N, percentage) %>%
-    dplyr::rename(
-      "Answer" = answer,
-      "Pct" = percentage
-    ) %>%
-    bind_rows(
-      tibble(
-        Answer = "Total",
-        N = comma(sum(gt_yn$n, na.rm = TRUE)),
-        "Pct" = round(sum(gt_yn$Pct, na.rm = TRUE), 1)
-      )
-    )
-
-  
-  kable(gt_yn_kable, 
-        caption = Title, align = "lrr",
-        booktabs = TRUE, longtable = TRUE, escape = TRUE) %>%
-    add_indent(seq(1, nrow(gt_yn_kable) - 1)) %>% 
-    kable_styling(latex_options = c("scale_down"))
+  cid_sym    <- rlang::ensym(CID)
+  cid_sym_p1 <- rlang::ensym(CID_1)
+  cid_sym_p4 <- rlang::ensym(CID_4)
+  df <- filter(data_tib_all3,
+    !!cid_sym_p4 != 804785430,
+    !!cid_sym_p1 %in% c(486319890, 132232896)
+  )
+  render_kable(build_summary(df, cid_sym), Title)
 }
 
 
 
-##GT TABLE: PRODUCT8C
+#7: GT TABLE: PRODUCT8C
 funct_8c <- function(PRODUCT8C_CID, PRODUCT5_CID, Product1_CID, Title){  
-  CID_SYM_P1 <- rlang::ensym(Product1_CID)
-  CID_SYM_P8C <- rlang::ensym(PRODUCT8C_CID)
-  CID_SYM_P5 <- rlang::ensym(PRODUCT5_CID)
-  
-    gt_yn <- data_tib_all3 %>%
-       filter((!!CID_SYM_P1==486319890 | !!CID_SYM_P1==132232896) & !!CID_SYM_P5!=317567178) %>% 
-    group_by(!!CID_SYM_P8C) %>%
-    summarize(n = n(), percentage = 100 * n / nrow(.)) %>%
-    ungroup() %>%
-    mutate(answer = dplyr::recode(!!CID_SYM_P8C, !!!dict)) %>%
-    replace_na(list(answer = "Skipped this Question")) %>%
-    select(answer, n, percentage)
-  
-    gt_yn_kable <- gt_yn %>%
-    mutate(
-      percentage = round(percentage, 1),
-      N = comma(n)
-    ) %>%
-    select(answer, N, percentage) %>%
-    dplyr::rename(
-      "Answer" = answer,
-      "Pct" = percentage
-    ) %>%
-    bind_rows(
-      tibble(
-        Answer = "Total",
-        N = comma(sum(gt_yn$n, na.rm = TRUE)),
-        "Pct" = round(sum(gt_yn$Pct, na.rm = TRUE), 1)
-      )
-    )
-
-  
-  kable(gt_yn_kable, 
-        caption = Title, align = "lrr",
-        booktabs = TRUE, longtable = TRUE, escape = TRUE) %>%
-    add_indent(seq(1, nrow(gt_yn_kable) - 1)) %>% 
-    kable_styling(latex_options = c("scale_down"))
+  cid_sym_p1  <- rlang::ensym(Product1_CID)
+  cid_sym_p8c <- rlang::ensym(PRODUCT8C_CID)
+  cid_sym_p5  <- rlang::ensym(PRODUCT5_CID)
+  df <- filter(data_tib_all3,
+    !!cid_sym_p1 %in% c(486319890, 132232896),
+    !!cid_sym_p5 != 317567178
+  )
+  render_kable(build_summary(df, cid_sym_p8c), Title)
 }
 
 
 
 
-##GT TABLE: PRODUCT9B
+#8: GT TABLE: PRODUCT9B
 funct_9b <- function(PRODUCT1_CID, PRODUCT4_CID, PRODUCT5_CID, PRODUCT8C_CID, PRODUCT9B_CID, Title){ 
-  CID_SYM_P1 <- rlang::ensym(PRODUCT1_CID)
-  CID_SYM_P4 <- rlang::ensym(PRODUCT4_CID)
-  CID_SYM_P5 <- rlang::ensym(PRODUCT5_CID)
-  CID_SYM_P8C <- rlang::ensym(PRODUCT8C_CID)
-  CID_SYM_P9B <- rlang::ensym(PRODUCT9B_CID)
-
-  gt_yn <- data_tib_all3 %>%
-       filter((!!CID_SYM_P1==486319890 | !!CID_SYM_P1==132232896) & 
-                !(!!CID_SYM_P4== 804785430|
-                    ((!is.na(!!CID_SYM_P4) | !!CID_SYM_P4!=419415087) & !!CID_SYM_P5==484055234 & !!CID_SYM_P8C== 353358909) | 
-                    ((!is.na(!!CID_SYM_P4) |  !!CID_SYM_P4!=419415087) & !!CID_SYM_P5==802197176 & !!CID_SYM_P8C== 353358909))) %>% 
-    group_by(!!CID_SYM_P9B) %>%
-    summarize(n = n(), percentage = 100 * n / nrow(.)) %>%
-    ungroup() %>%
-    mutate(answer = dplyr::recode(!!CID_SYM_P9B, !!!dict)) %>%
-    replace_na(list(answer = "Skipped this Question")) %>%
-    select(answer, n, percentage)
-  
-    gt_yn_kable <- gt_yn %>%
-    mutate(
-      percentage = round(percentage, 1),
-      N = comma(n)
-    ) %>%
-    select(answer, N, percentage) %>%
-    dplyr::rename(
-      "Answer" = answer,
-      "Pct" = percentage
-    ) %>%
-    bind_rows(
-      tibble(
-        Answer = "Total",
-        N = comma(sum(gt_yn$n, na.rm = TRUE)),
-        "Pct" = round(sum(gt_yn$Pct, na.rm = TRUE), 1)
-      )
-    )
-
-  
-  kable(gt_yn_kable, 
-        caption = Title, align = "lrr",
-        booktabs = TRUE, longtable = TRUE, escape = TRUE) %>%
-    add_indent(seq(1, nrow(gt_yn_kable) - 1)) %>% 
-    kable_styling(latex_options = c("scale_down"))
+  cid_sym_p1  <- rlang::ensym(PRODUCT1_CID)
+  cid_sym_p4  <- rlang::ensym(PRODUCT4_CID)
+  cid_sym_p5  <- rlang::ensym(PRODUCT5_CID)
+  cid_sym_p8c <- rlang::ensym(PRODUCT8C_CID)
+  cid_sym_p9b <- rlang::ensym(PRODUCT9B_CID)
+  df <- filter(data_tib_all3,
+    !!cid_sym_p1 %in% c(486319890, 132232896),
+    !(!!cid_sym_p4 == 804785430 |
+      ((!is.na(!!cid_sym_p4) | !!cid_sym_p4 != 419415087) & !!cid_sym_p5 == 484055234 & !!cid_sym_p8c == 353358909) |
+      ((!is.na(!!cid_sym_p4) | !!cid_sym_p4 != 419415087) & !!cid_sym_p5 == 802197176 & !!cid_sym_p8c == 353358909))
+  )
+  render_kable(build_summary(df, cid_sym_p9b), Title)
 }
 
 
 
 
-# Pattern logic for PRODUCT10 & PRODUCT11
+#9: Pattern logic for PRODUCT10 & PRODUCT11
 funct_10_11 <- function(CID, CID_prev1, CID_prev9b, CID_prev4, CID_prev8c, Title){
-  CID_SYM <- rlang::ensym(CID)
-  CID_SYM_P1 <- rlang::ensym(CID_prev1)
-  CID_SYM_P9b <- rlang::ensym(CID_prev9b)
-  CID_SYM_P4 <- rlang::ensym(CID_prev4)
-  CID_SYM_P8c <- rlang::ensym(CID_prev8c)
-
-     gt_yn <- data_tib_all3 %>%
-       filter((!!CID_SYM_P1 == 486319890 | !!CID_SYM_P1 == 132232896) & (!!CID_SYM_P9b == 353358909 |(!!CID_SYM_P4==804785430 | !!CID_SYM_P8c==353358909))) %>% 
-    group_by(!!CID_SYM) %>%
-    summarize(n = n(), percentage = 100 * n / nrow(.)) %>%
-    ungroup() %>%
-    mutate(answer = dplyr::recode(!!CID_SYM, !!!dict)) %>%
-    replace_na(list(answer = "Skipped this Question")) %>%
-    select(answer, n, percentage)
-  
-    gt_yn_kable <- gt_yn %>%
-    mutate(
-      percentage = round(percentage, 1),
-      N = comma(n)
-    ) %>%
-    select(answer, N, percentage) %>%
-    dplyr::rename(
-      "Answer" = answer,
-      "Pct" = percentage
-    ) %>%
-    bind_rows(
-      tibble(
-        Answer = "Total",
-        N = comma(sum(gt_yn$n, na.rm = TRUE)),
-        "Pct" = round(sum(gt_yn$Pct, na.rm = TRUE), 1)
-      )
-    )
-
-  
-  kable(gt_yn_kable, 
-        caption = Title, align = "lrr",
-        booktabs = TRUE, longtable = TRUE, escape = TRUE) %>%
-    add_indent(seq(1, nrow(gt_yn_kable) - 1)) %>% 
-    kable_styling(latex_options = c("scale_down"))
+  cid_sym     <- rlang::ensym(CID)
+  cid_sym_p1  <- rlang::ensym(CID_prev1)
+  cid_sym_p9b <- rlang::ensym(CID_prev9b)
+  cid_sym_p4  <- rlang::ensym(CID_prev4)
+  cid_sym_p8c <- rlang::ensym(CID_prev8c)
+  df <- filter(data_tib_all3,
+    !!cid_sym_p1 %in% c(486319890, 132232896),
+    !!cid_sym_p9b == 353358909 | !!cid_sym_p4 == 804785430 | !!cid_sym_p8c == 353358909
+  )
+  render_kable(build_summary(df, cid_sym), Title)
 }
 
 
 
-
-create_kable_table <- function(df, group_by_vriable, Title){  
-  CID_SYM <- rlang::ensym(group_by_vriable)
-  
-  gt_yn <- df %>%
-    group_by(!!CID_SYM) %>%
-    summarize(n = n(), percentage = 100 * n / nrow(.)) %>%
-    ungroup() %>%
-    mutate(answer = dplyr::recode(!!CID_SYM, !!!dict)) %>%
-    replace_na(list(answer = "Skipped this Question")) %>%
-    select(answer, n, percentage)
-  
-  gt_yn_kable <- gt_yn %>%
-    mutate(
-      percentage = round(percentage, 1),
-      N = comma(n)
-    ) %>%
-    select(answer, N, percentage) %>%
-    dplyr::rename(
-      "Answer" = answer,
-      "Pct" = percentage
-    ) %>%
-    bind_rows(
-      tibble(
-        Answer = "Total",
-        N = comma(sum(gt_yn$n, na.rm = TRUE)),
-        "Pct" = round(sum(gt_yn$Pct, na.rm = TRUE), 1)
-      )
-    )
-
-  
-  kable(gt_yn_kable, 
-        caption = Title, align = "lrr",
-        booktabs = TRUE, longtable = TRUE, escape = TRUE) %>%
-    add_indent(seq(1, nrow(gt_yn_kable) - 1)) %>% 
-    kable_styling(latex_options = c("scale_down"))
+#10: General Table table
+create_kable_table <- function(df, group_by_variable, Title){  
+  cid_sym <- rlang::ensym(group_by_variable)
+  render_kable(build_summary(df, cid_sym), Title)
 }
 
 
 
-
-create_kable_table_w_footnote <- function(df, group_by_vriable, Title){  
-  CID_SYM <- rlang::ensym(group_by_vriable)
-  
-  gt_yn <- df %>%
-    group_by(!!CID_SYM) %>%
-    summarize(n = n(), percentage = 100 * n / nrow(.)) %>%
-    ungroup() %>%
-    mutate(answer = dplyr::recode(!!CID_SYM, !!!dict)) %>%
-    replace_na(list(answer = "Skipped this Question")) %>%
-    select(answer, n, percentage)
-  
-  gt_yn_kable <- gt_yn %>%
-    mutate(
-      percentage = round(percentage, 1),
-      N = comma(n)
-    ) %>%
-    select(answer, N, percentage) %>%
-    dplyr::rename(
-      "Answer" = answer,
-      "Pct" = percentage
-    ) %>%
-    bind_rows(
-      tibble(
-        Answer = "Total",
-        N = comma(sum(gt_yn$n, na.rm = TRUE)),
-        "Pct" = round(sum(gt_yn$Pct, na.rm = TRUE), 1)
-      )
-    )
-
-  
-  kable(gt_yn_kable, 
-        caption = Title, align = "lrr",
-        booktabs = TRUE, longtable = TRUE, escape = TRUE) %>%
-    add_indent(seq(1, nrow(gt_yn_kable) - 1)) %>% 
-    kable_styling(latex_options = c("scale_down")) %>% 
-    footnote(general="Participants may select multiple responses or skip the question.", general_title = "")
+#11: General Table table, with footnote
+create_kable_table_w_footnote <- function(df, group_by_variable, Title){  
+  cid_sym <- rlang::ensym(group_by_variable)
+  render_kable(
+    build_summary(df, cid_sym), Title,
+    footnote = "Participants may select multiple responses or skip the question."
+  )
 }
 
 
@@ -1796,7 +1581,7 @@ simple_funct3(D_252017075_D_106272739, "SECSMD: Number of People in the Househol
 
 ```{r Clear_Memory1, include=FALSE}
 #Clearing up some memory -- removing all but the main dataframe and functions
-rm(list = setdiff(ls(), c("data_tib_all3", 'module3', "dict", 'hist_funct', 'boxp_funct', 'simple_funct3', 'simple_age_funct3', 'one_logic_funct3', 'alclife2_funct', 'funct_2_3_4', 'funct_5', 'funct_8c', 'funct_9b', 'funct_10_11', 'create_kable_table', 'create_kable_table_w_footnote')))
+rm(list = setdiff(ls(), c("data_tib_all3", 'module3', "dict", 'hist_funct', 'boxp_funct', 'simple_funct3', 'simple_age_funct3', 'one_logic_funct3', 'alclife2_funct', "alclife_bands", "alclife_levels", 'funct_2_3_4', 'funct_5', 'funct_8c', 'funct_9b', 'funct_10_11', 'create_kable_table', 'create_kable_table_w_footnote',"render_kable", "build_summary")))
 invisible(gc())
 
 ########################
@@ -2654,7 +2439,7 @@ grid.arrange(thmlfF, thmlfG, nrow=2)
 
 ```{r Clear_Memory2, include=FALSE}
 #Clearing up some memory -- removing all but the main dataframe and functions
-rm(list = setdiff(ls(), c("data_tib_all3", 'module3', "dict", 'hist_funct', 'boxp_funct', 'simple_funct3', 'simple_age_funct3', 'one_logic_funct3', 'alclife2_funct', 'funct_2_3_4', 'funct_5', 'funct_8c', 'funct_9b', 'funct_10_11', 'create_kable_table', 'create_kable_table_w_footnote')))
+rm(list = setdiff(ls(), c("data_tib_all3", 'module3', "dict", 'hist_funct', 'boxp_funct', 'simple_funct3', 'simple_age_funct3', 'one_logic_funct3', 'alclife2_funct', "alclife_bands", "alclife_levels", 'funct_2_3_4', 'funct_5', 'funct_8c', 'funct_9b', 'funct_10_11', 'create_kable_table', 'create_kable_table_w_footnote', "render_kable", "build_summary")))
 invisible(gc())
 
 ########################
@@ -2814,26 +2599,58 @@ create_kable_table(alc9, answer, "ALCOHOL9: Frequency of Drinking 4-5 Alcoholic 
 
 ## ALCLIFEA-H
 ```{r Alclife, warning=FALSE, echo=FALSE, message=FALSE}
+
+
+
+#----------------------- THIS IS OLD CODE I'M LOOKING TO REPLACE ----------------------
+
+
+
 ##ALCLIFE2 GRID
 #ALCLIFE2A
+
 #alclife2_funct(D_633553324_D_294629316,"ALCLIFE2A: Frequency of Drinking: Ages 0-17")
 
 
 #### COMPLICATED SKIP LOGIC
-  # DERIVED AGE VARIABLE PUSHED TO PROD AFTER MOD3 RELEASE, SO WE CAN'T USE IT-- needed to create one below
-# ALC2=3, ALC4 IS NOT NA, & (ALC5=1 OR (ALC5=0 & ALC6 IS NOT NA)) AND (ALC4<ALCLIFEAGE & (ALCLIFEAGE<ALC6 | AGE>ALCLIFEAGE))
-                                                                        # IF THEY NEVER STOPPED DRINKING, THEN AGE STARTED<ALCLIFE, IF STOPPED TEHN STARTED<ALCLIFE AND ALCLIFE<AGESTOPPED
+
+# ------ Skip logic to see the question set* ------------------------
+# ALC2=3, ALC4 IS NOT NA, & (ALC5=1 OR (ALC5=0 & ALC6 IS NOT NA)) 
+
+dt_alcl= data_tib_all3  %>% 
+  dplyr::rename("ALCOHOL2"="D_429228540",
+                "ALCOHOL4"="D_556837046_D_141874857",
+                "ALCOHOL5"="D_338467033",
+                "ALCOHOL6"="D_480426504") %>% 
+  filter(ALCOHOL2==132232896 & !is.na(ALCOHOL4) & 
+           (ALCOHOL5==353358909 | (ALCOHOL5==104430631 & !is.na(ALCOHOL6))))  %>% 
+  mutate(ALCOHOL4 = as.numeric(ALCOHOL4),
+         ALCOHOL6 = as.numeric(ALCOHOL6))
+
+# ----- Additional skip logic in regards to age range ---------------
 
 
-# data_tib_all3$DOB <- paste0(str_sub(module3$D_371067537,1,4), "-", str_sub(module3$D_371067537,5,6), "-", str_sub(module3$D_371067537,7,8)) 
-# data_tib_all3$DOB <- as.Date(data_tib_all3$DOB) #, format='%y-%m-%d')
-# currentDate <- as.Date(Sys.Date(), format='%y/%m/%d')
-# 
-# 
-# data_tib_all3$AGEGRID <- time_length(difftime(currentDate, data_tib_all3$DOB), "years")
+#1: Starting age range can't be greater tan their current age
+  # Ex: someone 55 can't be asked about their drinking from ages 70-79
+  # ALCLIFE_START =< AGEGRID
+
+#2: IF THEY NEVER STOPPED DRINKING:
+  #THEN AGE STARTED (ALCOHOL4) =<ALCLIFE_START
+
+#3: IF THEY DID STOP:
+  #THEN STARTED (ALCOHOL4) =<ALCLIFE_START AND ALCLIFE_END=< AGE STOPPED (ALCOHOL6) :
+
+
+# COMBINED:
+  #ALC4=<ALCLIFEAGE_START AND AGEGRID >= ALCLIFE_START AND
+  #EITHER ALCOHOL5=YES OR (ALCOHOL5==NO THEN ALCLIFE_END =< ALCOHOL6)
+
+ 
 
 
 
+
+#ALCLIFE2A 
 dt_alclA= data_tib_all3  %>%   filter(D_429228540==132232896 & !is.na(D_556837046_D_141874857) & 
                                        (D_338467033==353358909 | (D_338467033==104430631 & !is.na(D_480426504))) & 
                                        ((is.na(D_480426504) & as.numeric(D_556837046_D_141874857)<17) | 
@@ -2921,15 +2738,15 @@ create_kable_table(alcl, oth_age, "ALCLIFE2C: Frequency of Drinking: Ages 25-29"
 
 #ALCLIFE2D
 #alclife2_funct(D_633553324_D_818310825,"ALCLIFE2D: Frequency of Drinking: Ages 30-39")
-dt_alclD= data_tib_all3  %>%   filter(D_429228540==132232896 & !is.na(D_556837046_D_141874857) & 
-                                       (D_338467033==353358909 | (D_338467033==104430631 & !is.na(D_480426504))) & 
-                                       ((is.na(D_480426504) & as.numeric(D_556837046_D_141874857)<39) | 
+dt_alclD= data_tib_all3  %>%   filter(D_429228540==132232896 & !is.na(D_556837046_D_141874857) &
+                                       (D_338467033==353358909 | (D_338467033==104430631 & !is.na(D_480426504))) &
+                                       ((is.na(D_480426504) & as.numeric(D_556837046_D_141874857)<39) |
                                           (!is.na(D_480426504) & as.numeric(D_556837046_D_141874857)<39 & as.numeric(D_480426504)>39)))
                                           # (as.numeric(D_480426504)>17 | (is.na(D_48042650) & (state_d_934298480==124276120 |state_d_934298480==450985724 |
-                                          #                                                                                   state_d_934298480==363147933 | 
+                                          #                                                                                   state_d_934298480==363147933 |
                                           #                                                                                   state_d_934298480==636706443 |state_d_934298480==771230670))) ))
 
-alcl= dt_alclD  %>%  mutate(oth_age= case_when(D_633553324_D_818310825==265550580 ~"Didn't Drink", 
+alcl= dt_alclD  %>%  mutate(oth_age= case_when(D_633553324_D_818310825==265550580 ~"Didn't Drink",
                                                 D_633553324_D_818310825==950039557 ~"A few times per Year",
                                                 D_633553324_D_818310825==402048066 ~"A few times per Month",
                                                 D_633553324_D_818310825==522395860 ~"Once per Week",
@@ -2951,15 +2768,15 @@ create_kable_table(alcl, oth_age, "ALCLIFE2D: Frequency of Drinking: Ages 30-39"
 
 #ALCLIFE2E
 #alclife2_funct(D_633553324_D_843593800,"ALCLIFE2E: Frequency of Drinking: Ages 40-49")
-dt_alclE= data_tib_all3  %>%   filter(AGEGRID>40 & D_429228540==132232896 & !is.na(D_556837046_D_141874857) & 
-                                       (D_338467033==353358909 | (D_338467033==104430631 & !is.na(D_480426504))) & 
-                                       ((is.na(D_480426504) & as.numeric(D_556837046_D_141874857)<49) | 
+dt_alclE= data_tib_all3  %>%   filter(AGEGRID>40 & D_429228540==132232896 & !is.na(D_556837046_D_141874857) &
+                                       (D_338467033==353358909 | (D_338467033==104430631 & !is.na(D_480426504))) &
+                                       ((is.na(D_480426504) & as.numeric(D_556837046_D_141874857)<49) |
                                           (!is.na(D_480426504) & as.numeric(D_556837046_D_141874857)<49 & as.numeric(D_480426504)>49)))
                                           # (as.numeric(D_480426504)>17 | (is.na(D_48042650) & (state_d_934298480==124276120 |state_d_934298480==450985724 |
-                                          #                                                                                   state_d_934298480==363147933 | 
+                                          #                                                                                   state_d_934298480==363147933 |
                                           #                                                                                   state_d_934298480==636706443 |state_d_934298480==771230670))) ))
 
-alcl= dt_alclE  %>%  mutate(oth_age= case_when(D_633553324_D_843593800==265550580 ~"Didn't Drink", 
+alcl= dt_alclE  %>%  mutate(oth_age= case_when(D_633553324_D_843593800==265550580 ~"Didn't Drink",
                                                 D_633553324_D_843593800==950039557 ~"A few times per Year",
                                                 D_633553324_D_843593800==402048066 ~"A few times per Month",
                                                 D_633553324_D_843593800==522395860 ~"Once per Week",
@@ -2979,15 +2796,15 @@ create_kable_table(alcl, oth_age, "ALCLIFE2E: Frequency of Drinking: Ages 40-49"
 
 #ALCLIFE2F
 #alclife2_funct(D_633553324_D_175385712,"ALCLIFE2F: Frequency of Drinking: Ages 50-59")
-dt_alclF= data_tib_all3  %>%   filter(AGEGRID>50 & D_429228540==132232896 & !is.na(D_556837046_D_141874857) & 
-                                       (D_338467033==353358909 | (D_338467033==104430631 & !is.na(D_480426504))) & 
-                                       ((is.na(D_480426504) & as.numeric(D_556837046_D_141874857)<59) | 
+dt_alclF= data_tib_all3  %>%   filter(AGEGRID>50 & D_429228540==132232896 & !is.na(D_556837046_D_141874857) &
+                                       (D_338467033==353358909 | (D_338467033==104430631 & !is.na(D_480426504))) &
+                                       ((is.na(D_480426504) & as.numeric(D_556837046_D_141874857)<59) |
                                           (!is.na(D_480426504) & as.numeric(D_556837046_D_141874857)<59 & as.numeric(D_480426504)>59)))
                                           # (as.numeric(D_480426504)>17 | (is.na(D_48042650) & (state_d_934298480==124276120 |state_d_934298480==450985724 |
-                                          #                                                                                   state_d_934298480==363147933 | 
+                                          #                                                                                   state_d_934298480==363147933 |
                                           #                                                                                   state_d_934298480==636706443 |state_d_934298480==771230670))) ))
 
-alcl= dt_alclF  %>%  mutate(oth_age= case_when(D_633553324_D_175385712==265550580 ~"Didn't Drink", 
+alcl= dt_alclF  %>%  mutate(oth_age= case_when(D_633553324_D_175385712==265550580 ~"Didn't Drink",
                                                 D_633553324_D_175385712==950039557 ~"A few times per Year",
                                                 D_633553324_D_175385712==402048066 ~"A few times per Month",
                                                 D_633553324_D_175385712==522395860 ~"Once per Week",
@@ -3007,15 +2824,15 @@ create_kable_table(alcl, oth_age, "ALCLIFE2F: Frequency of Drinking: Ages 50-59"
 
 #ALCLIFE2G
 #alclife2_funct(D_633553324_D_772143730,"ALCLIFE2G: Frequency of Drinking: Ages 60-69")
-dt_alclG= data_tib_all3  %>%   filter(AGEGRID>60 & D_429228540==132232896 & !is.na(D_556837046_D_141874857) & 
-                                       (D_338467033==353358909 | (D_338467033==104430631 & !is.na(D_480426504))) & 
-                                       ((is.na(D_480426504) & as.numeric(D_556837046_D_141874857)<69) | 
+dt_alclG= data_tib_all3  %>%   filter(AGEGRID>60 & D_429228540==132232896 & !is.na(D_556837046_D_141874857) &
+                                       (D_338467033==353358909 | (D_338467033==104430631 & !is.na(D_480426504))) &
+                                       ((is.na(D_480426504) & as.numeric(D_556837046_D_141874857)<69) |
                                           (!is.na(D_480426504) & as.numeric(D_556837046_D_141874857)<69 & as.numeric(D_480426504)>69)))
                                           # (as.numeric(D_480426504)>17 | (is.na(D_48042650) & (state_d_934298480==124276120 |state_d_934298480==450985724 |
-                                          #                                                                                   state_d_934298480==363147933 | 
+                                          #                                                                                   state_d_934298480==363147933 |
                                           #                                                                                   state_d_934298480==636706443 |state_d_934298480==771230670))) ))
 
-alcl= dt_alclG  %>%  mutate(oth_age= case_when(D_633553324_D_772143730==265550580 ~"Didn't Drink", 
+alcl= dt_alclG  %>%  mutate(oth_age= case_when(D_633553324_D_772143730==265550580 ~"Didn't Drink",
                                                 D_633553324_D_772143730==950039557 ~"A few times per Year",
                                                 D_633553324_D_772143730==402048066 ~"A few times per Month",
                                                 D_633553324_D_772143730==522395860 ~"Once per Week",
@@ -3035,15 +2852,17 @@ create_kable_table(alcl, oth_age, "ALCLIFE2G: Frequency of Drinking: Ages 60-69"
 
 #ALCLIFE2H-- no one yet
 # alclife2_funct(D_633553324_D_602102163,"ALCLIFE2H: Frequency of Drinking: Ages 70+")
-dt_alclH= data_tib_all3  %>%   filter(AGEGRID>70 & D_429228540==132232896 & !is.na(D_556837046_D_141874857) & 
-                                       (D_338467033==353358909 | (D_338467033==104430631 & !is.na(D_480426504))) & 
-                                       ((is.na(D_480426504) & as.numeric(D_556837046_D_141874857)<79) | 
-                                          (!is.na(D_480426504) & as.numeric(D_556837046_D_141874857)<79 & as.numeric(D_480426504)>79)))
+dt_alclH= data_tib_all3  %>%   filter(AGEGRID>70 & D_429228540==132232896 & !is.na(D_556837046_D_141874857) &
+                                       (D_338467033==353358909 | (D_338467033==104430631 & !is.na(D_480426504))) &
+
+                                       ((is.na(D_480426504) & as.numeric(D_556837046_D_141874857)<79) |
+                                          (!is.na(D_480426504) & as.numeric(D_556837046_D_141874857)<79 &
+                                             as.numeric(D_480426504)>79)))
                                           # (as.numeric(D_480426504)>17 | (is.na(D_48042650) & (state_d_934298480==124276120 |state_d_934298480==450985724 |
-                                          #                                                                                   state_d_934298480==363147933 | 
+                                          #                                                                                   state_d_934298480==363147933 |
                                           #                                                                                   state_d_934298480==636706443 |state_d_934298480==771230670))) ))
 
-alcl= dt_alclH  %>%  mutate(oth_age= case_when(D_633553324_D_602102163==265550580 ~"Didn't Drink", 
+alcl= dt_alclH  %>%  mutate(oth_age= case_when(D_633553324_D_602102163==265550580 ~"Didn't Drink",
                                                 D_633553324_D_602102163==950039557 ~"A few times per Year",
                                                 D_633553324_D_602102163==402048066 ~"A few times per Month",
                                                 D_633553324_D_602102163==522395860 ~"Once per Week",
@@ -3053,9 +2872,12 @@ alcl= dt_alclH  %>%  mutate(oth_age= case_when(D_633553324_D_602102163==26555058
                                                 D_633553324_D_602102163==687445652 ~"4-5 times per Day",
                                                 D_633553324_D_602102163==333682419 ~"6+ times per Day",
                                               TRUE ~ "Skipped this question"),
-                            oth_age = factor(oth_age,levels=c("Didn't Drink","A few times per Year","A few times per Month",
-                                                              "Once per Week", "A few times per Week","Once per day",
-                                                              "2-3 times per Day","4-5 times per Day","6+ times per Day",
+                            oth_age = factor(oth_age,levels=c("Didn't Drink","A few times per Year",
+                                                              "A few times per Month",
+                                                              "Once per Week", "A few times per Week",
+                                                              "Once per day",
+                                                              "2-3 times per Day","4-5 times per Day",
+                                                              "6+ times per Day",
                                                               "Skipped this question")))
 
 create_kable_table(alcl, oth_age, "ALCLIFE2H: Frequency of Drinking: Ages 70+")
@@ -3064,22 +2886,19 @@ create_kable_table(alcl, oth_age, "ALCLIFE2H: Frequency of Drinking: Ages 70+")
 ```
 
 
-### ALCLIFE4A: Beverages Drank from Ages 0-17
-```{r Alclife4a, message=FALSE, warning=FALSE, echo=FALSE}
-###ALCLIFE4 GRID
+```{r Alclife2_Function, warning=FALSE, echo=FALSE, message=FALSE}
 
-    ##ALCLLIFE2 variables won't go into tibble for some reason so can't turn into a function 
 
-#ALCLIFE4A 
-alcl4= dt_alclA  %>%  mutate(oth_age= case_when(#D_470862706_D_912659087_D_789689151=="1"~"Drank Beer",
-                                              D_470862706_D_912659087_D_663253668=="1"~"Drank Liquor",
-                                              D_470862706_D_912659087_D_104676242=="1"~"Drank Wine",
-                                              D_470862706_D_912659087_D_137733407=="1"~"Drank Other Beverages",
-                                              TRUE ~ "Skipped this question"),
-                             oth_age = factor(oth_age,levels=c("Drank Beer","Drank Liquor","Drank Wine","Drank Other Beverages", "Skipped this question")))
+#------ NEW CODE I'M LOOKING TO UTILIZE ONCE FUNCTION FINALIZED ---------------------
 
-create_kable_table(alcl4, oth_age, "ALCLIFE4A: Beverages Drank from Ages 0-17")
-
+alclife2_funct(0,  "ALCLIFE2A: Frequency of Drinking: Ages 0-17")
+alclife2_funct(18, "ALCLIFE2B: Frequency of Drinking: Ages 18-24")
+alclife2_funct(25, "ALCLIFE2C: Frequency of Drinking: Ages 25-29")
+alclife2_funct(30, "ALCLIFE2D: Frequency of Drinking: Ages 30-39")
+alclife2_funct(40, "ALCLIFE2E: Frequency of Drinking: Ages 40-49")
+alclife2_funct(50, "ALCLIFE2F: Frequency of Drinking: Ages 50-59")
+alclife2_funct(60, "ALCLIFE2G: Frequency of Drinking: Ages 60-69")
+alclife2_funct(70, "ALCLIFE2H: Frequency of Drinking: Ages 70-79")
 
 ```
 
@@ -3187,7 +3006,7 @@ create_kable_table(alcl4H, oth_age, "ALCLIFE4H: Beverages Drank from Ages 70-79"
 
 ```{r Clear_Memory3, include=FALSE}
 #Clearing up some memory -- removing all but the main dataframe and functions
-rm(list = setdiff(ls(), c("data_tib_all3", 'module3', "dict", 'hist_funct', 'boxp_funct', 'simple_funct3', 'simple_age_funct3', 'one_logic_funct3', 'alclife2_funct', 'funct_2_3_4', 'funct_5', 'funct_8c', 'funct_9b', 'funct_10_11', 'create_kable_table', 'create_kable_table_w_footnote')))
+rm(list = setdiff(ls(), c("data_tib_all3", 'module3', "dict", 'hist_funct', 'boxp_funct', 'simple_funct3', 'simple_age_funct3', 'one_logic_funct3', 'alclife2_funct', "alclife_bands", "alclife_levels", 'funct_2_3_4', 'funct_5', 'funct_8c', 'funct_9b', 'funct_10_11', 'create_kable_table', 'create_kable_table_w_footnote', "render_kable", "build_summary")))
 invisible(gc())
 
 ########################
