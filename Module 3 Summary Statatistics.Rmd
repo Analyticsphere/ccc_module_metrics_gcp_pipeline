@@ -2609,7 +2609,7 @@ create_kable_table(alc9, answer, "ALCOHOL9: Frequency of Drinking 4-5 Alcoholic 
 ##ALCLIFE2 GRID
 #ALCLIFE2A
 
-#alclife2_funct(D_633553324_D_294629316,"ALCLIFE2A: Frequency of Drinking: Ages 0-17")
+
 
 
 #### COMPLICATED SKIP LOGIC
@@ -2649,6 +2649,9 @@ dt_alcl= data_tib_all3  %>%
 
 
 
+# COMBINED:
+  #ALC4=<ALCLIFEAGE_START AND AGEGRID >= ALCLIFE_START AND
+  #EITHER ALCOHOL5=YES OR (ALCOHOL5==NO THEN ALCLIFE_END =< ALCOHOL6)
 
 #ALCLIFE2A 
 dt_alclA= data_tib_all3  %>%   filter(D_429228540==132232896 & !is.na(D_556837046_D_141874857) & 
@@ -2677,8 +2680,6 @@ create_kable_table(alcl, oth_age, "ALCLIFE2A: Frequency of Drinking: Ages 0-17")
 
 
 #ALCLIFE2B
-#alclife2_funct(D_633553324_D_164707243,"ALCLIFE2B: Frequency of Drinking: Ages 18-24")
-#grid.arrange(alclf2A, alclf2B, nrow=2)
 
 
 dt_alclB= data_tib_all3  %>%   filter(D_429228540==132232896 & !is.na(D_556837046_D_141874857) & 
@@ -2709,7 +2710,7 @@ create_kable_table(alcl, oth_age, "ALCLIFE2B: Frequency of Drinking: Ages 18-24"
 
 
 #ALCLIFE2C
-#alclife2_funct(D_633553324_D_771426895,"ALCLIFE2C: Frequency of Drinking: Ages 25-29")
+
 dt_alclC= data_tib_all3  %>%   filter(D_429228540==132232896 & !is.na(D_556837046_D_141874857) & 
                                        (D_338467033==353358909 | (D_338467033==104430631 & !is.na(D_480426504))) & 
                                        ((is.na(D_480426504) & as.numeric(D_556837046_D_141874857)<29) | 
@@ -2737,7 +2738,7 @@ create_kable_table(alcl, oth_age, "ALCLIFE2C: Frequency of Drinking: Ages 25-29"
 
 
 #ALCLIFE2D
-#alclife2_funct(D_633553324_D_818310825,"ALCLIFE2D: Frequency of Drinking: Ages 30-39")
+
 dt_alclD= data_tib_all3  %>%   filter(D_429228540==132232896 & !is.na(D_556837046_D_141874857) &
                                        (D_338467033==353358909 | (D_338467033==104430631 & !is.na(D_480426504))) &
                                        ((is.na(D_480426504) & as.numeric(D_556837046_D_141874857)<39) |
@@ -2767,7 +2768,7 @@ create_kable_table(alcl, oth_age, "ALCLIFE2D: Frequency of Drinking: Ages 30-39"
 
 
 #ALCLIFE2E
-#alclife2_funct(D_633553324_D_843593800,"ALCLIFE2E: Frequency of Drinking: Ages 40-49")
+
 dt_alclE= data_tib_all3  %>%   filter(AGEGRID>40 & D_429228540==132232896 & !is.na(D_556837046_D_141874857) &
                                        (D_338467033==353358909 | (D_338467033==104430631 & !is.na(D_480426504))) &
                                        ((is.na(D_480426504) & as.numeric(D_556837046_D_141874857)<49) |
@@ -2795,7 +2796,7 @@ create_kable_table(alcl, oth_age, "ALCLIFE2E: Frequency of Drinking: Ages 40-49"
 
 
 #ALCLIFE2F
-#alclife2_funct(D_633553324_D_175385712,"ALCLIFE2F: Frequency of Drinking: Ages 50-59")
+
 dt_alclF= data_tib_all3  %>%   filter(AGEGRID>50 & D_429228540==132232896 & !is.na(D_556837046_D_141874857) &
                                        (D_338467033==353358909 | (D_338467033==104430631 & !is.na(D_480426504))) &
                                        ((is.na(D_480426504) & as.numeric(D_556837046_D_141874857)<59) |
@@ -2823,7 +2824,7 @@ create_kable_table(alcl, oth_age, "ALCLIFE2F: Frequency of Drinking: Ages 50-59"
 
 
 #ALCLIFE2G
-#alclife2_funct(D_633553324_D_772143730,"ALCLIFE2G: Frequency of Drinking: Ages 60-69")
+
 dt_alclG= data_tib_all3  %>%   filter(AGEGRID>60 & D_429228540==132232896 & !is.na(D_556837046_D_141874857) &
                                        (D_338467033==353358909 | (D_338467033==104430631 & !is.na(D_480426504))) &
                                        ((is.na(D_480426504) & as.numeric(D_556837046_D_141874857)<69) |
@@ -2851,7 +2852,7 @@ create_kable_table(alcl, oth_age, "ALCLIFE2G: Frequency of Drinking: Ages 60-69"
 
 
 #ALCLIFE2H-- no one yet
-# alclife2_funct(D_633553324_D_602102163,"ALCLIFE2H: Frequency of Drinking: Ages 70+")
+
 dt_alclH= data_tib_all3  %>%   filter(AGEGRID>70 & D_429228540==132232896 & !is.na(D_556837046_D_141874857) &
                                        (D_338467033==353358909 | (D_338467033==104430631 & !is.na(D_480426504))) &
 

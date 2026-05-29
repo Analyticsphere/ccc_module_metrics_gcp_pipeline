@@ -100,6 +100,10 @@ partsbq <- partsbq %>% mutate(
 base_vars <- left_join(partsbq, biobq, by=c("Connect_ID", "token"))
 
 
+
+
+
+ # ----------   Functions -----------------------------------------------
 safe_arrange <- function(df, ...) {
   if (nrow(df) > 0) df %>% arrange(...) else df
 }
@@ -120,14 +124,33 @@ make_explanation_cols <- function(df, vars) {
 }
 
 
-# Custom function for output: rule_id, rule_label, Variable name, concept ID value
+# Output info storage: rule_id, rule_label, Variable name, concept ID value
 tag_rule <- function(df, rule_num, rule_desc, vars) {
+  rules_registry[[length(rules_registry) + 1]] <<- data.frame(rule_id = rule_num, rule_label = rule_desc)
   df %>%
     mutate(rule_id = rule_num, rule_label = rule_desc) %>%
     make_explanation_cols(vars)
 }
 
+
+
+# Store exclusions for Exclusions tab
+register_exclusions <- function(rule_num, ids) {
+  exclusions_registry[[length(exclusions_registry) + 1]] <<- data.frame(
+    rule_id    = rule_num,
+    Connect_ID = as.character(ids)
+  )
+}
+
+
+
+
+
+# Empty lists for rules, errors, and exclusions 
+rules_registry <- list()
 all_errors <- data.frame(stringsAsFactors = FALSE)
+exclusions_registry <- list()
+
 
 
 ## ---- RULES ---------------------------------------------------------------
@@ -135,14 +158,16 @@ log_info("Starting to run the rules")
 
 # Rule 1
 incentive2 <- base_vars %>%
-  filter(d_949302066 == '231311385' & d_536735468 == '231311385' & d_976570371 == '231311385' & d_663265240 == '231311385' &
+  filter(d_949302066 == '231311385' & d_536735468 == '231311385' & 
+           d_976570371 == '231311385' & d_663265240 == '231311385' &
            ((d_299553921_d_593843561==353358909 & d_299553921_d_883732523 != 681745422) |
               (d_703954371_d_593843561==353358909 & d_703954371_d_883732523 != 681745422) |
               (d_838567176_d_593843561==353358909 & d_838567176_d_883732523 != 681745422) |
               (d_454453939_d_593843561==353358909 & d_454453939_d_883732523 != 681745422) |
               (d_652357376_d_593843561==353358909 & d_652357376_d_883732523 != 681745422) |
               (d_505347689_d_593843561==353358909 & d_505347689_d_883732523 != 681745422)) &
-           (d_130371375_d_266600170_d_731498909!=353358909 | d_130371375_d_266600170_d_222373868!=353358909 | is.na(d_130371375_d_266600170_d_787567527))) %>%
+           (d_130371375_d_266600170_d_731498909!=353358909 | d_130371375_d_266600170_d_222373868!=353358909 | 
+              is.na(d_130371375_d_266600170_d_787567527))) %>%
   safe_arrange(Site) %>%
   tag_rule(1,
            "If all BL Modules are completed and the participant has a baseline research collection where the tube is collected and the reason tube wasn't collected wasn't refusal, then SMPaym_TmPaymEligBL_v1r0 must be populated.",
@@ -184,6 +209,7 @@ can_no_longer_contact <- list("6673328645","1156167603","5950274173","1674063031
                               "2009345083","8140966374","4038472238","3379215871","6592021474","1721018129",
                               "3023733685","5085319740","8682077118","1441310478","4177949257","6384048173",
                               "1186358664","2510716583","1782585066")
+register_exclusions(2, unlist(can_no_longer_contact))
 
 mens_elg <- mens %>%
   filter(is.na(d_289750687) &
@@ -332,7 +358,8 @@ log_info("First 25 rules ran")
 rm(list = setdiff(ls(), 
                   c('currentDate', 'boxfolder', 'project', "partsbq", "biobq", 
                     "base_vars", "safe_arrange", "all_errors", "tag_rule",
-                    "make_explanation_cols")))
+                    "make_explanation_cols", "rules_registry", "register_exclusions",
+                    "exclusions_registry")))
 gc()
 
 # Rule 39 — BigQuery pull
@@ -373,7 +400,8 @@ bday2 <- bday_base_vars %>% filter(is.na(d_768313785) & !is.na(d_194486780)) %>%
                 "NORCBC_CardVersion"   = .$d_194486780))
 all_errors <- bind_rows(all_errors, bday2)
 
-bday3 <- bday_base_vars %>% filter(!is.na(d_768313785) & !(d_916186376 %in% c("01","02","06","07") | is.na(d_916186376))) %>%
+bday3 <- bday_base_vars %>% 
+  filter(!is.na(d_768313785) & !(d_916186376 %in% c("01","02","06","07") | is.na(d_916186376))) %>%
   safe_arrange(Site) %>%
   tag_rule(42, "If maildate is populated then dispCode should be 01, 02, 06, 07, or N/A.",
            list("NORCBC_CardMailingDt" = .$d_768313785,
@@ -387,7 +415,8 @@ bday4 <- bday_base_vars %>% filter(is.na(d_768313785) & !is.na(d_916186376)) %>%
                 "NORCBC_CardDispCode"  = .$d_916186376))
 all_errors <- bind_rows(all_errors, bday4)
 
-bday5 <- bday_base_vars %>% filter(!is.na(d_768313785) & !(is.na(ymd_hms(d_194486780, quiet=TRUE)) | is.na(d_194486780))) %>%
+bday5 <- bday_base_vars %>% 
+  filter(!is.na(d_768313785) & !(is.na(ymd_hms(d_194486780, quiet=TRUE)) | is.na(d_194486780))) %>%
   safe_arrange(Site) %>%
   tag_rule(44, "If maildate is populated then returnDate should be an ISO 8601 timestamp or N/A.",
            list("NORCBC_CardMailingDt" = .$d_768313785,
@@ -454,7 +483,8 @@ all_errors <- bind_rows(all_errors, start_DHQ)
 rm(list = setdiff(ls(), 
                   c('currentDate', 'boxfolder', 'project', "partsbq", "biobq", 
                     "base_vars", "safe_arrange", "all_errors", "tag_rule",
-                    "make_explanation_cols")))
+                    "make_explanation_cols", "rules_registry", "register_exclusions",
+                    "exclusions_registry")))
 gc()
 
 
@@ -567,6 +597,8 @@ all_errors <- bind_rows(all_errors, dhq_system_null)
 
 
 # Rule 59
+register_exclusions(59, c(6213377542, 6891536539, 1514220001, 8583917079))
+
 smmet <- partsbq %>%
   filter(d_100767870==353358909 &
            (d_949302066!=231311385 | d_536735468!=231311385 | d_976570371!=231311385 | d_663265240!=231311385) &
@@ -711,6 +743,8 @@ all_errors <- bind_rows(all_errors, cancer_match)
 
 
 # Rules 74–85: active recruit DI fields — shared exclusion pattern
+register_exclusions(74, c(4093473296,2701575745))
+
 act_di_age <- partsbq %>%
   filter(d_512820379=='486306141' & is.na(state_d_934298480) &
            !(d_821247024=="922622075" & state_d_793822265=="854903954") &
@@ -721,6 +755,9 @@ act_di_age <- partsbq %>%
                 "RcrtV_UpdateRecType_v1r0" = .$state_d_793822265,
                 "RcrtSI_Age_v1r0"          = .$state_d_934298480))
 all_errors <- bind_rows(all_errors, act_di_age)
+
+
+register_exclusions(75, 4093473296)
 
 act_di_race <- partsbq %>%
   filter(d_512820379=='486306141' & is.na(state_d_849518448) &
@@ -756,6 +793,9 @@ act_di_HFH_race <- partsbq %>%
                 "RcrtSI_HFHSRace_v1r0"    = .$state_d_684926335))
 all_errors <- bind_rows(all_errors, act_di_HFH_race)
 
+
+register_exclusions(78, 2701575745)
+
 act_di_BSWH_race <- partsbq %>%
   filter(d_512820379=='486306141' & is.na(state_d_253532712) &
            d_827220437=='472940358' &
@@ -790,6 +830,9 @@ act_di_HFH_eth <- partsbq %>%
                 "RcrtSI_HFHSEthnicity_v1r0" = .$state_d_527823810))
 all_errors <- bind_rows(all_errors, act_di_HFH_eth)
 
+
+register_exclusions(81, c(4093473296, 2701575745))
+
 act_di_member <- partsbq %>%
   filter(d_512820379=='486306141' & is.na(state_d_477091792) &
            !(d_821247024=="922622075" & state_d_793822265=="854903954") &
@@ -800,6 +843,9 @@ act_di_member <- partsbq %>%
                 "RcrtV_UpdateRecType_v1r0" = .$state_d_793822265,
                 "RcrtSI_MemberStat_v1r0"  = .$state_d_477091792))
 all_errors <- bind_rows(all_errors, act_di_member)
+
+
+register_exclusions(82, c(4093473296, 2701575745))
 
 act_di_cmpn <- partsbq %>%
   filter(d_512820379=='486306141' & is.na(state_d_667474224) &
@@ -812,6 +858,9 @@ act_di_cmpn <- partsbq %>%
                 "RcrtSI_CampaignType_v1r0" = .$state_d_667474224))
 all_errors <- bind_rows(all_errors, act_di_cmpn)
 
+
+register_exclusions(83, c(4093473296, 2701575745))
+
 act_di_elg <- partsbq %>%
   filter(d_512820379=='486306141' & is.na(state_d_749475364) &
            !(d_821247024=="922622075" & state_d_793822265=="854903954") &
@@ -822,6 +871,9 @@ act_di_elg <- partsbq %>%
                 "RcrtV_UpdateRecType_v1r0"   = .$state_d_793822265,
                 "RcrtSI_EligibilityVer_v1r0" = .$state_d_749475364))
 all_errors <- bind_rows(all_errors, act_di_elg)
+
+
+register_exclusions(84, c(4093473296, 2701575745))
 
 act_di_sex <- partsbq %>%
   filter(d_512820379=='486306141' & is.na(state_d_706256705) &
@@ -1018,7 +1070,8 @@ all_errors <- bind_rows(all_errors, Outreach_manual)
 ## Clearing up space in GCP memory
 rm(list = setdiff(ls(), c('currentDate', 'boxfolder', 'project', "partsbq", "biobq", 
                           "base_vars", "safe_arrange", "all_errors", "tag_rule",
-                          "make_explanation_cols")))
+                          "make_explanation_cols", "rules_registry", "register_exclusions",
+                          "exclusions_registry")))
 gc()
 
 
@@ -1169,9 +1222,13 @@ SF_MF_ver_pass <- base_vars %>%
 all_errors <- bind_rows(all_errors, SF_MF_ver_pass)
 
 
+## Need to save the raw variables for the Analytics tab
+
+all_errors_raw <- all_errors
 
 
-## Human Readable: concept ids converted to variable value ---------------
+
+## Human Readable: concept ids converted to variable value for the Operations tab
 
 ## There is not a straight forward way to do this in BQ, so leaving it as R code
 all_errors <- all_errors %>%
@@ -1219,11 +1276,12 @@ all_errors <- all_errors %>%
 
 
 
-
 ## ---- OUTPUT --------------------------------------------------------------
 
 boxfolder <- "194196493018"
 
+
+#### Operations report tab 
 # Re-enforce consistent column ordering
 fixed_cols <- c("Connect_ID", "token", "Site", "rule_id", "rule_label")
 
@@ -1249,13 +1307,73 @@ for (i in seq_len(n_pairs)) {
   }
 }
 
+
+# Final QC output
 all_errors <- all_errors[, c(fixed_cols, expl_cols)]
 
 
-openxlsx::write.xlsx(
-  all_errors,
+
+
+
+#### Rules Reference tab
+rules_tab <- bind_rows(rules_registry) %>%
+  distinct(rule_id, rule_label) %>%
+  arrange(rule_id)
+
+
+#### Analytics Report tab
+analytics_report <- all_errors %>%
+  left_join(partsbq %>% select(token, Site_CID = d_827220437), by = "token") %>%
+  mutate(
+    #explanation_variable1_CID       = all_errors_raw$explanation_variable1,
+    explanation_variable_value1_CID = all_errors_raw$explanation_variable_value1,
+    #explanation_variable2_CID       = all_errors_raw$explanation_variable2,
+    explanation_variable_value2_CID = all_errors_raw$explanation_variable_value2,
+    #explanation_variable3_CID       = all_errors_raw$explanation_variable3,
+    explanation_variable_value3_CID = all_errors_raw$explanation_variable_value3
+  ) %>%
+  select(any_of(c(
+    "Connect_ID", "token", "Site", "Site_CID",
+    "rule_id", "rule_label",
+    "explanation_variable1", #"explanation_variable1_CID",
+    "explanation_variable_value1", "explanation_variable_value1_CID",
+    "explanation_variable2", #"explanation_variable2_CID",
+    "explanation_variable_value2", "explanation_variable_value2_CID",
+    "explanation_variable3", #"explanation_variable3_CID",
+    "explanation_variable_value3", "explanation_variable_value3_CID"
+  )))
+
+
+#### Exclusions tab
+exclusions_tab <- bind_rows(exclusions_registry) %>%
+  mutate(Connect_ID = as.character(Connect_ID)) %>%
+  left_join(partsbq %>% select(Connect_ID, token) %>% mutate(Connect_ID = as.character(Connect_ID)), by = "Connect_ID") %>%
+  arrange(rule_id)
+
+
+
+# Output file
+wb <- openxlsx::createWorkbook()
+
+openxlsx::addWorksheet(wb, "Ops_report")
+openxlsx::writeData(wb, "Ops_report", all_errors, na.string = "")
+
+
+openxlsx::addWorksheet(wb, "Analytics_Report")
+openxlsx::writeData(wb, "Analytics_Report", analytics_report, na.string = "")
+
+
+openxlsx::addWorksheet(wb, "Exclusions")
+openxlsx::writeData(wb, "Exclusions", exclusions_tab, na.string = "")
+
+
+openxlsx::addWorksheet(wb, "Rules")
+openxlsx::writeData(wb, "Rules", rules_tab)
+
+openxlsx::saveWorkbook(
+  wb,
   glue("Recruitment_Custom_QC_Output_{currentDate}_boxfolder_{boxfolder}.xlsx"),
-  row.names = F, na=""
+  overwrite = TRUE
 )
 
 
