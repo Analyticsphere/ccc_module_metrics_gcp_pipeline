@@ -24,15 +24,6 @@ boxfolder <- 255783409227 # Active Box Folder
 currentDate <- Sys.Date()##### Making sure personal C drives aren't referenced if this code is being used by others
 
 
-#Change to FALSE if referencing this code
-write_to_local_drive = F 
-  
-
-
-### This function below is put before any write.csv functions, and "filename" is updated. It determines wheteher the file will be created locally or not.
-
-local_drive= ifelse(write_to_local_drive, "C:/Users/dowlingk2/Documents/GitHub/", "")
-
 currentDate <- Sys.Date()
 
 
@@ -43,7 +34,7 @@ project_cc = "nih-nci-dceg-connect-prod-6d04"
 datad_query <- "SELECT  Connect_ID, d_827220437, d_831041022, d_883668444, d_130371375_d_266600170_d_731498909, d_130371375_d_266600170_d_648936790, 
 d_130371375_d_496823485_d_731498909, d_130371375_d_496823485_d_648936790, d_130371375_d_650465111_d_731498909, d_130371375_d_650465111_d_648936790,
 d_130371375_d_303552867_d_731498909, d_130371375_d_303552867_d_648936790, d_269050420, d_359404406, d_949302066, d_536735468, d_976570371, d_663265240, 
-d_253883960, d_459098666,  d_265193023, d_126331570, d_878865966, d_167958071, d_684635302, d_100767870, d_119449326, d_912301837  
+d_253883960, d_459098666,  d_265193023, d_126331570, d_878865966, d_167958071, d_684635302, d_100767870, d_119449326, d_912301837, d_652627623 
 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` where Connect_ID IS NOT NULL and d_831041022='353358909'"  #d_220186468,
 spec_query <- "SELECT Connect_ID, d_820476880 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.biospecimen` where Connect_ID is not null"
 
@@ -130,10 +121,15 @@ destruction <- variables %>% mutate('Data Destruction Requested Flag'= case_when
                                     'Data Destroyed' = case_when(d_912301837==884452262 ~ "Yes",
                                                                  TRUE~"No"))
 
-destruction$'Data Destruction Date Requested' <- destruction$d_269050420
-destruction$'Date Signed Data Destruction Form' <- destruction$d_119449326
 
-Data_destruction <- destruction %>% select(Connect_ID, Site, 'Data Destruction Requested Flag', 'Data Destruction Date Requested', 
+
+destruction <- destruction %>%  
+  dplyr::rename(c('Data Destruction Date Requested' = d_269050420,
+                  'Date Data Destroyed' = d_652627623,
+                  'Date Signed Data Destruction Form' = d_119449326, 
+                  'Date Signed Data Destruction Form'= d_119449326))
+
+Data_destruction <- destruction %>% select(Connect_ID, Site, 'Data Destruction Requested Flag', 'Data Destruction Date Requested', 'Date Data Destroyed',
                                            'Data Destruction Form Signed', 'Date Signed Data Destruction Form', 'Data Destroyed', 'Module 1 Completion Status',
                                            'Module 2 Completion Status', 'Module 3 Completion Status', 'Module 4 Completion Status',
                                            'Baseline Biospecimen Survey Flag', 'SSN Survey Flag', 'Menstrual Cycle Survey Flag',  'Baseline Blood Collected',
@@ -147,4 +143,4 @@ Data_destruction <- destruction %>% select(Connect_ID, Site, 'Data Destruction R
 #knitr::kable(Data_destruction)
 
 
-write.csv(Data_destruction,glue("{local_drive}Data_Destruction_Requests_{currentDate}_boxfolder_{boxfolder}.csv"),row.names = F,na="")
+write.csv(Data_destruction,glue("Data_Destruction_Requests_{currentDate}_boxfolder_{boxfolder}.csv"),row.names = F,na="")
