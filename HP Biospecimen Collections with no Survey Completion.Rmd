@@ -167,9 +167,9 @@ completion_summary %>%  gt(rowname_col = "row_lab") %>%
 
 ```{r Collections, warning=FALSE, echo=FALSE, message=FALSE}
 # HPs$specdate <- HPs$d_556788178[!is.na(HPs$d_556788178)]
-# HPs$specdate <- as.POSIXct(ymd_hms(HPs$specdate))
+# HPs$specdate <- ymd_hms(HPs$specdate)
 
-HPs <- HPs %>%  mutate(specdate =as.POSIXct(ymd_hms(d_556788178)))
+HPs <- HPs %>%  mutate(specdate =ymd_hms(d_556788178))
 
 #HPs$Monthsdiff <- difftime(Sys.Date(), HPs$specdate, units="weeks")
 
@@ -214,7 +214,7 @@ completion_summary %>%  gt(rowname_col = "row_lab") %>%
 ```{r Verif, warning=FALSE, echo=FALSE, message=FALSE}
 
 HPs$verifdate <- HPs$d_914594314[!is.na(HPs$d_914594314)]
-HPs$verifdate <- as.POSIXct(ymd_hms(HPs$verifdate))
+HPs$verifdate <- ymd_hms(HPs$verifdate)
 
 #HPs$VerMonthsdiff <- difftime(Sys.Date(), HPs$verifdate, units="weeks")
 

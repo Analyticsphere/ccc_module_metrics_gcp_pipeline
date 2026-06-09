@@ -202,7 +202,8 @@ all_data <- all_data %>%  mutate(Site = case_when(d_827220437==472940358 ~ "Bayl
                                                     state_d_253532712 %in% c('153444133','572474909','308427446',
                                                                              '211228524','277568192','611398522','181769837') |
                                                     state_d_119643471 %in% c('232334767','211228524','308427446','432722256',
-                                                                             '232663805','785578696','200929978','490725843','965998904') ~ "Other",
+                                                                             '232663805','785578696','200929978','490725843',
+                                                                             '965998904') ~ "Other",
                                                   state_d_684926335 == '178420302'  | 
                                                     state_d_849518448 == '178420302' | 
                                                     state_d_253532712 == '178420302' |
@@ -210,8 +211,10 @@ all_data <- all_data %>%  mutate(Site = case_when(d_827220437==472940358 ~ "Bayl
                                                     (is.na(state_d_119643471) & d_827220437 == '657167265') ~ "Unknown"),
                                  sex = case_when(state_d_706256705 == '536341288' | state_d_435027713 == '536341288' ~ "Female",
                                                  state_d_706256705 == '654207589' | state_d_435027713 == '654207589' ~ "Male",
-                                                 #state_d_706256705 == '830573274' ~ "Intersex or Other", # too small of a count for now, need to combine with unknown 
-                                                 state_d_706256705 == '830573274' | state_d_706256705 == '178420302' | state_d_435027713 == '178420302' ~ "Unknown"),
+                                                 # too small of a count for now, need to combine with unknown
+                                                 #state_d_706256705 == '830573274' ~ "Intersex or Other",  
+                                                 state_d_706256705 == '830573274' | state_d_706256705 == '178420302' | 
+                                                   state_d_435027713 == '178420302' ~ "Unknown"),
                                  BSL_compl = case_when(d_100767870==353358909 ~ "All Baseline Modules Completed",
                                                        TRUE ~ "One or More Baseline Modules Not Completed"),
                                  Pref_lang=case_when(d_255077064 == 773342525 ~ "Spanish",
@@ -222,19 +225,17 @@ all_data <- all_data %>%  mutate(Site = case_when(d_827220437==472940358 ~ "Bayl
                                  
                                  qolcomplt = ifelse(d_320303124 == 231311385 ,"Submitted",
                                                     ifelse(d_320303124 == 615768760, "Started",
-                                                           ifelse(as.numeric(difftime(Sys.Date(), as.POSIXct(ymd_hms(d_914594314)),
+                                                           ifelse(as.numeric(difftime(Sys.Date(), ymd_hms(d_914594314),
                                                                                       units="days")) < 90, "Not Eligible",
                                                                   ifelse(d_320303124 == 972455046, "Not Started", "Error")))),
-                                
-                                # RcrtV_Verification_v1r0 = 1 - must be verified
-                                # AND RcrtV_VerificationTm_V1R0 LE 08/01/2025 - must have been verified on or before this date
-                                # AND HdWd_WdConsent_v1r0 = 0 = and not withdrawn
-
                                 roicomplt = case_when(d_278023676 == 231311385 ~ "Submitted",
                                                       d_278023676 == 615768760 ~ "Started",
-                                                      as.Date(d_914594314) > as.Date("2025-08-01") |     # ineligible if verified after August 1 2025
-                                                        d_821247024  != "197316935" |                     # ineligible if verification status isn't "verified"
-                                                        d_747006172 != "104430631" ~ "Not Eligible",     # ineligible if consent is withdrawn
+                                                      # ineligible if verified after August 1 2025
+                                                      as.Date(d_914594314) > as.Date("2025-08-01") | 
+                                                        # ineligible if verification status isn't "verified"
+                                                        d_821247024  != "197316935" |    
+                                                        # ineligible if consent withdrawn isn't no
+                                                        d_747006172 != "104430631" ~ "Not Eligible",     
                                                       d_278023676 == 972455046 ~ "Not Started",
                                                       TRUE ~ "Not Eligible"
                                 ),
@@ -242,13 +243,15 @@ all_data <- all_data %>%  mutate(Site = case_when(d_827220437==472940358 ~ "Bayl
                                 
                                 
                                  completion = case_when(d_100767870=="353358909" & 
-                                                          (d_878865966=="353358909" | d_684635302=="353358909" | d_167958071=="353358909") ~ "Completed both survey and sample(s)",
+                                                          (d_878865966=="353358909" | d_684635302=="353358909" | 
+                                                             d_167958071=="353358909") ~ "Completed both survey and sample(s)",
                                                         d_100767870=="353358909" ~ "Completed all baseline survey modules 1-4, no baseline samples",
                                                         (d_878865966=="353358909" | d_684635302=="353358909" | 
                                                            d_167958071=="353358909") ~ "Completed any baseline sample, did not complete baseline survey",
                                                         TRUE ~ "Completed neither survey or sample(s)"),
                                  collection = ifelse((d_878865966 == 353358909 | d_167958071 == 353358909 | 
-                                                              d_684635302 == 353358909 ), "Any biospecimen Collections","No biospecimen collections"),
+                                                              d_684635302 == 353358909 ), "Any biospecimen Collections",
+                                                     "No biospecimen collections"),
                                  provided4 =case_when(d_311580100==353358909 ~ "Full SSN",
                                                      d_914639140==353358909 ~ "Partial SSN",
                                                      TRUE ~ "No SSN"),
@@ -261,11 +264,14 @@ all_data <- all_data %>%  mutate(Site = case_when(d_827220437==472940358 ~ "Bayl
                                                         TRUE ~ "Not Eligible"),
                                  CSH_status = case_when(d_176068627==231311385	~ "Submitted",
                                                         d_176068627==615768760	~ "Started",
-                                                        d_176068627==972455046 & (as.numeric(difftime(Sys.Date(), as.POSIXct(ymd_hms(d_914594314)),units="days")) >269)	~ "Not Started",
+                                                        d_176068627==972455046 & 
+                                                          (as.numeric(difftime(Sys.Date(), ymd_hms(d_914594314),
+                                                                               units="days")) >269)	~ "Not Started",
                                                         TRUE ~ "Not Eligible"), #not eligible until 270 days after verification
                                  verif_time_diff = as.numeric(difftime(Sys.Date(), as.Date(d_914594314), units="days")),
                                  dhq_status = case_when(d_692560814==789467219 |
-                                                          !(as.Date(d_914594314) > "2024-12-01" & verif_time_diff>=180 & d_821247024=="197316935" & d_747006172 == '104430631') ~ "Not Eligible",
+                                                          !(as.Date(d_914594314) > "2024-12-01" & verif_time_diff>=180 &
+                                                              d_821247024=="197316935" & d_747006172 == '104430631') ~ "Not Eligible",
                                                         d_692560814==231311385 ~ "Submitted",
                                                         d_692560814==615768760 ~ "Started",
                                                         d_692560814==972455046 ~ "Not Started"),
@@ -275,20 +281,32 @@ all_data <- all_data %>%  mutate(Site = case_when(d_827220437==472940358 ~ "Bayl
                                                              d_501613780==542659759	~ "Completed"),
                                                              #d_501613780==418049936 | is.na(d_501613780)	~ "Not yet begun"),
                                  external_status = factor(external_status, levels=c("Null","Not yet begun", "In Progress","Completed")),
-                                 m1_comp_mins = as.numeric(difftime(as.POSIXct(ymd_hms(d_517311251)), as.POSIXct(ymd_hms(d_205553981)), units="hours"))*60,
-                                 m2_comp_mins = as.numeric(difftime(as.POSIXct(ymd_hms(d_832139544)), as.POSIXct(ymd_hms(d_541836531)), units="hours"))*60,
-                                 m3_comp_mins = as.numeric(difftime(as.POSIXct(ymd_hms(d_770257102)), as.POSIXct(ymd_hms(d_386488297)), units="hours"))*60,
-                                 m4_comp_mins = as.numeric(difftime(as.POSIXct(ymd_hms(d_264644252)), as.POSIXct(ymd_hms(d_452942800)), units="hours"))*60,
-                                 dhq_comp_mins = as.numeric(difftime(as.POSIXct(ymd_hms(d_610227793)), as.POSIXct(ymd_hms(d_109610692)), units="hours"))*60,
-                                 csh_comp_mins = as.numeric(difftime(as.POSIXct(ymd_hms(d_389890053)), as.POSIXct(ymd_hms(d_609630315)), units="hours"))*60,
-                                 roi_comp_mins = as.numeric(difftime(as.POSIXct(ymd_hms(d_543379310)), as.POSIXct(ymd_hms(d_993557295)), units="hours"))*60)
+                                 m1_comp_mins = as.numeric(difftime(ymd_hms(d_517311251), ymd_hms(d_205553981),
+                                                                    units="hours"))*60,
+                                 m2_comp_mins = as.numeric(difftime(ymd_hms(d_832139544), ymd_hms(d_541836531),
+                                                                    units="hours"))*60,
+                                 m3_comp_mins = as.numeric(difftime(ymd_hms(d_770257102), ymd_hms(d_386488297),
+                                                                    units="hours"))*60,
+                                 m4_comp_mins = as.numeric(difftime(ymd_hms(d_264644252), ymd_hms(d_452942800),
+                                                                    units="hours"))*60,
+                                 dhq_comp_mins = as.numeric(difftime(ymd_hms(d_610227793), ymd_hms(d_109610692),
+                                                                     units="hours"))*60,
+                                 csh_comp_mins = as.numeric(difftime(ymd_hms(d_389890053), ymd_hms(d_609630315),
+                                                                     units="hours"))*60,
+                                 roi_comp_mins = as.numeric(difftime(ymd_hms(d_543379310), ymd_hms(d_993557295),
+                                                                     units="hours"))*60)
 
-all_data$Site <- factor(all_data$Site, levels=c("Baylor Scott and White","HealthPartners", "Henry Ford","Marshfield","Sanford","UChicago","KP Colorado","KP Georgia", "KP Hawaii","KP Northwest"))
+all_data$Site <- factor(all_data$Site, levels=c("Baylor Scott and White","HealthPartners", "Henry Ford","Marshfield","Sanford",
+                                                "UChicago","KP Colorado","KP Georgia", "KP Hawaii","KP Northwest"))
 all_data$BL_comp <- factor(all_data$BL_comp, levels=c("All", "2 or 3 Sections", "BOH Only", "None"))
-all_data$completion <- factor(all_data$completion, levels=c("Completed both survey and sample(s)", "Completed all baseline survey modules 1-4, no baseline samples", 
-                                                  "Completed any baseline sample, did not complete baseline survey","Completed neither survey or sample(s)"))
-all_data$process <- factor(all_data$process, levels=c("None", "BOH Section only", "BOH and MRE Sections", "BOH and SAS Sections",  "BOH and LAW Sections", 
-                                                      "BOH, MRE, and SAS Sections", "BOH, SAS, and LAW Sections", "BOH, MRE, and LAW Sections", "All"))
+all_data$completion <- factor(all_data$completion, levels=c("Completed both survey and sample(s)", 
+                                                            "Completed all baseline survey modules 1-4, no baseline samples", 
+                                                            "Completed any baseline sample, did not complete baseline survey",
+                                                            "Completed neither survey or sample(s)"))
+all_data$process <- factor(all_data$process, levels=c("None", "BOH Section only", "BOH and MRE Sections", "BOH and SAS Sections", 
+                                                      "BOH and LAW Sections", 
+                                                      "BOH, MRE, and SAS Sections", "BOH, SAS, and LAW Sections", 
+                                                      "BOH, MRE, and LAW Sections", "All"))
 all_data$provided4<- factor(all_data$provided4,levels=c("Full SSN", "Partial SSN", "No SSN"))
 
 ```
@@ -391,7 +409,7 @@ comp_by_site_totals <- create_tbl_cross1(all_data,"Site", "BSL_compl", "row", "S
 total_rows <- nrow(comp_by_site_totals)
 knitr::kable(comp_by_site_totals , 
              caption='Table 1.1. Completion of Initial Surveys by Site', 
-             row.names=FALSE,align=c("l","c","c","c"),
+             row.names=FALSE,align=c("l",rep("c", 3)),
              col.names=c("Site", "All Completed", "One or More Not Completed", "Total"),
              booktabs = TRUE) %>%  
   add_indent(seq(1, total_rows - 1))  %>% 
@@ -412,7 +430,7 @@ all_srvy_comp_totals <- create_tbl_cross1(all_data,"process", "Recruit_Type", "c
 knitr::kable(all_srvy_comp_totals ,
              col.names=c("Sections Submitted", "Active Verified","Passive Verified", "Total Verified"), 
              caption='Table 1.2. Initial Survey Submission Among Verified Participants \n Stratified by Active and Passive Recruits', 
-             row.names=FALSE,align=c("l","c","c","c"), booktabs = TRUE) %>%  
+             row.names=FALSE,align=c("l",rep("c", 3)), booktabs = TRUE) %>%  
   add_indent(seq(1, nrow(all_srvy_comp_totals) - 1))  %>%
   kable_styling(latex_options = c("scale_down","hold_position")) %>% 
   footnote("All sections were in MyConnect on July 5, 2022. There were 766 verified participants before that date.", 
@@ -456,7 +474,7 @@ colnames(section_comp) <- c("Section", "Not Started", "Started", "Submitted", "T
 knitr::kable(section_comp, 
              caption='Table 1.3: Initial Survey Section Submission Status Among Verified Participants', 
              col.names=c("Section", "Not Started", "Started", "Submitted", "Total Verified Participants"), 
-             row.names=FALSE, align=c("l","c","c","c","c"), booktabs = TRUE) %>% 
+             row.names=FALSE, align=c("l",rep("c", 4)), booktabs = TRUE) %>% 
   kable_styling(latex_options = c("scale_down","hold_position"))
 
 
@@ -478,11 +496,16 @@ knitr::kable(section_comp,
 #Time the last Basleine Module was completed
 all_data <- all_data %>% group_by(Connect_ID) %>% mutate(last_mod_ts = max(d_832139544, d_770257102, d_264644252)) %>% ungroup()
 
-all_data <- all_data %>% mutate(ver_M1 = as.numeric(difftime(as.POSIXct(ymd_hms(d_517311251)), as.POSIXct(ymd_hms(d_914594314)), units="hours")),
-                                ver_M2 = as.numeric(difftime(as.POSIXct(ymd_hms(d_832139544)), as.POSIXct(ymd_hms(d_914594314)), units="hours")),
-                                ver_M3 = as.numeric(difftime(as.POSIXct(ymd_hms(d_770257102)), as.POSIXct(ymd_hms(d_914594314)), units="hours")),
-                                ver_M4 = as.numeric(difftime(as.POSIXct(ymd_hms(d_264644252)), as.POSIXct(ymd_hms(d_914594314)), units="hours")),
-                                ver_last = as.numeric(difftime(as.POSIXct(ymd_hms(last_mod_ts)), as.POSIXct(ymd_hms(d_914594314)), units="hours")),
+all_data <- all_data %>% mutate(ver_M1 = as.numeric(difftime(ymd_hms(d_517311251), ymd_hms(d_914594314),
+                                                             units="hours")),
+                                ver_M2 = as.numeric(difftime(ymd_hms(d_832139544), ymd_hms(d_914594314),
+                                                             units="hours")),
+                                ver_M3 = as.numeric(difftime(ymd_hms(d_770257102), ymd_hms(d_914594314),
+                                                             units="hours")),
+                                ver_M4 = as.numeric(difftime(ymd_hms(d_264644252), ymd_hms(d_914594314),
+                                                             units="hours")),
+                                ver_last = as.numeric(difftime(ymd_hms(last_mod_ts), ymd_hms(d_914594314),
+                                                               units="hours")),
                                 ver_M1_mins=ver_M1*60,
                                 ver_M2_mins=ver_M2*60,
                                 ver_M3_mins=ver_M3*60,
@@ -526,13 +549,15 @@ names(Table4a1)[1] <- "Recruit Type"
 
 knitr::kable(Table4a1,format.args = list(big.mark = ","),
              caption='Table 1.4.a. Time (in hours) from Verification to BOH Submission \n Stratified by Active and Passive Recruits', 
-             row.names=FALSE, align=c("l","c","c","c","c","c","c","c"),digits=2, booktabs = TRUE)%>% 
+             row.names=FALSE, align=c("l",rep("c", 7)),
+             digits=2, booktabs = TRUE)%>% 
   kable_styling(latex_options = "scale_down", full_width = FALSE, font_size=8) 
 
 
 knitr::kable(Table4a2,format.args = list(big.mark = ","),
              caption='Table 1.4.b. Time (in hours) from Verification to BOH Submission for All Participants',
-             row.names=FALSE, align=c("l","c","c","c","c","c","c","c"),digits=2, booktabs = TRUE)%>% 
+             row.names=FALSE, align=c("l",rep("c", 7)),
+             digits=2, booktabs = TRUE)%>% 
   kable_styling(latex_options = c("scale_down","hold_position")) 
 ```
 
@@ -557,14 +582,15 @@ verif_to_submit <- function(data, filter_column, filter_value, target_column) {
 }
 
 
+# Once again, each row is its own table, bound together for a full baseline survey summary
 Table4b <- verif_to_submit(all_data, "d_536735468", 231311385, "ver_M2")
 Table4c <- verif_to_submit(all_data, "d_976570371", 231311385, "ver_M3")
 Table4d <- verif_to_submit(all_data, "d_663265240", 231311385, "ver_M4")
-Table4e <- verif_to_submit(all_data, "d_100767870", 353358909, "ver_last")
+Table4e <- verif_to_submit(all_data, "d_100767870", 353358909, "ver_last") #datetime all 4 surveys completed
 
 
 
-### Table4a2 in previous chunk
+### Table4a2 (BOH) in previous chunk
 tb5boh <- as.data.frame(Table4a2)
 table4 <- rbind(tb5boh, Table4b, Table4c, Table4d, Table4e)
 
@@ -578,7 +604,8 @@ colnames(table4)[1] <- "Section"
 
 knitr::kable(table4,format.args = list(big.mark = ","),
              caption='Table 1.5. Time (in hours) from Verification to Initial Survey Module Submission',
-             row.names=FALSE, align=c("l","c","c","c","c","c","c","c"),digits=2, booktabs = TRUE)%>% 
+             row.names=FALSE, align=c("l",rep("c", 7)),
+             digits=2, booktabs = TRUE)%>% 
   kable_styling(latex_options = c("scale_down","hold_position")) 
 
 ```
@@ -595,24 +622,21 @@ knitr::kable(table4,format.args = list(big.mark = ","),
 
 
 
-```{r Submission_Minutes,echo=FALSE, error=FALSE, message=FALSE, warning=FALSE}
+```{r Submission_Minutes, echo=FALSE, error=FALSE, message=FALSE, warning=FALSE}
 
 
 
-completing_module <- function(data, start_time, end_time, completion_flag, completion_status, module_name) {
+completing_module <- function(data, start_time, end_time, completion_flag, module_name) {
   
   
   data <- data %>%
-    filter(!!sym(completion_flag) == completion_status)
-  
-  
-  comp_tm <- as.numeric(difftime(as.POSIXct(ymd_hms(data[[start_time]])), 
-                                 as.POSIXct(ymd_hms(data[[end_time]])), 
-                                 units = "hours"))
-  
+    filter(!!sym(completion_flag) == 231311385)
+
   
   data <- data %>%
-    mutate(comp_mins = comp_tm * 60,
+    mutate(comp_mins = as.numeric(difftime(ymd_hms(data[[start_time]]), 
+                                           ymd_hms(data[[end_time]]), 
+                                           units = "mins")),
            time_frame = case_when(comp_mins < 5 ~ "Under 5 minutes",
                                   comp_mins < 10 ~ "5 to 10 minutes",
                                   comp_mins < 15 ~ "10 to 15 minutes",
@@ -622,25 +646,27 @@ completing_module <- function(data, start_time, end_time, completion_flag, compl
                                   comp_mins < 60 ~ "45 to 60 minutes",
                                   comp_mins >= 60 ~ "60 minutes+",
                                   is.na(data[[start_time]]) | is.na(data[[end_time]]) ~ "Missing Time Stamp(s)",
-                                  start_time>end_time ~ "Start Time after End Time")) #new
+                                  #is.na(start_time) | is.na(end_time) ~ "Missing Time Stamp(s)",
+                                  data[[start_time]]>data[[end_time]] ~ "Start Time after End Time"),
+           time_frame = factor(time_frame, levels = c(
+             "Under 5 minutes", "5 to 10 minutes", "10 to 15 minutes",
+             "15 to 20 minutes", "20 to 30 minutes", "30 to 45 minutes",
+             "45 to 60 minutes", "60 minutes+", "Missing Time Stamp(s)",
+             "Start Time after End Time")))
   
-  data$time_frame <- factor(data$time_frame, levels = c(
-    "Under 5 minutes", "5 to 10 minutes", "10 to 15 minutes",
-    "15 to 20 minutes", "20 to 30 minutes", "30 to 45 minutes",
-    "45 to 60 minutes", "60 minutes+", "Missing Time Stamp(s)",
-    "Start Time after End Time"
-  ))
-  
-  #Add a Total Row
+  # N, Pct, Cumm Pct
   summary_data <- data %>%
     group_by(time_frame) %>%
-    summarize(n = n(), percentage = 100 * n / nrow(data)) %>%
+    summarize(n = n(), 
+              percentage = 100 * n / nrow(data)) %>%
     ungroup() %>%
     mutate(cumulative_percentage = cumsum(percentage)) %>%
     select(time_frame, n, percentage, cumulative_percentage)
   
+  #Add a Total Row
   summary_row <- summary_data %>%
-    summarize(n = sum(n), percentage = 100, 
+    summarize(n = sum(n), 
+              percentage = 100, 
               cumulative_percentage = 100,
               time_frame = "Total")
   
@@ -654,31 +680,24 @@ completing_module <- function(data, start_time, end_time, completion_flag, compl
   knitr::kable(table_summary, 
                caption = paste0('Table ', module_name, ' Section Initial Survey Submission Time \n from Start to Submit for Verified Participants'), 
                col.names = c("Submission Time", "Total Participants", "Cumulative Percentage"), 
-               row.names = FALSE, align = c("l", "c"), digits = 1, booktabs = TRUE) %>%  
+               row.names = FALSE, align = c("l", "c", "c"), 
+               digits = 2, booktabs = TRUE) %>%  
     add_indent(seq(1, nrow(table_summary) - 1)) %>% 
     kable_styling(latex_options = "scale_down") 
 }
 
 
-table6.1_sum <- completing_module(all_data, "d_517311251", "d_205553981", "d_949302066", 231311385, "1.6.a. BOH")
-table6.2_sum <- completing_module(all_data, "d_832139544", "d_541836531", "d_536735468", 231311385, "1.6.b. MRE")
-table6.3_sum <- completing_module(all_data, "d_770257102", "d_386488297", "d_976570371", 231311385, "1.6.c. SAS")
-table6.4_sum <- completing_module(all_data, "d_264644252", "d_452942800", "d_663265240", 231311385, "1.6.d. LAW")
+completing_module(all_data, "d_517311251", "d_205553981", "d_949302066", "1.6.a. BOH")
+completing_module(all_data, "d_832139544", "d_541836531", "d_536735468", "1.6.b. MRE")
+completing_module(all_data, "d_770257102", "d_386488297", "d_976570371", "1.6.c. SAS")
+completing_module(all_data, "d_264644252", "d_452942800", "d_663265240", "1.6.d. LAW")
 
 
 ```
 
 
-```{r BL_comp_time,echo=FALSE,error=FALSE,message=FALSE,warning=FALSE,results='asis'}
-table6.1_sum
-table6.2_sum
-table6.3_sum
-```
 
-\newpage
-```{r LAW_comp_time,echo=FALSE,error=FALSE,message=FALSE,warning=FALSE,results='asis'}
-table6.4_sum
-```
+
 
 
 
@@ -688,9 +707,9 @@ table6.4_sum
 
 
 
-start_to_submit <- function(data, filter_column, filter_value, target_column) {
+start_to_submit <- function(data, filter_column, target_column) {
   data %>% 
-    filter(!!sym(filter_column) == filter_value) %>% 
+    filter(!!sym(filter_column) == 231311385) %>% 
     summarize('N' = n(),
               Min = min(!!sym(target_column), na.rm = TRUE),
               Q1 = quantile(!!sym(target_column), 0.25, na.rm = TRUE),
@@ -704,10 +723,10 @@ start_to_submit <- function(data, filter_column, filter_value, target_column) {
               Max = max(!!sym(target_column), na.rm = TRUE))
 }
 
-Table7a <- start_to_submit(all_data, "d_949302066", 231311385, "m1_comp_mins")
-Table7b <- start_to_submit(all_data, "d_536735468", 231311385, "m2_comp_mins")
-Table7c <- start_to_submit(all_data, "d_976570371", 231311385, "m3_comp_mins")
-Table7d <- start_to_submit(all_data, "d_663265240", 231311385, "m4_comp_mins")
+Table7a <- start_to_submit(all_data, "d_949302066", "m1_comp_mins")
+Table7b <- start_to_submit(all_data, "d_536735468", "m2_comp_mins")
+Table7c <- start_to_submit(all_data, "d_976570371", "m3_comp_mins")
+Table7d <- start_to_submit(all_data, "d_663265240", "m4_comp_mins")
 
 
 Table7 <- rbind(Table7a, Table7b, Table7c, Table7d)
@@ -721,7 +740,8 @@ colnames(Table7)[1] <- "Section"
 
 knitr::kable(Table7,format.args = list(big.mark = ","),
              caption='Table 1.7. Time (in minutes) from Start to Submit of Initial Survey Modules',
-             row.names=FALSE, align=c("l","c","c","c","c","c","c","c"),digits=2, booktabs = TRUE)%>% 
+             row.names=FALSE, align=c("l",rep("c", 7)),
+             digits=2, booktabs = TRUE)%>% 
   kable_styling(latex_options = c("scale_down","hold_position")) 
 
 
@@ -743,17 +763,33 @@ cannot_ver <- data_c %>%  filter(d_821247024==219863910 & d_512820379==486306141
                                  d_976570371==231311385 | d_663265240==231311385) ~ "At Least One",
                               TRUE ~ "None"))
 
-Numb5 <- cannot_ver %>% group_by(sect_comp) %>%    dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% dplyr::ungroup() %>%  dplyr::select(sect_comp, n, percentage)
+Numb5 <- cannot_ver %>% group_by(sect_comp) %>%    
+  dplyr::summarize(n=n(), percentage=100*n/nrow(.))  %>% 
+  dplyr::ungroup() %>%  
+  dplyr::select(sect_comp, n, percentage)
 
-Numb5_table <- Numb5 %>% mutate(np = paste0(n, " (", round(percentage, digits=2), "%)")) %>% select(sect_comp, np)
+Numb5_table <- Numb5 %>% 
+  mutate(np = paste0(scales::comma(n), " (", 
+                     round(percentage, digits=2), "%)")) 
 
-Numb5_table[dim(Numb5_table)[[1]]+1 , ] <- list("Total", paste(sum(Numb5$n), " (100%)"))
+
+  #Add a Total Row
+  summary_row <- Numb5_table %>%
+    summarize(sect_comp = "Total",
+              n= sum(n),
+              percentage = sum(percentage),
+              np = paste0(scales::comma(sum(n)), " (",
+                          round(percentage, digits=2), "%)"))
+  
+Numb5_table <- bind_rows(Numb5_table, summary_row) %>% 
+  select(sect_comp, np)
 
 
 knitr::kable(Numb5_table, 
              caption='Table 1.8. Inital Survey Submission Status among Active Recruits who Could Not be Verified', 
              col.names=c("Sections Submitted", "Active Recruits"), 
-             row.names=FALSE, align=c("l","c"),digits=1, booktabs = TRUE) %>%  
+             row.names=FALSE, align=c("l","c"),
+             digits=1, booktabs = TRUE) %>%  
   add_indent(c(1:2)) %>% 
   kable_styling(latex_options = "scale_down")
 
@@ -769,7 +805,7 @@ BL_by_Sex_df <- create_tbl_cross2(all_data, "sex", "BL_comp", "row", "Sex", "Bas
 
 knitr::kable(BL_by_Sex_df, 
              caption='Table 1.9. Initial Survey Completion Rate by Site Defined Sex \n Among Verified Participants',
-             row.names=FALSE, align=c("l","c","c","c","c","c"), booktabs = TRUE) %>%
+             row.names=FALSE, align=c("l",rep("c", 5)), booktabs = TRUE) %>%
     kable_styling(latex_options = "scale_down") %>%  
     add_indent(seq(1, nrow(BL_by_Sex_df) - 1)) %>%  landscape() %>% 
   footnote(general="Note: Sex defined as the de-identified sex data reported by sites at time of invitation.",
@@ -783,7 +819,7 @@ BL_by_Age_df <- create_tbl_cross2(all_data, "age", "BL_comp", "row", "Age", "Bas
 
 knitr::kable(BL_by_Age_df, 
              caption="Table 1.10. Initial Survey Completion Rate by Site Defined Age \n Among Verified Participants",
-             row.names=FALSE, align=c("l","c","c","c","c","c"), booktabs = TRUE) %>%
+             row.names=FALSE, align=c("l",rep("c", 5)), booktabs = TRUE) %>%
     kable_styling(latex_options = "scale_down") %>%  
     add_indent(seq(1, nrow(BL_by_Age_df) - 1)) %>%  landscape() %>% 
   footnote(general="Note: Age defined as the de-identified age data reported by sites at time of invitation, not current age at time of survey completion.",
@@ -822,7 +858,7 @@ ssn_surv_table <- create_tbl_cross2(all_data, "ssn_started", "provided4", "row",
 
 knitr::kable(ssn_surv_table, 
              caption='Table 2.1 Proportion of SSN Given by Submission Status of SSN Survey Among Verified Participants',
-             row.names=FALSE, align=c("l","c","c","c","c"), booktabs = TRUE) %>%
+             row.names=FALSE, align=c("l",rep("c", 4)), booktabs = TRUE) %>%
     kable_styling(latex_options = "scale_down") %>%  
     add_indent(seq(1, nrow(ssn_surv_table) - 1))
 
@@ -854,7 +890,7 @@ colnames(covid_df)[5] <- "Total Eligible for \n COVID-19 Survey"
 
 knitr::kable(covid_df, 
              caption='Table 3.1 Baseline COVID Response Rate',
-             row.names=FALSE, align=c("l","c","c","c","c","c"), booktabs = TRUE) %>% #, escape = FALSE) %>%
+             row.names=FALSE, align=c("l",rep("c", 5)), booktabs = TRUE) %>% 
     kable_styling(latex_options = "scale_down", full_width = FALSE) %>% 
   footnote( "Note: This table includes all participants who are eligible for the stand alone COVID-19 Survey. Eligibility is defined as having donated a biospecimen collection on or after July 5th, 2023.", 
             general_title = "",
@@ -869,7 +905,7 @@ knitr::kable(covid_df,
 
 Covid_time = all_data %>% 
   filter(d_220186468==231311385 & (as.Date(d_556788178) >= as.Date("2023-07-05"))) %>% 
-  mutate(covid_start_stop = as.numeric(difftime(as.POSIXct(ymd_hms(d_784810139)), as.POSIXct(ymd_hms(d_268176409)), units="mins")), 
+  mutate(covid_start_stop = as.numeric(difftime(ymd_hms(d_784810139), ymd_hms(d_268176409), units="mins")), 
          timeframe = case_when(covid_start_stop<5 ~ "Under 5 Minutes",
                        covid_start_stop<10 ~ "5-10 Minutes",
                        covid_start_stop<15 ~ "10-15 Minutes",
@@ -891,7 +927,7 @@ summary_row <- data.frame(timeframe = "Total Submitted COVID-19 Surveys",
 
 Covid_time <- rbind(Covid_time, summary_row) %>%
     mutate(N_percent = paste0(formatC(n, big.mark = ",", format = "d"), 
-                              " (", round(Percentage, digits = 1), "%)"),
+                              " (", round(Percentage, digits = 2), "%)"),
            Cumulative_Percentage = round(cumsum(Percentage), digits=2))
 Covid_time$Cumulative_Percentage[nrow(Covid_time)] <- 100
 
@@ -903,7 +939,7 @@ Covid_time <- Covid_time %>%
 
 knitr::kable(Covid_time, 
              caption='Table 3.2 Baseline COVID Survey Completion Length (in minutes) among Submitted COVID-19 Surveys',
-             row.names=FALSE, align=c("l","c","c"), booktabs = TRUE) %>% #, escape = FALSE
+             row.names=FALSE, align=c("l","c","c"), booktabs = TRUE) %>%
   add_indent(c(1:(nrow(Covid_time)-1))) %>% 
     kable_styling(latex_options = "scale_down", full_width = FALSE)  %>% 
   footnote("To determine the length of COVID-19 Survey questions, only those who completed the stand alone COVID-19 Survey were included in this table. Those that completed the COVID-19 survey questions within the baseline biospecimen survey were not included.",
@@ -1015,7 +1051,7 @@ colnames(QOL_comp_BL)[5] <- "Total QOL Eligible \n Participants"
 
 knitr::kable(QOL_comp_BL, 
              caption='Table 4.2. Completion of 3-Month Quality of Life Survey by Baseline Data Completeness',
-             row.names=FALSE, align=c("l","c","c","c","c"), booktabs = TRUE) %>%
+             row.names=FALSE, align=c("l",rep("c", 4)), booktabs = TRUE) %>%
     kable_styling(latex_options = "scale_down") %>%  
     add_indent(seq(1, nrow(QOL_comp_BL) - 1)) %>%  landscape()
 
@@ -1032,7 +1068,7 @@ colnames(QOL_comp_BL_after)[5] <- "Total QOL Eligible \n Participants"
 
 knitr::kable(QOL_comp_BL_after, 
              caption='Table 4.2.a. Completion of 3-Month Quality of Life Survey by Baseline Data Completeness among Eligible Participants Verified on or after December 1, 2023',
-             row.names=FALSE, align=c("l","c","c","c","c"), booktabs = TRUE) %>%
+             row.names=FALSE, align=c("l",rep("c", 4)), booktabs = TRUE) %>%
     kable_styling(latex_options = "scale_down") %>%  
     add_indent(seq(1, nrow(QOL_comp_BL_after) - 1)) %>%  landscape()
 
@@ -1047,7 +1083,7 @@ QOL_comp_BL_before <- create_tbl_cross2(QOL_comp_after, "completion", "qolcomplt
 colnames(QOL_comp_BL_before)[5] <- "Total QOL Eligible \n Participants"
 knitr::kable(QOL_comp_BL_before, 
              caption='Table 4.2.b. Completion of 3-Month Quality of Life Survey by Baseline Data Completeness among Eligible Participants Verified on before December 1, 2023',
-             row.names=FALSE, align=c("l","c","c","c","c"), booktabs = TRUE) %>%
+             row.names=FALSE, align=c("l",rep("c", 4)), booktabs = TRUE) %>%
     kable_styling(latex_options = "scale_down") %>%  
     add_indent(seq(1, nrow(QOL_comp_BL_before) - 1)) %>%  landscape()
 
@@ -1076,7 +1112,8 @@ Comp_by_Sex <- all_data %>% filter(qolcomplt!="Not Eligible") %>%
 Comp_by_Sex_table <- Comp_by_Sex %>%
   modify_header(stat_0 = "Total QOL Eligible \n Participants") %>%
   modify_caption("Table 4.3. 3-Month Quality of Life Survey Completion Rate by Site Defined Sex \n Among Eligible Participants") %>%
-  as_kable_extra(escape = FALSE, addtl_fmt = TRUE) %>% kable_styling(latex_options = c("scale_down","hold_position"))  
+  as_kable_extra(escape = FALSE, addtl_fmt = TRUE) %>% 
+  kable_styling(latex_options = c("scale_down","hold_position"))  
 
 add_footnote(Comp_by_Sex_table, "Note: Sex defined as the de-identified sex data reported by sites at time of invitation.", 
              notation = "none")
@@ -1100,7 +1137,8 @@ Comp_by_Age <- all_data %>% filter(qolcomplt!="Not Eligible") %>%
 Comp_by_Age <- Comp_by_Age %>%
   modify_header(stat_0 = "Total QOL Eligible \n Participants") %>%
   modify_caption("Table 4.4. 3-Month Quality of Life Survey Completion Rate by Age \n Among Eligible Participants") %>%
-  as_kable_extra(escape = FALSE, addtl_fmt = TRUE)  %>% kable_styling(latex_options = c("scale_down","hold_position")) 
+  as_kable_extra(escape = FALSE, addtl_fmt = TRUE)  %>% 
+  kable_styling(latex_options = c("scale_down","hold_position")) 
 
 add_footnote(Comp_by_Age, "Note: Age defined as the de-identified age data reported by sites at time of invitation, not current age at time of survey completion.", 
              notation="none")
@@ -1113,7 +1151,7 @@ add_footnote(Comp_by_Age, "Note: Age defined as the de-identified age data repor
 ```{r merge1, include=FALSE, warning=FALSE}
 
 
-### Pulling in Module 1 completion to get participant defined race for the next few tables
+### Pulling in Module 1 completion to get participant defined race for the next few tables ####
 
 
 
@@ -1274,9 +1312,12 @@ Comp_by_race <- m1_comp %>% filter(qolcomplt!="Not Eligible") %>%
 Comp_by_race <- Comp_by_race %>%
   modify_header(stat_0 = "Total QOL Eligible \n Participants") %>%
   modify_caption("Table 4.5. 3-Month Quality of Life Survey Completion Rate by Race \n Among Eligible Participants") %>%
-  as_kable_extra(escape = FALSE, addtl_fmt = TRUE) %>% kable_styling(latex_options = c("scale_down","hold_position"))
+  as_kable_extra(escape = FALSE, addtl_fmt = TRUE) %>% 
+  kable_styling(latex_options = c("scale_down","hold_position"))
 
-reduced <- all_data %>% filter(d_949302066 != 231311385 & qolcomplt!="Not Eligible") # Those who are eligible for PROMIS but didn't complete mod1 yet
+
+# Those who are eligible for PROMIS but didn't complete mod1 yet
+reduced <- all_data %>% filter(d_949302066 != 231311385 & qolcomplt!="Not Eligible") 
 
 add_footnote(Comp_by_race, paste0('Note: In order to determine race, Module 1 must first be completed. There are ', dim(reduced)[[1]] , ' QOL eligible participants that have either not started or not finished Module 1.'),
              notation="none")
@@ -1293,7 +1334,7 @@ QOL_by_race_df <- create_tbl_cross2(QOL_by_race, "race", "qolcomplt", "row", "Ra
 
 knitr::kable(QOL_by_race_df, 
              caption="Table 4.5.a 3-Month Quality of Life Survey Completion Rate by Site Defined Race \n Among Verified Participants",
-             row.names=FALSE, align=c("l","c","c","c","c","c"), booktabs = TRUE) %>%
+             row.names=FALSE, align=c("l",rep("c", 5)), booktabs = TRUE) %>%
     kable_styling(latex_options = "scale_down") %>%  
     add_indent(seq(1, nrow(BL_by_Race_df) - 1)) %>%  landscape() %>%
     footnote(general = "Note: Race defined as the de-identified race data reported by sites at time of invitation.",
@@ -1345,9 +1386,11 @@ m1_comp <- m1_comp %>%
     "White Women" = if_else(race == "White" & sex == "Female", 1, 0),
     "Black Men" = if_else(race == "Black, African American, or African" & sex == "Male", 1, 0),
     "Women Under 45" = if_else((age == "35-39" | age == "40-45") & sex == "Female", 1, 0),
-    "Women Over 45" = if_else((age == "46-50" | age == "51-55" | age == "56-60" | age == "61-65" | age == "66-70") & sex == "Female", 1, 0),
+    "Women Over 45" = if_else((age == "46-50" | age == "51-55" | age == "56-60" | age == "61-65" | age == "66-70") & 
+                                sex == "Female", 1, 0),
     "Men Under 45" = if_else((age == "35-39" | age == "40-45") & sex == "Male", 1, 0),
-    "Men Over 45" = if_else((age == "46-50" | age == "51-55" | age == "56-60" | age == "61-65" | age == "66-70") & sex == "Male", 1, 0)
+    "Men Over 45" = if_else((age == "46-50" | age == "51-55" | age == "56-60" | age == "61-65" | age == "66-70") & 
+                              sex == "Male", 1, 0)
   )
 
 # Can be in more then one category
@@ -1379,7 +1422,8 @@ Comp_by_Demographic <- Comp_by_Demographic %>%
 
 # Style the table output
 Comp_by_Demographic %>% kable_styling(latex_options = c("scale_down", "hold_position"))  %>% 
-  footnote(general = "Participants may be counted more then once in these categories.",general_title = "Note: ", footnote_as_chunk = T)
+  footnote(general = "Participants may be counted more then once in these categories.",
+           general_title = "Note: ", footnote_as_chunk = T)
 
 
 ```
@@ -1392,7 +1436,7 @@ Comp_by_Demographic %>% kable_styling(latex_options = c("scale_down", "hold_posi
 
 QOL_time <- all_data %>% 
   filter(qolcomplt=="Submitted") %>%
-  mutate(compTM_qol = as.numeric(difftime(as.POSIXct(ymd_hms(d_843688458)), as.POSIXct(ymd_hms(d_870643066)), units="mins")),
+  mutate(compTM_qol = as.numeric(difftime(ymd_hms(d_843688458), ymd_hms(d_870643066), units="mins")),
          permission = case_when(compTM_qol<5 ~ "Under 5 Minutes",
                                 compTM_qol<10 ~ "5-10 Minutes",
                                 compTM_qol<15 ~ "10-15 Minutes",
@@ -1413,7 +1457,7 @@ summary_row <- data.frame(permission = "Total Submitted QOL Survey",
 
 QOL_TM <- rbind(QOL_time, summary_row) %>%
   mutate(N_percent = paste0(formatC(n, big.mark = ",", format = "d"), 
-                            " (", round(Percentage, digits = 1), "%)"),
+                            " (", round(Percentage, digits = 2), "%)"),
          Cumulative_Percentage = round(cumsum(Percentage), digits=2))
 QOL_TM$Cumulative_Percentage[nrow(QOL_TM)] <- 100
 
@@ -1441,7 +1485,8 @@ knitr::kable(QOL_TM, #format.args = list(big.mark = ","),
 # category= 3mo QOL Survey Reminders attempt=1st contact notification_time will be used in place of FIRST_QOL_REMINDER
 
 trig_qol <- bq_project_query(project,
-query="SELECT distinct(token), notification_time FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications`
+query="SELECT distinct(token), notification_time 
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications`
 where category='3mo QOL Survey Reminders' and attempt='1st contact'")
 trigger <- bigrquery::bq_table_download(trig_qol,bigint = "integer64")
 
@@ -1455,7 +1500,7 @@ trigger_time <- trigger_time %>%
                           TRUE ~ ymd_hms(d_914594314) + days(90)))
 
 trig_time<- trigger_time %>%  filter(qolcomplt=="Submitted") %>%
-  mutate(trigTM_qol = as.numeric(difftime(as.POSIXct(ymd_hms(d_843688458)), as.POSIXct(ymd_hms(trig)), units="days")))
+  mutate(trigTM_qol = as.numeric(difftime(ymd_hms(d_843688458), ymd_hms(trig), units="days")))
 
 Trig_table = trig_time %>%
   dplyr::summarize('N'=n(),
@@ -1471,7 +1516,7 @@ Trig_table = trig_time %>%
 knitr::kable(Trig_table, 
              caption = 'Table 4.9. 3-Month Quality of Life Survey Completion from Trigger to Submit for \n Verified Participants, in Days', 
              row.names=FALSE, format.args = list(big.mark = ","), linesep = "", 
-             booktabs = T, align=c("l", "c", "c", "c", "c", "c", "c", "c", "c")) %>% 
+             booktabs = T, align=c("l", rep("c", 8))) %>% 
   kable_styling(latex_options = c("scale_down","hold_position")) 
 
 ```
@@ -1484,16 +1529,18 @@ qol_ver<- all_data %>%  filter(qolcomplt != "Not Eligible") %>%
                               as.Date(d_914594314) < "2023-07-01" ~ "6 Months - 1 Year",
                               as.Date(d_914594314) < "2024-01-01" ~ "3 Months - 6 Months",
                               as.Date(d_914594314) >= "2024-01-01" ~ "At 3 Months"),
-         ver_surv = factor(ver_surv, levels=c("More than 1 Year","6 Months - 1 Year","3 Months - 6 Months","At 3 Months")))
+         ver_surv = factor(ver_surv, levels=c("More than 1 Year","6 Months - 1 Year",
+                                              "3 Months - 6 Months","At 3 Months")))
 
 
-qol_ver_df <- create_tbl_cross2(qol_ver, "ver_surv", "qolcomplt", "row", "Time from Verification to QOL Survey Release", "Survey Completion", 
+qol_ver_df <- create_tbl_cross2(qol_ver, "ver_surv", "qolcomplt", "row", "Time from Verification to QOL Survey Release", 
+                                "Survey Completion", 
                                 "Total QOL Eligible Participants")
 
 colnames(qol_ver_df)[5] <- "Total QOL Eligible \n Participants"
 knitr::kable(qol_ver_df, 
              caption='Table 4.10. 3-Month Quality of Life Survey Completion By Time from Verification to QOL Survey Release',
-             row.names=FALSE, align=c("l","c","c","c","c"), booktabs = TRUE) %>%
+             row.names=FALSE, align=c("l",rep("c", 4)), booktabs = TRUE) %>%
     kable_styling(latex_options = "scale_down") %>%  
     add_indent(seq(1, nrow(qol_ver_df) - 1)) %>%  landscape()
   
@@ -1559,15 +1606,15 @@ BL_QOL <- trigger_time %>%
 #############    Denominator #################
 
 ## Determine when a person was QOL eligible
-# trigger_time <- trigger_time %>%
-#   mutate(trig = case_when(d_914594314 < as.Date("2023-12-01") ~ ymd_hms(notification_time),
-#                           TRUE ~ ymd_hms(d_914594314) + days(90)))
+  # trigger_time <- trigger_time %>%
+  #   mutate(trig = case_when(d_914594314 < as.Date("2023-12-01") ~ ymd_hms(notification_time),
+  #                           TRUE ~ ymd_hms(d_914594314) + days(90)))
 
 ## Determine when a participant was BL survey eligible
-#MRE/SAS/LAW- once BOH completed ----   d_517311251
-#BUM/BU- when notified by email 
-#MW- when notified the MW kit was shipped
-#COVID- pushed to prod on 7/5/2023 and requires biospecimen donation 
+    #MRE/SAS/LAW- once BOH completed (d_517311251)
+    #BUM/BU- when notified by email 
+    #MW- when notified the MW kit was shipped
+    #COVID- pushed to prod on 7/5/2023 and requires biospecimen donation 
 
 
 
@@ -1677,7 +1724,7 @@ knitr::kable(DHQ_comp_BL,
 
 dhq_time = dhq1 %>% 
   filter(dhq_status=="Submitted") %>% 
-  mutate(dhq_start_stop = as.numeric(difftime(as.POSIXct(ymd_hms(d_610227793)), as.POSIXct(ymd_hms(d_109610692)), units="mins")), 
+  mutate(dhq_start_stop = as.numeric(difftime(ymd_hms(d_610227793), ymd_hms(d_109610692), units="mins")), 
          timeframe = case_when(dhq_start_stop<30 ~ "Under 30 Minutes",
                                dhq_start_stop<45 ~ "30-45 Minutes",
                                dhq_start_stop<60 ~ "45-60 Minutes",
@@ -1737,7 +1784,7 @@ trigger_time_DHQ <- left_join(trigger_time, trigger_DHQ, by="token")
 
 
 trig_time_DHQ <- trigger_time_DHQ %>%  filter(dhq_status == "Submitted") %>%
-  mutate(trigTM_DHQ = as.numeric(difftime(as.POSIXct(ymd_hms(d_610227793)), as.POSIXct(ymd_hms(DHQ_notif)), units="days")))
+  mutate(trigTM_DHQ = as.numeric(difftime(ymd_hms(d_610227793), ymd_hms(DHQ_notif), units="days")))
 
 Trig_table_DHQ = trig_time_DHQ %>%
   dplyr::summarize('N'=n(),
@@ -1753,7 +1800,7 @@ Trig_table_DHQ = trig_time_DHQ %>%
 knitr::kable(Trig_table_DHQ, 
              caption = 'Table 5.4. 6-month Diet History Questionnaire Completion from Trigger to Submit for \n Verified Participants, in Days', 
              row.names=FALSE, format.args = list(big.mark = ","), linesep = "", 
-             booktabs = T, align=c("l", "c", "c", "c", "c", "c", "c", "c", "c")) %>% 
+             booktabs = T, align=c("l", rep("c", 8))) %>% 
   kable_styling(latex_options = c("scale_down","hold_position")) 
 
 ```
@@ -1773,8 +1820,10 @@ BL_DHQ <- trigger_time_DHQ %>%
          MRE = as.Date(d_610227793) <= as.Date(d_832139544) & difftime(as.Date(d_832139544), as.Date(d_610227793), units="days") <31,
          SAS = as.Date(d_610227793) <= as.Date(d_770257102) & difftime(as.Date(d_770257102), as.Date(d_610227793), units="days") <31,
          LAW = as.Date(d_610227793) <= as.Date(d_264644252) & difftime(as.Date(d_264644252), as.Date(d_610227793), units="days") <31,
-         BUM = (as.Date(BUM_time) < as.Date(DHQ_notif) ) & (as.Date(d_610227793) <= as.Date(d_222161762)) & difftime(as.Date(d_222161762), as.Date(d_610227793), units="days") <31,  
-         BU = (as.Date(BU_time) < as.Date(DHQ_notif) ) & (as.Date(d_610227793) <= as.Date(d_764863765)) & difftime(as.Date(d_764863765), as.Date(d_610227793), units="days") <31, 
+         BUM = (as.Date(BUM_time) < as.Date(DHQ_notif) ) & (as.Date(d_610227793) <= as.Date(d_222161762)) & 
+           difftime(as.Date(d_222161762), as.Date(d_610227793), units="days") <31,  
+         BU = (as.Date(BU_time) < as.Date(DHQ_notif) ) & (as.Date(d_610227793) <= as.Date(d_764863765)) & 
+           difftime(as.Date(d_764863765), as.Date(d_610227793), units="days") <31, 
          MW = (as.Date(d_173836415_d_266600170_d_319972665_d_661940160) < as.Date(DHQ_notif)) & (as.Date(d_610227793) <= as.Date(d_195145666)) & 
            difftime(as.Date(d_195145666), as.Date(d_610227793), units="days") <31,
          COVID = (as.Date(d_556788178) < as.Date(DHQ_notif)) & (as.Date(d_556788178) >= as.Date("2023-07-05")) & (as.Date(d_610227793) <= as.Date(d_784810139)) & 
@@ -1795,10 +1844,10 @@ BL_DHQ <- trigger_time_DHQ %>%
 
 
 ## Determine when a participant was BL survey eligible
-#MRE/SAS/LAW- once BOH completed ----   d_517311251
-#BUM/BU- when notified by email 
-#MW- when notified the MW kit was shipped
-#COVID- pushed to prod on 7/5/2023 and requires biospecimen donation 
+    #MRE/SAS/LAW- once BOH completed (d_517311251)
+    #BUM/BU- when notified by email 
+    #MW- when notified the MW kit was shipped
+    #COVID- pushed to prod on 7/5/2023 and requires biospecimen donation 
 
 
 
@@ -1839,7 +1888,7 @@ colnames(after_DHQ) <- c("Survey", "n", "eligible")
 after_DHQ_table <- after_DHQ %>%
   mutate(Percentage = (n / eligible) * 100,
          N_percent = paste0(formatC(n, big.mark = ",", format = "d"), 
-                            " (", round(Percentage, digits = 1), "%)")) %>% 
+                            " (", round(Percentage, digits = 2), "%)")) %>% 
   dplyr::rename('Eligible for Survey' = eligible,
          'N%' = N_percent) %>% 
     select('Survey', 'N%', 'Eligible for Survey')
@@ -1879,7 +1928,7 @@ dhq_ver_df <- create_tbl_cross2(dhq_ver, "ver_surv", "dhq_status", "row", "Time 
 colnames(dhq_ver_df)[5] <- "Total DHQ Eligible \n Participants"
 knitr::kable(dhq_ver_df, 
              caption='Table 5.6. 6-month Diet History Questionnaire Completion By Time from Verification to Release',
-             row.names=FALSE, align=c("l","c","c","c","c"), booktabs = TRUE) %>%
+             row.names=FALSE, align=c("l",rep("c", 4)), booktabs = TRUE) %>%
     kable_styling(latex_options = "scale_down") %>%  
     add_indent(seq(1, nrow(dhq_ver_df) - 1)) %>%  landscape()
   
@@ -1898,7 +1947,7 @@ colnames(dhq1_df7)[6] <- "Total Eligible for \n DHQ Survey"
 
 knitr::kable(dhq1_df7, 
              caption='Table 5.7. Cross Check between 6-month Diet History Questionnaire Survey Status flag \n and the Status According to the DHQ System',
-             row.names=FALSE, align=c("l","c","c","c","c"), booktabs = TRUE) %>%
+             row.names=FALSE, align=c("l",rep("c", 4)), booktabs = TRUE) %>%
     kable_styling(latex_options = "scale_down") %>% 
   footnote(general = "Note: A 'Null' status according to the DHQ system means the participant has not logged into MyConnect since becoming eligible for the DHQ. 'Not yet begun' means they have logged into MyConnect but have not yet started the DHQ survey. There may also be up to a 24 hour delay between a participant starting and/or completing the survey and retrieving their 'Submitted', 'In Progress', and/or 'Completed' status.", 
            general_title = "",
@@ -1928,7 +1977,8 @@ DHQ_Comp_by_Sex <- dhq1 %>%
 DHQ_Comp_by_Sex_table <- DHQ_Comp_by_Sex %>%
   modify_header(stat_0 = "Total DHQ Eligible \n Participants") %>%
   modify_caption("Table 5.8. 6-month Diet History Questionnaire Completion Rate by Site Defined Sex \n Among Eligible Participants") %>%
-  as_kable_extra(escape = FALSE, addtl_fmt = TRUE) %>% kable_styling(latex_options = c("scale_down","hold_position"))  
+  as_kable_extra(escape = FALSE, addtl_fmt = TRUE) %>%
+  kable_styling(latex_options = c("scale_down","hold_position"))  
 
 add_footnote(DHQ_Comp_by_Sex_table, "Note: Sex defined as the de-identified sex data reported by sites at time of invitation.", 
              notation = "none")
@@ -1952,7 +2002,8 @@ DHQ_Comp_by_Age <- dhq1 %>%
 DHQ_Comp_by_Age <- DHQ_Comp_by_Age %>%
   modify_header(stat_0 = "Total DHQ Eligible \n Participants") %>%
   modify_caption("Table 5.9. 6-month Diet History Questionnaire Completion Rate by Age \n Among Eligible Participants") %>%
-  as_kable_extra(escape = FALSE, addtl_fmt = TRUE)  %>% kable_styling(latex_options = c("scale_down","hold_position")) 
+  as_kable_extra(escape = FALSE, addtl_fmt = TRUE)  %>% 
+  kable_styling(latex_options = c("scale_down","hold_position")) 
 
 add_footnote(DHQ_Comp_by_Age, "Note: Age defined as the de-identified age data reported by sites at time of invitation, not current age at time of survey completion.", 
              notation="none")
@@ -1979,11 +2030,16 @@ DHQ_Comp_by_race <- m1_comp %>% filter(dhq_status!="Not Eligible") %>%
 DHQ_Comp_by_race <- DHQ_Comp_by_race %>%
   modify_header(stat_0 = "Total DHQ Eligible \n Participants") %>%
   modify_caption("Table 5.10. 6-month Diet History Questionnaire Completion Rate by Race \n Among Eligible Participants") %>%
-  as_kable_extra(escape = FALSE, addtl_fmt = TRUE) %>% kable_styling(latex_options = c("scale_down","hold_position"))
+  as_kable_extra(escape = FALSE, addtl_fmt = TRUE) %>% 
+  kable_styling(latex_options = c("scale_down","hold_position"))
 
-reduced <- all_data %>% filter(d_949302066 != 231311385 & dhq_status!="Not Eligible") # Those who are eligible for PROMIS but didn't complete mod1 yet
 
-add_footnote(DHQ_Comp_by_race, paste0('Note: In order to determine race, Module 1 must first be completed. There are ', dim(reduced)[[1]] , ' DHQ eligible participants that have either not started or not finished Module 1.'),
+# Those who are eligible for PROMIS but didn't complete mod1 yet
+reduced <- all_data %>% filter(d_949302066 != 231311385 & dhq_status!="Not Eligible") 
+
+add_footnote(DHQ_Comp_by_race, paste0('Note: In order to determine race, Module 1 must first be completed. There are ', 
+                                      dim(reduced)[[1]] , 
+                                      ' DHQ eligible participants that have either not started or not finished Module 1.'),
              notation="none")
 
 
@@ -1997,7 +2053,7 @@ DHQ_by_race_df <- create_tbl_cross2(dhq1, "race", "dhq_status", "row", "Race", "
 
 knitr::kable(DHQ_by_race_df, 
              caption="Table 5.10.a 6-month Diet History Questionnaire Completion Rate by Site Defined Race \n Among Verified Participants",
-             row.names=FALSE, align=c("l","c","c","c","c","c"), booktabs = TRUE) %>%
+             row.names=FALSE, align=c("l", rep("c", 5)), booktabs = TRUE) %>%
     kable_styling(latex_options = "scale_down") %>%  
     add_indent(seq(1, nrow(BL_by_Race_df) - 1)) %>%  landscape() %>%
     footnote(general = "Note: Race defined as the de-identified race data reported by sites at time of invitation.",
@@ -2047,7 +2103,8 @@ DHQ_Comp_by_sex_race %>% kable_styling(latex_options = c("scale_down","hold_posi
 DHQ_Comp_by_Demographic <- all_data_long %>% 
   filter(dhq_status != "Not Eligible") %>%
   mutate(dhq_status = factor(dhq_status, levels = c("Not Started", "Started", "Submitted")),
-         Demographic_Group = factor(Demographic_Group, levels=c("White Women","Black Men","Women Under 45","Women Over 45","Men Under 45","Men Over 45"))) %>%
+         Demographic_Group = factor(Demographic_Group, levels=c("White Women","Black Men","Women Under 45",
+                                                                "Women Over 45","Men Under 45","Men Over 45"))) %>%
   select(Demographic_Group, dhq_status) %>%
   tbl_cross(
     row = Demographic_Group,
@@ -2066,7 +2123,8 @@ DHQ_Comp_by_Demographic <- DHQ_Comp_by_Demographic %>%
 
 # Style the table output
 DHQ_Comp_by_Demographic %>% kable_styling(latex_options = c("scale_down", "hold_position"))  %>% 
-  footnote(general = "Participants may be counted more then once in these categories.",general_title = "Note: ", footnote_as_chunk = T)
+  footnote(general = "Participants may be counted more then once in these categories.",
+           general_title = "Note: ", footnote_as_chunk = T)
 
 
 ```
@@ -2117,9 +2175,7 @@ CSH_comp %>% kable_styling(latex_options = c("scale_down","hold_position"))
 
 
 CSH_comp_BL <- all_data %>%  filter(CSH_status!="Not Eligible") %>%  
-  mutate(CSH_status = factor(CSH_status, levels=c("Not Started", "Started", "Submitted")),
-         completion = factor(completion, levels=c("Completed both survey and sample(s)","Completed all baseline survey modules 1-4, no baseline samples", 
-                                                  "Completed any baseline sample, did not complete baseline survey","Completed neither survey or sample(s)")))
+  mutate(CSH_status = factor(CSH_status, levels=c("Not Started", "Started", "Submitted")))
 
 
 CSH_com_df <- create_tbl_cross2(CSH_comp_BL, "completion", "CSH_status", "row", "Completion", "Survey Completion", "Total CSH Eligible Participants")
@@ -2128,7 +2184,7 @@ colnames(CSH_com_df)[5] <- "Total CSH Eligible \n Participants"
 
 knitr::kable(CSH_com_df, 
              caption='Table 6.2. Completion of 9-Month Cancer Screening History Survey by Baseline Data Completeness',
-             row.names=FALSE, align=c("l","c","c","c","c"), booktabs = TRUE) %>%
+             row.names=FALSE, align=c("l",rep("c", 4)), booktabs = TRUE) %>%
   kable_styling(latex_options = "scale_down") %>%  
   add_indent(seq(1, nrow(CSH_com_df) - 1)) %>%  landscape()
 
@@ -2140,7 +2196,7 @@ knitr::kable(CSH_com_df,
 
 
 CSH_time <- all_data %>% filter(CSH_status == "Submitted") %>%
-  mutate(comp_tm_CSH = as.numeric(difftime(as.POSIXct(ymd_hms(d_389890053)), as.POSIXct(ymd_hms(d_609630315)), units="mins")),
+  mutate(comp_tm_CSH = as.numeric(difftime(ymd_hms(d_389890053), ymd_hms(d_609630315), units="mins")),
          start_stop_time = case_when(comp_tm_CSH<5 ~ "Under 5 Minutes",
                                      comp_tm_CSH<10 ~ "5-10 Minutes",
                                      comp_tm_CSH<15 ~ "10-15 Minutes",
@@ -2149,7 +2205,8 @@ CSH_time <- all_data %>% filter(CSH_status == "Submitted") %>%
                                      comp_tm_CSH>=30 ~ "30+ Minutes",
                                      is.na(d_389890053) | is.na(d_609630315) ~ "Missing Stop or Start Timestamp"),
          start_stop_time = factor(start_stop_time, levels=c("Under 5 Minutes", "5-10 Minutes", "10-15 Minutes", 
-                                                            "15-20 Minutes", "20-30 Minutes", "30+ Minutes", "Missing Stop or Start Timestamp")))  %>% 
+                                                            "15-20 Minutes", "20-30 Minutes", "30+ Minutes", 
+                                                            "Missing Stop or Start Timestamp")))  %>% 
   group_by(start_stop_time) %>% tally()
 
 CSH_time$Percentage <- (CSH_time$n / sum(CSH_time$n)) * 100
@@ -2161,7 +2218,7 @@ summary_row <- data.frame(start_stop_time = "Total CSH Eligible Participants",
 
 CSH_TM <- rbind(CSH_time, summary_row) %>%
   mutate(N_percent = paste0(formatC(n, big.mark = ",", format = "d"), 
-                            " (", round(Percentage, digits = 1), "%)"))
+                            " (", round(Percentage, digits = 2), "%)"))
 
 
 CSH_TM <- CSH_TM %>% 
@@ -2174,7 +2231,7 @@ knitr::kable(CSH_TM,
              caption = 'Table 6.3. 9-Month Cancer Screening History Survey Completion Time from Start to Submit \n Among Eligible Participants', 
              booktabs=T, linesep = "", row.names=FALSE, align=c("l", "c")) %>% 
   add_indent(c(1:(nrow(CSH_TM)-1))) %>%  
-  kable_styling(latex_options = "scale_down") #c("scale_down","hold_position"))
+  kable_styling(latex_options = "scale_down") 
 
 ```
 
@@ -2183,8 +2240,10 @@ knitr::kable(CSH_TM,
 
 ## Time from CSH trigger to submission of CSH survey
 
+
 trig_csh <- bq_project_query(project,
-                             query="SELECT distinct(Connect_ID), notification_time as CSH_notif FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` notif
+                             query="SELECT distinct(pts.Connect_ID), notification_time as CSH_notif 
+                             FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications` notif
                              left join `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants` pts
                              on notif.token=pts.token
                              where category LIKE '%Screen%' and attempt='1st contact'")
@@ -2201,7 +2260,7 @@ trigger_time <- left_join(trigger_time, trigger_csh, by="Connect_ID")
 
 CSH_notif_table = trigger_time %>%  
   filter(CSH_status == "Submitted") %>%
-  mutate(time = as.numeric(difftime(as.POSIXct(ymd_hms(d_389890053)), as.POSIXct(ymd_hms(CSH_notif)), units="days"))) %>% 
+  mutate(time = as.numeric(difftime(ymd_hms(d_389890053), ymd_hms(CSH_notif), units="days"))) %>% 
   dplyr::summarize('N'=n(),
                    Min = round(min(time, na.rm = TRUE), digits=2),
                    Q1 = round(quantile(time, 0.25, na.rm = TRUE), digits=2),
@@ -2217,7 +2276,7 @@ CSH_notif_table = trigger_time %>%
 knitr::kable(CSH_notif_table, 
              caption = 'Table 6.4. 9-Month Cancer Screening History Survey Completion from Trigger \n to Submit for Verified Participants, in Days', 
              row.names=FALSE, format.args = list(big.mark = ","), linesep = "", 
-             booktabs = T, align=c("l", "c", "c", "c", "c", "c", "c", "c", "c")) %>% 
+             booktabs = T, align=c("l", rep("c", 8))) %>% 
   kable_styling(latex_options = c("scale_down","hold_position")) 
 
 ```
@@ -2229,8 +2288,7 @@ knitr::kable(CSH_notif_table,
 
 ```{r BL_After_CSH2, echo=FALSE, warning=FALSE, message=FALSE}
 
-## Determine when a person was CSH eligible
-# time notification was sent
+## Determine when a person was CSH eligible --> time notification was sent
 
 ################   Numerator  ##############
 
@@ -2262,10 +2320,10 @@ BL_CSH <- trigger_time %>%
 
 
 ## Determine when a participant was BL survey eligible
-#MRE/SAS/LAW- once BOH completed ----   d_517311251
-#BUM/BU- when notified by email 
-#MW- when notified the MW kit was shipped
-#COVID- pushed to prod on 7/5/2023 and requires biospecimen donation 
+    #MRE/SAS/LAW- once BOH completed (d_517311251)
+    #BUM/BU- when notified by email 
+    #MW- when notified the MW kit was shipped
+    #COVID- pushed to prod on 7/5/2023 and requires biospecimen donation 
 
 
 
@@ -2336,15 +2394,16 @@ csh_ver<- all_data %>%  filter(CSH_status != "Not Eligible") %>%
          ver_surv = factor(ver_surv, levels=c("More than 18 Months","12-18 Months","9-12 Months")))
 
 
-csh_ver_df <- create_tbl_cross2(csh_ver, "ver_surv", "CSH_status", "row", "Time from Verification to CSH Survey Release", "Survey Completion", 
-                                "Total CSH Eligible Participants")
+csh_ver_df <- create_tbl_cross2(csh_ver, "ver_surv", "CSH_status", "row", "Time from Verification to CSH Survey Release", 
+                                "Survey Completion", "Total CSH Eligible Participants")
 
 colnames(csh_ver_df)[5] <- "Total CSH Eligible \n Participants"
 knitr::kable(csh_ver_df, 
              caption='Table 6.6. 9-Month Cancer Screening History Survey Completion \n By Time from Verification to CSH Survey Release',
-             row.names=FALSE, align=c("l","c","c","c","c"), booktabs = TRUE) %>%
+             row.names=FALSE, align=c("l",rep("c", 4)), booktabs = TRUE) %>%
     kable_styling(latex_options = "scale_down") %>%  
-    add_indent(seq(1, nrow(csh_ver_df) - 1)) %>%  landscape()
+    add_indent(seq(1, nrow(csh_ver_df) - 1)) %>%  
+  landscape()
   
 
 
@@ -2369,7 +2428,8 @@ CSH_Comp_by_Sex <- all_data %>%  filter(CSH_status != "Not Eligible") %>%
 CSH_Comp_by_Sex_table <- CSH_Comp_by_Sex %>%
   modify_header(stat_0 = "Total CSH Eligible \n Participants") %>%
   modify_caption("Table 6.7. 9-Month Cancer Screening History Survey Completion Rate by Site Defined Sex \n Among Eligible Participants") %>%
-  as_kable_extra(escape = FALSE, addtl_fmt = TRUE) %>% kable_styling(latex_options = c("scale_down","hold_position"))  
+  as_kable_extra(escape = FALSE, addtl_fmt = TRUE) %>% 
+  kable_styling(latex_options = c("scale_down","hold_position"))  
 
 add_footnote(CSH_Comp_by_Sex_table, "Note: Sex defined as the de-identified sex data reported by sites at time of invitation.", 
              notation = "none")
@@ -2393,7 +2453,8 @@ CSH_Comp_by_Age <- all_data %>%  filter(CSH_status != "Not Eligible") %>%
 CSH_Comp_by_Age <- CSH_Comp_by_Age %>%
   modify_header(stat_0 = "Total CSH Eligible \n Participants") %>%
   modify_caption("Table 6.8. 9-Month Cancer Screening History Survey Completion Rate by Age \n Among Eligible Participants") %>%
-  as_kable_extra(escape = FALSE, addtl_fmt = TRUE)  %>% kable_styling(latex_options = c("scale_down","hold_position")) 
+  as_kable_extra(escape = FALSE, addtl_fmt = TRUE)  %>% 
+  kable_styling(latex_options = c("scale_down","hold_position")) 
 
 add_footnote(CSH_Comp_by_Age, "Note: Age defined as the de-identified age data reported by sites at time of invitation, not current age at time of survey completion.", 
              notation="none")
@@ -2420,11 +2481,16 @@ CSH_Comp_by_race <- m1_comp %>% filter(CSH_status!="Not Eligible") %>%
 CSH_Comp_by_race <- CSH_Comp_by_race %>%
   modify_header(stat_0 = "Total CSH Eligible \n Participants") %>%
   modify_caption("Table 6.9. 9-Month Cancer Screening History Survey Completion Rate by Race \n Among Eligible Participants") %>%
-  as_kable_extra(escape = FALSE, addtl_fmt = TRUE) %>% kable_styling(latex_options = c("scale_down","hold_position"))
+  as_kable_extra(escape = FALSE, addtl_fmt = TRUE) %>% 
+  kable_styling(latex_options = c("scale_down","hold_position"))
 
-reduced <- all_data %>% filter(d_949302066 != 231311385 & CSH_status!="Not Eligible") # Those who are eligible for PROMIS but didn't complete mod1 yet
 
-add_footnote(CSH_Comp_by_race, paste0('Note: In order to determine race, Module 1 must first be completed. There are ', dim(reduced)[[1]] , ' CSH eligible participants that have either not started or not finished Module 1.'),
+# Those who are eligible for PROMIS but didn't complete mod1 yet
+reduced <- all_data %>% filter(d_949302066 != 231311385 & CSH_status!="Not Eligible") 
+
+add_footnote(CSH_Comp_by_race, paste0('Note: In order to determine race, Module 1 must first be completed. There are ', 
+                                      dim(reduced)[[1]] , 
+                                      ' CSH eligible participants that have either not started or not finished Module 1.'),
              notation="none")
 
 
@@ -2435,13 +2501,15 @@ add_footnote(CSH_Comp_by_race, paste0('Note: In order to determine race, Module 
 
 csh1 <- all_data %>%  filter(CSH_status != "Not Eligible")
 
-CSH_by_race_df <- create_tbl_cross2(csh1, "race", "CSH_status", "row", "Race", "9-Month Cancer Screening History Survey", "Total Verified Participants")
+CSH_by_race_df <- create_tbl_cross2(csh1, "race", "CSH_status", "row", "Race", "9-Month Cancer Screening History Survey", 
+                                    "Total Verified Participants")
 
 knitr::kable(CSH_by_race_df, 
              caption="Table 6.9.a 9-Month Cancer Screening History Survey Completion Rate by Site Defined Race \n Among Verified Participants",
-             row.names=FALSE, align=c("l","c","c","c","c","c"), booktabs = TRUE) %>%
+             row.names=FALSE, align=c("l",rep("c", 5)), booktabs = TRUE) %>%
     kable_styling(latex_options = "scale_down") %>%  
-    add_indent(seq(1, nrow(BL_by_Race_df) - 1)) %>%  landscape() %>%
+    add_indent(seq(1, nrow(BL_by_Race_df) - 1)) %>%  
+  landscape() %>%
     footnote(general = "Note: Race defined as the de-identified race data reported by sites at time of invitation.",
              general_title = "")
 
@@ -2470,7 +2538,9 @@ CSH_Comp_by_sex_race <- CSH_Comp_by_sex_race %>%
   modify_caption("Table 6.10. 9-Month Cancer Screening History Survey Completion Rate by Sex and Race \n Among Eligible Participants") %>%
   as_kable_extra(escape = FALSE, addtl_fmt = TRUE)
 
-reduced <- all_data %>% filter(d_949302066 != 231311385 & CSH_status!="Not Eligible") # Those who are eligible for PROMIS but didn't complete mod1 yet
+
+# Those who are eligible for PROMIS but didn't complete mod1 yet
+reduced <- all_data %>% filter(d_949302066 != 231311385 & CSH_status!="Not Eligible") 
 
 CSH_Comp_by_sex_race %>% kable_styling(latex_options = c("scale_down","hold_position")) %>% 
   landscape() %>% 
@@ -2488,7 +2558,8 @@ CSH_Comp_by_sex_race %>% kable_styling(latex_options = c("scale_down","hold_posi
 CSH_Comp_by_Demographic <- all_data_long %>% 
   filter(CSH_status != "Not Eligible") %>%
   mutate(CSH_status = factor(CSH_status, levels = c("Not Started", "Started", "Submitted")),
-         Demographic_Group = factor(Demographic_Group, levels=c("White Women","Black Men","Women Under 45","Women Over 45","Men Under 45","Men Over 45"))) %>%
+         Demographic_Group = factor(Demographic_Group, levels=c("White Women","Black Men","Women Under 45",
+                                                                "Women Over 45","Men Under 45","Men Over 45"))) %>%
   select(Demographic_Group, CSH_status) %>%
   tbl_cross(
     row = Demographic_Group,
@@ -2507,7 +2578,8 @@ CSH_Comp_by_Demographic <- CSH_Comp_by_Demographic %>%
 
 # Style the table output
 CSH_Comp_by_Demographic %>% kable_styling(latex_options = c("scale_down", "hold_position"))  %>% 
-  footnote(general = "Participants may be counted more then once in these categories.",general_title = "Note: ", footnote_as_chunk = T)
+  footnote(general = "Participants may be counted more then once in these categories.",
+           general_title = "Note: ", footnote_as_chunk = T)
 
 
 ```
@@ -2554,20 +2626,20 @@ CES_comp %>% kable_styling(latex_options = c("scale_down","hold_position"))
 
 
 CES_comp_BL <- all_data %>%  filter(CES_status!="Not Eligible") %>%  
-  mutate(CES_status = factor(CES_status, levels=c("Not Started", "Started", "Submitted")),
-         completion = factor(completion, levels=c("Completed both survey and sample(s)","Completed all baseline survey modules 1-4, no baseline samples", 
-                                                  "Completed any baseline sample, did not complete baseline survey","Completed neither survey or sample(s)")))
+  mutate(CES_status = factor(CES_status, levels=c("Not Started", "Started", "Submitted")))
 
 
-CES_com_df <- create_tbl_cross2(CES_comp_BL, "completion", "CES_status", "row", "Completion", "Survey Completion", "Total CES Eligible Participants")
+CES_com_df <- create_tbl_cross2(CES_comp_BL, "completion", "CES_status", "row", "Completion", 
+                                "Survey Completion", "Total CES Eligible Participants")
 
 colnames(CES_com_df)[5] <- "Total CES Eligible \n Participants"
 
 knitr::kable(CES_com_df, 
              caption='Table 7.2. Completion of Connect Experience Survey by Baseline Data Completeness',
-             row.names=FALSE, align=c("l","c","c","c","c"), booktabs = TRUE) %>%
+             row.names=FALSE, align=c("l",rep("c", 4)), booktabs = TRUE) %>%
     kable_styling(latex_options = "scale_down") %>%  
-    add_indent(seq(1, nrow(CES_com_df) - 1)) %>%  landscape()
+    add_indent(seq(1, nrow(CES_com_df) - 1)) %>%  
+  landscape()
 
 ```
 
@@ -2578,7 +2650,7 @@ knitr::kable(CES_com_df,
 
 
 CES_time <- all_data %>% filter(CES_status=="Submitted") %>%
-  mutate(comp_tm_CES = as.numeric(difftime(as.POSIXct(ymd_hms(d_199471989)), as.POSIXct(ymd_hms(d_263355177)), units="mins")),
+  mutate(comp_tm_CES = as.numeric(difftime(ymd_hms(d_199471989), ymd_hms(d_263355177), units="mins")),
          start_stop_time = case_when(comp_tm_CES<5 ~ "Under 5 Minutes",
                                 comp_tm_CES<10 ~ "5-10 Minutes",
                                 comp_tm_CES<15 ~ "10-15 Minutes",
@@ -2587,36 +2659,30 @@ CES_time <- all_data %>% filter(CES_status=="Submitted") %>%
                                 comp_tm_CES>=30 ~ "30+ Minutes",
                                 is.na(d_199471989) | is.na(d_263355177) ~ "Missing Stop or Start Timestamp"),
          start_stop_time = factor(start_stop_time, levels=c("Under 5 Minutes", "5-10 Minutes", "10-15 Minutes", 
-                                                   "15-20 Minutes", "20-30 Minutes", "30+ Minutes", "Missing Stop or Start Timestamp")))  %>% 
-    group_by(start_stop_time) %>% tally()
-
-CES_time$Percentage <- (CES_time$n / sum(CES_time$n)) * 100
-
-summary_row <- data.frame(start_stop_time = "Total CES Eligible Participants",
-                          n = sum(CES_time$n),
-                          Percentage = 100)
+                                                   "15-20 Minutes", "20-30 Minutes", "30+ Minutes", 
+                                                   "Missing Stop or Start Timestamp")))  %>% 
+    group_by(start_stop_time) %>% tally() %>% 
+  mutate(Percentage = round(100 * n / sum(n), 2))
 
 
-CES_TM <- rbind(CES_time, summary_row)
-
-CES_TM[1, 4] <- paste0(formatC(CES_TM[1, 2], big.mark = ",", format = "d"), " (", round(CES_TM[1, 3], digits = 2), "%)")
-CES_TM[2, 4] <- paste0(formatC(CES_TM[2, 2], big.mark = ",", format = "d"), " (", round(CES_TM[2, 3], digits = 2), "%)")
-CES_TM[3, 4] <- paste0(formatC(CES_TM[3, 2], big.mark = ",", format = "d"), " (", round(CES_TM[3, 3], digits = 2), "%)")
-CES_TM[4, 4] <- paste0(formatC(CES_TM[4, 2], big.mark = ",", format = "d"), " (", round(CES_TM[4, 3], digits = 2), "%)")
-CES_TM[5, 4] <- paste0(formatC(CES_TM[5, 2], big.mark = ",", format = "d"), " (", round(CES_TM[5, 3], digits = 2), "%)")
-CES_TM[6, 4] <- paste0(formatC(CES_TM[6, 2], big.mark = ",", format = "d"), " (", round(CES_TM[6, 3], digits = 2), "%)")
-CES_TM[7, 4] <- paste0(formatC(CES_TM[7, 2], big.mark = ",", format = "d"), " (", round(CES_TM[7, 3], digits = 2), "%)")
+summary_row <- CES_time %>% 
+  dplyr::summarise(start_stop_time = "Total CES Eligible Participants",
+                          n = sum(n),
+                          Percentage = sum(Percentage))
 
 
-CES_TM_table <- CES_TM[, c(1,4)]
+CES_TM <- rbind(CES_time, summary_row) %>% 
+  mutate('N%' = paste0(scales::comma(n), " (",
+                       Percentage, "%)")) %>% 
+  select(start_stop_time, 'N%') %>% 
+  dplyr::rename("Completion Time" = "start_stop_time")
 
-colnames(CES_TM_table) <- c("Completion Time", "N%")
 
-knitr::kable(CES_TM_table, 
+knitr::kable(CES_TM, 
              caption = 'Table 7.3. Connect Experience Survey Completion Time from Start to Submit \n Among Eligible Participants', 
              booktabs=T, linesep = "", row.names=FALSE, align=c("l", "c")) %>% 
-  add_indent(c(1:(nrow(CES_TM_table)-1))) %>%  
-  kable_styling(latex_options = "scale_down") #c("scale_down","hold_position"))
+  add_indent(c(1:(nrow(CES_TM)-1))) %>%  
+  kable_styling(latex_options = "scale_down")
 
 ```
 
@@ -2645,7 +2711,7 @@ ces_notif_table = ces_notif_time %>%
 knitr::kable(ces_notif_table, 
              caption = 'Table 7.4. Connect Experience Survey Completion from Trigger to Submit for \n Verified Participants, in Days', 
              row.names=FALSE, format.args = list(big.mark = ","), linesep = "", 
-             booktabs = T, align=c("l", "c", "c", "c", "c", "c", "c", "c", "c")) %>% 
+             booktabs = T, align=c("l", rep("c", 8))) %>% 
   kable_styling(latex_options = c("scale_down","hold_position")) 
 
 ```
@@ -2685,14 +2751,14 @@ BL_CES <- trigger_time %>%
 #############    Denominator #################
 
 ## Determine when a person was CES eligible
-# All participants with a survey status NOT 'Not Eligible' or null; notificaton for CES was sent on 9/30/24
+    # All participants with a survey status NOT 'Not Eligible' or null; notification for CES was sent on 9/30/24
 
 
 ## Determine when a participant was BL survey eligible
-#MRE/SAS/LAW- once BOH completed ----   d_517311251
-#BUM/BU- when notified by email 
-#MW- when notified the MW kit was shipped
-#COVID- pushed to prod on 7/5/2023 and requires biospecimen donation 
+    #MRE/SAS/LAW- once BOH completed (d_517311251)
+    #BUM/BU- when notified by email 
+    #MW- when notified the MW kit was shipped
+    #COVID- pushed to prod on 7/5/2023 and requires biospecimen donation 
 
 
 
@@ -2771,7 +2837,7 @@ colnames(roi_table1)[5] <- "Total ROI Pref \n Eligible Participants"
 
 knitr::kable(roi_table1, 
              caption='Table 8.1. Completion of 2026 ROI Pref Among Eligible Participants',
-             row.names=FALSE, align=c("l","c","c","c","c","c"), booktabs = TRUE) %>%
+             row.names=FALSE, align=c("l",rep("c", 5)), booktabs = TRUE) %>%
     kable_styling(latex_options = "scale_down")  %>% 
   add_indent(seq(1, nrow(roi_table1) - 1))
 
@@ -2783,7 +2849,8 @@ knitr::kable(roi_table1,
 
 ROI_comp_BL_all <- all_data %>%  filter(roicomplt!="Not Eligible")
 
-ROI_comp_BL <- create_tbl_cross2(ROI_comp_BL_all, "completion", "roicomplt", "row", "Completion", "ROI Completion", "Total ROI Pref Eligible Participants")
+ROI_comp_BL <- create_tbl_cross2(ROI_comp_BL_all, "completion", "roicomplt", "row", "Completion", 
+                                 "ROI Completion", "Total ROI Pref Eligible Participants")
 colnames(ROI_comp_BL)[5] <- "Total ROI Pref Eligible Participants"
 
 
@@ -2793,14 +2860,14 @@ knitr::kable(ROI_comp_BL,
     kable_styling(latex_options = "scale_down") %>%
     add_indent(seq(1, nrow(ROI_comp_BL) - 1)) %>%  landscape()
 ```
-```{r ROI_start_stop, echo=FALSE, warning=FALSE, message=FALSE}
 
-##### Back to wanting all participants, whether or not they finished Module 1. So switching back to all_data df
+
+```{r ROI_start_stop, echo=FALSE, warning=FALSE, message=FALSE}
 
 
 ROI_time <- all_data %>%
   filter(roicomplt=="Submitted") %>%
-  mutate(compTM_roi = as.numeric(difftime(as.POSIXct(ymd_hms(d_543379310)), as.POSIXct(ymd_hms(d_993557295)), units="mins")),
+  mutate(compTM_roi = as.numeric(difftime(ymd_hms(d_543379310), ymd_hms(d_993557295), units="mins")),
          permission = case_when(compTM_roi<5 ~ "Under 5 Minutes",
                                 compTM_roi<10 ~ "5-10 Minutes",
                                 compTM_roi<15 ~ "10-15 Minutes",
@@ -2810,32 +2877,31 @@ ROI_time <- all_data %>%
          permission = factor(permission, levels=c("Under 5 Minutes", "5-10 Minutes", "10-15 Minutes",
                                                    "15-20 Minutes", "20-30 Minutes", "30+ Minutes")))  %>%
     group_by(permission) %>% tally() %>%
-  mutate(Percentage = (n / sum(n)) * 100)
+  mutate(Percentage = round(100* n / sum(n), 2),
+         Cumulative_Percentage = cumsum(Percentage))
 
 
-
-summary_row <- data.frame(permission = "Total Submitted ROI Survey",
-                          n = sum(ROI_time$n),
-                          Percentage = 100)
+summary_row <- ROI_time %>% 
+  dplyr::summarise(permission = "Total Submitted ROI Survey",
+                   n = sum(n),
+                   Percentage = sum(Percentage),
+                   Cumulative_Percentage = max(Cumulative_Percentage))
 
 
 ROI_TM <- rbind(ROI_time, summary_row) %>%
-  mutate(N_percent = paste0(formatC(n, big.mark = ",", format = "d"),
-                            " (", round(Percentage, digits = 1), "%)"),
-         Cumulative_Percentage = round(cumsum(Percentage), digits=2))
-ROI_TM$Cumulative_Percentage[nrow(ROI_TM)] <- 100
-
-ROI_TM <- ROI_TM %>%
+  mutate(N_percent = paste0(scales::comma(n),
+                            " (", Percentage, "%)")) %>%
   select(permission, N_percent, Cumulative_Percentage) %>%
-  dplyr::rename(`Completion Time` = permission, `N%` = N_percent,
+  dplyr::rename(`Completion Time` = permission, 
+                `N%` = N_percent,
          'Cumulative Percentage' = Cumulative_Percentage)
 
 
-knitr::kable(ROI_TM, #format.args = list(big.mark = ","),
+knitr::kable(ROI_TM, 
              caption = 'Table 8.3. 2026 ROI Pref Completion Time from Start to Submit \n Among Eligible Participants That Submitted the Survey',
              booktabs=T, linesep = "", row.names=FALSE, align=c("l", "c", "c")) %>%
   add_indent(c(1:(nrow(ROI_TM)-1))) %>%
-  kable_styling(latex_options = "scale_down") #c("scale_down","hold_position"))
+  kable_styling(latex_options = "scale_down") 
 
 ```
 
@@ -2850,7 +2916,8 @@ knitr::kable(ROI_TM, #format.args = list(big.mark = ","),
 #   AND attempt IN ('1st contact', '1st contact group 2');
 
 trig_roi <- bq_project_query(project,
-query="SELECT distinct(token), notification_time as ROI_notif FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications`
+query="SELECT distinct(token), notification_time as ROI_notif 
+FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.notifications`
 where category='2026 Return of Results Preference Survey Reminders'")
 trigger_ROI <- bigrquery::bq_table_download(trig_roi,bigint = "integer64")
 
@@ -2887,7 +2954,7 @@ Trig_table = trig_time %>%
 knitr::kable(Trig_table,
              caption = 'Table 8.4. 2026 ROI Pref Completion from Trigger to Submit for \n Verified Participants, in Days',
              row.names=FALSE, format.args = list(big.mark = ","), linesep = "",
-             booktabs = T, align=c("l", "c", "c", "c", "c", "c", "c", "c", "c")) %>%
+             booktabs = T, align=c("l", rep("c", 8))) %>%
   kable_styling(latex_options = c("scale_down","hold_position"))
 
 ```
@@ -2932,10 +2999,10 @@ BL_ROI <- trigger_time_ROI %>%
 #                           TRUE ~ ymd_hms(d_914594314) + days(90)))
 
 ## Determine when a participant was BL survey eligible
-#MRE/SAS/LAW- once BOH completed ----   d_517311251
-#BUM/BU- when notified by email
-#MW- when notified the MW kit was shipped
-#COVID- pushed to prod on 7/5/2023 and requires biospecimen donation
+    #MRE/SAS/LAW- once BOH completed (d_517311251)
+    #BUM/BU- when notified by email
+    #MW- when notified the MW kit was shipped
+    #COVID- pushed to prod on 7/5/2023 and requires biospecimen donation
 
 
 
@@ -3024,15 +3091,17 @@ roi_ver <- all_data %>%
 
 
 
-roi_ver_df <- create_tbl_cross2(roi_ver, "roi_ver_surv", "roicomplt", "row", "Time from Verification to ROI Survey Release", "Survey Completion",
+roi_ver_df <- create_tbl_cross2(roi_ver, "roi_ver_surv", "roicomplt", "row", 
+                                "Time from Verification to ROI Survey Release", "Survey Completion",
                                 "Total ROI Pref Eligible Participants")
 
 colnames(roi_ver_df)[5] <- "Total ROI Pref Eligible Participants"
 knitr::kable(roi_ver_df,
              caption='Table 8.6. 2026 ROI Pref Completion By Time from Verification to ROI Survey Release',
-             row.names=FALSE, align=c("l","c","c","c","c"), booktabs = TRUE) %>%
+             row.names=FALSE, align=c("l",rep("c", 4)), booktabs = TRUE) %>%
     kable_styling(latex_options = "scale_down") %>%
-    add_indent(seq(1, nrow(roi_ver_df) - 1)) %>%  landscape()
+    add_indent(seq(1, nrow(roi_ver_df) - 1)) %>%  
+  landscape()
 
 
 
@@ -3043,7 +3112,7 @@ knitr::kable(roi_ver_df,
 
 ```{r ROI_BySex_ByAge, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
-
+#### Sex
 ROI_Comp_by_Sex <- all_data %>% filter(roicomplt!="Not Eligible") %>%
   mutate(roicomplt = factor(roicomplt, levels=c("Not Started", "Started", "Submitted"))) %>%
   select(sex, roicomplt) %>% dplyr::arrange(sex,roicomplt) %>%
@@ -3059,7 +3128,8 @@ ROI_Comp_by_Sex <- all_data %>% filter(roicomplt!="Not Eligible") %>%
 ROI_Comp_by_Sex_table <- ROI_Comp_by_Sex %>%
   modify_header(stat_0 = "Total ROI Pref Eligible Participants") %>%
   modify_caption("Table 8.7. 2026 ROI Pref Completion Rate by Site Defined Sex Among Eligible Participants") %>%
-  as_kable_extra(escape = FALSE, addtl_fmt = TRUE) %>% kable_styling(latex_options = c("scale_down","hold_position"))
+  as_kable_extra(escape = FALSE, addtl_fmt = TRUE) %>% 
+  kable_styling(latex_options = c("scale_down","hold_position"))
 
 
 # leave this?
@@ -3068,6 +3138,10 @@ ROI_Comp_by_Sex <- add_footnote(ROI_Comp_by_Sex_table, "Note: Sex defined as the
 ROI_Comp_by_Sex
 
 
+
+
+
+#### Age
 ROI_Comp_by_Age <- all_data %>% filter(roicomplt!="Not Eligible") %>%
   mutate(roicomplt = factor(roicomplt, levels=c("Not Started", "Started", "Submitted"))) %>%
   select(age, roicomplt) %>% dplyr::arrange(age,roicomplt) %>%
@@ -3083,7 +3157,8 @@ ROI_Comp_by_Age <- all_data %>% filter(roicomplt!="Not Eligible") %>%
 ROI_Comp_by_Age <- ROI_Comp_by_Age %>%
   modify_header(stat_0 = "Total ROI Pref Eligible Participants") %>%
   modify_caption("Table 8.8. 2026 ROI Pref Completion Rate by Age \n Among Eligible Participants") %>%
-  as_kable_extra(escape = FALSE, addtl_fmt = TRUE)  %>% kable_styling(latex_options = c("scale_down","hold_position"))
+  as_kable_extra(escape = FALSE, addtl_fmt = TRUE)  %>% 
+  kable_styling(latex_options = c("scale_down","hold_position"))
 
 
 # leave this?
@@ -3115,16 +3190,18 @@ ROI_Comp_by_race <- m1_comp %>% filter(roicomplt!="Not Eligible") %>%
 ROI_Comp_by_race <- ROI_Comp_by_race %>%
   modify_header(stat_0 = "Total ROI Pref Eligible \n Participants") %>%
   modify_caption("Table 8.9. 2026 ROI Pref Completion Rate by Race \n Among Eligible Participants") %>%
-  as_kable_extra(escape = FALSE, addtl_fmt = TRUE) %>% kable_styling(latex_options = c("scale_down","hold_position"))
+  as_kable_extra(escape = FALSE, addtl_fmt = TRUE) %>% 
+  kable_styling(latex_options = c("scale_down","hold_position"))
 
-# will we need this for anything? keep this
-
-roireduced <- all_data %>% filter(d_949302066 != 231311385 & roicomplt!="Not Eligible") # Those who are eligible for ROI but didn't complete mod1 yet
+# Those who are eligible for ROI but didn't complete mod1 yet
+roireduced <- all_data %>% filter(d_949302066 != 231311385 & roicomplt!="Not Eligible") 
 
 
 # leave this or something like it?
 
-add_footnote(ROI_Comp_by_race, paste0('Note: In order to determine race, Module 1 must first be completed. There are ', dim(roireduced)[[1]] , ' ROI eligible participants that have either not started or not finished Module 1.'),
+add_footnote(ROI_Comp_by_race, paste0('Note: In order to determine race, Module 1 must first be completed. There are ', 
+                                      dim(roireduced)[[1]] , 
+                                      ' ROI eligible participants that have either not started or not finished Module 1.'),
              notation="none")
 
 
@@ -3135,15 +3212,17 @@ add_footnote(ROI_Comp_by_race, paste0('Note: In order to determine race, Module 
 
 ROI_by_race <- all_data %>% filter(roicomplt!="Not Eligible")
 
-ROI_by_race_df <- create_tbl_cross2(ROI_by_race, "race", "roicomplt", "row", "Race", "ROI Pref \n Survey Completion", "Total Verified Participants")
+ROI_by_race_df <- create_tbl_cross2(ROI_by_race, "race", "roicomplt", "row", "Race", 
+                                    "ROI Pref \n Survey Completion", "Total Verified Participants")
 
 
 # language -- verified (this example ) vs. eligible (github request)
 knitr::kable(ROI_by_race_df,
              caption="Table 8.9.a 2026 ROI Pref Completion Rate by Site Defined Race \n Among Verified Participants",
-             row.names=FALSE, align=c("l","c","c","c","c","c"), booktabs = TRUE) %>%
+             row.names=FALSE, align=c("l",rep("c", 5)), booktabs = TRUE) %>%
     kable_styling(latex_options = "scale_down") %>%
-    add_indent(seq(1, nrow(BL_by_Race_df) - 1)) %>%  landscape() %>%
+    add_indent(seq(1, nrow(BL_by_Race_df) - 1)) %>%  
+  landscape() %>%
     footnote(general = "Note: Race defined as the de-identified race data reported by sites at time of invitation.",
              general_title = "")
 
@@ -3172,7 +3251,9 @@ ROI_Comp_by_sex_race <- ROI_Comp_by_sex_race %>%
   modify_caption("Table 8.10. 2026 ROI Pref Completion Rate by Sex and Race \n Among Eligible Participants") %>%
   as_kable_extra(escape = FALSE, addtl_fmt = TRUE)
 
-reduced <- all_data %>% filter(d_949302066 != 231311385 & roicomplt!="Not Eligible") # Those who are eligible for ROI but didn't complete mod1 yet
+
+# Those who are eligible for ROI but didn't complete mod1 yet
+reduced <- all_data %>% filter(d_949302066 != 231311385 & roicomplt!="Not Eligible") 
 
 ROI_Comp_by_sex_race %>% kable_styling(latex_options = c("scale_down","hold_position")) %>%
   landscape() %>% 
@@ -3190,7 +3271,8 @@ ROI_Comp_by_sex_race %>% kable_styling(latex_options = c("scale_down","hold_posi
 ROI_Comp_by_Demographic <- all_data_long %>%
   filter(roicomplt != "Not Eligible") %>%
   mutate(roicomplt = factor(roicomplt, levels = c("Not Started", "Started", "Submitted")),
-         Demographic_Group = factor(Demographic_Group, levels=c("White Women","Black Men","Women Under 45","Women Over 45","Men Under 45","Men Over 45"))) %>%
+         Demographic_Group = factor(Demographic_Group, levels=c("White Women","Black Men","Women Under 45",
+                                                                "Women Over 45","Men Under 45","Men Over 45"))) %>%
   select(Demographic_Group, roicomplt) %>%
   tbl_cross(
     row = Demographic_Group,
@@ -3209,7 +3291,8 @@ ROI_Comp_by_Demographic <- ROI_Comp_by_Demographic %>%
 
 # Style the table output
 ROI_Comp_by_Demographic %>% kable_styling(latex_options = c("scale_down", "hold_position"))  %>%
-  footnote(general = "Participants may be counted more then once in these categories.",general_title = "Note: ", footnote_as_chunk = T)
+  footnote(general = "Participants may be counted more then once in these categories.",
+           general_title = "Note: ", footnote_as_chunk = T)
 
 
 ```
@@ -3253,7 +3336,7 @@ add_footnote(pref_lang_site, "Note: Preferred language is based on language of s
 
 ## d_784119588 is a variable for survey language preference and is in every single survey table EXCEPT DHQ
 ## DHQ is an outside survey with the participants table variable d_748726394 for language
-    ## in the queries below named both language variables 'language' too be able to run seemlessly through the survey loops
+    ## in the queries below named both language variables 'language' too be able to run seamlessly through the survey loops
 ## d_255077064 is the Consent and Notification Language set in the participants table
 
 
@@ -3400,9 +3483,11 @@ for (current_df in survey_dfs) {
   current_df <- current_df %>%
     mutate(
       Flag = ifelse(is.na(language), NA, 
-                    ifelse(language == 773342525, "Spanish", "English")), 
-      Pref_lang = case_when(d_255077064 == 773342525 ~ "Spanish", TRUE ~ "English")
-    )
+                    ifelse(language == 773342525, "Spanish", 
+                           "English")), 
+      Pref_lang = case_when(d_255077064 == 773342525 ~ "Spanish", 
+                            TRUE ~ "English"))
+
   
   # Extract relevant columns and add to the scenario tracking data frame
   participant_scenarios <- current_df %>%
@@ -3410,6 +3495,7 @@ for (current_df in survey_dfs) {
   
   all_scenarios <- bind_rows(all_scenarios, participant_scenarios)
 }
+
 
 # Summarize the scenario for each participant
 final_scenarios <- all_scenarios %>%
@@ -3427,8 +3513,8 @@ final_scenarios <- all_scenarios %>%
           "No Survey Language Preference Indicated",
 
         # CASE 2: At least one survey lang exists → check consistency based on populated values only
-        # Consistent if the sets match (ignoring NAs)
-        # Some participants finished surveys before there was a language setting 
+          # Consistent if the sets match (ignoring NAs)
+          # Some participants finished surveys before there was a language setting 
         length(F) > 0 & all(F %in% P) & all(P %in% F) ~
           "Survey Flags and Preferred Language Consistent",
 
@@ -3450,7 +3536,7 @@ knitr::kable(scenario_counts,
              caption = "Table 9.2. Consistency of Language Choice in Survey Completion",
              row.names = FALSE, align = c("l", "c"), digits = 2, 
              format.args = list(big.mark = ","), booktabs = TRUE) %>%
-  kable_styling(latex_options = "scale_down")  %>%  #landscape() %>% 
+  kable_styling(latex_options = "scale_down")  %>% 
   footnote(general="Those who do not start any surveys will not have survey flags, and thus not be counted in this table. Those that start but do not complete a survey will still choose a survey language.",
            general_title = "",
            footnote_as_chunk = TRUE,
@@ -3464,117 +3550,103 @@ knitr::kable(scenario_counts,
 \FloatBarrier
 ```{r Svy_Lang_Compare, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
-# must match the order for survey_dfs in the chunk above
-survey_acronyms <- c("BOH", "MRE", "SAS", "LAW", "BUM", "BU", "COVID", "MENS", "MW", "QOL", "DHQ", "CSH",  "CES", 
-                     "ROI"
-                     ) 
 
+# Must match the order of survey_dfs
+survey_acronyms <- c("BOH", "MRE", "SAS", "LAW", "BUM", "BU", "COVID", "MENS",
+                     "MW", "QOL", "DHQ", "CSH", "CES", "ROI")
 
-create_table <- function(current_df, current_acronym) {
-  if (nrow(current_df) == 0) {
-    return(data.frame(Survey = current_acronym, English = 0, Spanish = 0, Total = 0))
+# Language filter conditions 
+lang_filters <- list(
+  overall    = NULL,
+  spanish    = quote(d_255077064 == 773342525),
+  english    = quote(d_255077064 == 163149180 | is.na(d_255077064))
+)
+
+# Helper Function: summarize one survey df into a single-row count table, to be rbound at the end
+srvy_comp_by_lang <- function(df, acronym) {
+  
+  # Al survey+language combos to be included even if 0
+  if (nrow(df) == 0) {
+    return(data.frame(Survey = acronym, English = "0", Spanish = "0", Total = "0",
+                      stringsAsFactors = FALSE))
   }
-  
-  all_svry_flags <- current_df %>%
-    mutate(Survey = case_when(!is.na(Connect_ID) ~ current_acronym,
-                              TRUE ~ "NA"),
-           Flag = case_when(language == 773342525 ~ "Spanish", 
-                            TRUE ~ "English")) %>%
-    tbl_cross(
-      col =Flag,
-      row = Survey,
-      digits = c(0, 2),
-      percent = "row",
-      label = list(Flag = "Survey Flag",
-                   Site = "Survey"),
-      missing = "ifany",
-      margin_text = "Total") %>%
-    modify_header(stat_0 = "Total")
-  
-  df_all_svry_flags <- as.data.frame(all_svry_flags)
-  colnames(df_all_svry_flags)[1] <- "Survey"
-  df_all_svry_flags <- df_all_svry_flags[2,]
-  
-  # Ensure the data frame has consistent columns by adding missing ones with zeros
-  expected_columns <- c("Survey", "English", "Spanish", "Total")
-  missing_columns <- setdiff(expected_columns, names(df_all_svry_flags))
-  
-  if (length(missing_columns) > 0) {
-    for (col in missing_columns) {
-      df_all_svry_flags[[col]] <- 0
-    }
-  }
-  
-  df_all_svry_flags <- df_all_svry_flags[expected_columns]
-  
-  return(df_all_svry_flags)
+
+  result <- df %>%
+    mutate(Survey = acronym,
+           Flag   = case_when(language == 773342525 ~ "Spanish",
+                              language == 163149180 ~ "English",
+                              is.na(language)  ~ "English",
+                              TRUE ~ NA_character_)) %>%   # surfaces any unexpected codes
+    tbl_cross(col = Flag,
+              row = Survey,
+              digits = c(0, 2),
+              percent = "row",
+              label = list(Flag = "Survey Flag"),
+              missing = "no",
+              margin_text = "Total") %>%
+    modify_header(stat_0 = "Total") %>%
+    as.data.frame()
+
+  colnames(result)[1] <- "Survey"
+  result <- result[2, ]
+
+  # Ensure all expected columns exist, fill missing with "0", force character type
+  expected <- c("Survey", "English", "Spanish", "Total")
+  result[setdiff(expected, names(result))] <- "0"
+  result <- result[expected]
+  result <- result %>% mutate(across(all_of(expected[-1]), as.character))
+
+  result
 }
 
-# Initialize empty lists to store the results for each condition
-all_flags_list_overall <- list()
-all_flags_list_condition1 <- list()
-all_flags_list_condition2 <- list()
+# --- Build all three summary tables in one pass ---
 
-# Loop through each survey data frame and acronym
-for (i in seq_along(survey_dfs)) {
-  # Get the current data frame and acronym
-  current_df <- survey_dfs[[i]]
-  current_acronym <- survey_acronyms[i]
-  
-  # Overall table
-  df_overall <- create_table(current_df, current_acronym)
-  all_flags_list_overall[[current_acronym]] <- df_overall
-  
-  # Spanish
-  current_df_cond1 <- current_df %>% filter(d_255077064 == 773342525)
-  df_condition1 <- create_table(current_df_cond1, current_acronym)
-  all_flags_list_condition1[[current_acronym]] <- df_condition1
-  
-  # English
-  current_df_cond2 <- current_df %>% filter(d_255077064 == 163149180 | is.na(d_255077064))
-  df_condition2 <- create_table(current_df_cond2, current_acronym)
-  all_flags_list_condition2[[current_acronym]] <- df_condition2
+# map over 3 language filters (overall, spanish, english)
+results <- map(lang_filters, function(filter_expr) {
+  #loop through each survey
+  map2_dfr(survey_dfs, survey_acronyms, function(df, acronym) {
+    # apply language filter to english and spanish table rows
+    if (!is.null(filter_expr)) df <- filter(df, !!filter_expr)
+    #produce output summary
+    srvy_comp_by_lang(df, acronym)
+  })
+})
+
+
+
+# Shared footnote
+dhq_footnote <- "Note: The DHQ survey is completed in the DHQ Research Platform.
+Participants are able to toggle between English and Spanish throughout the DHQ
+survey and the language captured is the language the survey was toggled to at
+time of submission. All other surveys are completed within MyConnect and
+participants do not have the option to change their language selection once they
+start the survey."
+
+# Each of the tables has the exact same structure
+render_table <- function(df, caption) {
+  knitr::kable(
+    df,
+    caption   = caption,
+    row.names = FALSE,
+    align     = c("l", "c", "c", "c"),
+    digits    = 2,
+    booktabs  = TRUE
+  ) %>%
+    add_indent(seq_len(nrow(df))) %>%
+    kable_styling(latex_options = "scale_down") %>%
+    footnote(
+      general           = dhq_footnote,
+      general_title     = "",
+      footnote_as_chunk = TRUE,
+      escape            = FALSE,
+      threeparttable    = TRUE
+    )
 }
 
 
-final_df_overall <- do.call(rbind, all_flags_list_overall)
-final_df_condition1 <- do.call(rbind, all_flags_list_condition1)
-final_df_condition2 <- do.call(rbind, all_flags_list_condition2)
-
-
-
-knitr::kable(final_df_overall,
-               caption = paste0("Table 9.3. Survey Completion by Survey Language \n Among All Participants"),
-               row.names = FALSE, align = c("l","c","c","c"), digits = 2, booktabs = TRUE) %>% 
-  add_indent(1:nrow(final_df_overall)) %>%  
-  kable_styling(latex_options = "scale_down") %>% 
-  footnote(general="Note: The DHQ survey is completed in the DHQ Research Platform. Participants are able to toggle between English and Spanish throughout the DHQ survey and the language captured is the language the survey was toggled to at time of submission. All other surveys are completed within MyConnect and participants do not have the option to change their language selection once they start the survey.",
-           general_title = "",
-           footnote_as_chunk = TRUE,
-           escape = FALSE,
-           threeparttable = TRUE)
-
-knitr::kable(final_df_condition1,
-               caption = paste0("Table 9.3.a. Survey Completion by Survey Language \n Among Participants with Preferred language of Spanish"),
-               row.names = FALSE, align = c("l","c","c","c"), digits = 2, booktabs = TRUE) %>% 
-  add_indent(1:nrow(final_df_condition1)) %>%  
-  kable_styling(latex_options = "scale_down") %>%  
-  footnote(general="Note: The DHQ survey is completed in the DHQ Research Platform. Participants are able to toggle between English and Spanish throughout the DHQ survey and the language captured is the language the survey was toggled to at time of submission. All other surveys are completed within MyConnect and participants do not have the option to change their language selection once they start the survey.",
-           general_title = "",
-           footnote_as_chunk = TRUE,
-           escape = FALSE,
-           threeparttable = TRUE)
-
-knitr::kable(final_df_condition2,
-               caption = paste0("Table 9.3.b. Survey Completion by Survey Language \n Among Participants with Preferred language of English"),
-               row.names = FALSE, align = c("l","c","c","c"), digits = 2, booktabs = TRUE) %>% 
-  add_indent(1:nrow(final_df_condition2)) %>%  
-  kable_styling(latex_options = "scale_down")  %>% 
-  footnote(general="Note: The DHQ survey is completed in the DHQ Research Platform. Participants are able to toggle between English and Spanish throughout the DHQ survey and the language captured is the language the survey was toggled to at time of submission. All other surveys are completed within MyConnect and participants do not have the option to change their language selection once they start the survey.",
-           general_title = "",
-           footnote_as_chunk = TRUE,
-           escape = FALSE,
-           threeparttable = TRUE)
+render_table(results$overall, "Table 9.3. Survey Completion by Survey Language\nAmong All Participants")
+render_table(results$spanish, "Table 9.3.a. Survey Completion by Survey Language\nAmong Participants with Preferred Language of Spanish")
+render_table(results$english, "Table 9.3.b. Survey Completion by Survey Language\nAmong Participants with Preferred Language of English")
 
 
 ```
@@ -3585,9 +3657,12 @@ knitr::kable(final_df_condition2,
 \FloatBarrier
 ```{r BL_start_stop_Lang, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 
-start_stop_lang <- function(data, filter_column, filter_value, language_value, target_column) {
+## Start to submission of surveys by survey language preference
+
+start_stop_lang <- function(data, filter_column, language_value, target_column) {
     data %>% 
-        filter(!!sym(filter_column) == filter_value & Pref_lang == language_value) %>% 
+        filter(!!sym(filter_column) == 231311385 & 
+                 Pref_lang == language_value) %>% 
         summarize('N' = n(),
                   Min = min(!!sym(target_column), na.rm = TRUE),
                   Q1 = quantile(!!sym(target_column), 0.25, na.rm = TRUE),
@@ -3599,27 +3674,33 @@ start_stop_lang <- function(data, filter_column, filter_value, language_value, t
                   Max = max(!!sym(target_column), na.rm = TRUE))
 }
 
-BOH_LangE <- start_stop_lang(all_data, "d_949302066", 231311385, "English", "m1_comp_mins")
-MRE_LangE <- start_stop_lang(all_data, "d_536735468", 231311385, "English", "m2_comp_mins")
-SAS_LangE <- start_stop_lang(all_data, "d_976570371", 231311385, "English", "m3_comp_mins")
-LAW_LangE <- start_stop_lang(all_data, "d_663265240", 231311385, "English", "m4_comp_mins")
-DHQ_LangE <- start_stop_lang(all_data, "d_692560814", 231311385, "English", "dhq_comp_mins")
-CSH_LangE <- start_stop_lang(all_data, "d_176068627", 231311385, "English", "csh_comp_mins")
-ROI_LangE <- start_stop_lang(all_data, "d_278023676", 231311385, "English", "roi_comp_mins")
 
-BOH_LangSP <- start_stop_lang(all_data, "d_949302066", 231311385, "Spanish", "m1_comp_mins")
-MRE_LangSP <- start_stop_lang(all_data, "d_536735468", 231311385, "Spanish", "m2_comp_mins")
-SAS_LangSP <- start_stop_lang(all_data, "d_976570371", 231311385, "Spanish", "m3_comp_mins")
-LAW_LangSP <- start_stop_lang(all_data, "d_663265240", 231311385, "Spanish", "m4_comp_mins")
-DHQ_LangSP <- start_stop_lang(all_data, "d_692560814", 231311385, "Spanish", "dhq_comp_mins")
-CSH_LangSP <- start_stop_lang(all_data, "d_176068627", 231311385, "Spanish", "csh_comp_mins")
-ROI_LangSP <- start_stop_lang(all_data, "d_278023676", 231311385, "Spanish", "roi_comp_mins")
+# Each row is its own table. Calculate and then combine
+BOH_LangE <- start_stop_lang(all_data, "d_949302066", "English", "m1_comp_mins")
+MRE_LangE <- start_stop_lang(all_data, "d_536735468", "English", "m2_comp_mins")
+SAS_LangE <- start_stop_lang(all_data, "d_976570371", "English", "m3_comp_mins")
+LAW_LangE <- start_stop_lang(all_data, "d_663265240", "English", "m4_comp_mins")
+DHQ_LangE <- start_stop_lang(all_data, "d_692560814", "English", "dhq_comp_mins")
+CSH_LangE <- start_stop_lang(all_data, "d_176068627", "English", "csh_comp_mins")
+ROI_LangE <- start_stop_lang(all_data, "d_278023676", "English", "roi_comp_mins")
+
+BOH_LangSP <- start_stop_lang(all_data, "d_949302066", "Spanish", "m1_comp_mins")
+MRE_LangSP <- start_stop_lang(all_data, "d_536735468", "Spanish", "m2_comp_mins")
+SAS_LangSP <- start_stop_lang(all_data, "d_976570371", "Spanish", "m3_comp_mins")
+LAW_LangSP <- start_stop_lang(all_data, "d_663265240", "Spanish", "m4_comp_mins")
+DHQ_LangSP <- start_stop_lang(all_data, "d_692560814", "Spanish", "dhq_comp_mins")
+CSH_LangSP <- start_stop_lang(all_data, "d_176068627", "Spanish", "csh_comp_mins")
+ROI_LangSP <- start_stop_lang(all_data, "d_278023676", "Spanish", "roi_comp_mins")
 
 
 BL_lang_E <- rbind(BOH_LangE, MRE_LangE, SAS_LangE, LAW_LangE)
 BL_lang_SP <- rbind(BOH_LangSP, MRE_LangSP, SAS_LangSP, LAW_LangSP)
 
 
+
+
+
+# Add an extra column to name the rows; put that column first; name it Section
 BL_lang_E[,10] <- c("BOH", "MRE", "SAS", "LAW")
 BL_lang_SP[,10] <- c("BOH", "MRE", "SAS", "LAW")
 
@@ -3630,46 +3711,51 @@ BL_lang_SP<- BL_lang_SP[, c(10,1:9)]
 colnames(BL_lang_E)[1] <- "Section"
 colnames(BL_lang_SP)[1] <- "Section"
 
+
+
+
+
+
 knitr::kable(BL_lang_E, format.args = list(big.mark = ","), digits=2, 
              caption='Table 9.4.a Time (in minutes) from Start to Submit of Initial Survey Modules for English',
-             row.names=FALSE, align=c("l","c","c","c","c","c","c","c","c"), booktabs = TRUE)%>% 
+             row.names=FALSE, align=c("l",rep("c", 8)), booktabs = TRUE)%>% 
     kable_styling(latex_options = c("scale_down","hold_position")) 
 
 knitr::kable(BL_lang_SP, format.args = list(big.mark = ","), digits=2, 
              caption='Table 9.4.b Time (in minutes) from Start to Submit of Initial Survey Modules for Spanish',
-             row.names=FALSE, align=c("l","c","c","c","c","c","c","c","c"),booktabs = TRUE)%>% 
+             row.names=FALSE, align=c("l",rep("c", 8)),booktabs = TRUE)%>% 
     kable_styling(latex_options = c("scale_down","hold_position")) 
 
 
  knitr::kable(DHQ_LangE, format.args = list(big.mark = ","), digits=2,
               caption='Table 9.5.a Time (in minutes) from Start to Submit of 6-month Diet History Questionaire for English',
-              row.names=FALSE, align=c("l","c","c","c","c","c","c","c","c"), booktabs = TRUE)%>%
+              row.names=FALSE, align=c("l",rep("c", 8)), booktabs = TRUE)%>%
      kable_styling(latex_options = c("scale_down","hold_position"))
 
  knitr::kable(DHQ_LangSP, format.args = list(big.mark = ","), digits=2,
               caption='Table 9.5.b Time (in minutes) from Start to Submit of 6-month Diet History Questionaire for Spanish',
-              row.names=FALSE, align=c("l","c","c","c","c","c","c","c","c"),booktabs = TRUE)%>%
+              row.names=FALSE, align=c("l",rep("c", 8)),booktabs = TRUE)%>%
      kable_styling(latex_options = c("scale_down","hold_position"))
 
 
  knitr::kable(CSH_LangE, format.args = list(big.mark = ","), digits=2,
               caption='Table 9.6.a Time (in minutes) from Start to Submit of Cancer Screening History Survey for English',
-              row.names=FALSE, align=c("l","c","c","c","c","c","c","c","c"), booktabs = TRUE)%>%
+              row.names=FALSE, align=c("l",rep("c", 8)), booktabs = TRUE)%>%
      kable_styling(latex_options = c("scale_down","hold_position"))
 
  knitr::kable(CSH_LangSP, format.args = list(big.mark = ","), digits=2,
               caption='Table 9.6.b Time (in minutes) from Start to Submit of Cancer Screening History Survey for Spanish',
-              row.names=FALSE, align=c("l","c","c","c","c","c","c","c","c"),booktabs = TRUE)%>%
+              row.names=FALSE, align=c("l",rep("c", 8)),booktabs = TRUE)%>%
      kable_styling(latex_options = c("scale_down","hold_position"))
  
   knitr::kable(ROI_LangE, format.args = list(big.mark = ","), digits=2,
               caption='Table 9.7.a Time (in minutes) from Start to Submit of ROI Preference Survey for English',
-              row.names=FALSE, align=c("l","c","c","c","c","c","c","c","c"), booktabs = TRUE)%>%
+              row.names=FALSE, align=c("l",rep("c", 8)), booktabs = TRUE)%>%
      kable_styling(latex_options = c("scale_down","hold_position"))
 
  knitr::kable(ROI_LangSP, format.args = list(big.mark = ","), digits=2,
               caption='Table 9.7.b Time (in minutes) from Start to Submit of ROI Preference Survey for Spanish',
-              row.names=FALSE, align=c("l","c","c","c","c","c","c","c","c"),booktabs = TRUE)%>%
+              row.names=FALSE, align=c("l",rep("c", 8)),booktabs = TRUE)%>%
      kable_styling(latex_options = c("scale_down","hold_position"))
 
 ```

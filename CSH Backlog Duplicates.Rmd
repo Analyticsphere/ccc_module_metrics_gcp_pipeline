@@ -130,7 +130,7 @@ dups_csh_combined <- dups_csh_combined %>%  mutate(dup_status = case_when(dup_st
                                                   method=="google.com" ~ "Email"),
                                  CSH_status= case_when(CSH_status==231311385	~ "Submitted",
                                                         CSH_status==615768760	~ "Started",
-                                                        CSH_status==972455046 & (as.numeric(difftime(Sys.Date(), as.POSIXct(ymd_hms(verif_date)),units="days")) >269)	~ "Not Started",
+                                                        CSH_status==972455046 & (as.numeric(difftime(Sys.Date(), ymd_hms(verif_date),units="days")) >269)	~ "Not Started",
                                                         TRUE ~ "Not Eligible"))
 
 
