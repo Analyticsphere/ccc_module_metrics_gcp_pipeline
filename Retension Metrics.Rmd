@@ -100,7 +100,7 @@ reten <- data_tib %>%  filter(d_821247024 =='197316935') %>%
                                  d_512820379==854703046 ~ "Passive"),
          qolcomplt = ifelse(d_320303124 == 231311385 ,"Submitted",
                             ifelse(d_320303124 == 615768760, "Started",
-                                   ifelse(as.numeric(difftime(Sys.Date(), as.POSIXct(ymd_hms(d_914594314)),
+                                   ifelse(as.numeric(difftime(Sys.Date(), ymd_hms(d_914594314),
                                                               units="days")) < 90, "Not Eligible",
                                           ifelse(d_320303124 == 972455046, "Not Started", "Error")))),
          age = case_when(state_d_934298480 == "713781738"~ "30-34",

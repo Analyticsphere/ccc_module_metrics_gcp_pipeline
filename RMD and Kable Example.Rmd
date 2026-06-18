@@ -62,7 +62,7 @@ data_ex <- data_ex %>% mutate(mod1_status = case_when(d_949302066==972455046 ~ "
                                                       d_949302066==231311385 ~ "Submitted"),
                               blood_status = case_when(d_878865966==353358909 ~ "Blood Donated",
                                                        d_878865966==104430631 ~ "No Blood Donated"),
-                              m1_comp_mins = as.numeric(difftime(as.POSIXct(ymd_hms(d_517311251)), as.POSIXct(ymd_hms(d_205553981)), units="mins")),
+                              m1_comp_mins = as.numeric(difftime(ymd_hms(d_517311251), ymd_hms(d_205553981), units="mins")),
                               Site = case_when(d_827220437==472940358 ~ "Baylor Scott and White Health",
                                                d_827220437==125001209 ~ "KP Colorado",
                                                d_827220437==327912200 ~ "KP Georgia",

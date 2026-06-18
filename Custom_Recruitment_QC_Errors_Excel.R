@@ -239,7 +239,7 @@ CASE WHEN d_459098666='231311385' THEN 'Completed' WHEN d_459098666='615768760' 
 d_844088537 as Time_Survey_Started
 FROM `nih-nci-dceg-connect-prod-6d04.FlatConnect.participants`
 where d_289750687 is null and (d_459098666='231311385' or d_459098666='615768760')
-and date(d_844088537) >= '2023-01-01'
+and date(d_844088537) >= '2022-12-10'
 order by d_844088537 desc"
 
 MC_ccc_NE_table <- bq_project_query(project, MC_ccc_NE)
@@ -416,7 +416,8 @@ bday4 <- bday_base_vars %>% filter(is.na(d_768313785) & !is.na(d_916186376)) %>%
 all_errors <- bind_rows(all_errors, bday4)
 
 bday5 <- bday_base_vars %>% 
-  filter(!is.na(d_768313785) & !(is.na(ymd_hms(d_194486780, quiet=TRUE)) | is.na(d_194486780))) %>%
+  filter(!is.na(d_768313785) & !(grepl("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$", d_902078073) |
+                                   is.na(d_902078073))) %>%
   safe_arrange(Site) %>%
   tag_rule(44, "If maildate is populated then returnDate should be an ISO 8601 timestamp or N/A.",
            list("NORCBC_CardMailingDt" = .$d_768313785,
@@ -1091,7 +1092,7 @@ all_errors <- bind_rows(all_errors, Auto_verif)
 # Rule 101
 Man_Auto_verif <- base_vars %>%
   filter(d_821247024==197316935 & state_d_444699761==734437214 &
-           (state_d_953614051==104430631 | is.na(state_d_953614051)) &
+           (state_d_953614051==734437214 | is.na(state_d_953614051)) &
            as.Date(d_914594314) < (currentDate - days(5))) %>%
   safe_arrange(Site) %>%
   tag_rule(101, "If verified and Auto Verif=method not used, then Manual Verif must be 'method used'. 5-day lag.",
@@ -1194,7 +1195,7 @@ SF_MF_ver_act <- base_vars %>%
            Site %in% c("SF","MF") & d_512820379=="486306141" &
            state_d_793822265=="132080040" &
            as.Date(d_914594314) < (currentDate - days(5)) &
-           as.Date(d_914594314) > "2026-05-01" &
+           as.Date(d_914594314) >= "2026-05-01" &
            !(state_d_444699761=="426360242" & !is.na(state_d_188797763) & !is.na(state_d_953614051))) %>%
   safe_arrange(Site) %>%
   tag_rule(109,
@@ -1242,8 +1243,8 @@ all_errors <- all_errors %>%
     . == 197316935 ~ "Verified",
     . == 219863910 ~ "Cannot be verified",
     . == 922622075 ~ "Duplicate",
-    . == 197316935 ~ "Outreach timed out",
-    . == 160161595 ~ "Not active",
+    . == 160161595 ~ "Outreach timed out",
+    . == 180583933 ~ "Not active",
     . == 486306141 ~ "Active",
     . == 854703046 ~ "Passive",
     . == 734437214 ~ "Method not used",
