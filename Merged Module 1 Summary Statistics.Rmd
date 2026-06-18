@@ -6232,3 +6232,8 @@ simple_funct(D_431721131, "QXAUTHOR1: Who Completed this Survey")
 
 
 
+```{r Clear_Memory_Last, include=FALSE}
+#Clearing up GCP memory
+rm(list = ls()[sapply(mget(ls(), envir = .GlobalEnv), is.data.frame)])
+gc()
+```

@@ -1306,6 +1306,18 @@ create_kable_table(lifetime, timespan, "CHEWLIFEH: Time Chewing Tobacco/Dip Used
 ```
 
 
+
+
+```{r Clear_Memory0, include=FALSE}
+#Clearing up some memory -- removing all but the main dataframe and functions
+rm(list = setdiff(ls(), c("data_tib_all3", 'module3', "dict", 'hist_funct', 'boxp_funct', 'simple_funct3', 'simple_age_funct3', 'one_logic_funct3', 'alclife2_funct', "alclife_bands", "alclife_levels", 'funct_2_3_4', 'funct_5', 'funct_8c', 'funct_9b', 'funct_10_11', 'create_kable_table', 'create_kable_table_w_footnote',"render_kable", "build_summary")))
+invisible(gc())
+
+########################
+```
+
+
+
 ## Hookah 
 ```{r Hookah, warning=FALSE, echo=FALSE, message=FALSE}
 #HOOKAH1
@@ -1967,6 +1979,15 @@ grid.arrange(tomrlfD, tomrlfE, nrow=2)
 ```
 
 
+
+```{r Clear_Memory1.5, include=FALSE}
+#Clearing up some memory -- removing all but the main dataframe and functions
+rm(list = setdiff(ls(), c("data_tib_all3", 'module3', "dict", 'hist_funct', 'boxp_funct', 'simple_funct3', 'simple_age_funct3', 'one_logic_funct3', 'alclife2_funct', "alclife_bands", "alclife_levels", 'funct_2_3_4', 'funct_5', 'funct_8c', 'funct_9b', 'funct_10_11', 'create_kable_table', 'create_kable_table_w_footnote',"render_kable", "build_summary")))
+invisible(gc())
+
+########################
+```
+
 ## Electronic Delivery Devices
 ```{r VapeMj, warning=FALSE, echo=FALSE, message=FALSE}
 #ELMAR1
@@ -2595,6 +2616,13 @@ create_kable_table(alc9, answer, "ALCOHOL9: Frequency of Drinking 4-5 Alcoholic 
 ```
 
 
+```{r Clear_Memory2.5, include=FALSE}
+#Clearing up some memory -- removing all but the main dataframe and functions
+rm(list = setdiff(ls(), c("data_tib_all3", 'module3', "dict", 'hist_funct', 'boxp_funct', 'simple_funct3', 'simple_age_funct3', 'one_logic_funct3', 'alclife2_funct', "alclife_bands", "alclife_levels", 'funct_2_3_4', 'funct_5', 'funct_8c', 'funct_9b', 'funct_10_11', 'create_kable_table', 'create_kable_table_w_footnote', "render_kable", "build_summary")))
+invisible(gc())
+
+########################
+```
 
 
 ## ALCLIFEA-H
@@ -3161,3 +3189,8 @@ simple_funct3(D_352986465, "FRECKLING: Amount of Freckles on Back and Shoulders"
 
 ```
 
+```{r Clear_Memory_Last, include=FALSE}
+#Clearing up GCP memory
+rm(list = ls()[sapply(mget(ls(), envir = .GlobalEnv), is.data.frame)])
+gc()
+```

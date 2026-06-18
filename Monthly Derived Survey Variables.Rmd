@@ -35,6 +35,8 @@ library(ggplot2)
 library(gridExtra)
 library(scales)
 library(gt)
+library(knitr)
+library(kableExtra)
 library(tinytex)
 library(data.table) ###to write or read and data management 
 library(tidyverse) ###for data management
@@ -197,25 +199,24 @@ bmi_box
 
 ```
 
-
+\newpage
 
 ```{r By_PrimRelCancer, echo=FALSE, warning=FALSE, message=FALSE}
 
-library(dplyr)
-library(tidyr)
-library(stringr)
-library(gt)
+
 
 #-------------------------- FAMILY HX LOGIC -----------------------------------------------
 
-# Helper: get loop columns in numeric order
+# Helper: get sib/child loop columns in numeric order
 get_loop_cols <- function(data, prefix) {
   cols <- names(data)[grepl(paste0("^", prefix, "\\d+_\\d+$"), names(data))]
   loop_num <- as.integer(sub(paste0("^", prefix, "(\\d+)_\\1$"), "\\1", cols))
   cols[order(loop_num)]
 }
 
-# Overall loop logic: original behavior
+
+
+# ---- Response Order Logic ----------------------------------
 eval_loop_status <- function(x) {
   x <- x[!is.na(x)]
   
@@ -242,7 +243,7 @@ eval_loop_status_by_n <- function(x, n) {
   "Skipped this Question"
 }
 
-# Single non-loop item
+# Single non-loop item (Mom and Dad)
 eval_single_status <- function(x) {
   if (is.na(x)) return("Skipped this Question")
   if (x == 353358909) return("Yes")
@@ -250,6 +251,11 @@ eval_single_status <- function(x) {
   if (x == 104430631) return("No")
   "Error"
 }
+
+#--------------------------------------------------
+
+
+
 
 # Loop variables
 sib_cols   <- get_loop_cols(data_tib_base, "D_607773106_")
@@ -259,6 +265,7 @@ child_cols <- get_loop_cols(data_tib_base, "D_718867914_")
 family <- data_tib_base %>%
   rowwise() %>%
   mutate(
+    
     mom_status = eval_single_status(D_276353712),
     dad_status = eval_single_status(D_659784914),
     
@@ -282,7 +289,7 @@ family <- data_tib_base %>%
       eval_loop_status_by_n(child_vals, n_child)
     },
     
-    # Keep the original overall logic
+    # Sibling and Child Status
     loop_status = {
       n_sib <- as.integer(D_694265648)
       n_child <- as.integer(D_446999144)
@@ -302,6 +309,12 @@ family <- data_tib_base %>%
       eval_loop_status(c(sib_vals, child_vals))
     },
     
+    #### FINAL Cancer Status
+      # PR2 logic determination:
+        # If ANY family member has cancer, this should be yes
+        # Else, if ANY question was skipped, set the value to skipped
+        # Else, if ANY family members cancer status is unknown, this should be unknown
+        # IF ALL family members do not have cancer, this should be no
     status = case_when(
       D_276353712 == 353358909 |
         D_659784914 == 353358909 |
@@ -331,24 +344,32 @@ dt_fam_canc_summary <- family %>%
   mutate(status = factor(status, levels = c("Yes", "No", "Don't Know", "Skipped this Question"))) %>%
   group_by(status, .drop = FALSE) %>%
   summarise(n = n(), .groups = "drop") %>%
-  mutate(percentage = 100 * n / sum(n))
+  mutate(percentage = round(100 * n / sum(n), 1)) 
 
-dt_fam_canc_summary %>%
-  gt() %>%
-  fmt_number(columns = "percentage", decimals = 2) %>%
-  fmt_number(columns = "n", decimals = 0, use_seps = TRUE) %>%
-  tab_header(title = md("Primary Relative(s) Diagnosed With Cancer")) %>%
-  cols_label(n = md("**N**"), status = md("**Answer**"), percentage = md("**%**")) %>%
-  grand_summary_rows(columns = c(n, percentage), fns = ~ sum(., na.rm = TRUE)) %>%
-  tab_options(stub.font.weight = "bold") %>%
-  tab_style(
-    style = list(cell_text(weight = "bold")),
-    locations = cells_body(columns = status)
-  ) %>%
-  tab_footnote(
-    footnote = "Primary relatives consist of parents, siblings, and children.",
-    placement = "left"
-  )
+#Total row
+total_all_fam <- dt_fam_canc_summary %>% 
+  dplyr::summarise(status = "Total",
+                   n = sum(n),
+                   percentage = sum(percentage))
+
+# N (P%) Setup
+dt_fam_canc_summary <- rbind(dt_fam_canc_summary, total_all_fam) %>% 
+  mutate(n = scales::comma(n),
+         np = paste0(n, " (", percentage, "%)")) %>% 
+  select(status, np)
+
+
+total_rows <- nrow(dt_fam_canc_summary)
+knitr::kable(dt_fam_canc_summary , 
+             caption='Any Primary Relative(s) Diagnosed With Cancer', 
+             row.names=FALSE,align=c("l","c"),
+             col.names=c("Cancer Status", "N (P%)"),
+             booktabs = TRUE) %>%  
+  add_indent(seq(1, total_rows - 1))  %>% 
+  kable_styling(latex_options = c("scale_down","hold_position"))  %>% 
+  footnote(general="Primary relatives consist of parents, siblings, and children.",
+           general_title = "")
+
 
 #-------------------------- TABLE 2: BY RELATIVE --------------------------------------------
 
@@ -377,25 +398,54 @@ dt_fam_canc_by_relative <- family %>%
   group_by(relative) %>%
   mutate(percentage = 100 * n / sum(n)) %>%
   ungroup() %>%
-  mutate(cell = paste0(n, " (", round(percentage, 2), "%)")) %>%
+  mutate(cell = paste0(scales::comma(n), " (", round(percentage, 2), "%)")) %>%
   select(relative, status, cell) %>%
   pivot_wider(names_from = relative, values_from = cell)
 
-dt_fam_canc_by_relative %>%
-  gt() %>%
-  tab_header(title = md("Primary Relative(s) Diagnosed With Cancer")) %>%
-  cols_label(
-    status = md("**Answer**"),
-    Mom = md("**Mom**"),
-    Dad = md("**Dad**"),
-    Sibling = md("**Sibling**"),
-    Child = md("**Child**")
+
+# Total Row
+total_row <- family %>%
+  select(mom_status, dad_status, sib_status, child_status) %>%
+  pivot_longer(
+    cols = everything(),
+    names_to = "relative",
+    values_to = "status"
   ) %>%
-  tab_options(stub.font.weight = "bold") %>%
-  tab_footnote(
-    footnote = "Note: Not all participants have siblings and/or children. The denominator for these columns will differ accordingly.",
-    locations = cells_column_labels(columns = c(Sibling, Child))
-  )
+  filter(!is.na(status)) %>%
+  mutate(
+    relative = factor(
+      recode(relative,
+             mom_status = "Mom",
+             dad_status = "Dad",
+             sib_status = "Sibling",
+             child_status = "Child"),
+      levels = c("Mom", "Dad", "Sibling", "Child")
+    )
+  ) %>%
+  group_by(relative) %>%
+  summarise(n = n(), .groups = "drop") %>%
+  mutate(
+    total = sum(n),
+    status = factor("Total", levels = c("Yes", "No", "Don't Know", "Skipped this Question", "Total")),
+    cell = paste0(scales::comma(n), " (100%)")
+  ) %>%
+  select(relative, status, cell) %>%
+  pivot_wider(names_from = relative, values_from = cell)
+
+dt_fam_canc_by_relative <- bind_rows(dt_fam_canc_by_relative, total_row)
+
+
+
+total_rows <- nrow(dt_fam_canc_by_relative)
+knitr::kable(dt_fam_canc_by_relative , 
+             caption='Which Primary Relative(s) Diagnosed With Cancer', 
+             row.names=FALSE,align=c("l",rep("c",4)),
+             col.names=c("Cancer Status", "Mom", "Dad", "Sibling", "Child"),
+             booktabs = TRUE) %>%  
+  add_indent(seq(1, total_rows - 1))  %>% 
+  kable_styling(latex_options = c("scale_down","hold_position")) %>% 
+  footnote(general="Note: Not all participants have siblings and/or children. The denominator for these columns will differ accordingly.",
+           general_title = "")
 
 ```
 
