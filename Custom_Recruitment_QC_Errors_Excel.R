@@ -1019,17 +1019,6 @@ Man_OutRch <- partsbq %>%
 all_errors <- bind_rows(all_errors, Man_OutRch)
 
 
-# Rule 95
-Non_act_verif <- base_vars %>%
-  filter(d_512820379==180583933 &
-           d_821247024 %in% c(219863910, 922622075, 197316935) &
-           !(state_d_148197146 %in% c(283434980, 866029623))) %>%
-  safe_arrange(Site) %>%
-  tag_rule(95, "If participants are 'not active', they cannot have verification completed.",
-           list("RcrtV_Verification_v1r0" = .$d_821247024,
-                "RcrtV_DuplicateType"     = .$state_d_148197146))
-all_errors <- bind_rows(all_errors, Non_act_verif)
-
 
 # Rule 96
 update_recr <- base_vars %>%
@@ -1221,6 +1210,30 @@ SF_MF_ver_pass <- base_vars %>%
                 "RcrtV_Outreach_v1r0"  = .$state_d_188797763,
                 "RcrtV_Manual_v1r0"    = .$state_d_953614051))
 all_errors <- bind_rows(all_errors, SF_MF_ver_pass)
+
+
+
+
+
+# Rule 111
+Non_act_verif <- base_vars %>%
+  # If recruit type is not active
+  filter(d_512820379==180583933 &
+           # we shouldn't see any other verif status other then 'not yet verified' or 
+           # 'no longer enrolled' OR
+            # 'duplicate' if Duplicate Type = 'Not active signed in as Passive Recruit' or 
+                                              # 'Not active enrolled as an Active Recruit'
+           !(d_821247024==875007964 | d_821247024==290379732 |
+               (d_821247024==922622075 & state_d_148197146 %in% c(283434980, 866029623))
+             )
+         ) %>%
+  safe_arrange(Site) %>%
+  tag_rule(111, "If Recruit Type is 'Not active', then Verif Status should be 'Not yet verified' OR 'Duplicate' IF Duplicate Type = 'Not active signed in as Passive Recruit' or 'Not active enrolled as an Active Recruit'.",
+           list("RcrtV_Verification_v1r0" = .$d_821247024,
+                "RcrtV_DuplicateType"     = .$state_d_148197146))
+all_errors <- bind_rows(all_errors, Non_act_verif)
+
+
 
 
 ## Need to save the raw variables for the Analytics tab
