@@ -360,7 +360,7 @@ alclife_bands <- list(
 
 # Levels to all ALCLIFE responses
 alclife_levels <- c(
-  "Didn't Drink", "A few times per Year", "A few times per Month",
+  "Didn't drink during this time", "A few times per Year", "A few times per Month",
   "Once per Week", "A few times per Week", "Once per day",
   "2-3 times per Day", "4-5 times per Day", "6+ times per Day",
   "Skipped this question"
@@ -414,7 +414,7 @@ alclife2_funct <- function(age_start, Title) {
     ) %>%
     mutate(
       answer = case_when(
-        .data[[cid]] == 265550580 ~ "Didn't Drink",
+        .data[[cid]] == 265550580 ~ "Didn't drink during this time",
         .data[[cid]] == 950039557 ~ "A few times per Year",
         .data[[cid]] == 402048066 ~ "A few times per Month",
         .data[[cid]] == 522395860 ~ "Once per Week",
