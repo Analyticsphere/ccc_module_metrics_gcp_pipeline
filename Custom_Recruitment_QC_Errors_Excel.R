@@ -945,17 +945,7 @@ AB1 <- partsbq %>%
 all_errors <- bind_rows(all_errors, AB1)
 
 
-# Rule 88
-AB2 <- partsbq %>%
-  filter(!is.na(state_d_956485028) &
-           (is.na(d_761057722) | is.na(d_207613315) | is.na(d_163847117)) &
-           !(is.na(d_761057722) & is.na(d_207613315) & is.na(d_163847117))) %>%
-  safe_arrange(Site) %>%
-  tag_rule(88, "If A/B Testing Message Response is populated and any UTM parameter is populated, all three must be present.",
-           list("UTM_Source"   = .$d_761057722,
-                "UTM_Medium"   = .$d_207613315,
-                "UTM_Campaign" = .$d_163847117))
-all_errors <- bind_rows(all_errors, AB2)
+# DEPRECATED Rule 88 -- "If A/B Testing Message Response is populated and any UTM parameter is populated, all three must be present.",
 
 
 # Rule 89
